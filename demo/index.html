@@ -1,0 +1,198 @@
+<!DOCTYPE html>
+<html>
+	<head>
+		<title>ECHO Forms</title>
+		<script src="http://ajax.googleapis.com/ajax/libs/jquery/2.0.3/jquery.min.js"></script>
+		<script src="../dist/ajaxslt-0.8.1.js"></script>
+		<script src="../dist/ajaxslt-ext.js"></script>
+		<script src="../dist/jquery-compat.js"></script>
+		<script src="../dist/echo-forms.js"></script>
+	</head>
+	<body>
+		<script>
+			$(function() {
+				$("#echoform").echoform({
+					propertyName: "a custom value"
+				});
+			});
+		</script>
+    <form id="echoform" class="echoforms-form">
+      <script type="application/xml" class="echoforms-model">
+<ecs:request xmlns:ecs="http://ecs.nasa.gov/options">
+<!--NOTE: elements in caps losely match the ESI API, those in lowercase are helper elements -->
+<ecs:requestInfo>
+<ecs:email/>
+</ecs:requestInfo>
+<!--Dataset ID will be injected by Reverb-->
+<ecs:CLIENT>ESI</ecs:CLIENT>
+<!--First SubsetAgent in the input capabilities XML is used as the default.-->
+<ecs:SUBAGENT_ID>
+<ecs:value>HEG</ecs:value>
+</ecs:SUBAGENT_ID>
+<!-- hardcode to async for Reverb services -->
+<ecs:REQUEST_MODE>async</ecs:REQUEST_MODE>
+<ecs:HEG-request>
+<!--Need to populate BBOX in final ESI request as follows: "&BBOX=ullon,lrlat,lrlon,ullat"-->
+<ecs:BBOX/>
+<ecs:spatial_subsetting>
+<ecs:boundingbox>
+<ecs:ullat>90</ecs:ullat>
+<ecs:ullon>-180</ecs:ullon>
+<ecs:lrlat>-90</ecs:lrlat>
+<ecs:lrlon>180</ecs:lrlon>
+</ecs:boundingbox>
+</ecs:spatial_subsetting>
+<ecs:band_subsetting>
+<ecs:SUBSET_DATA_LAYERS>
+<!--Assumptions: -Only bands and dims can have a 'size'. Objects and fields are selected as a boolean yes or no. -For now, only bands are supported, not dims? -->
+<ecs:MOD_CMG_Snow_5km value="MOD_CMG_Snow_5km">
+<!--Flag which selects all fields in the object.-->
+<ecs:subtreeSelected>false</ecs:subtreeSelected>
+<!--Flag which allows hiding of fields in the object.-->
+<ecs:objectVisible>false</ecs:objectVisible>
+<ecs:MOD_CMG_Snow_5km_Day_CMG_Snow_Cover value="MOD_CMG_Snow_5km:Day_CMG_Snow_Cover">
+<!--Flag to select the field (either entire field or a sub band/dim).-->
+<ecs:itemSelected>false</ecs:itemSelected>
+<!--Flag to select all band and dim values in the field.-->
+<ecs:subtreeSelected>true</ecs:subtreeSelected>
+</ecs:MOD_CMG_Snow_5km_Day_CMG_Snow_Cover>
+<ecs:MOD_CMG_Snow_5km_Day_CMG_Confidence_Index value="MOD_CMG_Snow_5km:Day_CMG_Confidence_Index">
+<!--Flag to select the field (either entire field or a sub band/dim).-->
+<ecs:itemSelected>false</ecs:itemSelected>
+<!--Flag to select all band and dim values in the field.-->
+<ecs:subtreeSelected>true</ecs:subtreeSelected>
+</ecs:MOD_CMG_Snow_5km_Day_CMG_Confidence_Index>
+<ecs:MOD_CMG_Snow_5km_Day_CMG_Cloud_Obscured value="MOD_CMG_Snow_5km:Day_CMG_Cloud_Obscured">
+<!--Flag to select the field (either entire field or a sub band/dim).-->
+<ecs:itemSelected>false</ecs:itemSelected>
+<!--Flag to select all band and dim values in the field.-->
+<ecs:subtreeSelected>true</ecs:subtreeSelected>
+</ecs:MOD_CMG_Snow_5km_Day_CMG_Cloud_Obscured>
+<ecs:MOD_CMG_Snow_5km_Snow_Spatial_QA value="MOD_CMG_Snow_5km:Snow_Spatial_QA">
+<!--Flag to select the field (either entire field or a sub band/dim).-->
+<ecs:itemSelected>false</ecs:itemSelected>
+<!--Flag to select all band and dim values in the field.-->
+<ecs:subtreeSelected>true</ecs:subtreeSelected>
+</ecs:MOD_CMG_Snow_5km_Snow_Spatial_QA>
+</ecs:MOD_CMG_Snow_5km>
+</ecs:SUBSET_DATA_LAYERS>
+</ecs:band_subsetting>
+<!--First Format in the input XML is used as the default.-->
+<ecs:FORMAT>
+<ecs:value>HDF-EOS</ecs:value>
+</ecs:FORMAT>
+<!-- OUTPUT_GRID is never used in ESI (but should be enabled for SSW)-->
+<!-- FILE_IDS must be injected by Reverb -->
+<!-- FILE_URLS is not used in requests from ECHO, Use FILE_IDS instead -->
+<ecs:projection_options>
+<ecs:PROJECTION>
+<ecs:value>&amp;</ecs:value>
+</ecs:PROJECTION>
+<!--In final ESI request, projection parameters should be included as follows: "&PROJECTION_PARAMETERS=param1:value1,param2:value2,...paramn:valuen"-->
+<ecs:PROJECTION_PARAMETERS>
+<ecs:GEOGRAPHIC_projection/>
+<ecs:UNIVERSAL_TRANSVERSE_MERCATOR_projection>
+<ecs:LonZ/>
+<ecs:LatZ/>
+<ecs:NZone/>
+<ecs:southFlag/>
+</ecs:UNIVERSAL_TRANSVERSE_MERCATOR_projection>
+<ecs:STATE_PLANE_projection>
+<ecs:Spheroid/>
+<ecs:NZone/>
+</ecs:STATE_PLANE_projection>
+<ecs:LAMBERT_CONFORMAL_CONIC_projection>
+<ecs:OriginLat/>
+<ecs:CentMer/>
+<ecs:STDPR1/>
+<ecs:STDPR2/>
+<ecs:FE/>
+<ecs:FN/>
+<ecs:SMajor/>
+<ecs:SMinor/>
+</ecs:LAMBERT_CONFORMAL_CONIC_projection>
+<ecs:POLAR_STEREOGRAPHIC_projection>
+<ecs:LongPol/>
+<ecs:lat_0/>
+<ecs:TrueScale/>
+<ecs:Factor/>
+<ecs:FE/>
+<ecs:FN/>
+<ecs:SMajor/>
+<ecs:SMinor/>
+</ecs:POLAR_STEREOGRAPHIC_projection>
+<ecs:TRANSVERSE_MERCATOR_projection>
+<ecs:Factor/>
+<ecs:OriginLat/>
+<ecs:CentMer/>
+<ecs:FE/>
+<ecs:FN/>
+<ecs:SMajor/>
+<ecs:SMinor/>
+</ecs:TRANSVERSE_MERCATOR_projection>
+<ecs:LAMBERT_AZIMUTHAL_projection>
+<ecs:Sphere/>
+<ecs:CenterLat/>
+<ecs:CentLon/>
+<ecs:FE/>
+<ecs:FN/>
+</ecs:LAMBERT_AZIMUTHAL_projection>
+<ecs:SINUSOIDAL_projection>
+<ecs:CentMer/>
+<ecs:FE/>
+<ecs:FN/>
+</ecs:SINUSOIDAL_projection>
+</ecs:PROJECTION_PARAMETERS>
+</ecs:projection_options>
+<ecs:advanced_file_option_flag/>
+<ecs:advanced_file_options>
+<!--In final ESI request, resample options should be formatted like: "&RESAMPLE=dimension:value"-->
+<ecs:RESAMPLE>
+<ecs:GEOGRAPHIC-dimension>
+<ecs:value>&amp;</ecs:value>
+</ecs:GEOGRAPHIC-dimension>
+<ecs:UNIVERSAL_TRANSVERSE_MERCATOR-dimension>
+<ecs:value>&amp;</ecs:value>
+</ecs:UNIVERSAL_TRANSVERSE_MERCATOR-dimension>
+<ecs:STATE_PLANE-dimension>
+<ecs:value>&amp;</ecs:value>
+</ecs:STATE_PLANE-dimension>
+<ecs:LAMBERT_CONFORMAL_CONIC-dimension>
+<ecs:value>&amp;</ecs:value>
+</ecs:LAMBERT_CONFORMAL_CONIC-dimension>
+<ecs:POLAR_STEREOGRAPHIC-dimension>
+<ecs:value>&amp;</ecs:value>
+</ecs:POLAR_STEREOGRAPHIC-dimension>
+<ecs:TRANSVERSE_MERCATOR-dimension>
+<ecs:value>&amp;</ecs:value>
+</ecs:TRANSVERSE_MERCATOR-dimension>
+<ecs:LAMBERT_AZIMUTHAL-dimension>
+<ecs:value>&amp;</ecs:value>
+</ecs:LAMBERT_AZIMUTHAL-dimension>
+<ecs:SINUSOIDAL-dimension>
+<ecs:value>&amp;</ecs:value>
+</ecs:SINUSOIDAL-dimension>
+<ecs:GEOGRAPHIC-PERCENT-value>100</ecs:GEOGRAPHIC-PERCENT-value>
+<ecs:UNIVERSAL_TRANSVERSE_MERCATOR-PERCENT-value>100</ecs:UNIVERSAL_TRANSVERSE_MERCATOR-PERCENT-value>
+<ecs:STATE_PLANE-PERCENT-value>100</ecs:STATE_PLANE-PERCENT-value>
+<ecs:LAMBERT_CONFORMAL_CONIC-PERCENT-value>100</ecs:LAMBERT_CONFORMAL_CONIC-PERCENT-value>
+<ecs:POLAR_STEREOGRAPHIC-PERCENT-value>100</ecs:POLAR_STEREOGRAPHIC-PERCENT-value>
+<ecs:TRANSVERSE_MERCATOR-PERCENT-value>100</ecs:TRANSVERSE_MERCATOR-PERCENT-value>
+<ecs:LAMBERT_AZIMUTHAL-PERCENT-value>100</ecs:LAMBERT_AZIMUTHAL-PERCENT-value>
+<ecs:SINUSOIDAL-PERCENT-value>100</ecs:SINUSOIDAL-PERCENT-value>
+</ecs:RESAMPLE>
+<ecs:INTERPOLATION>
+<ecs:value>NN</ecs:value>
+</ecs:INTERPOLATION>
+<!--INCLUDE_META needs to be converted from true/false here to Y/N in the request.-->
+<ecs:INCLUDE_META>false</ecs:INCLUDE_META>
+</ecs:advanced_file_options>
+<ecs:spatial_subset_flag/>
+<ecs:band_subset_flag/>
+<ecs:temporal_subset_flag/>
+</ecs:HEG-request>
+</ecs:request>
+      </script>
+    </form>
+	</body>
+</html>

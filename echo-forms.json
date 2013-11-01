@@ -1,0 +1,27 @@
+{
+  "name": "echo-forms.js",
+  "description": "A Javascript implementation of the ECHO Forms.",
+  "keywords": [
+    "jquery",
+    "echo",
+    "reverb",
+    "forms",
+    "echo-forms",
+    "echo forms",
+    "plugins"
+  ],
+  "version": "1.0.0",
+  "author": {
+    "name": "Patrick Quinn",
+    "email": "patrick@element84.com"
+  },
+  "maintainers": [
+    {
+      "name": "Patrick Quinn",
+      "email": "patrick@element84.com"
+    }
+  ],
+  "dependencies": {
+    "jquery": ">=1.4"
+  }
+}
