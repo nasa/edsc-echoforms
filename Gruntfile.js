@@ -74,6 +74,17 @@ module.exports = function(grunt) {
           forever: false
         }
       }
+    },
+
+    sass: {
+      dist: {
+        files: {
+          'dist/echo-forms.min.css': 'src/echo-forms.scss'
+        },
+        options: {
+          style: 'compressed'
+        }
+      }
     }
 
 	});
@@ -83,8 +94,9 @@ module.exports = function(grunt) {
 	grunt.loadNpmTasks("grunt-contrib-uglify");
 	grunt.loadNpmTasks("grunt-contrib-coffee");
 	grunt.loadNpmTasks("grunt-contrib-watch");
+	grunt.loadNpmTasks("grunt-contrib-sass");
 
-	grunt.registerTask("default", ["coffee", "concat", "jshint", "uglify"]);
+	grunt.registerTask("default", ["coffee", "concat", "jshint", "uglify", "sass"]);
 	grunt.registerTask("travis", ["jshint"]);
 
 };

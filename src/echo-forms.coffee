@@ -35,32 +35,8 @@
     serialize: ->
       xmlText(@document)
 
-  class EchoFormsBuilder
-    @uniqueId: 0
-
-    constructor: (xml, @controlClasses) ->
-      @loadNamespaces(xml)
-
-      doc = $($.parseXML(xml))
-      @model = model = doc.xpath('//echoforms:form/echoforms:model', @resolver)
-      @ui = ui = doc.xpath('//echoforms:form/echoforms:ui', @resolver)
-
-      window.ui = ui
-
-      @control = new EchoFormsFormControl(ui, model, @controlClasses)
-
-    element: ->
-      @control.element()
-
-    resolver: (prefix) =>
-      prefix = " default " unless prefix?
-      result = @namespaces[prefix]
-      unless result
-        console.log "Bad prefix: #{prefix}.  Ignoring."
-        prefix = " default "
-      result
-
-    loadNamespaces: (xml) ->
+  class XPathResolver
+    constructor: (xml) ->
       namespaces = {}
 
       namespaceRegexp = /\sxmlns(?::(\w+))?=\"([^\"]+)\"/g
@@ -77,6 +53,34 @@
 
       @namespaces = namespaces
 
+    resolve: (prefix) =>
+      prefix = " default " unless prefix?
+      result = @namespaces[prefix]
+      unless result
+        console.log "Bad prefix: #{prefix}.  Ignoring."
+        prefix = " default "
+      result
+
+  class EchoFormsBuilder
+    @uniqueId: 0
+
+    constructor: (xml, @controlClasses) ->
+      @resolver = new XPathResolver(xml).resolve
+
+      doc = $($.parseXML(xml))
+      @model = model = doc.xpath('//echoforms:form/echoforms:model/echoforms:instance', @resolver)
+      @ui = ui = doc.xpath('//echoforms:form/echoforms:ui', @resolver)
+
+      # DELETE ME
+      window.ui = ui
+      window.model = model
+      window.resolver = @resolver
+
+      @control = new FormControl(ui, model, @controlClasses, @resolver)
+
+    element: ->
+      @control.element()
+
 
   class EchoFormsInterface
     @inputTimeout: null
@@ -89,16 +93,16 @@
 
       @root = root = $(root)
 
-      root.data('echoformsInterface', this)
-      root.bind('echoforms:refresh', @waitThenRefresh)
-      root.submit(@_onSubmit)
+      # root.data('echoformsInterface', this)
+      # root.bind('echoforms:refresh', @waitThenRefresh)
+      # root.submit(@_onSubmit)
       # TODO Is this needed?  Looks like testing code
-      root.closest('form#form-test').submit(@_onSubmit)
+      # root.closest('form#form-test').submit(@_onSubmit)
 
       @builder = new EchoFormsBuilder(root.find('.echoforms-xml').text(), @controlClasses)
       root.append(@builder.element())
-      @instance = new EchoForm(root.find('.echoforms-xml').text())
-      @initializeInstance(root)
+      # @instance = new EchoForm(root.find('.echoforms-xml').text())
+      # @initializeInstance(root)
 
     initializeInstance: (localRoot, refresh) ->
       # FIXME Reverb does styling stuff and control initialization here.
