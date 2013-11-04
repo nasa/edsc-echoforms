@@ -1,26 +1,3 @@
-# Note that when compiling with coffeescript, the plugin is wrapped in another
-# anonymous function. We do not need to pass in undefined as well, since
-# coffeescript uses (void 0) instead.
-do ($ = jQuery, window, document) ->
-
-  # Needed for IE < 8 compatibility.  This is defined in 1.8.1
-  String.prototype.trim ?= -> this.replace(/^\s*/, "").replace(/\s*$/, "");
-
-  isFunction = (obj) ->
-    !!(object && getClass.call(object) == '[object Function]')
-
-  nearest = (el, selector) ->
-    $(el).find(selector).filter ->
-      !$(this).parentsUntil(el, selector).length
-
-
-  defaultControls = [
-    EchoFormsContainerControl,
-    EchoFormsCheckboxControl,
-    EchoFormsOutputControl,
-    EchoFormsDefaultControl
-    ]
-
   # Create the defaults once
   pluginName = "echoform"
   defaults =
@@ -30,9 +7,7 @@ do ($ = jQuery, window, document) ->
   # methods which allow us to manipulate the model using xpaths
   class EchoForm
     constructor: (xml) ->
-      console.log(xml)
       @document = xmlParse(xml)
-      console.log(@document)
       @root = @document.firstChild
       @root.prefixElements()
       $(document).trigger('echoforms:instanceChange', this)
@@ -60,110 +35,48 @@ do ($ = jQuery, window, document) ->
     serialize: ->
       xmlText(@document)
 
+  class EchoFormsBuilder
+    @uniqueId: 0
 
-  class BaseEchoFormsControl
-    # TODO caching opportunities
-    constructor: (@el) ->
-      # TODO Not fantastic performance here
-      @inputs().bind('click change', onChange)
+    constructor: (xml, @controlClasses) ->
+      @loadNamespaces(xml)
 
-    isChanged: (newValue) ->
-      @getValue().toString().trim() != newValue.toString().trim()
+      doc = $($.parseXML(xml))
+      @model = model = doc.xpath('//echoforms:form/echoforms:model', @resolver)
+      @ui = ui = doc.xpath('//echoforms:form/echoforms:ui', @resolver)
 
-    changed: (newValue) =>
-      @el.trigger('echoforms:controlchange', @el, this, newValue)
+      window.ui = ui
 
-    inputSelector: ':input'
+      @control = new EchoFormsFormControl(ui, model, @controlClasses)
 
-    inputs: () ->
-      @inputs ?= @el.find(@inputSelector)
+    element: ->
+      @control.element()
 
-    relevant: (arg) ->
-      if arg?
-        isRelevant = !!arg
-        if isRelevant != @relevant()
-          el.toggleClass('echoforms-irrelevant', !isRelevant)
-          el.toggle(isRelevant)
-      else
-        !el.hasClass('echoforms-irrelevant')
+    resolver: (prefix) =>
+      prefix = " default " unless prefix?
+      result = @namespaces[prefix]
+      unless result
+        console.log "Bad prefix: #{prefix}.  Ignoring."
+        prefix = " default "
+      result
 
-    readonly: (arg) ->
-      if arg?
-        isReadonly = !!arg
-        if isReadonly != @readonly()
-          el.toggleClass('echoforms-readonly ui-state-disabled', isReadonly)
-          @updateReadonly(isReadonly)
-      else
-        el.hasClass('echoforms-readonly')
+    loadNamespaces: (xml) ->
+      namespaces = {}
 
-    updateReadonly: (isReadonly) ->
-      @inputs().attr('disabled', isReadonly)
-      @inputs().attr('readonly', isReadonly)
+      namespaceRegexp = /\sxmlns(?::(\w+))?=\"([^\"]+)\"/g
+      match = namespaceRegexp.exec(xml)
+      while match?
+        name = match[1] ? ' default '
+        uri = match[2]
+        namespaces[name] = uri
+        match = namespaceRegexp.exec(xml)
 
-    value: (arg) ->
-      if arg?
-        if @isChanged()
-          @setValue(arg)
-          @changed(arg)
-      else
-        @getValue()
+      # We need these
+      namespaces['xs'] = 'http://www.w3.org/2001/XMLSchema'
+      namespaces['echoforms'] = 'http://echo.nasa.gov/v9/echoforms'
 
-    getValue: () ->
+      @namespaces = namespaces
 
-    setValue: () ->
-
-     onChange: (e) =>
-      @changed(@getValue())
-
-  class EchoFormsContainerControl extends BaseEchoFormsControl
-    @selector: '.echoforms-group, .echoforms-repeat'
-
-    inputs: () -> $()
-
-    getValue: () ->
-      if @el.data('echoformsRef')
-        # FIXME this shouldn't really be referencing the form if possible
-        # FIXME instanceValue needs to be updated to use jQuery data attributes
-        ui = @el.closest('.echoforms-echoform').data('echoformsInterface')
-        ui.instanceValue(@el, 'echoformsRef')
-
-  class EchoFormsCheckboxControl extends BaseEchoFormsControl
-    @selector: '.echoforms-control-checkbox'
-
-    inputSelector: ':checkbox'
-
-    getValue: () ->
-      @inputs().is(':checked')
-
-    setValue: (value) ->
-      @inputs().attr('checked', value.toString() == true)
-
-  class EchoFormsOutputControl extends BaseEchoFormsControl
-      @selector: '.echoforms-control-output'
-
-      inputs: () -> $()
-
-      getValue: () ->
-        @el.find('.elements > a, .elements p').text()
-
-      setValue: (value) ->
-        outputEl = @el.find('.elements > a, .elements p')
-        outputEl.attr('href', value) if outputEl.is('a')
-        outputEl.text(value)
-
-  class EchoFormsDefaultControl extends BaseEchoFormsControl
-    @selector: '.echoforms-control'
-
-    getValue: () ->
-      @inputs().val()
-
-    setValue: (value) ->
-      @inputs().val(value)
-
-  class BaseEchoFormsConstraint
-    constructor: (@attrs) ->
-
-    message: -> @attrs.alert
 
   class EchoFormsInterface
     @inputTimeout: null
@@ -182,7 +95,9 @@ do ($ = jQuery, window, document) ->
       # TODO Is this needed?  Looks like testing code
       root.closest('form#form-test').submit(@_onSubmit)
 
-      @instance = new EchoForm(root.find('.echoforms-model').text())
+      @builder = new EchoFormsBuilder(root.find('.echoforms-xml').text(), @controlClasses)
+      root.append(@builder.element())
+      @instance = new EchoForm(root.find('.echoforms-xml').text())
       @initializeInstance(root)
 
     initializeInstance: (localRoot, refresh) ->

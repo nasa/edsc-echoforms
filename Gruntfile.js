@@ -25,10 +25,11 @@ module.exports = function(grunt) {
     concat: {
       dist: {
         files: {
-          "dist/ajaxslt-0.8.1.js": ["src/ajaxslt-0.8.1/xmltoken.js",
-                                    "src/ajaxslt-0.8.1/util.js",
-                                    "src/ajaxslt-0.8.1/dom.js",
-                                    "src/ajaxslt-0.8.1/xpath.js"],
+          "dist/ajaxslt-0.8.1.js": ["vendor/ajaxslt-0.8.1/xmltoken.js",
+                                    "vendor/ajaxslt-0.8.1/util.js",
+                                    "vendor/ajaxslt-0.8.1/dom.js",
+                                    "vendor/ajaxslt-0.8.1/xpath.js"],
+          "dist/jquery.xpath.min.js": ["vendor/jquery-xpath/jquery.xpath.min.js"],
           "dist/ajaxslt-ext.js": ["src/ajaxslt-ext.js"],
           "dist/jquery-compat.js": ["src/jquery-compat.js"]
         }
@@ -53,9 +54,16 @@ module.exports = function(grunt) {
 		coffee: {
 			compile: {
 				files: {
-					"dist/echo-forms.js": "src/echo-forms.coffee"
+					"dist/echo-forms.js": ["src/preamble.coffee",
+                                 "src/util.coffee",
+                                 "src/constraints.coffee",
+                                 "src/controls.coffee",
+                                 "src/echo-forms.coffee"]
 				}
-			}
+			},
+      options: {
+        join: true
+      }
 		},
 
     watch: {
