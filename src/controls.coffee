@@ -178,7 +178,7 @@
 
     buildElementsChildrenDom: ->
       element = $("<input id=\"#{@id}-element\" type=\"text\" class=\"echoforms-element-input echoforms-element-input-#{@inputType}\" autocomplete=\"off\">")
-      element.attr('placeholder', 'MM/DD/YYYY HH:MM:SS') if @inputType == 'datetime'
+      element.attr('placeholder', 'MM/DD/YYYYTHH:MM:SS') if @inputType == 'datetime'
       element
 
   class CheckboxControl extends InputControl
@@ -308,7 +308,6 @@
 
     bindEvents: ->
       @el.on 'echoforms:modelchange', '.echoforms-control', =>
-        console.log '#############'
         @loadFromModel()
 
   class GroupControl extends GroupingControl

@@ -63,14 +63,32 @@
       TypeConstraint.MAX_LONG = Math.pow(2, 63) - 1;
 
       function TypeConstraint(rawType, message) {
-        var a, match;
+        var a, human_type, match;
         if (message == null) {
           message = null;
         }
         match = rawType.match(/^(?:[^:]+:)?(.*)$/);
         this.type = match ? match[1] : rawType;
-        a = /^[aeiou]/i.test(this.type) ? 'an' : 'a';
-        TypeConstraint.__super__.constructor.call(this, message != null ? message : "Value must be " + a + " " + this.type);
+        human_type = (function() {
+          switch (this.type) {
+            case "double":
+              return "number";
+            case "long":
+              return "integer between -2^63 and 2^63-1";
+            case "int":
+              return "integer between -2,147,483,648 and 2,147,483,647";
+            case "short":
+              return "integer between -32,768 and 32,767";
+            case "datetime":
+              return "date/time with format MM/DD/YYYYTHH:MM:SS";
+            case "boolean":
+              return "true or false";
+            default:
+              return this.type;
+          }
+        }).call(this);
+        a = /^[aeiou]/i.test(human_type) ? 'an' : 'a';
+        TypeConstraint.__super__.constructor.call(this, message != null ? message : "Value must be " + a + " " + human_type);
       }
 
       TypeConstraint.prototype.check = function(value, model, resolver) {
@@ -483,7 +501,7 @@
         var element;
         element = $("<input id=\"" + this.id + "-element\" type=\"text\" class=\"echoforms-element-input echoforms-element-input-" + this.inputType + "\" autocomplete=\"off\">");
         if (this.inputType === 'datetime') {
-          element.attr('placeholder', 'MM/DD/YYYY HH:MM:SS');
+          element.attr('placeholder', 'MM/DD/YYYYTHH:MM:SS');
         }
         return element;
       };
@@ -741,7 +759,6 @@
       FormControl.prototype.bindEvents = function() {
         var _this = this;
         return this.el.on('echoforms:modelchange', '.echoforms-control', function() {
-          console.log('#############');
           return _this.loadFromModel();
         });
       };

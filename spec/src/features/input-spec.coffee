@@ -1,4 +1,4 @@
-describe 'Input control', ->
+describe '"input" control', ->
   template = new FormTemplate("""
     <form xmlns="http://echo.nasa.gov/v9/echoforms"
           xmlns:xs="http://www.w3.org/2001/XMLSchema"
@@ -20,17 +20,52 @@ describe 'Input control', ->
     </form>
   """)
 
+  it "displays as an html text input element", ->
+    template.form(dom)
+    expect($('#control :input')).toBeMatchedBy('input[type=text]')
+
   sharedBehaviorForControls(template)
   sharedBehaviorForTypedControls(template)
 
-  describe '"relevant" attribute', ->
+  describe 'with type="xs:boolean"', ->
+    it "displays a checkbox instead of a text input", ->
+      template.form(dom, attributes: 'type="xs:boolean"')
+      expect($('#control :checkbox')).toExist()
+      expect($('#control :checkbox')).not.toBeChecked()
 
+    it "loads boolean true values from the model", ->
+      template.form(dom,
+        attributes: 'type="xs:boolean" ref="prov:boolean"'
+        model: '<prov:boolean>true</prov:boolean>'
+        )
+      expect($('#control :checkbox')).toBeChecked()
 
-  describe '"required" attribute', ->
+    it "loads boolean false values from the model", ->
+      template.form(dom,
+        attributes: 'type="xs:boolean" ref="prov:boolean"'
+        model: '<prov:boolean>false</prov:boolean>'
+        )
+      expect($('#control :checkbox')).not.toBeChecked()
 
-  describe '"readonly" attribute', ->
+    it "copes with non-boolean values in the model", ->
+      template.form(dom,
+        attributes: 'type="xs:boolean" ref="prov:boolean"'
+        model: '<prov:boolean>asdf</prov:boolean>'
+        )
+      expect($('#control :checkbox')).not.toBeChecked()
 
-  describe 'validation', ->
-    describe '"pattern" constraint', ->
+    it "updates its checkbox's checked state when the model updates", ->
+      template.form(dom, attributes: 'type="xs:boolean" ref="prov:reference"')
+      expect($('#control :checkbox')).not.toBeChecked()
+      $('#reference :input').val('true').change()
+      expect($('#control :checkbox')).toBeChecked()
+      $('#reference :input').val('false').change()
+      expect($('#control :checkbox')).not.toBeChecked()
 
-    describe '"xpath" constraint', ->
+    it "updates the model based on its checked state", ->
+      template.form(dom, attributes: 'type="xs:boolean" ref="prov:reference"')
+      expect($('#reference :input').val()).toBe('')
+      $('#control :input').attr('checked', true).change()
+      expect($('#reference :input').val()).toBe('true')
+      $('#control :input').attr('checked', false).change()
+      expect($('#reference :input').val()).toBe('false')

@@ -8,6 +8,18 @@ window.sharedBehaviorForControls = (template) ->
     template.form(dom, children: '<help>Helpful text</help>')
     expect($('#control > .echoforms-help')).toBeVisible()
 
+  it "uses the default value contained in the model", ->
+    template.form(dom,
+      model: '<prov:default>Default value</prov:default>',
+      attributes: 'ref="prov:default"')
+    expect($('#control :input').val()).toBe('Default value')
+
+  it "is initially blank when the model has no default value", ->
+    template.form(dom,
+      model: '<prov:default />',
+      attributes: 'ref="prov:default"')
+    expect($('#control :input').val()).toBe('')
+
   describe '"relevant" attribute', ->
     it "contains an xpath which hides the control when it evaluates to false", ->
       template.form(dom, attributes: 'relevant="prov:reference != \'hidden\'"')

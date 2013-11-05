@@ -10,6 +10,20 @@
       });
       return expect($('#control > .echoforms-help')).toBeVisible();
     });
+    it("uses the default value contained in the model", function() {
+      template.form(dom, {
+        model: '<prov:default>Default value</prov:default>',
+        attributes: 'ref="prov:default"'
+      });
+      return expect($('#control :input').val()).toBe('Default value');
+    });
+    it("is initially blank when the model has no default value", function() {
+      template.form(dom, {
+        model: '<prov:default />',
+        attributes: 'ref="prov:default"'
+      });
+      return expect($('#control :input').val()).toBe('');
+    });
     describe('"relevant" attribute', function() {
       it("contains an xpath which hides the control when it evaluates to false", function() {
         template.form(dom, {

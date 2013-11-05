@@ -39,7 +39,7 @@
         _ref = control.children('.echoforms-errors').children('.echoforms-error');
         for (_i = 0, _len = _ref.length; _i < _len; _i++) {
           message = _ref[_i];
-          if ($.trim($(message).text()) === expected) {
+          if ($.trim($(message).text()) === expected || (expected == null)) {
             return true;
           }
         }

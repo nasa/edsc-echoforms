@@ -30,7 +30,7 @@ beforeEach ->
       control = $(@actual)
 
       for message in control.children('.echoforms-errors').children('.echoforms-error')
-        return true if $.trim($(message).text()) == expected
+        return true if $.trim($(message).text()) == expected or !expected?
 
       false
 
