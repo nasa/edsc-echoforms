@@ -1,4 +1,5 @@
   # TODO look at optimization / caching
+  # TODO Listen to model dom instead of page dom?
 
   echoformsControlUniqueId = 0
 
@@ -32,15 +33,6 @@
         if xpathNode.length > 0
           @constraints.push(new XPathConstraint(xpathNode.text(), message))
 
-    isRelevant: ->
-      if @relevantExpr? then @xpath(@relevantExpr) else true
-
-    isRequired: ->
-      if @requiredExpr? then @xpath(@requiredExpr) else false
-
-    isReadonly: ->
-      if @readonlyExpr? then @xpath(@readonlyExpr) else false
-
     ref: ->
       if @refExpr? then @xpath(@refExpr) else @model
 
@@ -51,10 +43,20 @@
       console.warn("#{@constructor.name} must override inputValue")
 
     loadFromModel: ->
-      console.warn("#{@constructor.name} must override loadFromModel")
+      @validate()
+
+    validate: ->
+      @relevant(@xpath(@relevantExpr)[0]) if @relevantExpr?
+      @readonly(@xpath(@readonlyExpr)[0]) if @readonlyExpr?
+
+      errors = (c.message for c in @constraints when !c.check(@refValue(), @model, @resolver))
+
+      if errors.length > 0
+        console.log errors
+
+      @setErrors(errors)
 
     saveToModel: ->
-      console.warn("#{@constructor.name} must override saveToModel")
 
     bindEvents: ->
 
@@ -68,13 +70,7 @@
       @refValue().toString().trim() != @inputValue().toString().trim()
 
     changed: () =>
-      console.log('triggering on', @el)
       @el.trigger('echoforms:modelchange')
-
-    inputSelector: ':input'
-
-    inputs: () ->
-      @_inputs ?= @el.find(@inputSelector)
 
     relevant: (arg) ->
       if arg?
@@ -82,8 +78,9 @@
         if isRelevant != @relevant()
           @el.toggleClass('echoforms-irrelevant', !isRelevant)
           @el.toggle(isRelevant)
+          @ref().toggleClass('echoforms-pruned', !isRelevant)
       else
-        !el.hasClass('echoforms-irrelevant')
+        !@el.hasClass('echoforms-irrelevant')
 
     readonly: (arg) ->
       if arg?
@@ -98,19 +95,10 @@
       @inputs().attr('disabled', isReadonly)
       @inputs().attr('readonly', isReadonly)
 
-    value: (arg) ->
-      if arg?
-        if @isChanged()
-          @setValue(arg)
-          @changed(arg)
-      else
-        @getValue()
-
     onChange: (e) =>
       if @isChanged()
         @saveToModel()
         @changed()
-
 
     buildLabelDom: ->
       if @label?
@@ -130,6 +118,17 @@
     buildElementsDom: ->
       $('<div class="echoforms-elements"/>').append(@buildElementsChildrenDom())
 
+    buildErrorsDom: ->
+      $('<div class="echoforms-errors"/>')
+
+    setErrors: (messages) ->
+      errors = $()
+      for message in messages
+        error = $('<div class="echoforms-error"/>')
+        error.text(message)
+        errors = errors.add(error)
+      @el.find('.echoforms-errors').empty().append(errors)
+
     buildElementsChildrenDom: ->
       $()
 
@@ -138,6 +137,7 @@
       root.append(@buildLabelDom())
       root.append(@buildElementsDom())
       root.append(@buildHelpDom())
+      root.append(@buildErrorsDom())
 
       root
 
@@ -147,12 +147,15 @@
 
   class TypedControl extends BaseControl
     constructor: (ui, model, controlClasses, resolver) ->
-      @inputType = (ui.attr('inputType') ? 'string').replace(/^.*:/, '').toLowerCase()
+      @inputType = (ui.attr('type') ? 'string').replace(/^.*:/, '').toLowerCase()
       super(ui, model, controlClasses, resolver)
 
     loadConstraints: ->
       super()
       @constraints.push(new TypeConstraint(@inputType))
+
+    inputs: () ->
+      @_inputs ?= @el.find(':input')
 
     bindEvents: ->
       @inputs().bind('click change', @onChange)
@@ -161,16 +164,12 @@
       @inputs().val()
 
     saveToModel: ->
+      super()
       @ref().text(@inputValue())
 
     loadFromModel: ->
+      super()
       @inputs().val(@refValue())
-
-    getValue: () ->
-      @inputs().val()
-
-    setValue: (value) ->
-      @inputs().val(value)
 
   class InputControl extends TypedControl
     @selector: 'input'
@@ -183,16 +182,12 @@
   class CheckboxControl extends InputControl
     @selector: 'input[type$=boolean]'
 
-    inputSelector: ':checkbox'
-
-    loadFromModel: ->
-      @inputs().attr('checked', @refValue().toString().trim() == 'true')
-
-    getValue: () ->
+    inputValue:() ->
       @inputs().is(':checked')
 
-    setValue: (value) ->
-      @inputs().attr('checked', value.toString().trim() == 'true')
+    loadFromModel: ->
+      super()
+      @inputs().attr('checked', @refValue().toString().trim() == 'true')
 
     buildElementsChildrenDom: ->
       super().attr('type', 'checkbox')
@@ -206,22 +201,18 @@
 
     inputs: () -> $()
 
-    getValue: () ->
-      @el.find('.echoforms-elements > p').text()
-
-    setValue: (value) ->
-      @el.find('.echoforms-elements > p').text(value)
+    loadFromModel: ->
+      super()
+      @el.find('.echoforms-elements > p').text(@refValue())
 
     buildElementsChildrenDom: ->
       $('<p/>')
 
   class UrlOutputControl extends OutputControl
-    @selector: 'input[type$=anyURI], input[type$=anyuri]'
+    @selector: 'output[type$=anyURI], output[type$=anyuri]'
 
-    getValue: () ->
-      @el.find('.echoforms-elements > a').text()
-
-    setValue: (value) ->
+    loadFromModel: ->
+      value = @refValue()
       @el.find('.echoforms-elements > a').text(value).attr('href', value)
 
     buildElementsChildrenDom: ->
@@ -283,14 +274,8 @@
     # TODO read only needs to be inherited
     inputs: () -> $()
 
-    getValue: () ->
-      if @el.data('echoformsRef')
-        # FIXME this shouldn't really be referencing the form if possible
-        # FIXME instanceValue needs to be updated to use jQuery data attributes
-        ui = @el.closest('.echoforms-echoform').data('echoformsInterface')
-        ui.instanceValue(@el, 'echoformsRef')
-
     loadFromModel: ->
+      super()
       control.loadFromModel() for control in @controls
 
     buildDom: ->
@@ -321,6 +306,7 @@
 
     bindEvents: ->
       @el.on 'echoforms:modelchange', '.echoforms-control', =>
+        console.log('change')
         @loadFromModel()
 
   class GroupControl extends GroupingControl

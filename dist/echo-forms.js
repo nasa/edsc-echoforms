@@ -23,16 +23,24 @@
         this.message = message;
       }
 
+      BaseConstraint.prototype.check = function(value, model, resolver) {
+        return console.warn("" + this.constructor.name + " must override check");
+      };
+
       return BaseConstraint;
 
     })();
     PatternConstraint = (function(_super) {
       __extends(PatternConstraint, _super);
 
-      function PatternConstraint(pattern, message) {
-        this.pattern = pattern;
+      function PatternConstraint(patternStr, message) {
+        this.pattern = new RegExp('^' + patternStr + '$');
         PatternConstraint.__super__.constructor.call(this, message != null ? message : 'Invalid');
       }
+
+      PatternConstraint.prototype.check = function(value, model, resolver) {
+        return pattern.exec(value) !== null;
+      };
 
       return PatternConstraint;
 
@@ -45,19 +53,96 @@
         XPathConstraint.__super__.constructor.call(this, message != null ? message : 'Invalid');
       }
 
+      XPathConstraint.prototype.check = function(value, model, resolver) {
+        return model.xpath(this.xpath, resolver);
+      };
+
       return XPathConstraint;
 
     })(BaseConstraint);
     TypeConstraint = (function(_super) {
       __extends(TypeConstraint, _super);
 
-      function TypeConstraint(type, message) {
-        this.type = type;
+      TypeConstraint.MIN_SHORT = -Math.pow(2, 15);
+
+      TypeConstraint.MAX_SHORT = Math.pow(2, 15) - 1;
+
+      TypeConstraint.MIN_INT = -Math.pow(2, 31);
+
+      TypeConstraint.MAX_INT = Math.pow(2, 31) - 1;
+
+      TypeConstraint.MIN_LONG = -Math.pow(2, 63);
+
+      TypeConstraint.MAX_LONG = Math.pow(2, 63) - 1;
+
+      function TypeConstraint(rawType, message) {
+        var a, match;
         if (message == null) {
           message = null;
         }
-        TypeConstraint.__super__.constructor.call(this, message != null ? message : "Value must be a " + this.type);
+        match = rawType.match(/^(?:[^:]+:)?(.*)$/);
+        this.type = match ? match[1] : rawType;
+        a = /^[aeiou]/i.test(this.type) ? 'an' : 'a';
+        TypeConstraint.__super__.constructor.call(this, message != null ? message : "Value must be " + a + " " + this.type);
       }
+
+      TypeConstraint.prototype.check = function(value, model, resolver) {
+        if (!value) {
+          return true;
+        }
+        switch (this.type) {
+          case "string":
+            return true;
+          case "anyuri":
+            return true;
+          case "double":
+            return this.checkDouble(value);
+          case "long":
+            return this.checkLong(value);
+          case "int":
+            return this.checkInt(value);
+          case "short":
+            return this.checkShort(value);
+          case "datetime":
+            return this.checkDateTime(value);
+          case "boolean":
+            return this.checkBoolean(value);
+          default:
+            console.warn("Unable to validate type: ", this.type);
+            return true;
+        }
+      };
+
+      TypeConstraint.prototype._checkIntegerRange = function(min, max, value) {
+        var number;
+        number = Number(value);
+        return !isNaN(number) && number >= min && number <= max && value.indexOf('.') === -1;
+      };
+
+      TypeConstraint.prototype.checkDouble = function(value) {
+        return !isNaN(Number(value));
+      };
+
+      TypeConstraint.prototype.checkLong = function(value) {
+        return this._checkIntegerRange(TypeConstraint.MIN_LONG, TypeConstraint.MAX_LONG, value);
+      };
+
+      TypeConstraint.prototype.checkInt = function(value) {
+        return this._checkIntegerRange(TypeConstraint.MIN_INT, TypeConstraint.MAX_INT, value);
+      };
+
+      TypeConstraint.prototype.checkShort = function(value) {
+        return this._checkIntegerRange(TypeConstraint.MIN_SHORT, TypeConstraint.MAX_SHORT, value);
+      };
+
+      TypeConstraint.prototype.checkBoolean = function(value) {
+        return value === 'true' || value === 'false';
+      };
+
+      TypeConstraint.prototype.checkDateTime = function(value) {
+        console.warn("Implement datetime validation");
+        return true;
+      };
 
       return TypeConstraint;
 
@@ -72,6 +157,10 @@
         }
         RequiredConstraint.__super__.constructor.call(this, message);
       }
+
+      RequiredConstraint.prototype.check = function(value, model, resolver) {
+        return !!value || model.xpath(this.xpath, resolver);
+      };
 
       return RequiredConstraint;
 
@@ -181,30 +270,6 @@
         return _results;
       };
 
-      BaseControl.prototype.isRelevant = function() {
-        if (this.relevantExpr != null) {
-          return this.xpath(this.relevantExpr);
-        } else {
-          return true;
-        }
-      };
-
-      BaseControl.prototype.isRequired = function() {
-        if (this.requiredExpr != null) {
-          return this.xpath(this.requiredExpr);
-        } else {
-          return false;
-        }
-      };
-
-      BaseControl.prototype.isReadonly = function() {
-        if (this.readonlyExpr != null) {
-          return this.xpath(this.readonlyExpr);
-        } else {
-          return false;
-        }
-      };
-
       BaseControl.prototype.ref = function() {
         if (this.refExpr != null) {
           return this.xpath(this.refExpr);
@@ -226,12 +291,36 @@
       };
 
       BaseControl.prototype.loadFromModel = function() {
-        return console.warn("" + this.constructor.name + " must override loadFromModel");
+        return this.validate();
       };
 
-      BaseControl.prototype.saveToModel = function() {
-        return console.warn("" + this.constructor.name + " must override saveToModel");
+      BaseControl.prototype.validate = function() {
+        var c, errors;
+        if (this.relevantExpr != null) {
+          this.relevant(this.xpath(this.relevantExpr)[0]);
+        }
+        if (this.readonlyExpr != null) {
+          this.readonly(this.xpath(this.readonlyExpr)[0]);
+        }
+        errors = (function() {
+          var _i, _len, _ref2, _results;
+          _ref2 = this.constraints;
+          _results = [];
+          for (_i = 0, _len = _ref2.length; _i < _len; _i++) {
+            c = _ref2[_i];
+            if (!c.check(this.refValue(), this.model, this.resolver)) {
+              _results.push(c.message);
+            }
+          }
+          return _results;
+        }).call(this);
+        if (errors.length > 0) {
+          console.log(errors);
+        }
+        return this.setErrors(errors);
       };
+
+      BaseControl.prototype.saveToModel = function() {};
 
       BaseControl.prototype.bindEvents = function() {};
 
@@ -248,14 +337,7 @@
       };
 
       BaseControl.prototype.changed = function() {
-        console.log('triggering on', this.el);
         return this.el.trigger('echoforms:modelchange');
-      };
-
-      BaseControl.prototype.inputSelector = ':input';
-
-      BaseControl.prototype.inputs = function() {
-        return this._inputs != null ? this._inputs : this._inputs = this.el.find(this.inputSelector);
       };
 
       BaseControl.prototype.relevant = function(arg) {
@@ -264,10 +346,11 @@
           isRelevant = !!arg;
           if (isRelevant !== this.relevant()) {
             this.el.toggleClass('echoforms-irrelevant', !isRelevant);
-            return this.el.toggle(isRelevant);
+            this.el.toggle(isRelevant);
+            return this.ref().toggleClass('echoforms-pruned', !isRelevant);
           }
         } else {
-          return !el.hasClass('echoforms-irrelevant');
+          return !this.el.hasClass('echoforms-irrelevant');
         }
       };
 
@@ -287,17 +370,6 @@
       BaseControl.prototype.updateReadonly = function(isReadonly) {
         this.inputs().attr('disabled', isReadonly);
         return this.inputs().attr('readonly', isReadonly);
-      };
-
-      BaseControl.prototype.value = function(arg) {
-        if (arg != null) {
-          if (this.isChanged()) {
-            this.setValue(arg);
-            return this.changed(arg);
-          }
-        } else {
-          return this.getValue();
-        }
       };
 
       BaseControl.prototype.onChange = function(e) {
@@ -334,6 +406,22 @@
         return $('<div class="echoforms-elements"/>').append(this.buildElementsChildrenDom());
       };
 
+      BaseControl.prototype.buildErrorsDom = function() {
+        return $('<div class="echoforms-errors"/>');
+      };
+
+      BaseControl.prototype.setErrors = function(messages) {
+        var error, errors, message, _i, _len;
+        errors = $();
+        for (_i = 0, _len = messages.length; _i < _len; _i++) {
+          message = messages[_i];
+          error = $('<div class="echoforms-error"/>');
+          error.text(message);
+          errors = errors.add(error);
+        }
+        return this.el.find('.echoforms-errors').empty().append(errors);
+      };
+
       BaseControl.prototype.buildElementsChildrenDom = function() {
         return $();
       };
@@ -344,6 +432,7 @@
         root.append(this.buildLabelDom());
         root.append(this.buildElementsDom());
         root.append(this.buildHelpDom());
+        root.append(this.buildErrorsDom());
         return root;
       };
 
@@ -355,13 +444,17 @@
 
       function TypedControl(ui, model, controlClasses, resolver) {
         var _ref2;
-        this.inputType = ((_ref2 = ui.attr('inputType')) != null ? _ref2 : 'string').replace(/^.*:/, '').toLowerCase();
+        this.inputType = ((_ref2 = ui.attr('type')) != null ? _ref2 : 'string').replace(/^.*:/, '').toLowerCase();
         TypedControl.__super__.constructor.call(this, ui, model, controlClasses, resolver);
       }
 
       TypedControl.prototype.loadConstraints = function() {
         TypedControl.__super__.loadConstraints.call(this);
         return this.constraints.push(new TypeConstraint(this.inputType));
+      };
+
+      TypedControl.prototype.inputs = function() {
+        return this._inputs != null ? this._inputs : this._inputs = this.el.find(':input');
       };
 
       TypedControl.prototype.bindEvents = function() {
@@ -373,19 +466,13 @@
       };
 
       TypedControl.prototype.saveToModel = function() {
+        TypedControl.__super__.saveToModel.call(this);
         return this.ref().text(this.inputValue());
       };
 
       TypedControl.prototype.loadFromModel = function() {
+        TypedControl.__super__.loadFromModel.call(this);
         return this.inputs().val(this.refValue());
-      };
-
-      TypedControl.prototype.getValue = function() {
-        return this.inputs().val();
-      };
-
-      TypedControl.prototype.setValue = function(value) {
-        return this.inputs().val(value);
       };
 
       return TypedControl;
@@ -423,18 +510,13 @@
 
       CheckboxControl.selector = 'input[type$=boolean]';
 
-      CheckboxControl.prototype.inputSelector = ':checkbox';
-
-      CheckboxControl.prototype.loadFromModel = function() {
-        return this.inputs().attr('checked', this.refValue().toString().trim() === 'true');
-      };
-
-      CheckboxControl.prototype.getValue = function() {
+      CheckboxControl.prototype.inputValue = function() {
         return this.inputs().is(':checked');
       };
 
-      CheckboxControl.prototype.setValue = function(value) {
-        return this.inputs().attr('checked', value.toString().trim() === 'true');
+      CheckboxControl.prototype.loadFromModel = function() {
+        CheckboxControl.__super__.loadFromModel.call(this);
+        return this.inputs().attr('checked', this.refValue().toString().trim() === 'true');
       };
 
       CheckboxControl.prototype.buildElementsChildrenDom = function() {
@@ -458,12 +540,9 @@
         return $();
       };
 
-      OutputControl.prototype.getValue = function() {
-        return this.el.find('.echoforms-elements > p').text();
-      };
-
-      OutputControl.prototype.setValue = function(value) {
-        return this.el.find('.echoforms-elements > p').text(value);
+      OutputControl.prototype.loadFromModel = function() {
+        OutputControl.__super__.loadFromModel.call(this);
+        return this.el.find('.echoforms-elements > p').text(this.refValue());
       };
 
       OutputControl.prototype.buildElementsChildrenDom = function() {
@@ -481,13 +560,11 @@
         return _ref4;
       }
 
-      UrlOutputControl.selector = 'input[type$=anyURI], input[type$=anyuri]';
+      UrlOutputControl.selector = 'output[type$=anyURI], output[type$=anyuri]';
 
-      UrlOutputControl.prototype.getValue = function() {
-        return this.el.find('.echoforms-elements > a').text();
-      };
-
-      UrlOutputControl.prototype.setValue = function(value) {
+      UrlOutputControl.prototype.loadFromModel = function() {
+        var value;
+        value = this.refValue();
         return this.el.find('.echoforms-elements > a').text(value).attr('href', value);
       };
 
@@ -607,16 +684,9 @@
         return $();
       };
 
-      GroupingControl.prototype.getValue = function() {
-        var ui;
-        if (this.el.data('echoformsRef')) {
-          ui = this.el.closest('.echoforms-echoform').data('echoformsInterface');
-          return ui.instanceValue(this.el, 'echoformsRef');
-        }
-      };
-
       GroupingControl.prototype.loadFromModel = function() {
         var control, _i, _len, _ref8, _results;
+        GroupingControl.__super__.loadFromModel.call(this);
         _ref8 = this.controls;
         _results = [];
         for (_i = 0, _len = _ref8.length; _i < _len; _i++) {
@@ -674,6 +744,7 @@
       FormControl.prototype.bindEvents = function() {
         var _this = this;
         return this.el.on('echoforms:modelchange', '.echoforms-control', function() {
+          console.log('change');
           return _this.loadFromModel();
         });
       };
