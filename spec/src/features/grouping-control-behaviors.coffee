@@ -1,0 +1,1 @@
+window.sharedBehaviorForGroupingControls = (template) ->

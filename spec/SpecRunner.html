@@ -1,0 +1,75 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <title>Jasmine Spec Runner</title>
+
+	<script src="http://ajax.googleapis.com/ajax/libs/jquery/2.0.3/jquery.min.js"></script>
+
+  <link rel="stylesheet" href="../vendor/jasmine-1.3.0/jasmine.css">
+  <script src="../vendor/jasmine-1.3.0/jasmine.js"></script>
+  <script src="../vendor/jasmine-1.3.0/jasmine-html.js"></script>
+  <script src="../vendor/jasmine-jquery-1.5.92.js"></script>
+
+  <!-- include source files here... -->
+	<script src="../dist/jquery.xpath.min.js"></script>
+	<script src="../dist/jquery-compat.js"></script>
+	<script src="../dist/echo-forms.js"></script>
+  <link rel="stylesheet" href="../dist/echo-forms.min.css">
+
+  <!-- include spec helpers here... -->
+  <script src="dist/helpers/pending.js"></script>
+  <script src="dist/helpers/form-template.js"></script>
+  <script src="dist/helpers/matchers.js"></script>
+
+  <!-- include shared examples here... -->
+  <script src="dist/features/control-behaviors.js"></script>
+  <script src="dist/features/typed-control-behaviors.js"></script>
+  <script src="dist/features/grouping-control-behaviors.js"></script>
+  <script src="dist/features/reference-control-behaviors.js"></script>
+
+  <!-- include spec files here... -->
+  <script src="dist/features/input-spec.js"></script>
+
+  <script type="text/javascript">
+    (function() {
+      var jasmineEnv = jasmine.getEnv();
+      jasmineEnv.updateInterval = 1000;
+
+      var htmlReporter = new jasmine.HtmlReporter();
+
+      jasmineEnv.addReporter(htmlReporter);
+
+      jasmineEnv.specFilter = function(spec) {
+        return htmlReporter.specFilter(spec);
+      };
+
+      var currentWindowOnload = window.onload;
+
+      window.onload = function() {
+        if (currentWindowOnload) {
+          currentWindowOnload();
+        }
+        execJasmine();
+      };
+
+      function clearDom() {
+        dom.empty();
+        $.removeData(dom);
+      }
+
+      function execJasmine() {
+        window.dom = $('#dom')
+        afterEach(clearDom)
+        jasmineEnv.execute();
+      }
+
+    })();
+  </script>
+
+</head>
+
+<body>
+  <div id="dom">
+  </div>
+</body>
+</html>

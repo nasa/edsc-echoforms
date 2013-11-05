@@ -11,14 +11,14 @@
       super(message ? 'Invalid')
 
     check: (value, model, resolver) ->
-      pattern.exec(value) != null;
+      !value || @pattern.exec(value) != null;
 
   class XPathConstraint extends BaseConstraint
     constructor: (@xpath, message) ->
       super(message ? 'Invalid')
 
     check: (value, model, resolver) ->
-      model.xpath(@xpath, resolver)
+      model.xpath(@xpath, resolver)[0]
 
   class TypeConstraint extends BaseConstraint
     # Constants
@@ -75,7 +75,7 @@
       super(message)
 
     check: (value, model, resolver) ->
-      !!value || model.xpath(@xpath, resolver)
+      !!value || !model.xpath(@xpath, resolver)[0]
 
   class ItemCountConstraint extends BaseConstraint
     constructor: (@count, message=null) ->

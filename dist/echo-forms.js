@@ -4,20 +4,7 @@
     __bind = function(fn, me){ return function(){ return fn.apply(me, arguments); }; };
 
   (function($, window, document) {
-    var BaseConstraint, BaseControl, CheckboxControl, ControlrefControl, EchoForm, EchoFormsBuilder, EchoFormsInterface, FormControl, GroupControl, GroupingControl, InputControl, ItemCountConstraint, MaxItemsConstraint, MinItemsConstraint, OutputControl, PatternConstraint, RangeControl, ReferenceControl, RepeatControl, RepeatInstanceControl, RepeatTemplateControl, RequiredConstraint, SecretControl, SelectControl, SelectrefControl, TextareaControl, TypeConstraint, TypedControl, UrlOutputControl, XPathConstraint, XPathResolver, defaultControls, defaults, echoformsControlUniqueId, isFunction, nearest, pluginName, _base, _ref, _ref1, _ref10, _ref11, _ref2, _ref3, _ref4, _ref5, _ref6, _ref7, _ref8, _ref9;
-    if ((_base = String.prototype).trim == null) {
-      _base.trim = function() {
-        return this.replace(/^\s*/, "").replace(/\s*$/, "");
-      };
-    }
-    isFunction = function(obj) {
-      return !!(object && getClass.call(object) === '[object Function]');
-    };
-    nearest = function(el, selector) {
-      return $(el).find(selector).filter(function() {
-        return !$(this).parentsUntil(el, selector).length;
-      });
-    };
+    var BaseConstraint, BaseControl, CheckboxControl, ControlrefControl, EchoFormsBuilder, EchoFormsInterface, FormControl, GroupControl, GroupingControl, InputControl, ItemCountConstraint, MaxItemsConstraint, MinItemsConstraint, OutputControl, PatternConstraint, RangeControl, ReferenceControl, RepeatControl, RepeatInstanceControl, RepeatTemplateControl, RequiredConstraint, SecretControl, SelectControl, SelectrefControl, TextareaControl, TypeConstraint, TypedControl, UrlOutputControl, XPathConstraint, XPathResolver, defaultControls, defaults, echoformsControlUniqueId, pluginName, _ref, _ref1, _ref10, _ref11, _ref2, _ref3, _ref4, _ref5, _ref6, _ref7, _ref8, _ref9;
     BaseConstraint = (function() {
       function BaseConstraint(message) {
         this.message = message;
@@ -39,7 +26,7 @@
       }
 
       PatternConstraint.prototype.check = function(value, model, resolver) {
-        return pattern.exec(value) !== null;
+        return !value || this.pattern.exec(value) !== null;
       };
 
       return PatternConstraint;
@@ -54,7 +41,7 @@
       }
 
       XPathConstraint.prototype.check = function(value, model, resolver) {
-        return model.xpath(this.xpath, resolver);
+        return model.xpath(this.xpath, resolver)[0];
       };
 
       return XPathConstraint;
@@ -159,7 +146,7 @@
       }
 
       RequiredConstraint.prototype.check = function(value, model, resolver) {
-        return !!value || model.xpath(this.xpath, resolver);
+        return !!value || !model.xpath(this.xpath, resolver)[0];
       };
 
       return RequiredConstraint;
@@ -280,9 +267,9 @@
 
       BaseControl.prototype.refValue = function() {
         if (this.refExpr != null) {
-          return this.ref().text().trim();
+          return $.trim(this.ref().text());
         } else {
-          return "";
+          return void 0;
         }
       };
 
@@ -297,26 +284,23 @@
       BaseControl.prototype.validate = function() {
         var c, errors;
         if (this.relevantExpr != null) {
-          this.relevant(this.xpath(this.relevantExpr)[0]);
+          this.relevant(!!this.xpath(this.relevantExpr)[0]);
         }
         if (this.readonlyExpr != null) {
-          this.readonly(this.xpath(this.readonlyExpr)[0]);
+          this.readonly(!!this.xpath(this.readonlyExpr)[0]);
         }
         errors = (function() {
-          var _i, _len, _ref2, _results;
+          var _i, _len, _ref2, _ref3, _results;
           _ref2 = this.constraints;
           _results = [];
           for (_i = 0, _len = _ref2.length; _i < _len; _i++) {
             c = _ref2[_i];
-            if (!c.check(this.refValue(), this.model, this.resolver)) {
+            if (!c.check((_ref3 = this.refValue()) != null ? _ref3 : this.inputValue(), this.model, this.resolver)) {
               _results.push(c.message);
             }
           }
           return _results;
         }).call(this);
-        if (errors.length > 0) {
-          console.log(errors);
-        }
         return this.setErrors(errors);
       };
 
@@ -325,6 +309,9 @@
       BaseControl.prototype.bindEvents = function() {};
 
       BaseControl.prototype.xpath = function(xpath) {
+        if ((xpath != null ? xpath.charAt(0) : void 0) === '[') {
+          xpath = "." + xpath;
+        }
         return this.model.xpath(xpath, this.resolver);
       };
 
@@ -333,7 +320,7 @@
       };
 
       BaseControl.prototype.isChanged = function(newValue) {
-        return this.refValue().toString().trim() !== this.inputValue().toString().trim();
+        return this.refValue() !== this.inputValue() || !this.refExpr;
       };
 
       BaseControl.prototype.changed = function() {
@@ -462,17 +449,21 @@
       };
 
       TypedControl.prototype.inputValue = function() {
-        return this.inputs().val();
+        return $.trim(this.inputs().val());
       };
 
       TypedControl.prototype.saveToModel = function() {
         TypedControl.__super__.saveToModel.call(this);
-        return this.ref().text(this.inputValue());
+        if (this.refExpr) {
+          return this.ref().text(this.inputValue());
+        }
       };
 
       TypedControl.prototype.loadFromModel = function() {
         TypedControl.__super__.loadFromModel.call(this);
-        return this.inputs().val(this.refValue());
+        if (this.refExpr) {
+          return this.inputs().val(this.refValue());
+        }
       };
 
       return TypedControl;
@@ -511,12 +502,14 @@
       CheckboxControl.selector = 'input[type$=boolean]';
 
       CheckboxControl.prototype.inputValue = function() {
-        return this.inputs().is(':checked');
+        return this.inputs().is(':checked').toString();
       };
 
       CheckboxControl.prototype.loadFromModel = function() {
         CheckboxControl.__super__.loadFromModel.call(this);
-        return this.inputs().attr('checked', this.refValue().toString().trim() === 'true');
+        if (this.refExpr) {
+          return this.inputs().attr('checked', this.refValue() === 'true');
+        }
       };
 
       CheckboxControl.prototype.buildElementsChildrenDom = function() {
@@ -542,7 +535,9 @@
 
       OutputControl.prototype.loadFromModel = function() {
         OutputControl.__super__.loadFromModel.call(this);
-        return this.el.find('.echoforms-elements > p').text(this.refValue());
+        if (this.refExpr) {
+          return this.el.find('.echoforms-elements > p').text(this.refValue());
+        }
       };
 
       OutputControl.prototype.buildElementsChildrenDom = function() {
@@ -565,7 +560,9 @@
       UrlOutputControl.prototype.loadFromModel = function() {
         var value;
         value = this.refValue();
-        return this.el.find('.echoforms-elements > a').text(value).attr('href', value);
+        if (this.refExpr) {
+          return this.el.find('.echoforms-elements > a').text(value).attr('href', value);
+        }
       };
 
       UrlOutputControl.prototype.buildElementsChildrenDom = function() {
@@ -744,7 +741,7 @@
       FormControl.prototype.bindEvents = function() {
         var _this = this;
         return this.el.on('echoforms:modelchange', '.echoforms-control', function() {
-          console.log('change');
+          console.log('#############');
           return _this.loadFromModel();
         });
       };
@@ -880,53 +877,6 @@
     defaults = {
       controls: []
     };
-    EchoForm = (function() {
-      function EchoForm(xml) {
-        this.document = xmlParse(xml);
-        this.root = this.document.firstChild;
-        this.root.prefixElements();
-        $(document).trigger('echoforms:instanceChange', this);
-      }
-
-      EchoForm.prototype.find = function(parent, xpath) {
-        var context;
-        context = new ExprContext(parent != null ? parent : this.root);
-        return xpathParse(xpath).evaluate(context).value;
-      };
-
-      EchoForm.prototype.update = function(parent, xpath, valueElement, value) {
-        var node, nodes, _i, _len;
-        if (valueElement != null) {
-          valueElement = this.namespace(parent, valueElement);
-        }
-        nodes = xpath ? this.find(parent, xpath) : [parent];
-        for (_i = 0, _len = nodes.length; _i < _len; _i++) {
-          node = nodes[_i];
-          node.setValues(value, valueElement);
-        }
-        return $(document).trigger('echoforms:instanceChange', this);
-      };
-
-      EchoForm.prototype.namespace = function(parentNode, childName) {
-        var childNode;
-        childNode = XNode.create(DOM_ELEMENT_NODE, childName, null, null);
-        if (childNode.getNamespacePrefix() == null) {
-          childNode.setNamespacePrefix(parentNode.getNamespacePrefix());
-        }
-        return childNode.nodeName;
-      };
-
-      EchoForm.prototype.prune = function(parent, xpath) {
-        return XNode.removeAll(this.find(parent, xpath));
-      };
-
-      EchoForm.prototype.serialize = function() {
-        return xmlText(this.document);
-      };
-
-      return EchoForm;
-
-    })();
     XPathResolver = (function() {
       function XPathResolver(xml) {
         this.resolve = __bind(this.resolve, this);
@@ -988,143 +938,17 @@
       EchoFormsInterface.inputTimeout = null;
 
       function EchoFormsInterface(root, options) {
+        var _ref12;
         this.root = root;
-        this._onSubmit = __bind(this._onSubmit, this);
-        this._onControlChange = __bind(this._onControlChange, this);
         this.options = $.extend({}, defaults, options);
+        this.form = (_ref12 = this.options['form']) != null ? _ref12 : root.find('.echoforms-xml').text();
         this.controlClasses = this.options['controls'].concat(defaultControls);
         this._defaults = defaults;
         this._name = pluginName;
         this.root = root = $(root);
-        this.builder = new EchoFormsBuilder(root.find('.echoforms-xml').text(), this.controlClasses);
+        this.builder = new EchoFormsBuilder(this.form, this.controlClasses);
         root.append(this.builder.element());
       }
-
-      EchoFormsInterface.prototype.initializeInstance = function(localRoot, refresh) {
-        var controls, self;
-        this.refresh();
-        self = this;
-        controls = localRoot.find('.echoforms-control');
-        controls.each(function() {
-          var ControlClass, el, _i, _len, _ref12, _results;
-          el = $(this);
-          if (!el.data('echoformsControl')) {
-            _ref12 = self.controlClasses;
-            _results = [];
-            for (_i = 0, _len = _ref12.length; _i < _len; _i++) {
-              ControlClass = _ref12[_i];
-              if (el.is(ControlClass.selector)) {
-                if (isFunction(ControlClass)) {
-                  el.data('echoformsControl', new ControlClass(el));
-                } else {
-                  el.data('echoformsControl', new Object(ControlClass));
-                }
-                break;
-              } else {
-                _results.push(void 0);
-              }
-            }
-            return _results;
-          }
-        });
-        controls.bind('echoforms:controlchange', this._onControlChange);
-        return this.root.trigger('echoforms:instanceInitialized', localRoot);
-      };
-
-      EchoFormsInterface.prototype._onControlChange = function(e, el, control, newValue) {
-        var context;
-        context = this.instanceContext(el);
-        this.instance.update(context, el.data('echoformsRef'), null, newValue);
-        el.addClass('echoforms-updating');
-        return this.waitThenRefresh();
-      };
-
-      EchoFormsInterface.prototype._waitThenRefresh = function() {
-        var timeoutfn;
-        clearTimeout(EchoFormInterface.inputTimeout);
-        timeoutfn = "$('.echoform:visible').each(function() {" + "   $(this).data('echoformsUi').refresh();" + "});";
-        return EchoFormInterface.inputTimeout = setTimeout(timeoutfn, 500);
-      };
-
-      EchoFormsInterface.prototype._onSubmit = function(e) {
-        var instance, message, self;
-        this.refresh();
-        if (this.root.hasClass('echoforms-invalid')) {
-          message = 'Please correct errors identified in bold before ' + 'submitting the form';
-          this.root.find('.echoforms-alert').text(message).show();
-          e.preventDefault();
-          return false;
-        } else {
-          instance = new EchoForm(this.instance.serialize());
-          self = this;
-          this.root.find('.echoforms-irrelevant').each(function() {
-            var el;
-            el = $(this);
-            return this.instance.prune(self.instanceContext(el), el.data('echoformsRef'));
-          });
-          this.root.find('.model').val(this.instance.serialize());
-          return this.instance = instance;
-        }
-      };
-
-      EchoFormsInterface.prototype.refresh = function() {
-        var self;
-        this.root.trigger('echoforms:beforerefresh', this);
-        self = this;
-        this.root.find('.echoforms-control').each(function() {
-          var control, el, isReadonly, isRelevant;
-          el = $(this);
-          control = $(this).data('echoformsControl');
-          if (control != null) {
-            control.value(self.instanceValue(el, 'echoformsRef'));
-            isRelevant = this.instanceValue(el, 'echoformsRelevant', {
-              "default": true
-            });
-            control.relevant(isRelevant);
-            isReadonly = this.instanceValue(el, 'echoformsReadonly', {
-              "default": false
-            });
-            return control.readonly(isReadonly);
-          }
-        });
-        return this.root.trigger('echoforms:refresh', this);
-      };
-
-      EchoFormsInterface.prototype.validate = function() {
-        return console.log("TODO: Validations");
-      };
-
-      EchoFormsInterface.prototype.instanceContext = function(el) {
-        var refParent;
-        refParent = el.parentsUntil('echoform', '[data-echoforms-ref]').first();
-        if (refParent.length > 0) {
-          return this.instanceXPath(refParent, 'echoformsRef')[0];
-        } else {
-          return this.instance.root;
-        }
-      };
-
-      EchoFormsInterface.prototype.instanceXPath = function(el, xpathAttr) {
-        var context, xpath;
-        xpath = el.data(xpathAttr);
-        if (xpath == null) {
-          return null;
-        }
-        context = this.instanceContext(el);
-        return this.instance.find(context, xpath);
-      };
-
-      EchoFormsInterface.prototype.instanceValue = function(el, xpathAttr, options) {
-        var result;
-        if (options == null) {
-          options = {};
-        }
-        result = this.instanceXPath(el, xpathAttr);
-        if (result instanceof Array) {
-          result = result[0].getValues(el.data('echoformsValueElementName'));
-        }
-        return result != null ? result : options['default'];
-      };
 
       return EchoFormsInterface;
 
@@ -1135,15 +959,7 @@
         return $.data(this, "echoformsInterface", new EchoFormsInterface(this, options));
       }
     };
-    return $(document).ready(function() {
-      var formatXml;
-      formatXml = function(xml) {
-        return xml.replace(/\s+/g, ' ').replace(/> </g, '>\n<');
-      };
-      return $(document).bind('echoforms:instanceChange', function(event, instance) {
-        return $('#debug').text(formatXml(instance.serialize()));
-      });
-    });
+    return $(document).ready(function() {});
   })(jQuery, window, document);
 
 }).call(this);

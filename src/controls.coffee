@@ -37,7 +37,7 @@
       if @refExpr? then @xpath(@refExpr) else @model
 
     refValue: ->
-      if @refExpr? then @ref().text().trim() else ""
+      if @refExpr? then $.trim(@ref().text()) else undefined
 
     inputValue: ->
       console.warn("#{@constructor.name} must override inputValue")
@@ -46,13 +46,10 @@
       @validate()
 
     validate: ->
-      @relevant(@xpath(@relevantExpr)[0]) if @relevantExpr?
-      @readonly(@xpath(@readonlyExpr)[0]) if @readonlyExpr?
+      @relevant(!!@xpath(@relevantExpr)[0]) if @relevantExpr?
+      @readonly(!!@xpath(@readonlyExpr)[0]) if @readonlyExpr?
 
-      errors = (c.message for c in @constraints when !c.check(@refValue(), @model, @resolver))
-
-      if errors.length > 0
-        console.log errors
+      errors = (c.message for c in @constraints when !c.check(@refValue() ? @inputValue(), @model, @resolver))
 
       @setErrors(errors)
 
@@ -61,13 +58,18 @@
     bindEvents: ->
 
     xpath: (xpath) ->
+      # Handle slightly bad expressions received from providers.
+      # "[foo=bar]" becomes ".[foo=bar]"
+      if xpath?.charAt(0) == '['
+        xpath = ".#{xpath}"
+
       @model.xpath(xpath, @resolver)
 
     element: ->
       @el ?= @buildDom()
 
     isChanged: (newValue) ->
-      @refValue().toString().trim() != @inputValue().toString().trim()
+      @refValue() != @inputValue() || !@refExpr
 
     changed: () =>
       @el.trigger('echoforms:modelchange')
@@ -161,15 +163,15 @@
       @inputs().bind('click change', @onChange)
 
     inputValue:() ->
-      @inputs().val()
+      $.trim(@inputs().val())
 
     saveToModel: ->
       super()
-      @ref().text(@inputValue())
+      @ref().text(@inputValue()) if @refExpr
 
     loadFromModel: ->
       super()
-      @inputs().val(@refValue())
+      @inputs().val(@refValue()) if @refExpr
 
   class InputControl extends TypedControl
     @selector: 'input'
@@ -183,11 +185,11 @@
     @selector: 'input[type$=boolean]'
 
     inputValue:() ->
-      @inputs().is(':checked')
+      @inputs().is(':checked').toString()
 
     loadFromModel: ->
       super()
-      @inputs().attr('checked', @refValue().toString().trim() == 'true')
+      @inputs().attr('checked', @refValue() == 'true') if @refExpr
 
     buildElementsChildrenDom: ->
       super().attr('type', 'checkbox')
@@ -203,7 +205,7 @@
 
     loadFromModel: ->
       super()
-      @el.find('.echoforms-elements > p').text(@refValue())
+      @el.find('.echoforms-elements > p').text(@refValue()) if @refExpr
 
     buildElementsChildrenDom: ->
       $('<p/>')
@@ -213,7 +215,7 @@
 
     loadFromModel: ->
       value = @refValue()
-      @el.find('.echoforms-elements > a').text(value).attr('href', value)
+      @el.find('.echoforms-elements > a').text(value).attr('href', value) if @refExpr
 
     buildElementsChildrenDom: ->
       $('<a href="#" />')
@@ -306,7 +308,7 @@
 
     bindEvents: ->
       @el.on 'echoforms:modelchange', '.echoforms-control', =>
-        console.log('change')
+        console.log '#############'
         @loadFromModel()
 
   class GroupControl extends GroupingControl

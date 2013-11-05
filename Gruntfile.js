@@ -25,12 +25,7 @@ module.exports = function(grunt) {
     concat: {
       dist: {
         files: {
-          "dist/ajaxslt-0.8.1.js": ["vendor/ajaxslt-0.8.1/xmltoken.js",
-                                    "vendor/ajaxslt-0.8.1/util.js",
-                                    "vendor/ajaxslt-0.8.1/dom.js",
-                                    "vendor/ajaxslt-0.8.1/xpath.js"],
           "dist/jquery.xpath.min.js": ["vendor/jquery-xpath/jquery.xpath.min.js"],
-          "dist/ajaxslt-ext.js": ["src/ajaxslt-ext.js"],
           "dist/jquery-compat.js": ["src/jquery-compat.js"]
         }
       },
@@ -53,22 +48,32 @@ module.exports = function(grunt) {
 		// CoffeeScript compilation
 		coffee: {
 			compile: {
-				files: {
-					"dist/echo-forms.js": ["src/preamble.coffee",
-                                 "src/util.coffee",
-                                 "src/constraints.coffee",
-                                 "src/controls.coffee",
-                                 "src/echo-forms.coffee"]
-				}
-			},
-      options: {
-        join: true
+        files: [
+          {
+					  src: ["src/preamble.coffee",
+                  "src/util.coffee",
+                  "src/constraints.coffee",
+                  "src/controls.coffee",
+                  "src/echo-forms.coffee"],
+            dest: "dist/echo-forms.js"
+          },
+          {
+            expand: true,
+            cwd: 'spec/src/',
+            ext: '.js',
+            src: ['**/*.coffee'],
+            dest: 'spec/dist/'
+          }
+        ],
+        options: {
+          join: true
+        }
       }
 		},
 
     watch: {
       scripts: {
-        files: ['src/**/*', 'Gruntfile.js'],
+        files: ['src/**/*', 'spec/src/**/*', 'Gruntfile.js'],
         tasks: 'default',
         options: {
           forever: false

@@ -1,0 +1,1 @@
+window.sharedBehaviorForReferenceControls = (template) ->
