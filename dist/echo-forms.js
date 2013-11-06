@@ -354,6 +354,12 @@
         if ((xpath != null ? xpath.charAt(0) : void 0) === '[') {
           xpath = "." + xpath;
         }
+        if (xpath === "true") {
+          return [true];
+        }
+        if (xpath === "false") {
+          return [false];
+        }
         return this.model.xpath(xpath, this.resolver);
       };
 
@@ -575,9 +581,17 @@
         return $();
       };
 
+      OutputControl.prototype.refValue = function() {
+        if (this.valueExpr) {
+          return this.xpath(this.valueExpr)[0];
+        } else {
+          return OutputControl.__super__.refValue.call(this);
+        }
+      };
+
       OutputControl.prototype.loadFromModel = function() {
         OutputControl.__super__.loadFromModel.call(this);
-        if (this.refExpr) {
+        if (this.refExpr || this.valueExpr) {
           return this.el.find('.echoforms-elements > p').text(this.refValue());
         }
       };
@@ -602,7 +616,7 @@
       UrlOutputControl.prototype.loadFromModel = function() {
         var value;
         value = this.refValue();
-        if (this.refExpr) {
+        if (this.refExpr || this.valueExpr) {
           return this.el.find('.echoforms-elements > a').text(value).attr('href', value);
         }
       };

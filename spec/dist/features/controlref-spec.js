@@ -1,6 +1,4 @@
 (function() {
-  describe('"controlref" control', function() {
-    return pending("Implement me", function() {});
-  });
+  describe('"controlref" control', function() {});
 
 }).call(this);

@@ -13,7 +13,7 @@ describe '"secret" control', ->
       </model>
       <ui>
         <input id="reference" label="Reference value" ref="prov:reference" type="xs:string"/>
-        <secret id="control" label="Input" {{attributes}}>
+        <secret id="control" {{attributes}}>
           {{children}}
         </secret>
       </ui>

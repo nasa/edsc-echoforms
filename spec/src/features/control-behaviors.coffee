@@ -1,24 +1,29 @@
-window.sharedBehaviorForControls = (template) ->
+window.sharedBehaviorForControls = (template, options={}) ->
 
   it 'is tagged as a control', ->
     template.form(dom)
     expect($('#control')).toHaveClass('echoforms-control')
 
+  it "displays its label", ->
+    template.form(dom, attributes: 'label="Control label"')
+    expect($('#control > .echoforms-control-label')).toHaveText('Control label')
+
   it "displays help", ->
     template.form(dom, children: '<help>Helpful text</help>')
-    expect($('#control > .echoforms-help')).toBeVisible()
+    expect($('#control > .echoforms-help')).toHaveText('Helpful text')
 
-  it "uses the default value contained in the model", ->
-    template.form(dom,
-      model: '<prov:default>Default value</prov:default>',
-      attributes: 'ref="prov:default"')
-    expect($('#control :input').val()).toBe('Default value')
+  unless options['skip_input_specs']
+    it "uses the default value contained in the model", ->
+      template.form(dom,
+        model: '<prov:default>Default value</prov:default>',
+        attributes: 'ref="prov:default"')
+      expect($('#control :input').val()).toBe('Default value')
 
-  it "is initially blank when the model has no default value", ->
-    template.form(dom,
-      model: '<prov:default />',
-      attributes: 'ref="prov:default"')
-    expect($('#control :input').val()).toBe('')
+    it "is initially blank when the model has no default value", ->
+      template.form(dom,
+        model: '<prov:default />',
+        attributes: 'ref="prov:default"')
+      expect($('#control :input').val()).toBe('')
 
   describe '"relevant" attribute', ->
     it "contains an xpath which hides the control when it evaluates to false", ->
@@ -46,14 +51,15 @@ window.sharedBehaviorForControls = (template) ->
       $('#reference :input').val('optional').change()
       expect('#control').not.toHaveError('Required field')
 
-    it "produces no error if the control has a non-empty value", ->
-      template.form(dom, attributes: 'required="prov:reference=\'required\'"')
-      $('#reference :input').val('required').change()
-      expect('#control').toHaveError('Required field')
-      $('#control :input').val('value').change()
-      expect('#control').not.toHaveError('Required field')
-      $('#control :input').val('').change()
-      expect('#control').toHaveError('Required field')
+    unless options['skip_input_specs']
+      it "produces no error if the control has a non-empty value", ->
+        template.form(dom, attributes: 'required="prov:reference=\'required\'"')
+        $('#reference :input').val('required').change()
+        expect('#control').toHaveError('Required field')
+        $('#control :input').val('value').change()
+        expect('#control').not.toHaveError('Required field')
+        $('#control :input').val('').change()
+        expect('#control').toHaveError('Required field')
 
   describe '"reaodnly" attribute', ->
     it "contains an xpath which causes the control to become readonly", ->
@@ -74,15 +80,16 @@ window.sharedBehaviorForControls = (template) ->
       </constraints>
       """
 
-    it "displays the given error message when the control's value does not match the given pattern", ->
-      template.form(dom, children: constraints)
-      $('#control :input').val('alphabetic').change()
-      expect('#control').toHaveError('Must be numeric')
+    unless options['skip_input_specs']
+      it "displays the given error message when the control's value does not match the given pattern", ->
+        template.form(dom, children: constraints)
+        $('#control :input').val('alphabetic').change()
+        expect('#control').toHaveError('Must be numeric')
 
-    it "displays no error when the control's value matches the given pattern", ->
-      template.form(dom, children: constraints)
-      $('#control :input').val('12345').change()
-      expect('#control').not.toHaveError('Must be numeric')
+      it "displays no error when the control's value matches the given pattern", ->
+        template.form(dom, children: constraints)
+        $('#control :input').val('12345').change()
+        expect('#control').not.toHaveError('Must be numeric')
 
     it "displays no error when the control is left blank", ->
       template.form(dom, children: constraints)

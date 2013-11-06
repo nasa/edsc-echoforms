@@ -13,7 +13,7 @@ describe '"input" control', ->
       </model>
       <ui>
         <input id="reference" label="Reference value" ref="prov:reference" type="xs:string"/>
-        <input id="control" label="Input" {{attributes}}>
+        <input id="control" {{attributes}}>
           {{children}}
         </input>
       </ui>

@@ -1,6 +1,4 @@
 (function() {
-  describe('"repeat" control', function() {
-    return pending("Implement me", function() {});
-  });
+  describe('"repeat" control', function() {});
 
 }).call(this);

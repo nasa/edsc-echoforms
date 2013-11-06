@@ -13,7 +13,7 @@ describe '"textarea" control', ->
       </model>
       <ui>
         <input id="reference" label="Reference value" ref="prov:reference" type="xs:string"/>
-        <textarea id="control" label="Input" {{attributes}}>
+        <textarea id="control" {{attributes}}>
           {{children}}
         </textarea>
       </ui>

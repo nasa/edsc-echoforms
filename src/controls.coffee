@@ -63,6 +63,10 @@
       if xpath?.charAt(0) == '['
         xpath = ".#{xpath}"
 
+      # "true" and "false" become "true()" and "false()"
+      return [true] if xpath == "true"
+      return [false] if xpath == "false"
+
       @model.xpath(xpath, @resolver)
 
     element: ->
@@ -203,9 +207,15 @@
 
     inputs: () -> $()
 
+    refValue: ->
+      if @valueExpr
+        @xpath(@valueExpr)[0]
+      else
+        super()
+
     loadFromModel: ->
       super()
-      @el.find('.echoforms-elements > p').text(@refValue()) if @refExpr
+      @el.find('.echoforms-elements > p').text(@refValue()) if @refExpr || @valueExpr
 
     buildElementsChildrenDom: ->
       $('<p/>')
@@ -215,7 +225,7 @@
 
     loadFromModel: ->
       value = @refValue()
-      @el.find('.echoforms-elements > a').text(value).attr('href', value) if @refExpr
+      @el.find('.echoforms-elements > a').text(value).attr('href', value) if @refExpr || @valueExpr
 
     buildElementsChildrenDom: ->
       $('<a href="#" />')

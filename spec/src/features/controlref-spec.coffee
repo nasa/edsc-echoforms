@@ -1,2 +1,2 @@
 describe '"controlref" control', ->
-  pending "Implement me", ->
+  # Repeats are not currently implemented, since they are unused in ops
