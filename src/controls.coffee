@@ -46,7 +46,6 @@
       @validate()
 
     validate: ->
-
       @relevant(!!@xpath(@relevantExpr)[0]) if @relevantExpr?
       @readonly(!!@xpath(@readonlyExpr)[0]) if @readonlyExpr?
 
@@ -85,7 +84,9 @@
         if isRelevant != @relevant()
           @el.toggleClass('echoforms-irrelevant', !isRelevant)
           @el.toggle(isRelevant)
-          @ref().toggleClass('echoforms-pruned', !isRelevant)
+          ref = @ref()
+          ref.toggleClass('echoforms-pruned', !isRelevant)
+          ref.removeAttr('class') if ref.attr('class') == '' # Ensure there's no class="" from the previous statement
       else
         !@el.hasClass('echoforms-irrelevant')
 
@@ -291,7 +292,7 @@
 
   class RangeControl extends InputControl
     @selector: 'range'
-    # TODO Implement me
+
     constructor: (ui, model, controlClasses, resolver) ->
       @start = ui.attr('start')
       @end = ui.attr('end')
@@ -360,6 +361,14 @@
       @el.on 'echoforms:modelchange', '.echoforms-control', =>
         @loadFromModel()
 
+    isValid: ->
+      @el.find('.echoforms-error').length == 0
+
+    serialize: ->
+      model = @model.children().clone()
+      model.find('.echoforms-pruned').remove()
+      $('<div>').append(model).html()
+
   class GroupControl extends GroupingControl
     @selector: 'group'
     # TODO Headers and footers
@@ -368,22 +377,16 @@
   # Reference Controls
   #####################
 
-  class ReferenceControl extends BaseControl
-    constructor: (ui, model, controlClasses, resolver) ->
-      @idref = ui.attr('idref')
-      super(ui, model, controlClasses, resolver)
-
-  class SelectrefControl extends ReferenceControl
+  # As used, selectrefs turn out to be identical to selects, with valueElementName defaulted to 'value'
+  # The lack of reference controls hugely simplifies client code
+  class SelectrefControl extends SelectControl
     @selector: 'selectref'
-    # TODO Implement me
 
-    constructor: (ui, model, controlClasses) ->
-      @isOpen = ui.attr('open') == 'true'
-      @isMultiple = ui.attr('multiple') == 'true'
-      @valueElementName = ui.attr('valueElementName')
-      @items = for item in ui.children('item')
-        [label, value] = [$(item).attr('label'), $(item).attr('value')]
-        [label ? value, value]
+    constructor: (ui, model, controlClasses, resolver) ->
+      valueElementName = ui.attr('valueElementName')
+      ui.attr('valueElementName', 'value') unless valueElementName?
+
+      super(ui, model, controlClasses, resolver)
 
   defaultControls = [
     # Typed controls

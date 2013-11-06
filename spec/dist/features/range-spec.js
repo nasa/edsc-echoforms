@@ -1,6 +1,4 @@
 (function() {
-  describe('"range" control', function() {
-    return pending("Implement me", function() {});
-  });
+  describe('"range" control', function() {});
 
 }).call(this);

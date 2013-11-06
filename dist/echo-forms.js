@@ -4,7 +4,7 @@
     __bind = function(fn, me){ return function(){ return fn.apply(me, arguments); }; };
 
   (function($, window, document) {
-    var BaseConstraint, BaseControl, CheckboxControl, EchoFormsBuilder, EchoFormsInterface, FormControl, GroupControl, GroupingControl, InputControl, OutputControl, PatternConstraint, RangeControl, ReferenceControl, RequiredConstraint, SecretControl, SelectControl, SelectrefControl, TextareaControl, TypeConstraint, TypedControl, UrlOutputControl, XPathConstraint, XPathResolver, defaultControls, defaults, echoformsControlUniqueId, pluginName, _ref, _ref1, _ref2, _ref3, _ref4, _ref5, _ref6;
+    var BaseConstraint, BaseControl, CheckboxControl, EchoFormsBuilder, EchoFormsInterface, FormControl, GroupControl, GroupingControl, InputControl, OutputControl, PatternConstraint, RangeControl, RequiredConstraint, SecretControl, SelectControl, SelectrefControl, TextareaControl, TypeConstraint, TypedControl, UrlOutputControl, XPathConstraint, XPathResolver, defaultControls, defaults, echoformsControlUniqueId, pluginName, _ref, _ref1, _ref2, _ref3, _ref4, _ref5, _ref6;
     BaseConstraint = (function() {
       function BaseConstraint(message) {
         this.message = message;
@@ -327,13 +327,17 @@
       };
 
       BaseControl.prototype.relevant = function(arg) {
-        var isRelevant;
+        var isRelevant, ref;
         if (arg != null) {
           isRelevant = !!arg;
           if (isRelevant !== this.relevant()) {
             this.el.toggleClass('echoforms-irrelevant', !isRelevant);
             this.el.toggle(isRelevant);
-            return this.ref().toggleClass('echoforms-pruned', !isRelevant);
+            ref = this.ref();
+            ref.toggleClass('echoforms-pruned', !isRelevant);
+            if (ref.attr('class') === '') {
+              return ref.removeAttr('class');
+            }
           }
         } else {
           return !this.el.hasClass('echoforms-irrelevant');
@@ -831,6 +835,17 @@
         });
       };
 
+      FormControl.prototype.isValid = function() {
+        return this.el.find('.echoforms-error').length === 0;
+      };
+
+      FormControl.prototype.serialize = function() {
+        var model;
+        model = this.model.children().clone();
+        model.find('.echoforms-pruned').remove();
+        return $('<div>').append(model).html();
+      };
+
       return FormControl;
 
     })(GroupingControl);
@@ -847,43 +862,23 @@
       return GroupControl;
 
     })(GroupingControl);
-    ReferenceControl = (function(_super) {
-      __extends(ReferenceControl, _super);
-
-      function ReferenceControl(ui, model, controlClasses, resolver) {
-        this.idref = ui.attr('idref');
-        ReferenceControl.__super__.constructor.call(this, ui, model, controlClasses, resolver);
-      }
-
-      return ReferenceControl;
-
-    })(BaseControl);
     SelectrefControl = (function(_super) {
       __extends(SelectrefControl, _super);
 
       SelectrefControl.selector = 'selectref';
 
-      function SelectrefControl(ui, model, controlClasses) {
-        var item, label, value;
-        this.isOpen = ui.attr('open') === 'true';
-        this.isMultiple = ui.attr('multiple') === 'true';
-        this.valueElementName = ui.attr('valueElementName');
-        this.items = (function() {
-          var _i, _len, _ref7, _ref8, _results;
-          _ref7 = ui.children('item');
-          _results = [];
-          for (_i = 0, _len = _ref7.length; _i < _len; _i++) {
-            item = _ref7[_i];
-            _ref8 = [$(item).attr('label'), $(item).attr('value')], label = _ref8[0], value = _ref8[1];
-            _results.push([label != null ? label : value, value]);
-          }
-          return _results;
-        })();
+      function SelectrefControl(ui, model, controlClasses, resolver) {
+        var valueElementName;
+        valueElementName = ui.attr('valueElementName');
+        if (valueElementName == null) {
+          ui.attr('valueElementName', 'value');
+        }
+        SelectrefControl.__super__.constructor.call(this, ui, model, controlClasses, resolver);
       }
 
       return SelectrefControl;
 
-    })(ReferenceControl);
+    })(SelectControl);
     defaultControls = [CheckboxControl, InputControl, UrlOutputControl, OutputControl, SelectControl, RangeControl, SecretControl, TextareaControl, GroupControl, SelectrefControl];
     pluginName = "echoform";
     defaults = {
@@ -933,10 +928,11 @@
         doc = $($.parseXML(xml));
         this.model = model = doc.xpath('//echoforms:form/echoforms:model/echoforms:instance', this.resolver);
         this.ui = ui = doc.xpath('//echoforms:form/echoforms:ui', this.resolver);
+        this.control = new FormControl(ui, model, this.controlClasses, this.resolver);
         window.ui = ui;
         window.model = model;
         window.resolver = this.resolver;
-        this.control = new FormControl(ui, model, this.controlClasses, this.resolver);
+        window.control = this.control;
       }
 
       EchoFormsBuilder.prototype.element = function() {

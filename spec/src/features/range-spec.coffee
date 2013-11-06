@@ -1,2 +1,3 @@
 describe '"range" control', ->
-  pending "Implement me", ->
+  # Default range control is just an input control
+  # TODO: non-default range control

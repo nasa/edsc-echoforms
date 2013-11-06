@@ -1,2 +1,2 @@
 describe '"selectref" control', ->
-  pending "Implement me", ->
+  # selectrefs, as used, are just selects with valueElementName defaulted to "value"

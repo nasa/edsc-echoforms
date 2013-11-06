@@ -39,12 +39,13 @@
       @model = model = doc.xpath('//echoforms:form/echoforms:model/echoforms:instance', @resolver)
       @ui = ui = doc.xpath('//echoforms:form/echoforms:ui', @resolver)
 
+      @control = new FormControl(ui, model, @controlClasses, @resolver)
+
       # DELETE ME
       window.ui = ui
       window.model = model
       window.resolver = @resolver
-
-      @control = new FormControl(ui, model, @controlClasses, @resolver)
+      window.control = @control
 
     element: ->
       @control.element()

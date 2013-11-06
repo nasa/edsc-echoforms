@@ -1,6 +1,4 @@
 (function() {
-  describe('"selectref" control', function() {
-    return pending("Implement me", function() {});
-  });
+  describe('"selectref" control', function() {});
 
 }).call(this);
