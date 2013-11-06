@@ -145,8 +145,32 @@
       };
 
       TypeConstraint.prototype.checkDateTime = function(value) {
-        console.warn("Implement datetime validation");
-        return true;
+        var date, day, hour, minute, month, second, t, time, year, _ref, _ref1, _ref2;
+        if (!value.match(/^\d{4}-\d{2}-\d{2}T\d{2}:\d{2}:\d{2}$/)) {
+          return false;
+        }
+        _ref = value.split('T'), date = _ref[0], time = _ref[1];
+        _ref1 = (function() {
+          var _i, _len, _ref1, _results;
+          _ref1 = date.split('-');
+          _results = [];
+          for (_i = 0, _len = _ref1.length; _i < _len; _i++) {
+            t = _ref1[_i];
+            _results.push(parseInt(t, 10));
+          }
+          return _results;
+        })(), year = _ref1[0], month = _ref1[1], day = _ref1[2];
+        _ref2 = (function() {
+          var _i, _len, _ref2, _results;
+          _ref2 = time.split(':');
+          _results = [];
+          for (_i = 0, _len = _ref2.length; _i < _len; _i++) {
+            t = _ref2[_i];
+            _results.push(parseInt(t, 10));
+          }
+          return _results;
+        })(), hour = _ref2[0], minute = _ref2[1], second = _ref2[2];
+        return (1 <= month && month <= 12) && (1 <= day && day <= 31) && hour < 24 && minute < 60 && second < 60;
       };
 
       return TypeConstraint;

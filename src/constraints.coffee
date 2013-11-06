@@ -75,8 +75,16 @@
     checkShort: (value) -> @_checkIntegerRange(TypeConstraint.MIN_SHORT, TypeConstraint.MAX_SHORT, value)
     checkBoolean: (value) -> value == 'true' || value == 'false'
     checkDateTime: (value) ->
-      console.warn("Implement datetime validation")
-      true
+      return false unless value.match(/^\d{4}-\d{2}-\d{2}T\d{2}:\d{2}:\d{2}$/)
+      [date, time] = value.split('T')
+      [year, month, day] = (parseInt(t, 10) for t in date.split('-'))
+      [hour, minute, second] = (parseInt(t, 10) for t in time.split(':'))
+
+      (1 <= month <= 12 and
+       1 <= day <= 31 and
+       hour < 24 and
+       minute < 60 and
+       second < 60)
 
   class RequiredConstraint extends BaseConstraint
     constructor: (@xpath, message="Required field") ->
