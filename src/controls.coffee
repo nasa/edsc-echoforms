@@ -1,5 +1,5 @@
-  # TODO look at optimization / caching
-  # TODO Listen to model dom instead of page dom?
+  # TODO Reverb jQuery compatibility ($.on)
+  # TODO documentation
 
   echoformsControlUniqueId = 0
 
@@ -46,6 +46,7 @@
       @validate()
 
     validate: ->
+
       @relevant(!!@xpath(@relevantExpr)[0]) if @relevantExpr?
       @readonly(!!@xpath(@readonlyExpr)[0]) if @readonlyExpr?
 
@@ -323,13 +324,13 @@
       control.loadFromModel() for control in @controls
 
     buildDom: ->
-      root = super
+      root = super()
       childModel = @ref()
       ui = @ui
       children = $()
       @controls = controls = []
       for child in ui.children()
-        continue if child.nodeName == 'help'
+        continue if child.nodeName == 'help' || child.nodeName == 'constraints'
         found = false
         for ControlClass in @controlClasses
           if $(child).is(ControlClass.selector)
@@ -341,6 +342,13 @@
         console.log("No class available for element:", child) unless found
       root.find('.echoforms-elements').replaceWith($('<div class="echoforms-children"/>').append(children))
       root
+
+    updateReadonly: (isReadonly) ->
+      super(isReadonly)
+      for control in @controls
+        control.updateReadonly(isReadonly)
+
+
 
   class FormControl extends GroupingControl
     constructor: (ui, model, controlClasses, resolver) ->
@@ -356,35 +364,6 @@
     @selector: 'group'
     # TODO Headers and footers
 
-  class RepeatInstanceControl extends GroupingControl
-    # TODO Implement me
-
-  class RepeatTemplateControl extends GroupingControl
-    @selector: 'template'
-    # TODO Implement me
-
-    buildDom: ->
-      $()
-
-    loadFromModel: ->
-
-
-  class RepeatControl extends GroupingControl
-    @selector: 'repeat'
-    # TODO Implement me
-    constructor: (ui, model, controlClasses, resolver) ->
-      @minItems = ui.attr('minItems')
-      @minItems = parseInt(@minItems, 10) if @minItems
-      @maxItems = ui.attr('maxItems')
-      @maxItems = parseInt(@maxItems, 10) if @maxItems
-      super(ui, model, controlClasses, resolver)
-
-    loadConstraints: ->
-      super()
-      @constraints.push(new MinItemsConstraint(@minItems)) if @minItems?
-      @constraints.push(new MaxItemsConstraint(@maxItems)) if @maxItems?
-
-
   #####################
   # Reference Controls
   #####################
@@ -393,10 +372,6 @@
     constructor: (ui, model, controlClasses, resolver) ->
       @idref = ui.attr('idref')
       super(ui, model, controlClasses, resolver)
-
-  class ControlrefControl extends ReferenceControl
-    @selector: 'controlref'
-    # TODO Implement me
 
   class SelectrefControl extends ReferenceControl
     @selector: 'selectref'
@@ -421,9 +396,7 @@
 
     # Grouping controls
     GroupControl,
-    RepeatControl, RepeatTemplateControl,
 
     # Reference controls
-    ControlrefControl,
     SelectrefControl,
     ]

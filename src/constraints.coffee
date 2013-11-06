@@ -93,16 +93,3 @@
     check: (value, model, resolver) ->
       value = null if value instanceof Array and value.length == 0
       !!value || !model.xpath(@xpath, resolver)[0]
-
-  class ItemCountConstraint extends BaseConstraint
-    constructor: (@count, message=null) ->
-      super(message ? @buildMessage())
-
-    itemWord: ->
-      if @count == 1 then "item" else "items"
-
-  class MinItemsConstraint extends ItemCountConstraint
-    buildMessage: -> "At least #{@count} #{@itemWord()} required"
-
-  class MaxItemsConstraint extends ItemCountConstraint
-    buildMessage: -> "No more than #{@count} #{@itemWord()} allowed"

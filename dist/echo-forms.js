@@ -4,7 +4,7 @@
     __bind = function(fn, me){ return function(){ return fn.apply(me, arguments); }; };
 
   (function($, window, document) {
-    var BaseConstraint, BaseControl, CheckboxControl, ControlrefControl, EchoFormsBuilder, EchoFormsInterface, FormControl, GroupControl, GroupingControl, InputControl, ItemCountConstraint, MaxItemsConstraint, MinItemsConstraint, OutputControl, PatternConstraint, RangeControl, ReferenceControl, RepeatControl, RepeatInstanceControl, RepeatTemplateControl, RequiredConstraint, SecretControl, SelectControl, SelectrefControl, TextareaControl, TypeConstraint, TypedControl, UrlOutputControl, XPathConstraint, XPathResolver, defaultControls, defaults, echoformsControlUniqueId, pluginName, _ref, _ref1, _ref10, _ref11, _ref2, _ref3, _ref4, _ref5, _ref6, _ref7, _ref8, _ref9;
+    var BaseConstraint, BaseControl, CheckboxControl, EchoFormsBuilder, EchoFormsInterface, FormControl, GroupControl, GroupingControl, InputControl, OutputControl, PatternConstraint, RangeControl, ReferenceControl, RequiredConstraint, SecretControl, SelectControl, SelectrefControl, TextareaControl, TypeConstraint, TypedControl, UrlOutputControl, XPathConstraint, XPathResolver, defaultControls, defaults, echoformsControlUniqueId, pluginName, _ref, _ref1, _ref2, _ref3, _ref4, _ref5, _ref6;
     BaseConstraint = (function() {
       function BaseConstraint(message) {
         this.message = message;
@@ -197,62 +197,10 @@
       return RequiredConstraint;
 
     })(BaseConstraint);
-    ItemCountConstraint = (function(_super) {
-      __extends(ItemCountConstraint, _super);
-
-      function ItemCountConstraint(count, message) {
-        this.count = count;
-        if (message == null) {
-          message = null;
-        }
-        ItemCountConstraint.__super__.constructor.call(this, message != null ? message : this.buildMessage());
-      }
-
-      ItemCountConstraint.prototype.itemWord = function() {
-        if (this.count === 1) {
-          return "item";
-        } else {
-          return "items";
-        }
-      };
-
-      return ItemCountConstraint;
-
-    })(BaseConstraint);
-    MinItemsConstraint = (function(_super) {
-      __extends(MinItemsConstraint, _super);
-
-      function MinItemsConstraint() {
-        _ref = MinItemsConstraint.__super__.constructor.apply(this, arguments);
-        return _ref;
-      }
-
-      MinItemsConstraint.prototype.buildMessage = function() {
-        return "At least " + this.count + " " + (this.itemWord()) + " required";
-      };
-
-      return MinItemsConstraint;
-
-    })(ItemCountConstraint);
-    MaxItemsConstraint = (function(_super) {
-      __extends(MaxItemsConstraint, _super);
-
-      function MaxItemsConstraint() {
-        _ref1 = MaxItemsConstraint.__super__.constructor.apply(this, arguments);
-        return _ref1;
-      }
-
-      MaxItemsConstraint.prototype.buildMessage = function() {
-        return "No more than " + this.count + " " + (this.itemWord()) + " allowed";
-      };
-
-      return MaxItemsConstraint;
-
-    })(ItemCountConstraint);
     echoformsControlUniqueId = 0;
     BaseControl = (function() {
       function BaseControl(ui, model, controlClasses, resolver) {
-        var help, _i, _len, _ref2, _ref3;
+        var help, _i, _len, _ref, _ref1;
         this.ui = ui;
         this.model = model;
         this.controlClasses = controlClasses;
@@ -260,14 +208,14 @@
         this.onChange = __bind(this.onChange, this);
         this.changed = __bind(this.changed, this);
         this.refExpr = ui.attr('ref');
-        this.id = (_ref2 = ui.attr('id')) != null ? _ref2 : "echoforms-control-" + (echoformsControlUniqueId++);
+        this.id = (_ref = ui.attr('id')) != null ? _ref : "echoforms-control-" + (echoformsControlUniqueId++);
         this.relevantExpr = ui.attr('relevant');
         this.requiredExpr = ui.attr('required');
         this.readonlyExpr = ui.attr('readonly');
         this.label = ui.attr('label');
-        _ref3 = ui.children('help');
-        for (_i = 0, _len = _ref3.length; _i < _len; _i++) {
-          help = _ref3[_i];
+        _ref1 = ui.children('help');
+        for (_i = 0, _len = _ref1.length; _i < _len; _i++) {
+          help = _ref1[_i];
           this.help = $(help).text();
         }
         this.loadConstraints();
@@ -276,16 +224,16 @@
       }
 
       BaseControl.prototype.loadConstraints = function() {
-        var constraintNodes, message, node, patternNode, xpathNode, _i, _len, _ref2, _results;
+        var constraintNodes, message, node, patternNode, xpathNode, _i, _len, _ref, _results;
         this.constraints = [];
         if (this.requiredExpr) {
           this.constraints.push(new RequiredConstraint(this.requiredExpr));
         }
         constraintNodes = this.ui.children('constraints');
-        _ref2 = constraintNodes.children('constraint');
+        _ref = constraintNodes.children('constraint');
         _results = [];
-        for (_i = 0, _len = _ref2.length; _i < _len; _i++) {
-          node = _ref2[_i];
+        for (_i = 0, _len = _ref.length; _i < _len; _i++) {
+          node = _ref[_i];
           node = $(node);
           message = node.children('alert').text();
           patternNode = node.children('pattern');
@@ -335,12 +283,12 @@
           this.readonly(!!this.xpath(this.readonlyExpr)[0]);
         }
         errors = (function() {
-          var _i, _len, _ref2, _ref3, _results;
-          _ref2 = this.constraints;
+          var _i, _len, _ref, _ref1, _results;
+          _ref = this.constraints;
           _results = [];
-          for (_i = 0, _len = _ref2.length; _i < _len; _i++) {
-            c = _ref2[_i];
-            if (!c.check((_ref3 = this.refValue()) != null ? _ref3 : this.inputValue(), this.model, this.resolver)) {
+          for (_i = 0, _len = _ref.length; _i < _len; _i++) {
+            c = _ref[_i];
+            if (!c.check((_ref1 = this.refValue()) != null ? _ref1 : this.inputValue(), this.model, this.resolver)) {
               _results.push(c.message);
             }
           }
@@ -426,11 +374,11 @@
       };
 
       BaseControl.prototype.buildHelpDom = function() {
-        var help, result, _i, _len, _ref2;
+        var help, result, _i, _len, _ref;
         result = $();
-        _ref2 = this.ui.children('help');
-        for (_i = 0, _len = _ref2.length; _i < _len; _i++) {
-          help = _ref2[_i];
+        _ref = this.ui.children('help');
+        for (_i = 0, _len = _ref.length; _i < _len; _i++) {
+          help = _ref[_i];
           result = result.add("<label class=\"echoforms-help\" for=\"" + this.id + "-element\">" + ($(help).text()) + "</label>");
         }
         return result;
@@ -481,8 +429,8 @@
       __extends(TypedControl, _super);
 
       function TypedControl(ui, model, controlClasses, resolver) {
-        var _ref2;
-        this.inputType = ((_ref2 = ui.attr('type')) != null ? _ref2 : 'string').replace(/^.*:/, '').toLowerCase();
+        var _ref;
+        this.inputType = ((_ref = ui.attr('type')) != null ? _ref : 'string').replace(/^.*:/, '').toLowerCase();
         TypedControl.__super__.constructor.call(this, ui, model, controlClasses, resolver);
       }
 
@@ -524,8 +472,8 @@
       __extends(InputControl, _super);
 
       function InputControl() {
-        _ref2 = InputControl.__super__.constructor.apply(this, arguments);
-        return _ref2;
+        _ref = InputControl.__super__.constructor.apply(this, arguments);
+        return _ref;
       }
 
       InputControl.selector = 'input';
@@ -546,8 +494,8 @@
       __extends(CheckboxControl, _super);
 
       function CheckboxControl() {
-        _ref3 = CheckboxControl.__super__.constructor.apply(this, arguments);
-        return _ref3;
+        _ref1 = CheckboxControl.__super__.constructor.apply(this, arguments);
+        return _ref1;
       }
 
       CheckboxControl.selector = 'input[type$=boolean]';
@@ -610,8 +558,8 @@
       __extends(UrlOutputControl, _super);
 
       function UrlOutputControl() {
-        _ref4 = UrlOutputControl.__super__.constructor.apply(this, arguments);
-        return _ref4;
+        _ref2 = UrlOutputControl.__super__.constructor.apply(this, arguments);
+        return _ref2;
       }
 
       UrlOutputControl.selector = 'output[type$=anyURI], output[type$=anyuri]';
@@ -641,12 +589,12 @@
         this.isMultiple = ui.attr('multiple') === 'true';
         this.valueElementName = ui.attr('valueElementName');
         this.items = (function() {
-          var _i, _len, _ref5, _ref6, _results;
-          _ref5 = ui.children('item');
+          var _i, _len, _ref3, _ref4, _results;
+          _ref3 = ui.children('item');
           _results = [];
-          for (_i = 0, _len = _ref5.length; _i < _len; _i++) {
-            item = _ref5[_i];
-            _ref6 = [$(item).attr('label'), $(item).attr('value')], label = _ref6[0], value = _ref6[1];
+          for (_i = 0, _len = _ref3.length; _i < _len; _i++) {
+            item = _ref3[_i];
+            _ref4 = [$(item).attr('label'), $(item).attr('value')], label = _ref4[0], value = _ref4[1];
             _results.push([label != null ? label : value, value]);
           }
           return _results;
@@ -655,12 +603,12 @@
       }
 
       SelectControl.prototype.refValue = function() {
-        var child, _i, _len, _ref5, _results;
+        var child, _i, _len, _ref3, _results;
         if ((this.valueElementName != null) && (this.refExpr != null)) {
-          _ref5 = this.ref().children(this.valueElementName);
+          _ref3 = this.ref().children(this.valueElementName);
           _results = [];
-          for (_i = 0, _len = _ref5.length; _i < _len; _i++) {
-            child = _ref5[_i];
+          for (_i = 0, _len = _ref3.length; _i < _len; _i++) {
+            child = _ref3[_i];
             _results.push($(child).text());
           }
           return _results;
@@ -670,14 +618,14 @@
       };
 
       SelectControl.prototype.saveToModel = function() {
-        var namespace, node, root, value, _i, _len, _ref5, _results;
+        var namespace, node, root, value, _i, _len, _ref3, _results;
         if ((this.valueElementName != null) && (this.refExpr != null)) {
           root = this.ref().empty();
           namespace = root[0].nodeName.split(':')[0];
-          _ref5 = this.inputValue();
+          _ref3 = this.inputValue();
           _results = [];
-          for (_i = 0, _len = _ref5.length; _i < _len; _i++) {
-            value = _ref5[_i];
+          for (_i = 0, _len = _ref3.length; _i < _len; _i++) {
+            value = _ref3[_i];
             node = $("<" + namespace + ":" + this.valueElementName + "/>").text(value);
             _results.push(root.append(node));
           }
@@ -691,11 +639,11 @@
         var node, value;
         if ((this.valueElementName != null) && (this.refExpr != null)) {
           value = (function() {
-            var _i, _len, _ref5, _results;
-            _ref5 = this.ref().children();
+            var _i, _len, _ref3, _results;
+            _ref3 = this.ref().children();
             _results = [];
-            for (_i = 0, _len = _ref5.length; _i < _len; _i++) {
-              node = _ref5[_i];
+            for (_i = 0, _len = _ref3.length; _i < _len; _i++) {
+              node = _ref3[_i];
               _results.push($(node).text());
             }
             return _results;
@@ -723,7 +671,7 @@
       };
 
       SelectControl.prototype.buildElementsChildrenDom = function() {
-        var el, label, value, _i, _len, _ref5, _ref6, _results;
+        var el, label, value, _i, _len, _ref3, _ref4, _results;
         el = $("<select id=\"" + this.id + "-element\" class=\"echoforms-element-select\" autocomplete=\"off\"/>");
         if (this.isMultiple) {
           el.addClass('echoforms-element-select-multiple');
@@ -734,10 +682,10 @@
         if (this.isOpen) {
           el.addClass('echoforms-element-select-open');
         }
-        _ref5 = this.items;
+        _ref3 = this.items;
         _results = [];
-        for (_i = 0, _len = _ref5.length; _i < _len; _i++) {
-          _ref6 = _ref5[_i], label = _ref6[0], value = _ref6[1];
+        for (_i = 0, _len = _ref3.length; _i < _len; _i++) {
+          _ref4 = _ref3[_i], label = _ref4[0], value = _ref4[1];
           _results.push(el.append("<option value=\"" + value + "\">" + label + "</option>"));
         }
         return _results;
@@ -765,8 +713,8 @@
       __extends(SecretControl, _super);
 
       function SecretControl() {
-        _ref5 = SecretControl.__super__.constructor.apply(this, arguments);
-        return _ref5;
+        _ref3 = SecretControl.__super__.constructor.apply(this, arguments);
+        return _ref3;
       }
 
       SecretControl.selector = 'secret';
@@ -782,8 +730,8 @@
       __extends(TextareaControl, _super);
 
       function TextareaControl() {
-        _ref6 = TextareaControl.__super__.constructor.apply(this, arguments);
-        return _ref6;
+        _ref4 = TextareaControl.__super__.constructor.apply(this, arguments);
+        return _ref4;
       }
 
       TextareaControl.selector = 'textarea';
@@ -799,8 +747,8 @@
       __extends(GroupingControl, _super);
 
       function GroupingControl() {
-        _ref7 = GroupingControl.__super__.constructor.apply(this, arguments);
-        return _ref7;
+        _ref5 = GroupingControl.__super__.constructor.apply(this, arguments);
+        return _ref5;
       }
 
       GroupingControl.prototype.inputs = function() {
@@ -808,34 +756,34 @@
       };
 
       GroupingControl.prototype.loadFromModel = function() {
-        var control, _i, _len, _ref8, _results;
+        var control, _i, _len, _ref6, _results;
         GroupingControl.__super__.loadFromModel.call(this);
-        _ref8 = this.controls;
+        _ref6 = this.controls;
         _results = [];
-        for (_i = 0, _len = _ref8.length; _i < _len; _i++) {
-          control = _ref8[_i];
+        for (_i = 0, _len = _ref6.length; _i < _len; _i++) {
+          control = _ref6[_i];
           _results.push(control.loadFromModel());
         }
         return _results;
       };
 
       GroupingControl.prototype.buildDom = function() {
-        var ControlClass, child, childModel, children, control, controls, found, root, ui, _i, _j, _len, _len1, _ref8, _ref9;
-        root = GroupingControl.__super__.buildDom.apply(this, arguments);
+        var ControlClass, child, childModel, children, control, controls, found, root, ui, _i, _j, _len, _len1, _ref6, _ref7;
+        root = GroupingControl.__super__.buildDom.call(this);
         childModel = this.ref();
         ui = this.ui;
         children = $();
         this.controls = controls = [];
-        _ref8 = ui.children();
-        for (_i = 0, _len = _ref8.length; _i < _len; _i++) {
-          child = _ref8[_i];
-          if (child.nodeName === 'help') {
+        _ref6 = ui.children();
+        for (_i = 0, _len = _ref6.length; _i < _len; _i++) {
+          child = _ref6[_i];
+          if (child.nodeName === 'help' || child.nodeName === 'constraints') {
             continue;
           }
           found = false;
-          _ref9 = this.controlClasses;
-          for (_j = 0, _len1 = _ref9.length; _j < _len1; _j++) {
-            ControlClass = _ref9[_j];
+          _ref7 = this.controlClasses;
+          for (_j = 0, _len1 = _ref7.length; _j < _len1; _j++) {
+            ControlClass = _ref7[_j];
             if ($(child).is(ControlClass.selector)) {
               control = new ControlClass($(child), childModel, this.controlClasses, this.resolver);
               controls.push(control);
@@ -850,6 +798,18 @@
         }
         root.find('.echoforms-elements').replaceWith($('<div class="echoforms-children"/>').append(children));
         return root;
+      };
+
+      GroupingControl.prototype.updateReadonly = function(isReadonly) {
+        var control, _i, _len, _ref6, _results;
+        GroupingControl.__super__.updateReadonly.call(this, isReadonly);
+        _ref6 = this.controls;
+        _results = [];
+        for (_i = 0, _len = _ref6.length; _i < _len; _i++) {
+          control = _ref6[_i];
+          _results.push(control.updateReadonly(isReadonly));
+        }
+        return _results;
       };
 
       return GroupingControl;
@@ -878,73 +838,13 @@
       __extends(GroupControl, _super);
 
       function GroupControl() {
-        _ref8 = GroupControl.__super__.constructor.apply(this, arguments);
-        return _ref8;
+        _ref6 = GroupControl.__super__.constructor.apply(this, arguments);
+        return _ref6;
       }
 
       GroupControl.selector = 'group';
 
       return GroupControl;
-
-    })(GroupingControl);
-    RepeatInstanceControl = (function(_super) {
-      __extends(RepeatInstanceControl, _super);
-
-      function RepeatInstanceControl() {
-        _ref9 = RepeatInstanceControl.__super__.constructor.apply(this, arguments);
-        return _ref9;
-      }
-
-      return RepeatInstanceControl;
-
-    })(GroupingControl);
-    RepeatTemplateControl = (function(_super) {
-      __extends(RepeatTemplateControl, _super);
-
-      function RepeatTemplateControl() {
-        _ref10 = RepeatTemplateControl.__super__.constructor.apply(this, arguments);
-        return _ref10;
-      }
-
-      RepeatTemplateControl.selector = 'template';
-
-      RepeatTemplateControl.prototype.buildDom = function() {
-        return $();
-      };
-
-      RepeatTemplateControl.prototype.loadFromModel = function() {};
-
-      return RepeatTemplateControl;
-
-    })(GroupingControl);
-    RepeatControl = (function(_super) {
-      __extends(RepeatControl, _super);
-
-      RepeatControl.selector = 'repeat';
-
-      function RepeatControl(ui, model, controlClasses, resolver) {
-        this.minItems = ui.attr('minItems');
-        if (this.minItems) {
-          this.minItems = parseInt(this.minItems, 10);
-        }
-        this.maxItems = ui.attr('maxItems');
-        if (this.maxItems) {
-          this.maxItems = parseInt(this.maxItems, 10);
-        }
-        RepeatControl.__super__.constructor.call(this, ui, model, controlClasses, resolver);
-      }
-
-      RepeatControl.prototype.loadConstraints = function() {
-        RepeatControl.__super__.loadConstraints.call(this);
-        if (this.minItems != null) {
-          this.constraints.push(new MinItemsConstraint(this.minItems));
-        }
-        if (this.maxItems != null) {
-          return this.constraints.push(new MaxItemsConstraint(this.maxItems));
-        }
-      };
-
-      return RepeatControl;
 
     })(GroupingControl);
     ReferenceControl = (function(_super) {
@@ -958,19 +858,6 @@
       return ReferenceControl;
 
     })(BaseControl);
-    ControlrefControl = (function(_super) {
-      __extends(ControlrefControl, _super);
-
-      function ControlrefControl() {
-        _ref11 = ControlrefControl.__super__.constructor.apply(this, arguments);
-        return _ref11;
-      }
-
-      ControlrefControl.selector = 'controlref';
-
-      return ControlrefControl;
-
-    })(ReferenceControl);
     SelectrefControl = (function(_super) {
       __extends(SelectrefControl, _super);
 
@@ -982,12 +869,12 @@
         this.isMultiple = ui.attr('multiple') === 'true';
         this.valueElementName = ui.attr('valueElementName');
         this.items = (function() {
-          var _i, _len, _ref12, _ref13, _results;
-          _ref12 = ui.children('item');
+          var _i, _len, _ref7, _ref8, _results;
+          _ref7 = ui.children('item');
           _results = [];
-          for (_i = 0, _len = _ref12.length; _i < _len; _i++) {
-            item = _ref12[_i];
-            _ref13 = [$(item).attr('label'), $(item).attr('value')], label = _ref13[0], value = _ref13[1];
+          for (_i = 0, _len = _ref7.length; _i < _len; _i++) {
+            item = _ref7[_i];
+            _ref8 = [$(item).attr('label'), $(item).attr('value')], label = _ref8[0], value = _ref8[1];
             _results.push([label != null ? label : value, value]);
           }
           return _results;
@@ -997,7 +884,7 @@
       return SelectrefControl;
 
     })(ReferenceControl);
-    defaultControls = [CheckboxControl, InputControl, UrlOutputControl, OutputControl, SelectControl, RangeControl, SecretControl, TextareaControl, GroupControl, RepeatControl, RepeatTemplateControl, ControlrefControl, SelectrefControl];
+    defaultControls = [CheckboxControl, InputControl, UrlOutputControl, OutputControl, SelectControl, RangeControl, SecretControl, TextareaControl, GroupControl, SelectrefControl];
     pluginName = "echoform";
     defaults = {
       controls: []
@@ -1005,12 +892,12 @@
     XPathResolver = (function() {
       function XPathResolver(xml) {
         this.resolve = __bind(this.resolve, this);
-        var match, name, namespaceRegexp, namespaces, uri, _ref12;
+        var match, name, namespaceRegexp, namespaces, uri, _ref7;
         namespaces = {};
         namespaceRegexp = /\sxmlns(?::(\w+))?=\"([^\"]+)\"/g;
         match = namespaceRegexp.exec(xml);
         while (match != null) {
-          name = (_ref12 = match[1]) != null ? _ref12 : ' default ';
+          name = (_ref7 = match[1]) != null ? _ref7 : ' default ';
           uri = match[2];
           namespaces[name] = uri;
           match = namespaceRegexp.exec(xml);
@@ -1063,10 +950,10 @@
       EchoFormsInterface.inputTimeout = null;
 
       function EchoFormsInterface(root, options) {
-        var _ref12;
+        var _ref7;
         this.root = root;
         this.options = $.extend({}, defaults, options);
-        this.form = (_ref12 = this.options['form']) != null ? _ref12 : root.find('.echoforms-xml').text();
+        this.form = (_ref7 = this.options['form']) != null ? _ref7 : root.find('.echoforms-xml').text();
         this.controlClasses = this.options['controls'].concat(defaultControls);
         this._defaults = defaults;
         this._name = pluginName;

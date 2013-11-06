@@ -38,6 +38,7 @@
       </model>
       <ui>
         <input id="reference" label="Reference value" ref="prov:reference" type="xs:string"/>
+        <input id="childReference" label="Reference value" ref="prov:parentReference/prov:childReference" type="xs:string"/>
         <group id="group" label="Group" ref="prov:parentReference" attrs="attrs">
           <help>Helpful text</help>
           <input label="Child input" ref="prov:childReference" type="xs:string"/>
@@ -96,15 +97,6 @@
           <item label="654321" value="654321" />
           <help>Helpful text</help>
         </select>
-        <repeat id="repeat" label="Repeat" a="a" ref="prov:reference">
-          <template>
-            <prov:repeat xmlns:prov="http://www.example.com/orderoptions">
-              <prov:child />
-            </prov:repeat>
-          </template>
-          <input label="Child input" type="xs:string"/>
-          <help>Helpful text</help>
-        </repeat>
       </ui>
     </form>
 </script>
