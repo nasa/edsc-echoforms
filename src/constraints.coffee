@@ -91,6 +91,7 @@
       super(message)
 
     check: (value, model, resolver) ->
+      value = null if value instanceof Array and value.length == 0
       !!value || !model.xpath(@xpath, resolver)[0]
 
   class ItemCountConstraint extends BaseConstraint

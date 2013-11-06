@@ -231,11 +231,9 @@
       $('<a href="#" />')
 
   class SelectControl extends TypedControl
-    # TODO: Implement open selects
     @selector: 'select'
 
     constructor: (ui, model, controlClasses, resolver) ->
-      @isOpen = ui.attr('open') == 'true'
       @isMultiple = ui.attr('multiple') == 'true'
       @valueElementName = ui.attr('valueElementName')
       @items = for item in ui.children('item')
@@ -243,6 +241,40 @@
         [label ? value, value]
 
       super(ui, model, controlClasses, resolver)
+
+    refValue: ->
+      if @valueElementName? and @refExpr?
+        $(child).text() for child in @ref().children(@valueElementName)
+      else
+        super()
+
+    saveToModel: ->
+      if @valueElementName? and @refExpr?
+        root = @ref().empty()
+        namespace = root[0].nodeName.split(':')[0]
+        for value in @inputValue()
+          node = $("<#{namespace}:#{@valueElementName}/>").text(value)
+          root.append(node)
+      else
+        super()
+
+    loadFromModel: ->
+      if @valueElementName? and @refExpr?
+        value = ($(node).text() for node in @ref().children())
+        value = value[0] unless @isMultiple
+        @inputs().val(value)
+      else
+        super()
+
+    inputValue: ->
+      result = @inputs().val()
+      if @valueElementName? and !(result instanceof Array)
+        result = if result? then [result] else []
+      result
+
+    isChanged: (newValue) ->
+      @refValue() != @inputValue() || !@refExpr
+
 
     buildElementsChildrenDom: ->
       el = $("<select id=\"#{@id}-element\" class=\"echoforms-element-select\" autocomplete=\"off\"/>")

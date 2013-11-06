@@ -26,6 +26,10 @@
           <prov:options xmlns:prov="http://www.example.com/orderoptions">
             <prov:reference>123456</prov:reference>
             <prov:boolreference>true</prov:boolreference>
+            <prov:selectReference>
+              <prov:selectValue>123456</prov:selectValue>
+              <prov:selectValue>654321</prov:selectValue>
+            </prov:selectReference>
             <prov:parentReference>
               <prov:childReference>Child value</prov:childReference>
             </prov:parentReference>
@@ -68,25 +72,25 @@
         <range id="range" label="Range" start="1" stop="10" step="1" type="xs:int" a="a" ref="prov:reference">
           <help>Helpful text</help>
         </range>
-        <select id="select" label="Select" a="a" ref="prov:reference">
+        <select id="select" label="Select" a="a" ref="prov:selectReference" valueElementName="selectValue">
           <item label="Alphabetic" value="Alphabetic" />
           <item label="123456" value="123456" />
           <item label="654321" value="654321" />
           <help>Helpful text</help>
         </select>
-        <select id="open-select" label="Open select" open="true" a="a" ref="prov:reference">
+        <select id="open-select" label="Open select" open="true" a="a" ref="prov:selectReference" valueElementName="selectValue">
           <item label="Alphabetic" value="Alphabetic" />
           <item label="123456" value="123456" />
           <item label="654321" value="654321" />
           <help>Helpful text</help>
         </select>
-        <select id="multiple-select" label="Multiple select" multiple="true" a="a" ref="prov:reference">
+        <select id="multiple-select" label="Multiple select" multiple="true" a="a" ref="prov:selectReference" valueElementName="selectValue">
           <item label="Alphabetic" value="Alphabetic" />
           <item label="123456" value="123456" />
           <item label="654321" value="654321" />
           <help>Helpful text</help>
         </select>
-        <select id="open-multiple-select" label="Open multiple select" multiple="true" open="true" a="a" ref="prov:reference">
+        <select id="open-multiple-select" label="Open multiple select" multiple="true" open="true" a="a" ref="prov:selectReference" valueElementName="selectValue">
           <item label="Alphabetic" value="Alphabetic" />
           <item label="123456" value="123456" />
           <item label="654321" value="654321" />

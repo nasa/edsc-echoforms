@@ -188,6 +188,9 @@
       }
 
       RequiredConstraint.prototype.check = function(value, model, resolver) {
+        if (value instanceof Array && value.length === 0) {
+          value = null;
+        }
         return !!value || !model.xpath(this.xpath, resolver)[0];
       };
 
@@ -635,7 +638,6 @@
 
       function SelectControl(ui, model, controlClasses, resolver) {
         var item, label, value;
-        this.isOpen = ui.attr('open') === 'true';
         this.isMultiple = ui.attr('multiple') === 'true';
         this.valueElementName = ui.attr('valueElementName');
         this.items = (function() {
@@ -651,6 +653,74 @@
         })();
         SelectControl.__super__.constructor.call(this, ui, model, controlClasses, resolver);
       }
+
+      SelectControl.prototype.refValue = function() {
+        var child, _i, _len, _ref5, _results;
+        if ((this.valueElementName != null) && (this.refExpr != null)) {
+          _ref5 = this.ref().children(this.valueElementName);
+          _results = [];
+          for (_i = 0, _len = _ref5.length; _i < _len; _i++) {
+            child = _ref5[_i];
+            _results.push($(child).text());
+          }
+          return _results;
+        } else {
+          return SelectControl.__super__.refValue.call(this);
+        }
+      };
+
+      SelectControl.prototype.saveToModel = function() {
+        var namespace, node, root, value, _i, _len, _ref5, _results;
+        if ((this.valueElementName != null) && (this.refExpr != null)) {
+          root = this.ref().empty();
+          namespace = root[0].nodeName.split(':')[0];
+          _ref5 = this.inputValue();
+          _results = [];
+          for (_i = 0, _len = _ref5.length; _i < _len; _i++) {
+            value = _ref5[_i];
+            node = $("<" + namespace + ":" + this.valueElementName + "/>").text(value);
+            _results.push(root.append(node));
+          }
+          return _results;
+        } else {
+          return SelectControl.__super__.saveToModel.call(this);
+        }
+      };
+
+      SelectControl.prototype.loadFromModel = function() {
+        var node, value;
+        if ((this.valueElementName != null) && (this.refExpr != null)) {
+          value = (function() {
+            var _i, _len, _ref5, _results;
+            _ref5 = this.ref().children();
+            _results = [];
+            for (_i = 0, _len = _ref5.length; _i < _len; _i++) {
+              node = _ref5[_i];
+              _results.push($(node).text());
+            }
+            return _results;
+          }).call(this);
+          if (!this.isMultiple) {
+            value = value[0];
+          }
+          return this.inputs().val(value);
+        } else {
+          return SelectControl.__super__.loadFromModel.call(this);
+        }
+      };
+
+      SelectControl.prototype.inputValue = function() {
+        var result;
+        result = this.inputs().val();
+        if ((this.valueElementName != null) && !(result instanceof Array)) {
+          result = result != null ? [result] : [];
+        }
+        return result;
+      };
+
+      SelectControl.prototype.isChanged = function(newValue) {
+        return this.refValue() !== this.inputValue() || !this.refExpr;
+      };
 
       SelectControl.prototype.buildElementsChildrenDom = function() {
         var el, label, value, _i, _len, _ref5, _ref6, _results;
