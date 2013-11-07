@@ -36,16 +36,16 @@
       @resolver = new XPathResolver(xml).resolve
 
       doc = $($.parseXML(xml))
-      @model = model = doc.xpath('//echoforms:form/echoforms:model/echoforms:instance', @resolver)
-      @ui = ui = doc.xpath('//echoforms:form/echoforms:ui', @resolver)
-
-      @control = new FormControl(ui, model, @controlClasses, @resolver)
+      @model = model = doc.find('form > model> instance')
+      @ui = ui = doc.find('form > ui')
 
       # DELETE ME
+      window.doc = doc
       window.ui = ui
       window.model = model
       window.resolver = @resolver
-      window.control = @control
+
+      @control = new FormControl(ui, model, @controlClasses, @resolver)
 
     element: ->
       @control.element()

@@ -1,5 +1,17 @@
   # TODO Reverb jQuery compatibility ($.on)
   # TODO documentation
+  #
+  # Note: There's a pretty fantastic opportunity for optimization here.
+  # All node xpaths are alphanumeric with at least one colon and 0 or
+  # more forward slashes, periods, and dashes, possibly (rarely) followed
+  # by a single bracketed expression.
+  # Because of this, we should be able to pick out node selectors from
+  # within xpaths, see which model nodes they reference, and listen for
+  # change events on those nodes only.  Instead of refreshing the whole
+  # UI, we should only have to refresh elements which actually change.
+  # If we do this, we should strip bracketed expressions before listening.
+  # They are rare and evaluating them up-front is unnecessary and has
+  # pitfalls.
 
   echoformsControlUniqueId = 0
 
@@ -34,7 +46,7 @@
           @constraints.push(new XPathConstraint(xpathNode.text(), message))
 
     ref: ->
-      if @refExpr? then @xpath(@refExpr) else @model
+      if @refExpr? then $(@xpath(@refExpr)) else @model
 
     refValue: ->
       if @refExpr? then $.trim(@ref().text()) else undefined
@@ -46,8 +58,8 @@
       @validate()
 
     validate: ->
-      @relevant(!!@xpath(@relevantExpr)[0]) if @relevantExpr?
-      @readonly(!!@xpath(@readonlyExpr)[0]) if @readonlyExpr?
+      @relevant(!!@xpath(@relevantExpr)) if @relevantExpr?
+      @readonly(!!@xpath(@readonlyExpr)) if @readonlyExpr?
 
       errors = (c.message for c in @constraints when !c.check(@refValue() ? @inputValue(), @model, @resolver))
 
@@ -58,16 +70,7 @@
     bindEvents: ->
 
     xpath: (xpath) ->
-      # Handle slightly bad expressions received from providers.
-      # "[foo=bar]" becomes ".[foo=bar]"
-      if xpath?.charAt(0) == '['
-        xpath = ".#{xpath}"
-
-      # "true" and "false" become "true()" and "false()"
-      return [true] if xpath == "true"
-      return [false] if xpath == "false"
-
-      @model.xpath(xpath, @resolver)
+      execXPath(@model, xpath, @resolver)
 
     element: ->
       @el ?= @buildDom()
@@ -141,13 +144,11 @@
       $()
 
     buildDom: ->
-      root = @buildControlDom()
-      root.append(@buildLabelDom())
-      root.append(@buildElementsDom())
-      root.append(@buildHelpDom())
-      root.append(@buildErrorsDom())
-
-      root
+      @buildControlDom()
+        .append(@buildLabelDom())
+        .append(@buildElementsDom())
+        .append(@buildHelpDom())
+        .append(@buildErrorsDom())
 
   #####################
   # Typed Controls
@@ -211,7 +212,7 @@
 
     refValue: ->
       if @valueExpr
-        @xpath(@valueExpr)[0]
+        @xpath(@valueExpr)
       else
         super()
 

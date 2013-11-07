@@ -4,7 +4,31 @@
     __bind = function(fn, me){ return function(){ return fn.apply(me, arguments); }; };
 
   (function($, window, document) {
-    var BaseConstraint, BaseControl, CheckboxControl, EchoFormsBuilder, EchoFormsInterface, FormControl, GroupControl, GroupingControl, InputControl, OutputControl, PatternConstraint, RangeControl, RequiredConstraint, SecretControl, SelectControl, SelectrefControl, TextareaControl, TypeConstraint, TypedControl, UrlOutputControl, XPathConstraint, XPathResolver, defaultControls, defaults, echoformsControlUniqueId, pluginName, _ref, _ref1, _ref2, _ref3, _ref4, _ref5, _ref6;
+    var BaseConstraint, BaseControl, CheckboxControl, EchoFormsBuilder, EchoFormsInterface, FormControl, GroupControl, GroupingControl, InputControl, OutputControl, PatternConstraint, RangeControl, RequiredConstraint, SecretControl, SelectControl, SelectrefControl, TextareaControl, TypeConstraint, TypedControl, UrlOutputControl, XPathConstraint, XPathResolver, defaultControls, defaults, echoformsControlUniqueId, execXPath, pluginName, _ref, _ref1, _ref2, _ref3, _ref4, _ref5, _ref6;
+    wgxpath.install(window);
+    execXPath = function(root, xpath, resolver) {
+      var result;
+      if ((xpath != null ? xpath.charAt(0) : void 0) === '[') {
+        xpath = "self::*" + xpath;
+      }
+      if (xpath === "true") {
+        return true;
+      }
+      if (xpath === "false") {
+        return false;
+      }
+      result = document.evaluate(xpath, root[0], resolver, XPathResult.ANY_TYPE, null);
+      switch (result.resultType) {
+        case XPathResult.NUMBER_TYPE:
+          return result.numberValue;
+        case XPathResult.STRING_TYPE:
+          return result.stringValue;
+        case XPathResult.BOOLEAN_TYPE:
+          return result.booleanValue;
+        default:
+          return result.iterateNext();
+      }
+    };
     BaseConstraint = (function() {
       function BaseConstraint(message) {
         this.message = message;
@@ -41,7 +65,7 @@
       }
 
       XPathConstraint.prototype.check = function(value, model, resolver) {
-        return model.xpath(this.xpath, resolver)[0];
+        return execXPath(model, this.xpath, resolver);
       };
 
       return XPathConstraint;
@@ -191,7 +215,7 @@
         if (value instanceof Array && value.length === 0) {
           value = null;
         }
-        return !!value || !model.xpath(this.xpath, resolver)[0];
+        return !!value || !execXPath(model, this.xpath, resolver);
       };
 
       return RequiredConstraint;
@@ -252,7 +276,7 @@
 
       BaseControl.prototype.ref = function() {
         if (this.refExpr != null) {
-          return this.xpath(this.refExpr);
+          return $(this.xpath(this.refExpr));
         } else {
           return this.model;
         }
@@ -277,10 +301,10 @@
       BaseControl.prototype.validate = function() {
         var c, errors;
         if (this.relevantExpr != null) {
-          this.relevant(!!this.xpath(this.relevantExpr)[0]);
+          this.relevant(!!this.xpath(this.relevantExpr));
         }
         if (this.readonlyExpr != null) {
-          this.readonly(!!this.xpath(this.readonlyExpr)[0]);
+          this.readonly(!!this.xpath(this.readonlyExpr));
         }
         errors = (function() {
           var _i, _len, _ref, _ref1, _results;
@@ -302,16 +326,7 @@
       BaseControl.prototype.bindEvents = function() {};
 
       BaseControl.prototype.xpath = function(xpath) {
-        if ((xpath != null ? xpath.charAt(0) : void 0) === '[') {
-          xpath = "." + xpath;
-        }
-        if (xpath === "true") {
-          return [true];
-        }
-        if (xpath === "false") {
-          return [false];
-        }
-        return this.model.xpath(xpath, this.resolver);
+        return execXPath(this.model, xpath, this.resolver);
       };
 
       BaseControl.prototype.element = function() {
@@ -417,13 +432,7 @@
       };
 
       BaseControl.prototype.buildDom = function() {
-        var root;
-        root = this.buildControlDom();
-        root.append(this.buildLabelDom());
-        root.append(this.buildElementsDom());
-        root.append(this.buildHelpDom());
-        root.append(this.buildErrorsDom());
-        return root;
+        return this.buildControlDom().append(this.buildLabelDom()).append(this.buildElementsDom()).append(this.buildHelpDom()).append(this.buildErrorsDom());
       };
 
       return BaseControl;
@@ -538,7 +547,7 @@
 
       OutputControl.prototype.refValue = function() {
         if (this.valueExpr) {
-          return this.xpath(this.valueExpr)[0];
+          return this.xpath(this.valueExpr);
         } else {
           return OutputControl.__super__.refValue.call(this);
         }
@@ -926,13 +935,13 @@
         this.controlClasses = controlClasses;
         this.resolver = new XPathResolver(xml).resolve;
         doc = $($.parseXML(xml));
-        this.model = model = doc.xpath('//echoforms:form/echoforms:model/echoforms:instance', this.resolver);
-        this.ui = ui = doc.xpath('//echoforms:form/echoforms:ui', this.resolver);
-        this.control = new FormControl(ui, model, this.controlClasses, this.resolver);
+        this.model = model = doc.find('form > model> instance');
+        this.ui = ui = doc.find('form > ui');
+        window.doc = doc;
         window.ui = ui;
         window.model = model;
         window.resolver = this.resolver;
-        window.control = this.control;
+        this.control = new FormControl(ui, model, this.controlClasses, this.resolver);
       }
 
       EchoFormsBuilder.prototype.element = function() {
