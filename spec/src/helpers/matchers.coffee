@@ -37,3 +37,9 @@ beforeEach ->
     toBeReadonly: () ->
       control = $(@actual)
       control.is('.echoforms-readonly') && control.find(':input').not('[readonly]').length == 0
+
+    toMatchXml: (expected) ->
+      expected = expected.replace(/\s+/g, ' ').replace('> <', '><')
+      actual = @actual.replace(/\s+/g, ' ').replace('> <', '><')
+
+      expected == actual

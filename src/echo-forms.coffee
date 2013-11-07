@@ -29,49 +29,58 @@
         prefix = " default "
       result
 
-  class EchoFormsBuilder
-    @uniqueId: 0
+  class EchoFormsInterface
+    constructor: (@root, options) ->
+      @options = $.extend({}, defaults, options)
+      @form = form = @options['form']
+      @controlClasses = controlClasses = @options['controls'].concat(defaultControls)
 
-    constructor: (xml, @controlClasses) ->
-      @resolver = new XPathResolver(xml).resolve
+      unless form?
+        error "You must specify a 'form' option when creating an echoform instance"
 
-      doc = $(parseXML(xml))
+      @resolver = resolver = new XPathResolver(form).resolve
+      @doc = doc = $(parseXML(form))
       @model = model = doc.find('form > model> instance')
       @ui = ui = doc.find('form > ui')
 
-      # DELETE ME
-      window.doc = doc
-      window.ui = ui
-      window.model = model
-      window.resolver = @resolver
+      @control = new FormControl(ui, model, controlClasses, resolver)
+      @root.append(@control.element())
 
-      @control = new FormControl(ui, model, @controlClasses, @resolver)
+    destroy: ->
+      @root.removeData('echoform').empty()
 
-    element: ->
-      @control.element()
+    isValid: ->
+      @control.isValid()
 
+    serialize: ->
+      @control.serialize()
 
-  class EchoFormsInterface
-    @inputTimeout: null
+  $.fn[pluginName] = (args...) ->
+    if args.length > 0 && typeof args[0] == 'string'
+      # Method call
+      [method, args...] = args
+      result = @map ->
+        form = $.data(this, "echoform")
 
-    constructor: (@root, options) ->
-      @options = $.extend({}, defaults, options)
-      @form = @options['form'] ? root.find('.echoforms-xml').text()
-      @controlClasses = @options['controls'].concat(defaultControls)
-      @_defaults = defaults
-      @_name = pluginName
-
-      @root = root = $(root)
-
-      @builder = new EchoFormsBuilder(@form, @controlClasses)
-      root.append(@builder.element())
-
-  # A really lightweight plugin wrapper around the constructor,
-  # preventing against multiple instantiations
-  $.fn[pluginName] = (options) ->
-    @each ->
-    if !$.data(this, "echoformsInterface")
-      $.data(this, "echoformsInterface", new EchoFormsInterface(this, options))
+        if /^debug_/.test(method)
+          [x, attr...] = method.split('_')
+          form[attr.join('_')]
+        else if !/^_/.test(method) && typeof form?[method] == 'function'
+          form[method](args...)
+        else
+          err "Could not call #{method} on echoform instance:", this
+          null
+      result[0]
+    else if args.length < 2
+      @each ->
+        # Constructor call
+        options = args[0]
+        # Prevent multiple instantiations
+        if !$.data(this, "echoform")
+          $.data(this, "echoform", new EchoFormsInterface($(this), options))
+    else
+      err "Bad arguments to echoform:", args
+      this
 
   $(document).ready ->
     #formatXml = (xml) ->

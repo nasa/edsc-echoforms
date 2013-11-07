@@ -1,23 +1,7 @@
-  log = (args...) ->
-    console.log(args...) if window.console && console.log
-
-  debug = (args...) ->
-    if console && console.debug
-      console.debug(args...)
-    else
-      log(args...)
-
-  warn = (args...) ->
-    if console && console.warn
-      console.warn(args...)
-    else
-      log(args...)
-
-  error = (args...) ->
-    if console && console.error
-      console.error(args...)
-    else
-      log(args...)
+  log =   (args...) -> console?.log?(args...)
+  debug = (args...) -> console?.debug?(args...)
+  warn =  (args...) -> console?.warn?(args...)
+  error = err = (args...) -> console?.error?(args...)
 
   wgxpath.install(window)
 

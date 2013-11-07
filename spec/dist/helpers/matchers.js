@@ -49,6 +49,12 @@
         var control;
         control = $(this.actual);
         return control.is('.echoforms-readonly') && control.find(':input').not('[readonly]').length === 0;
+      },
+      toMatchXml: function(expected) {
+        var actual;
+        expected = expected.replace(/\s+/g, ' ').replace('> <', '><');
+        actual = this.actual.replace(/\s+/g, ' ').replace('> <', '><');
+        return expected === actual;
       }
     });
   });

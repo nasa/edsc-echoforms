@@ -1,0 +1,56 @@
+  <form xmlns="http://echo.nasa.gov/v9/echoforms" xmlns:echo="http://provider_refer_system_must_match_this" xmlns:xs="http://www.w3.org/2001/XMLSchema" targetNamespace="http://for_further_reference">
+    <!-- This form creates ASF options for SAR frame products.
+   Author: Matthew Moore <mmoore@asf.alaska.edu>
+   Based on example provided by Lei Fang <lfang@sesda2.com>
+   Split for frame L0
+-->
+    <import name="ECHO_SYSTEM_OPTIONS_V2"/>
+    <model>
+      <instance>
+        <providerOptions xmlns="http://schema_verify_provider_instance_and_match_alias" xmlns:prov="http://schema_verify_provider_instance_and_match_alias">
+          <processingType/>
+          <processingOption/>
+          <processingResolution/>
+          <browseType/>
+          <mediaType/>
+          <mediaLabel/>
+          <shippingInfo>
+            <shippingMethod/>
+            <fedexAccountNum/>
+          </shippingInfo>
+        </providerOptions>
+      </instance>
+    </model>
+    <ui>
+      <!-- Renamed Processing Options to Order Options -->
+      <selectref idref="echo:processingTypeSelect" label="Offered Data Processing Types" ref="prov:processingType" required="true">
+        <item label="Level Zero" value="L0"/>
+      </selectref>
+      <!-- create different selection of processing option based on processing type -->
+      <selectref idref="echo:processingOptionSelect" label="Processing Option for Processing Level 0" ref="prov:processingOption" relevant="prov:processingType/prov:value='L0'" required="true">
+        <item label="CEOS" value="CEOS"/>
+        <item label="STF" value="STF"/>
+      </selectref>
+      <!-- browse image types relevant for all frame processing types -->
+      <select id="browseTypeSelect" label="Offered Browse Image Types" ref="prov:browseType" required="true" type="xs:string" valueElementName="value">
+        <item label="JPEG" value="JPEG"/>
+        <item label="TIFF" value="TIFF"/>
+      </select>
+      <selectref idref="echo:mediaTypeSelect" label="Offered Media Delivery Types for Level 0 Products" ref="prov:mediaType" relevant="prov:processingType/prov:value='L0'" required="true">
+        <item label="FTP Pull" value="FTPPULL"/>
+        <item label="Digital Versatile Disc (DVD)" value="DVD"/>
+        <!-- CDROM is not available for L0 products because they won't fit -->
+      </selectref>
+      <!-- The Order & Media Label is relevant for all media types -->
+      <textarea id="mediaLabelTextArea" label="Order and Media Label" ref="prov:mediaLabel" type="xs:string"/>
+      <group label="Media Shipping Information" ref="prov:shippingInfo" relevant="prov:mediaType/prov:value='DVD'">
+        <!-- Need to select a Shipping Method for physical media -->
+        <selectref idref="echo:shippingMethodSelect" label="Offered Shipping Methods for Media Products" ref="prov:shippingMethod">
+          <item label="US Mail" value="USPS"/>
+          <item label="Pick Up" value="PICKUP"/>
+          <item label="Federal Express" value="FEDEX"/>
+        </selectref>
+        <textarea id="fedexAccountNumTextArea" label="FEDEX Account Number" ref="prov:fedexAccountNum" relevant="prov:shippingMethod/prov:value ='FEDEX'" type="xs:string"/>
+      </group>
+    </ui>
+  </form>

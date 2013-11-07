@@ -5,40 +5,26 @@
     __bind = function(fn, me){ return function(){ return fn.apply(me, arguments); }; };
 
   (function($, window, document) {
-    var BaseConstraint, BaseControl, CheckboxControl, EchoFormsBuilder, EchoFormsInterface, FormControl, GroupControl, GroupingControl, InputControl, OutputControl, PatternConstraint, RangeControl, RequiredConstraint, SecretControl, SelectControl, SelectrefControl, TextareaControl, TypeConstraint, TypedControl, UrlOutputControl, XPathConstraint, XPathResolver, debug, defaultControls, defaults, echoformsControlUniqueId, error, execXPath, log, parseXML, pluginName, warn, _ref, _ref1, _ref2, _ref3, _ref4, _ref5, _ref6;
+    var BaseConstraint, BaseControl, CheckboxControl, EchoFormsInterface, FormControl, GroupControl, GroupingControl, InputControl, OutputControl, PatternConstraint, RangeControl, RequiredConstraint, SecretControl, SelectControl, SelectrefControl, TextareaControl, TypeConstraint, TypedControl, UrlOutputControl, XPathConstraint, XPathResolver, debug, defaultControls, defaults, echoformsControlUniqueId, err, error, execXPath, log, parseXML, pluginName, warn, _ref, _ref1, _ref2, _ref3, _ref4, _ref5, _ref6;
     log = function() {
       var args;
       args = 1 <= arguments.length ? __slice.call(arguments, 0) : [];
-      if (window.console && console.log) {
-        return console.log.apply(console, args);
-      }
+      return typeof console !== "undefined" && console !== null ? typeof console.log === "function" ? console.log.apply(console, args) : void 0 : void 0;
     };
     debug = function() {
       var args;
       args = 1 <= arguments.length ? __slice.call(arguments, 0) : [];
-      if (console && console.debug) {
-        return console.debug.apply(console, args);
-      } else {
-        return log.apply(null, args);
-      }
+      return typeof console !== "undefined" && console !== null ? typeof console.debug === "function" ? console.debug.apply(console, args) : void 0 : void 0;
     };
     warn = function() {
       var args;
       args = 1 <= arguments.length ? __slice.call(arguments, 0) : [];
-      if (console && console.warn) {
-        return console.warn.apply(console, args);
-      } else {
-        return log.apply(null, args);
-      }
+      return typeof console !== "undefined" && console !== null ? typeof console.warn === "function" ? console.warn.apply(console, args) : void 0 : void 0;
     };
-    error = function() {
+    error = err = function() {
       var args;
       args = 1 <= arguments.length ? __slice.call(arguments, 0) : [];
-      if (console && console.error) {
-        return console.error.apply(console, args);
-      } else {
-        return log.apply(null, args);
-      }
+      return typeof console !== "undefined" && console !== null ? typeof console.error === "function" ? console.error.apply(console, args) : void 0 : void 0;
     };
     wgxpath.install(window);
     execXPath = function(root, xpath, resolver) {
@@ -981,53 +967,69 @@
       return XPathResolver;
 
     })();
-    EchoFormsBuilder = (function() {
-      EchoFormsBuilder.uniqueId = 0;
-
-      function EchoFormsBuilder(xml, controlClasses) {
-        var doc, model, ui;
-        this.controlClasses = controlClasses;
-        this.resolver = new XPathResolver(xml).resolve;
-        doc = $(parseXML(xml));
-        this.model = model = doc.find('form > model> instance');
-        this.ui = ui = doc.find('form > ui');
-        window.doc = doc;
-        window.ui = ui;
-        window.model = model;
-        window.resolver = this.resolver;
-        this.control = new FormControl(ui, model, this.controlClasses, this.resolver);
-      }
-
-      EchoFormsBuilder.prototype.element = function() {
-        return this.control.element();
-      };
-
-      return EchoFormsBuilder;
-
-    })();
     EchoFormsInterface = (function() {
-      EchoFormsInterface.inputTimeout = null;
-
       function EchoFormsInterface(root, options) {
-        var _ref7;
+        var controlClasses, doc, form, model, resolver, ui;
         this.root = root;
         this.options = $.extend({}, defaults, options);
-        this.form = (_ref7 = this.options['form']) != null ? _ref7 : root.find('.echoforms-xml').text();
-        this.controlClasses = this.options['controls'].concat(defaultControls);
-        this._defaults = defaults;
-        this._name = pluginName;
-        this.root = root = $(root);
-        this.builder = new EchoFormsBuilder(this.form, this.controlClasses);
-        root.append(this.builder.element());
+        this.form = form = this.options['form'];
+        this.controlClasses = controlClasses = this.options['controls'].concat(defaultControls);
+        if (form == null) {
+          error("You must specify a 'form' option when creating an echoform instance");
+        }
+        this.resolver = resolver = new XPathResolver(form).resolve;
+        this.doc = doc = $(parseXML(form));
+        this.model = model = doc.find('form > model> instance');
+        this.ui = ui = doc.find('form > ui');
+        this.control = new FormControl(ui, model, controlClasses, resolver);
+        this.root.append(this.control.element());
       }
+
+      EchoFormsInterface.prototype.destroy = function() {
+        return this.root.removeData('echoform').empty();
+      };
+
+      EchoFormsInterface.prototype.isValid = function() {
+        return this.control.isValid();
+      };
+
+      EchoFormsInterface.prototype.serialize = function() {
+        return this.control.serialize();
+      };
 
       return EchoFormsInterface;
 
     })();
-    $.fn[pluginName] = function(options) {
-      this.each(function() {});
-      if (!$.data(this, "echoformsInterface")) {
-        return $.data(this, "echoformsInterface", new EchoFormsInterface(this, options));
+    $.fn[pluginName] = function() {
+      var args, method, result, _ref7;
+      args = 1 <= arguments.length ? __slice.call(arguments, 0) : [];
+      if (args.length > 0 && typeof args[0] === 'string') {
+        _ref7 = args, method = _ref7[0], args = 2 <= _ref7.length ? __slice.call(_ref7, 1) : [];
+        result = this.map(function() {
+          var attr, form, x, _ref8;
+          form = $.data(this, "echoform");
+          if (/^debug_/.test(method)) {
+            _ref8 = method.split('_'), x = _ref8[0], attr = 2 <= _ref8.length ? __slice.call(_ref8, 1) : [];
+            return form[attr.join('_')];
+          } else if (!/^_/.test(method) && typeof (form != null ? form[method] : void 0) === 'function') {
+            return form[method].apply(form, args);
+          } else {
+            err("Could not call " + method + " on echoform instance:", this);
+            return null;
+          }
+        });
+        return result[0];
+      } else if (args.length < 2) {
+        return this.each(function() {
+          var options;
+          options = args[0];
+          if (!$.data(this, "echoform")) {
+            return $.data(this, "echoform", new EchoFormsInterface($(this), options));
+          }
+        });
+      } else {
+        err("Bad arguments to echoform:", args);
+        return this;
       }
     };
     return $(document).ready(function() {});
