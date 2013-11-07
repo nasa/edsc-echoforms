@@ -35,8 +35,8 @@ module.exports = function(grunt) {
 		// Minify definitions
 		uglify: {
 			my_target: {
-				src: ["dist/echoforms.js"],
-				dest: "dist/echoforms.min.js"
+				src: ["dist/jquery.echoforms.js"],
+				dest: "dist/jquery.echoforms.min.js"
 			},
 			options: {
 				report: 'min',
@@ -54,7 +54,7 @@ module.exports = function(grunt) {
                   "src/constraints.coffee",
                   "src/controls.coffee",
                   "src/echoforms.coffee"],
-            dest: "dist/echoforms.js"
+            dest: "dist/jquery.echoforms.js"
           },
           {
             expand: true,
@@ -83,7 +83,7 @@ module.exports = function(grunt) {
     sass: {
       dist: {
         files: {
-          'dist/echoforms.min.css': 'src/echoforms.scss'
+          'dist/jquery.echoforms.min.css': 'src/echoforms.scss'
         },
         options: {
           style: 'compressed'

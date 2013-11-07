@@ -13,8 +13,8 @@
 
   <!-- include source files here... -->
 	<script src="../dist/wgxpath.install.js"></script>
-	<script src="../dist/echoforms.js"></script>
-  <link rel="stylesheet" href="../dist/echoforms.min.css">
+	<script src="../dist/jquery.echoforms.js"></script>
+  <link rel="stylesheet" href="../dist/jquery.echoforms.min.css">
 
   <!-- include spec helpers here... -->
   <script src="dist/helpers/pending.js"></script>
@@ -76,15 +76,8 @@
         }
       }
 
-      function printName() {
-        if (console && console.log) {
-          console.log('-----', this.env.currentSpec.getFullName(), '-----');
-        }
-      }
-
       function execJasmine() {
         window.dom = $('#dom');
-        beforeEach(printName);
         afterEach(clearDom);
         jasmineEnv.execute();
       }
