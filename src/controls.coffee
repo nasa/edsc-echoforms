@@ -290,8 +290,6 @@
         el.attr('multiple', 'multiple')
       else
         el.append('<option value=""> -- Select a value -- </option>')
-      if @isOpen
-        el.addClass('echoforms-element-select-open')
       for [label, value] in @items
         el.append("<option value=\"#{value}\">#{label}</option>")
       el

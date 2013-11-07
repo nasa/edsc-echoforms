@@ -742,9 +742,6 @@
         } else {
           el.append('<option value=""> -- Select a value -- </option>');
         }
-        if (this.isOpen) {
-          el.addClass('echoforms-element-select-open');
-        }
         _ref3 = this.items;
         for (_i = 0, _len = _ref3.length; _i < _len; _i++) {
           _ref4 = _ref3[_i], label = _ref4[0], value = _ref4[1];
