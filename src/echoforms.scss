@@ -1,7 +1,66 @@
+  //-moz-box-sizing: border-box;
+  //box-sizing: border-box;
 
+
+// The root control
+.echoforms-control-ui {
+}
+
+// All controls
 .echoforms-control {
   clear: both;
-  padding: .5em;
-  margin: .5em;
+  padding: .5em 0;
+  margin: .5em 0;
+}
+
+.echoforms-control-group {
   border: 1px solid #aaa;
+  border-width: 1px 0px;
+
+  &:first-child {
+    border-top-width: 0;
+  }
+  &:last-child {
+    border-bottom-width: 0;
+  }
+}
+
+.echoforms-control-checkbox {
+  .echoforms-elements {
+    display: inline;
+  }
+
+  .echoforms-control-label {
+    display: inline;
+    float: none;
+  }
+}
+
+.echoforms-control-output {
+  .echoforms-elements {
+    padding:.3em 0 .2em;
+  }
+}
+
+label.echoforms-control-label {
+  float: left;
+  width: 10em;
+  padding: .3em .5em .2em;
+  text-align: right;
+}
+
+.echoforms-elements {
+  p {
+    margin: 0;
+    padding: 0;
+  }
+}
+
+.echoforms-help, .echoforms-control-label, .echoforms-elements, .echoforms-errors, .echoforms-control {
+  display: block;
+  padding: .2em 0;
+}
+
+label.echoforms-help, .echoforms-elements, .echoforms-errors {
+  margin-left: 11em;
 }

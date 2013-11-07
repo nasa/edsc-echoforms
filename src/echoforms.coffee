@@ -47,7 +47,13 @@
 
       @resolver = resolver = new XPathResolver(form).resolve
       @doc = doc = $(parseXML(form))
-      @model = model = doc.find('form > model> instance')
+
+      # This is funky.  We want the model to just deal with namespaces as it defines them.
+      # This fixes a problem where provider forms change the default namespace for the model.
+      #modelXml = $('<div>').append(doc.find('form > model > instance > *')).html()
+      #@resolver = resolver = new XPathResolver(modelXml).resolve
+
+      @model = model = doc.find('form > model > instance')
       @ui = ui = doc.find('form > ui')
 
       @control = new FormControl(ui, model, controlClasses, resolver)
@@ -69,7 +75,10 @@
       result = @map ->
         form = $.data(this, "echoforms")
 
-        if /^debug_/.test(method)
+        if !form
+          warn "ECHO Form not found on instance"
+          this
+        else if /^debug_/.test(method)
           [x, attr...] = method.split('_')
           form[attr.join('_')]
         else if !/^_/.test(method) && typeof form?[method] == 'function'

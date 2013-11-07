@@ -197,7 +197,8 @@
     buildDom: ->
       # Put the label after the element as is expected of checkboxes
       result = super()
-      result.find('.echoforms-elements').after(result.find('.echoforms-control-label'))
+      result.addClass('echoforms-control-checkbox')
+      result.children('.echoforms-elements').after(result.children('.echoforms-control-label'))
       result
 
 
@@ -352,10 +353,12 @@
 
   class FormControl extends GroupingControl
     constructor: (ui, model, controlClasses, resolver) ->
-      ui.attr('ref', model.children()[0].nodeName)
       super(ui, model, controlClasses, resolver)
       @el.bind 'echoforms:modelchange', => @loadFromModel()
       @loadFromModel()
+
+    ref: ->
+      @model.children()
 
     isValid: ->
       @el.find('.echoforms-error').length == 0
@@ -382,7 +385,7 @@
 
     buildDom: ->
       result = super()
-      result.find('.echoforms-control-label').after(result.find('.echoforms-help'))
+      result.children('.echoforms-control-label').after(result.children('.echoforms-help'))
       result
 
   #####################

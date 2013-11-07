@@ -568,7 +568,8 @@
       CheckboxControl.prototype.buildDom = function() {
         var result;
         result = CheckboxControl.__super__.buildDom.call(this);
-        result.find('.echoforms-elements').after(result.find('.echoforms-control-label'));
+        result.addClass('echoforms-control-checkbox');
+        result.children('.echoforms-elements').after(result.children('.echoforms-control-label'));
         return result;
       };
 
@@ -870,13 +871,16 @@
 
       function FormControl(ui, model, controlClasses, resolver) {
         var _this = this;
-        ui.attr('ref', model.children()[0].nodeName);
         FormControl.__super__.constructor.call(this, ui, model, controlClasses, resolver);
         this.el.bind('echoforms:modelchange', function() {
           return _this.loadFromModel();
         });
         this.loadFromModel();
       }
+
+      FormControl.prototype.ref = function() {
+        return this.model.children();
+      };
 
       FormControl.prototype.isValid = function() {
         return this.el.find('.echoforms-error').length === 0;
@@ -924,7 +928,7 @@
       GroupControl.prototype.buildDom = function() {
         var result;
         result = GroupControl.__super__.buildDom.call(this);
-        result.find('.echoforms-control-label').after(result.find('.echoforms-help'));
+        result.children('.echoforms-control-label').after(result.children('.echoforms-help'));
         return result;
       };
 
@@ -988,7 +992,7 @@
         }
         this.resolver = resolver = new XPathResolver(form).resolve;
         this.doc = doc = $(parseXML(form));
-        this.model = model = doc.find('form > model> instance');
+        this.model = model = doc.find('form > model > instance');
         this.ui = ui = doc.find('form > ui');
         this.control = new FormControl(ui, model, controlClasses, resolver);
         this.root.append(this.control.element());
@@ -1017,7 +1021,10 @@
         result = this.map(function() {
           var attr, form, x, _ref7;
           form = $.data(this, "echoforms");
-          if (/^debug_/.test(method)) {
+          if (!form) {
+            warn("ECHO Form not found on instance");
+            return this;
+          } else if (/^debug_/.test(method)) {
             _ref7 = method.split('_'), x = _ref7[0], attr = 2 <= _ref7.length ? __slice.call(_ref7, 1) : [];
             return form[attr.join('_')];
           } else if (!/^_/.test(method) && typeof (form != null ? form[method] : void 0) === 'function') {

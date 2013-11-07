@@ -6,15 +6,58 @@
 	  <script src="../dist/wgxpath.install.js"></script>
 		<script src="../dist/jquery.echoforms.js"></script>
     <link rel="stylesheet" href="../dist/jquery.echoforms.min.css">
-	</head>
-	<body>
+
+    <style>
+      #demo-echoforms-form {
+        margin:1em 0;
+        border: 1px solid #888;
+      }
+      #demo-echoforms-form h1 {
+        font-size: 1.3em;
+      }
+      #demo-echoforms-xml {
+        width: 100%;
+        height: 20em;
+      }
+      body {
+        padding: 0 5em;
+      }
+    </style>
+
 		<script>
 			$(function() {
-				$("#echoform").echoforms({form: $('#echoforms-xml').val()});
+        var root = "#demo-echoforms-form";
+        var source = "#demo-echoforms-xml";
+        var model = "#demo-echoforms-model";
+
+        function loadForm() {
+				  $(root).echoforms({form: $(source).val()});
+        }
+
+        function reloadForm() {
+          $(root).echoforms('destroy');
+          loadForm();
+        }
+
+        function displayModel() {
+          var modelString = $(root).echoforms('serialize');
+          $(model).text(modelString);
+        }
+
+        loadForm();
+        displayModel();
+
+        $(source).on('change', reloadForm)
+        $(root).on('echoforms:modelchange', displayModel)
 			});
 		</script>
 
-    <textarea id="echoforms-xml" class="echoforms-xml">
+	</head>
+	<body>
+    <h1>ECHO Forms jQuery Plugin Demo</h1>
+    <h2>ECHO Forms XML</h2>
+    <p>Enter ECHO Forms XML in the box below to see it rendered</p>
+    <textarea id="demo-echoforms-xml">
     &lt;form xmlns=&quot;http://echo.nasa.gov/v9/echoforms&quot;
           xmlns:xs=&quot;http://www.w3.org/2001/XMLSchema&quot;
           targetNamespace=&quot;http://www.example.com/echoforms&quot;&gt;
@@ -85,7 +128,11 @@
       &lt;/ui&gt;
     &lt;/form&gt;
     </textarea>
-    <form id="echoform" class="echoforms-form">
+    <h2>Generated Interface</h2>
+    <form id="demo-echoforms-form">
     </form>
+    <h2>Serialized Model</h2>
+    <pre id="demo-echoforms-model">
+    </pre>
 	</body>
 </html>
