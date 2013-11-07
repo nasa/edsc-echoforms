@@ -6,7 +6,7 @@
       return it('removes the ECHO Form from the DOM', function() {
         template.form(dom);
         expect(dom).not.toBeEmpty();
-        dom.echoform('destroy');
+        dom.echoforms('destroy');
         return expect(dom).toBeEmpty();
       });
     });
@@ -15,25 +15,25 @@
         template.form(dom, {
           attributes: 'required="true()"'
         });
-        expect(dom.echoform('isValid')).toBe(false);
+        expect(dom.echoforms('isValid')).toBe(false);
         $('#reference :input').val('some value').change();
-        expect(dom.echoform('isValid')).toBe(true);
+        expect(dom.echoforms('isValid')).toBe(true);
         $('#reference :input').val('').change();
-        return expect(dom.echoform('isValid')).toBe(false);
+        return expect(dom.echoforms('isValid')).toBe(false);
       });
     });
     return describe('"serialize" method', function() {
       it("returns the model's serialized XML string", function() {
         template.form(dom);
         $('#reference :input').val('some value').change();
-        return expect(dom.echoform('serialize')).toMatchXml("<prov:options xmlns:prov=\"http://www.example.com/orderoptions\">\n  <prov:reference>some value</prov:reference>\n</prov:options>");
+        return expect(dom.echoforms('serialize')).toMatchXml("<prov:options xmlns:prov=\"http://www.example.com/orderoptions\">\n  <prov:reference>some value</prov:reference>\n</prov:options>");
       });
       return it("prunes irrelevant values from the serialized XML", function() {
         template.form(dom, {
           attributes: 'relevant="false()"'
         });
         $('#reference :input').val('some value').change();
-        return expect(dom.echoform('serialize')).toMatchXml("<prov:options xmlns:prov=\"http://www.example.com/orderoptions\">\n</prov:options>");
+        return expect(dom.echoforms('serialize')).toMatchXml("<prov:options xmlns:prov=\"http://www.example.com/orderoptions\">\n</prov:options>");
       });
     });
   });

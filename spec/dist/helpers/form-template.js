@@ -33,7 +33,7 @@
       if (varmap == null) {
         varmap = {};
       }
-      return dom.echoform({
+      return dom.echoforms({
         form: this.xml(varmap)
       });
     };

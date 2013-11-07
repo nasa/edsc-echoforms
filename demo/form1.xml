@@ -26,16 +26,16 @@
         <input id="input" label="Input" a="a" ref="prov:reference">
           <help>Helpful text</help>
         </input>
-        <input id="input" label="Bool input" a="a" ref="prov:boolreference" type="xs:boolean">
+        <input id="boolinput" label="Bool input" a="a" ref="prov:boolreference" type="xs:boolean">
           <help>Helpful text</help>
         </input>
-        <input id="input" label="Relevant based on checkbox" relevant="prov:boolreference='true'" a="a" ref="prov:reference">
+        <input id="relevantinput" label="Relevant based on checkbox" relevant="prov:boolreference='true'" a="a" ref="prov:reference">
         </input>
-        <input id="input" label="Readonly based on checkbox" readonly="prov:boolreference='true'" a="a" ref="prov:reference">
+        <input id="readonlyinput" label="Readonly based on checkbox" readonly="prov:boolreference='true'" a="a" ref="prov:reference">
         </input>
-        <input id="input" label="Required based on checkbox" required="prov:boolreference='true'" a="a" ref="prov:reference">
+        <input id="requiredinput" label="Required based on checkbox" required="prov:boolreference='true'" a="a" ref="prov:reference">
         </input>
-        <input id="input" label="Date input" a="a" ref="prov:reference" type="xs:datetime">
+        <input id="dateinput" label="Date input" a="a" ref="prov:reference" type="xs:datetime">
           <help>Helpful text</help>
         </input>
         <textarea id="textarea" label="Textarea" a="a" ref="prov:reference">
@@ -47,7 +47,7 @@
         <output id="output" label="Output" a="a" ref="prov:reference">
           <help>Helpful text</help>
         </output>
-        <output id="output" label="URL Output" type="xs:anyURI" a="a" ref="prov:reference">
+        <output id="urloutput" label="URL Output" type="xs:anyURI" a="a" ref="prov:reference">
           <help>Helpful text</help>
         </output>
         <range id="range" label="Range" start="1" stop="10" step="1" type="xs:int" a="a" ref="prov:reference">

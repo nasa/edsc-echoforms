@@ -1,12 +1,12 @@
 {
-  "name": "echo-forms.js",
+  "name": "echoforms.js",
   "description": "A Javascript implementation of the ECHO Forms.",
   "keywords": [
     "jquery",
     "echo",
     "reverb",
     "forms",
-    "echo-forms",
+    "echoforms",
     "echo forms",
     "plugins"
   ],

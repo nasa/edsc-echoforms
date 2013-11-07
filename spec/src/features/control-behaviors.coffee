@@ -42,16 +42,16 @@ window.sharedBehaviorForControls = (template, options={}) ->
       $('#reference :input').val('visible').change()
       expect($('#control')).toBeVisible()
 
-  describe '"required" attribute', ->
-    it "contains an xpath which requires the control to have a value when it evaluates to true", ->
-      template.form(dom, attributes: 'required="prov:reference=\'required\'"')
-      expect('#control').not.toHaveError('Required field')
-      $('#reference :input').val('required').change()
-      expect('#control').toHaveError('Required field')
-      $('#reference :input').val('optional').change()
-      expect('#control').not.toHaveError('Required field')
+  unless options['skip_input_specs']
+    describe '"required" attribute', ->
+      it "contains an xpath which requires the control to have a value when it evaluates to true", ->
+        template.form(dom, attributes: 'required="prov:reference=\'required\'"')
+        expect('#control').not.toHaveError('Required field')
+        $('#reference :input').val('required').change()
+        expect('#control').toHaveError('Required field')
+        $('#reference :input').val('optional').change()
+        expect('#control').not.toHaveError('Required field')
 
-    unless options['skip_input_specs']
       it "produces no error if the control has a non-empty value", ->
         template.form(dom, attributes: 'required="prov:reference=\'required\'"')
         $('#reference :input').val('required').change()

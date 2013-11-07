@@ -15,4 +15,4 @@ class window.FormTemplate
     result
 
   form: (dom, varmap={}) ->
-    dom.echoform(form: @xml(varmap))
+    dom.echoforms(form: @xml(varmap))

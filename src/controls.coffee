@@ -1,6 +1,3 @@
-  # TODO Reverb jQuery compatibility ($.on)
-  # TODO documentation
-  #
   # Note: There's a pretty fantastic opportunity for optimization here.
   # All node xpaths are alphanumeric with at least one colon and 0 or
   # more forward slashes, periods, and dashes, possibly (rarely) followed
@@ -27,7 +24,6 @@
 
       @loadConstraints()
       @el = @buildDom()
-      @bindEvents()
 
     loadConstraints: ->
       @constraints  = []
@@ -67,8 +63,6 @@
 
     saveToModel: ->
 
-    bindEvents: ->
-
     xpath: (xpath) ->
       execXPath(@model, xpath, @resolver)
 
@@ -89,7 +83,8 @@
           @el.toggle(isRelevant)
           ref = @ref()
           ref.toggleClass('echoforms-pruned', !isRelevant)
-          ref.removeAttr('class') if ref.attr('class') == '' # Ensure there's no class="" from the previous statement
+          # Ensure there's no class="" from the previous statement
+          ref.removeAttr('class') if ref.attr('class') == ''
       else
         !@el.hasClass('echoforms-irrelevant')
 
@@ -158,6 +153,7 @@
     constructor: (ui, model, controlClasses, resolver) ->
       @inputType = (ui.attr('type') ? 'string').replace(/^.*:/, '').toLowerCase()
       super(ui, model, controlClasses, resolver)
+      @inputs().bind('click change', @onChange)
 
     loadConstraints: ->
       super()
@@ -165,9 +161,6 @@
 
     inputs: () ->
       @_inputs ?= @el.find(':input')
-
-    bindEvents: ->
-      @inputs().bind('click change', @onChange)
 
     inputValue:() ->
       $.trim(@inputs().val())
@@ -192,6 +185,7 @@
 
   class CheckboxControl extends InputControl
     @selector: 'input[type$=boolean]'
+    inputElementType: 'checkbox'
 
     inputValue:() ->
       @inputs().is(':checked').toString()
@@ -200,7 +194,12 @@
       super()
       @inputs().attr('checked', @refValue() == 'true') if @refExpr
 
-    inputElementType: 'checkbox'
+    buildDom: ->
+      # Put the label after the element as is expected of checkboxes
+      result = super()
+      result.find('.echoforms-elements').after(result.find('.echoforms-control-label'))
+      result
+
 
   class OutputControl extends TypedControl
     @selector: 'output'
@@ -276,10 +275,6 @@
         result = if result? then [result] else []
       result
 
-    isChanged: (newValue) ->
-      @refValue() != @inputValue() || !@refExpr
-
-
     buildElementsChildrenDom: ->
       el = $("<select id=\"#{@id}-element\" class=\"echoforms-element-select\" autocomplete=\"off\"/>")
       if @isMultiple
@@ -318,8 +313,11 @@
   #####################
 
   class GroupingControl extends BaseControl
-    # TODO Required needs to be ignored
-    # TODO read only needs to be inherited
+    constructor: (ui, model, controlClasses, resolver) ->
+      # Grouping controls ignore the 'required' attribute
+      ui.removeAttr('required')
+      super(ui, model, controlClasses, resolver)
+
     inputs: () -> $()
 
     loadFromModel: ->
@@ -347,21 +345,17 @@
       root
 
     updateReadonly: (isReadonly) ->
+      # Grouping controls cause child controls to inherit the readonly flag
       super(isReadonly)
       for control in @controls
         control.updateReadonly(isReadonly)
-
-
 
   class FormControl extends GroupingControl
     constructor: (ui, model, controlClasses, resolver) ->
       ui.attr('ref', model.children()[0].nodeName)
       super(ui, model, controlClasses, resolver)
+      @el.bind 'echoforms:modelchange', => @loadFromModel()
       @loadFromModel()
-
-    bindEvents: ->
-      @el.bind 'echoforms:modelchange', =>
-        @loadFromModel()
 
     isValid: ->
       @el.find('.echoforms-error').length == 0
@@ -373,7 +367,23 @@
 
   class GroupControl extends GroupingControl
     @selector: 'group'
-    # TODO Headers and footers
+
+    buildLabelDom: ->
+      if @label?
+        $("<h1 class=\"echoforms-control-label\">#{@label}</h1>")
+      else
+        $()
+
+    buildHelpDom: ->
+      result = $()
+      for help in @ui.children('help')
+        result = result.add("<p class=\"echoforms-help\">#{$(help).text()}</>")
+      result
+
+    buildDom: ->
+      result = super()
+      result.find('.echoforms-control-label').after(result.find('.echoforms-help'))
+      result
 
   #####################
   # Reference Controls
@@ -389,19 +399,3 @@
       ui.attr('valueElementName', 'value') unless valueElementName?
 
       super(ui, model, controlClasses, resolver)
-
-  defaultControls = [
-    # Typed controls
-    CheckboxControl, InputControl,
-    UrlOutputControl, OutputControl,
-    SelectControl,
-    RangeControl,
-    SecretControl,
-    TextareaControl,
-
-    # Grouping controls
-    GroupControl,
-
-    # Reference controls
-    SelectrefControl,
-    ]

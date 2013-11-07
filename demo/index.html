@@ -4,86 +4,87 @@
 		<title>ECHO Forms</title>
 	  <script src="http://ajax.googleapis.com/ajax/libs/jquery/2.0.3/jquery.min.js"></script>
 	  <script src="../dist/wgxpath.install.js"></script>
-		<script src="../dist/echo-forms.js"></script>
-    <link rel="stylesheet" href="../dist/echo-forms.min.css">
+		<script src="../dist/echoforms.js"></script>
+    <link rel="stylesheet" href="../dist/echoforms.min.css">
 	</head>
 	<body>
 		<script>
 			$(function() {
-				$("#echoform").echoform({form: $('#echoforms-xml').text()});
+				$("#echoform").echoforms({form: $('#echoforms-xml').val()});
 			});
 		</script>
-<script type="application/xml" id="echoforms-xml" class="echoforms-xml">
-    <form xmlns="http://echo.nasa.gov/v9/echoforms"
-          xmlns:xs="http://www.w3.org/2001/XMLSchema"
-          targetNamespace="http://www.example.com/echoforms">
-      <model>
-        <instance>
-          <prov:options xmlns:prov="http://www.example.com/orderoptions">
-            <prov:reference>123456</prov:reference>
-            <prov:boolreference>true</prov:boolreference>
-            <prov:selectReference>
-              <prov:selectValue>123456</prov:selectValue>
-              <prov:selectValue>654321</prov:selectValue>
-            </prov:selectReference>
-            <prov:parentReference>
-              <prov:childReference>Child value</prov:childReference>
-            </prov:parentReference>
-          </prov:options>
-        </instance>
-      </model>
-      <ui>
-        <input id="reference" label="Reference value" ref="prov:reference" type="xs:string"/>
-        <input id="childReference" label="Reference value" ref="prov:parentReference/prov:childReference" type="xs:string"/>
-        <group id="group" label="Group" ref="prov:parentReference" attrs="attrs">
-          <help>Helpful text</help>
-          <input label="Child input" ref="prov:childReference" type="xs:string"/>
-        </group>
-        <input id="input" label="Input" a="a" ref="prov:reference">
-          <help>Helpful text</help>
-        </input>
-        <input id="input" label="Bool input" a="a" ref="prov:boolreference" type="xs:boolean">
-          <help>Helpful text</help>
-        </input>
-        <input id="input" label="Relevant based on checkbox" relevant="prov:boolreference='true'" a="a" ref="prov:reference">
-        </input>
-        <input id="input" label="Readonly based on checkbox" readonly="prov:boolreference='true'" a="a" ref="prov:reference">
-        </input>
-        <input id="input" label="Required based on checkbox" required="prov:boolreference='true'" a="a" ref="prov:reference">
-        </input>
-        <input id="input" label="Date input" a="a" ref="prov:reference" type="xs:datetime">
-          <help>Helpful text</help>
-        </input>
-        <textarea id="textarea" label="Textarea" a="a" ref="prov:reference">
-          <help>Helpful text</help>
-        </textarea>
-        <secret id="secret" label="Secret" a="a" ref="prov:reference">
-          <help>Helpful text</help>
-        </secret>
-        <output id="output" label="Output" a="a" ref="prov:reference">
-          <help>Helpful text</help>
-        </output>
-        <output id="output" label="URL Output" type="xs:anyURI" a="a" ref="prov:reference">
-          <help>Helpful text</help>
-        </output>
-        <range id="range" label="Range" start="1" stop="10" step="1" type="xs:int" a="a" ref="prov:reference">
-          <help>Helpful text</help>
-        </range>
-        <select id="select" label="Select" a="a" ref="prov:selectReference" valueElementName="selectValue">
-          <item label="Alphabetic" value="Alphabetic" />
-          <item label="123456" value="123456" />
-          <item label="654321" value="654321" />
-          <help>Helpful text</help>
-        </select>
-        <select id="multiple-select" label="Multiple select" multiple="true" a="a" ref="prov:selectReference" valueElementName="selectValue">
-          <item label="Alphabetic" value="Alphabetic" />
-          <item label="123456" value="123456" />
-          <item label="654321" value="654321" />
-          <help>Helpful text</help>
-        </select>
-      </ui>
-    </form>
-</script>
+
+    <textarea id="echoforms-xml" class="echoforms-xml">
+    &lt;form xmlns=&quot;http://echo.nasa.gov/v9/echoforms&quot;
+          xmlns:xs=&quot;http://www.w3.org/2001/XMLSchema&quot;
+          targetNamespace=&quot;http://www.example.com/echoforms&quot;&gt;
+      &lt;model&gt;
+        &lt;instance&gt;
+          &lt;prov:options xmlns:prov=&quot;http://www.example.com/orderoptions&quot;&gt;
+            &lt;prov:reference&gt;123456&lt;/prov:reference&gt;
+            &lt;prov:boolreference&gt;true&lt;/prov:boolreference&gt;
+            &lt;prov:selectReference&gt;
+              &lt;prov:selectValue&gt;123456&lt;/prov:selectValue&gt;
+              &lt;prov:selectValue&gt;654321&lt;/prov:selectValue&gt;
+            &lt;/prov:selectReference&gt;
+            &lt;prov:parentReference&gt;
+              &lt;prov:childReference&gt;Child value&lt;/prov:childReference&gt;
+            &lt;/prov:parentReference&gt;
+          &lt;/prov:options&gt;
+        &lt;/instance&gt;
+      &lt;/model&gt;
+      &lt;ui&gt;
+        &lt;input id=&quot;reference&quot; label=&quot;Reference value&quot; ref=&quot;prov:reference&quot; type=&quot;xs:string&quot;/&gt;
+        &lt;input id=&quot;childReference&quot; label=&quot;Reference value&quot; ref=&quot;prov:parentReference/prov:childReference&quot; type=&quot;xs:string&quot;/&gt;
+        &lt;group id=&quot;group&quot; label=&quot;Group&quot; ref=&quot;prov:parentReference&quot; attrs=&quot;attrs&quot;&gt;
+          &lt;help&gt;Helpful text&lt;/help&gt;
+          &lt;input label=&quot;Child input&quot; ref=&quot;prov:childReference&quot; type=&quot;xs:string&quot;/&gt;
+        &lt;/group&gt;
+        &lt;input id=&quot;input&quot; label=&quot;Input&quot; a=&quot;a&quot; ref=&quot;prov:reference&quot;&gt;
+          &lt;help&gt;Helpful text&lt;/help&gt;
+        &lt;/input&gt;
+        &lt;input id=&quot;boolinput&quot; label=&quot;Bool input&quot; a=&quot;a&quot; ref=&quot;prov:boolreference&quot; type=&quot;xs:boolean&quot;&gt;
+          &lt;help&gt;Helpful text&lt;/help&gt;
+        &lt;/input&gt;
+        &lt;input id=&quot;relevantinput&quot; label=&quot;Relevant based on checkbox&quot; relevant=&quot;prov:boolreference='true'&quot; a=&quot;a&quot; ref=&quot;prov:reference&quot;&gt;
+        &lt;/input&gt;
+        &lt;input id=&quot;readonlyinput&quot; label=&quot;Readonly based on checkbox&quot; readonly=&quot;prov:boolreference='true'&quot; a=&quot;a&quot; ref=&quot;prov:reference&quot;&gt;
+        &lt;/input&gt;
+        &lt;input id=&quot;requiredinput&quot; label=&quot;Required based on checkbox&quot; required=&quot;prov:boolreference='true'&quot; a=&quot;a&quot; ref=&quot;prov:reference&quot;&gt;
+        &lt;/input&gt;
+        &lt;input id=&quot;dateinput&quot; label=&quot;Date input&quot; a=&quot;a&quot; ref=&quot;prov:reference&quot; type=&quot;xs:datetime&quot;&gt;
+          &lt;help&gt;Helpful text&lt;/help&gt;
+        &lt;/input&gt;
+        &lt;textarea id=&quot;textarea&quot; label=&quot;Textarea&quot; a=&quot;a&quot; ref=&quot;prov:reference&quot;&gt;
+          &lt;help&gt;Helpful text&lt;/help&gt;
+        &lt;/textarea&gt;
+        &lt;secret id=&quot;secret&quot; label=&quot;Secret&quot; a=&quot;a&quot; ref=&quot;prov:reference&quot;&gt;
+          &lt;help&gt;Helpful text&lt;/help&gt;
+        &lt;/secret&gt;
+        &lt;output id=&quot;output&quot; label=&quot;Output&quot; a=&quot;a&quot; ref=&quot;prov:reference&quot;&gt;
+          &lt;help&gt;Helpful text&lt;/help&gt;
+        &lt;/output&gt;
+        &lt;output id=&quot;urloutput&quot; label=&quot;URL Output&quot; type=&quot;xs:anyURI&quot; a=&quot;a&quot; ref=&quot;prov:reference&quot;&gt;
+          &lt;help&gt;Helpful text&lt;/help&gt;
+        &lt;/output&gt;
+        &lt;range id=&quot;range&quot; label=&quot;Range&quot; start=&quot;1&quot; stop=&quot;10&quot; step=&quot;1&quot; type=&quot;xs:int&quot; a=&quot;a&quot; ref=&quot;prov:reference&quot;&gt;
+          &lt;help&gt;Helpful text&lt;/help&gt;
+        &lt;/range&gt;
+        &lt;select id=&quot;select&quot; label=&quot;Select&quot; a=&quot;a&quot; ref=&quot;prov:selectReference&quot; valueElementName=&quot;selectValue&quot;&gt;
+          &lt;item label=&quot;Alphabetic&quot; value=&quot;Alphabetic&quot; /&gt;
+          &lt;item label=&quot;123456&quot; value=&quot;123456&quot; /&gt;
+          &lt;item label=&quot;654321&quot; value=&quot;654321&quot; /&gt;
+          &lt;help&gt;Helpful text&lt;/help&gt;
+        &lt;/select&gt;
+        &lt;select id=&quot;multiple-select&quot; label=&quot;Multiple select&quot; multiple=&quot;true&quot; a=&quot;a&quot; ref=&quot;prov:selectReference&quot; valueElementName=&quot;selectValue&quot;&gt;
+          &lt;item label=&quot;Alphabetic&quot; value=&quot;Alphabetic&quot; /&gt;
+          &lt;item label=&quot;123456&quot; value=&quot;123456&quot; /&gt;
+          &lt;item label=&quot;654321&quot; value=&quot;654321&quot; /&gt;
+          &lt;help&gt;Helpful text&lt;/help&gt;
+        &lt;/select&gt;
+      &lt;/ui&gt;
+    &lt;/form&gt;
+    </textarea>
     <form id="echoform" class="echoforms-form">
     </form>
 	</body>

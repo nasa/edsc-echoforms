@@ -1,7 +1,23 @@
   # Create the defaults once
-  pluginName = "echoform"
+  pluginName = "echoforms"
   defaults =
     controls: []
+
+  defaultControls = [
+    # Typed controls
+    CheckboxControl, InputControl,
+    UrlOutputControl, OutputControl,
+    SelectControl,
+    RangeControl,
+    SecretControl,
+    TextareaControl,
+
+    # Grouping controls
+    GroupControl,
+
+    # Reference controls
+    SelectrefControl
+    ]
 
   class XPathResolver
     constructor: (xml) ->
@@ -15,19 +31,10 @@
         namespaces[name] = uri
         match = namespaceRegexp.exec(xml)
 
-      # We need these
-      namespaces['xs'] = 'http://www.w3.org/2001/XMLSchema'
-      namespaces['echoforms'] = 'http://echo.nasa.gov/v9/echoforms'
-
       @namespaces = namespaces
 
     resolve: (prefix) =>
-      prefix = " default " unless prefix?
-      result = @namespaces[prefix]
-      unless result
-        warn "Bad prefix: #{prefix}.  Ignoring."
-        prefix = " default "
-      result
+      @namespaces[prefix ? " default "]
 
   class EchoFormsInterface
     constructor: (@root, options) ->
@@ -36,7 +43,7 @@
       @controlClasses = controlClasses = @options['controls'].concat(defaultControls)
 
       unless form?
-        error "You must specify a 'form' option when creating an echoform instance"
+        error "You must specify a 'form' option when creating an echoforms instance"
 
       @resolver = resolver = new XPathResolver(form).resolve
       @doc = doc = $(parseXML(form))
@@ -47,7 +54,7 @@
       @root.append(@control.element())
 
     destroy: ->
-      @root.removeData('echoform').empty()
+      @root.removeData('echoforms').empty()
 
     isValid: ->
       @control.isValid()
@@ -60,7 +67,7 @@
       # Method call
       [method, args...] = args
       result = @map ->
-        form = $.data(this, "echoform")
+        form = $.data(this, "echoforms")
 
         if /^debug_/.test(method)
           [x, attr...] = method.split('_')
@@ -68,7 +75,7 @@
         else if !/^_/.test(method) && typeof form?[method] == 'function'
           form[method](args...)
         else
-          err "Could not call #{method} on echoform instance:", this
+          err "Could not call #{method} on echoforms instance:", this
           null
       result[0]
     else if args.length < 2
@@ -76,10 +83,10 @@
         # Constructor call
         options = args[0]
         # Prevent multiple instantiations
-        if !$.data(this, "echoform")
-          $.data(this, "echoform", new EchoFormsInterface($(this), options))
+        if !$.data(this, "echoforms")
+          $.data(this, "echoforms", new EchoFormsInterface($(this), options))
     else
-      err "Bad arguments to echoform:", args
+      err "Bad arguments to echoforms:", args
       this
 
   $(document).ready ->

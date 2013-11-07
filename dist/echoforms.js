@@ -5,7 +5,7 @@
     __bind = function(fn, me){ return function(){ return fn.apply(me, arguments); }; };
 
   (function($, window, document) {
-    var BaseConstraint, BaseControl, CheckboxControl, EchoFormsInterface, FormControl, GroupControl, GroupingControl, InputControl, OutputControl, PatternConstraint, RangeControl, RequiredConstraint, SecretControl, SelectControl, SelectrefControl, TextareaControl, TypeConstraint, TypedControl, UrlOutputControl, XPathConstraint, XPathResolver, debug, defaultControls, defaults, echoformsControlUniqueId, err, error, execXPath, log, parseXML, pluginName, warn, _ref, _ref1, _ref2, _ref3, _ref4, _ref5, _ref6;
+    var BaseConstraint, BaseControl, CheckboxControl, EchoFormsInterface, FormControl, GroupControl, GroupingControl, InputControl, OutputControl, PatternConstraint, RangeControl, RequiredConstraint, SecretControl, SelectControl, SelectrefControl, TextareaControl, TypeConstraint, TypedControl, UrlOutputControl, XPathConstraint, XPathResolver, debug, defaultControls, defaults, echoformsControlUniqueId, err, error, execXPath, log, parseXML, pluginName, warn, _ref, _ref1, _ref2, _ref3, _ref4, _ref5;
     log = function() {
       var args;
       args = 1 <= arguments.length ? __slice.call(arguments, 0) : [];
@@ -287,7 +287,6 @@
         }
         this.loadConstraints();
         this.el = this.buildDom();
-        this.bindEvents();
       }
 
       BaseControl.prototype.loadConstraints = function() {
@@ -365,8 +364,6 @@
       };
 
       BaseControl.prototype.saveToModel = function() {};
-
-      BaseControl.prototype.bindEvents = function() {};
 
       BaseControl.prototype.xpath = function(xpath) {
         return execXPath(this.model, xpath, this.resolver);
@@ -488,6 +485,7 @@
         var _ref;
         this.inputType = ((_ref = ui.attr('type')) != null ? _ref : 'string').replace(/^.*:/, '').toLowerCase();
         TypedControl.__super__.constructor.call(this, ui, model, controlClasses, resolver);
+        this.inputs().bind('click change', this.onChange);
       }
 
       TypedControl.prototype.loadConstraints = function() {
@@ -497,10 +495,6 @@
 
       TypedControl.prototype.inputs = function() {
         return this._inputs != null ? this._inputs : this._inputs = this.el.find(':input');
-      };
-
-      TypedControl.prototype.bindEvents = function() {
-        return this.inputs().bind('click change', this.onChange);
       };
 
       TypedControl.prototype.inputValue = function() {
@@ -558,6 +552,8 @@
 
       CheckboxControl.selector = 'input[type$=boolean]';
 
+      CheckboxControl.prototype.inputElementType = 'checkbox';
+
       CheckboxControl.prototype.inputValue = function() {
         return this.inputs().is(':checked').toString();
       };
@@ -569,7 +565,12 @@
         }
       };
 
-      CheckboxControl.prototype.inputElementType = 'checkbox';
+      CheckboxControl.prototype.buildDom = function() {
+        var result;
+        result = CheckboxControl.__super__.buildDom.call(this);
+        result.find('.echoforms-elements').after(result.find('.echoforms-control-label'));
+        return result;
+      };
 
       return CheckboxControl;
 
@@ -722,10 +723,6 @@
         return result;
       };
 
-      SelectControl.prototype.isChanged = function(newValue) {
-        return this.refValue() !== this.inputValue() || !this.refExpr;
-      };
-
       SelectControl.prototype.buildElementsChildrenDom = function() {
         var el, label, value, _i, _len, _ref3, _ref4;
         el = $("<select id=\"" + this.id + "-element\" class=\"echoforms-element-select\" autocomplete=\"off\"/>");
@@ -799,9 +796,9 @@
     GroupingControl = (function(_super) {
       __extends(GroupingControl, _super);
 
-      function GroupingControl() {
-        _ref5 = GroupingControl.__super__.constructor.apply(this, arguments);
-        return _ref5;
+      function GroupingControl(ui, model, controlClasses, resolver) {
+        ui.removeAttr('required');
+        GroupingControl.__super__.constructor.call(this, ui, model, controlClasses, resolver);
       }
 
       GroupingControl.prototype.inputs = function() {
@@ -809,34 +806,34 @@
       };
 
       GroupingControl.prototype.loadFromModel = function() {
-        var control, _i, _len, _ref6, _results;
+        var control, _i, _len, _ref5, _results;
         GroupingControl.__super__.loadFromModel.call(this);
-        _ref6 = this.controls;
+        _ref5 = this.controls;
         _results = [];
-        for (_i = 0, _len = _ref6.length; _i < _len; _i++) {
-          control = _ref6[_i];
+        for (_i = 0, _len = _ref5.length; _i < _len; _i++) {
+          control = _ref5[_i];
           _results.push(control.loadFromModel());
         }
         return _results;
       };
 
       GroupingControl.prototype.buildDom = function() {
-        var ControlClass, child, childModel, children, control, controls, found, root, ui, _i, _j, _len, _len1, _ref6, _ref7;
+        var ControlClass, child, childModel, children, control, controls, found, root, ui, _i, _j, _len, _len1, _ref5, _ref6;
         root = GroupingControl.__super__.buildDom.call(this);
         childModel = this.ref();
         ui = this.ui;
         children = $();
         this.controls = controls = [];
-        _ref6 = ui.children();
-        for (_i = 0, _len = _ref6.length; _i < _len; _i++) {
-          child = _ref6[_i];
+        _ref5 = ui.children();
+        for (_i = 0, _len = _ref5.length; _i < _len; _i++) {
+          child = _ref5[_i];
           if (child.nodeName === 'help' || child.nodeName === 'constraints') {
             continue;
           }
           found = false;
-          _ref7 = this.controlClasses;
-          for (_j = 0, _len1 = _ref7.length; _j < _len1; _j++) {
-            ControlClass = _ref7[_j];
+          _ref6 = this.controlClasses;
+          for (_j = 0, _len1 = _ref6.length; _j < _len1; _j++) {
+            ControlClass = _ref6[_j];
             if ($(child).is(ControlClass.selector)) {
               control = new ControlClass($(child), childModel, this.controlClasses, this.resolver);
               controls.push(control);
@@ -854,12 +851,12 @@
       };
 
       GroupingControl.prototype.updateReadonly = function(isReadonly) {
-        var control, _i, _len, _ref6, _results;
+        var control, _i, _len, _ref5, _results;
         GroupingControl.__super__.updateReadonly.call(this, isReadonly);
-        _ref6 = this.controls;
+        _ref5 = this.controls;
         _results = [];
-        for (_i = 0, _len = _ref6.length; _i < _len; _i++) {
-          control = _ref6[_i];
+        for (_i = 0, _len = _ref5.length; _i < _len; _i++) {
+          control = _ref5[_i];
           _results.push(control.updateReadonly(isReadonly));
         }
         return _results;
@@ -872,17 +869,14 @@
       __extends(FormControl, _super);
 
       function FormControl(ui, model, controlClasses, resolver) {
+        var _this = this;
         ui.attr('ref', model.children()[0].nodeName);
         FormControl.__super__.constructor.call(this, ui, model, controlClasses, resolver);
-        this.loadFromModel();
-      }
-
-      FormControl.prototype.bindEvents = function() {
-        var _this = this;
-        return this.el.bind('echoforms:modelchange', function() {
+        this.el.bind('echoforms:modelchange', function() {
           return _this.loadFromModel();
         });
-      };
+        this.loadFromModel();
+      }
 
       FormControl.prototype.isValid = function() {
         return this.el.find('.echoforms-error').length === 0;
@@ -902,11 +896,37 @@
       __extends(GroupControl, _super);
 
       function GroupControl() {
-        _ref6 = GroupControl.__super__.constructor.apply(this, arguments);
-        return _ref6;
+        _ref5 = GroupControl.__super__.constructor.apply(this, arguments);
+        return _ref5;
       }
 
       GroupControl.selector = 'group';
+
+      GroupControl.prototype.buildLabelDom = function() {
+        if (this.label != null) {
+          return $("<h1 class=\"echoforms-control-label\">" + this.label + "</h1>");
+        } else {
+          return $();
+        }
+      };
+
+      GroupControl.prototype.buildHelpDom = function() {
+        var help, result, _i, _len, _ref6;
+        result = $();
+        _ref6 = this.ui.children('help');
+        for (_i = 0, _len = _ref6.length; _i < _len; _i++) {
+          help = _ref6[_i];
+          result = result.add("<p class=\"echoforms-help\">" + ($(help).text()) + "</>");
+        }
+        return result;
+      };
+
+      GroupControl.prototype.buildDom = function() {
+        var result;
+        result = GroupControl.__super__.buildDom.call(this);
+        result.find('.echoforms-control-label').after(result.find('.echoforms-help'));
+        return result;
+      };
 
       return GroupControl;
 
@@ -928,40 +948,29 @@
       return SelectrefControl;
 
     })(SelectControl);
-    defaultControls = [CheckboxControl, InputControl, UrlOutputControl, OutputControl, SelectControl, RangeControl, SecretControl, TextareaControl, GroupControl, SelectrefControl];
-    pluginName = "echoform";
+    pluginName = "echoforms";
     defaults = {
       controls: []
     };
+    defaultControls = [CheckboxControl, InputControl, UrlOutputControl, OutputControl, SelectControl, RangeControl, SecretControl, TextareaControl, GroupControl, SelectrefControl];
     XPathResolver = (function() {
       function XPathResolver(xml) {
         this.resolve = __bind(this.resolve, this);
-        var match, name, namespaceRegexp, namespaces, uri, _ref7;
+        var match, name, namespaceRegexp, namespaces, uri, _ref6;
         namespaces = {};
         namespaceRegexp = /\sxmlns(?::(\w+))?=\"([^\"]+)\"/g;
         match = namespaceRegexp.exec(xml);
         while (match != null) {
-          name = (_ref7 = match[1]) != null ? _ref7 : ' default ';
+          name = (_ref6 = match[1]) != null ? _ref6 : ' default ';
           uri = match[2];
           namespaces[name] = uri;
           match = namespaceRegexp.exec(xml);
         }
-        namespaces['xs'] = 'http://www.w3.org/2001/XMLSchema';
-        namespaces['echoforms'] = 'http://echo.nasa.gov/v9/echoforms';
         this.namespaces = namespaces;
       }
 
       XPathResolver.prototype.resolve = function(prefix) {
-        var result;
-        if (prefix == null) {
-          prefix = " default ";
-        }
-        result = this.namespaces[prefix];
-        if (!result) {
-          warn("Bad prefix: " + prefix + ".  Ignoring.");
-          prefix = " default ";
-        }
-        return result;
+        return this.namespaces[prefix != null ? prefix : " default "];
       };
 
       return XPathResolver;
@@ -975,7 +984,7 @@
         this.form = form = this.options['form'];
         this.controlClasses = controlClasses = this.options['controls'].concat(defaultControls);
         if (form == null) {
-          error("You must specify a 'form' option when creating an echoform instance");
+          error("You must specify a 'form' option when creating an echoforms instance");
         }
         this.resolver = resolver = new XPathResolver(form).resolve;
         this.doc = doc = $(parseXML(form));
@@ -986,7 +995,7 @@
       }
 
       EchoFormsInterface.prototype.destroy = function() {
-        return this.root.removeData('echoform').empty();
+        return this.root.removeData('echoforms').empty();
       };
 
       EchoFormsInterface.prototype.isValid = function() {
@@ -1001,20 +1010,20 @@
 
     })();
     $.fn[pluginName] = function() {
-      var args, method, result, _ref7;
+      var args, method, result, _ref6;
       args = 1 <= arguments.length ? __slice.call(arguments, 0) : [];
       if (args.length > 0 && typeof args[0] === 'string') {
-        _ref7 = args, method = _ref7[0], args = 2 <= _ref7.length ? __slice.call(_ref7, 1) : [];
+        _ref6 = args, method = _ref6[0], args = 2 <= _ref6.length ? __slice.call(_ref6, 1) : [];
         result = this.map(function() {
-          var attr, form, x, _ref8;
-          form = $.data(this, "echoform");
+          var attr, form, x, _ref7;
+          form = $.data(this, "echoforms");
           if (/^debug_/.test(method)) {
-            _ref8 = method.split('_'), x = _ref8[0], attr = 2 <= _ref8.length ? __slice.call(_ref8, 1) : [];
+            _ref7 = method.split('_'), x = _ref7[0], attr = 2 <= _ref7.length ? __slice.call(_ref7, 1) : [];
             return form[attr.join('_')];
           } else if (!/^_/.test(method) && typeof (form != null ? form[method] : void 0) === 'function') {
             return form[method].apply(form, args);
           } else {
-            err("Could not call " + method + " on echoform instance:", this);
+            err("Could not call " + method + " on echoforms instance:", this);
             return null;
           }
         });
@@ -1023,12 +1032,12 @@
         return this.each(function() {
           var options;
           options = args[0];
-          if (!$.data(this, "echoform")) {
-            return $.data(this, "echoform", new EchoFormsInterface($(this), options));
+          if (!$.data(this, "echoforms")) {
+            return $.data(this, "echoforms", new EchoFormsInterface($(this), options));
           }
         });
       } else {
-        err("Bad arguments to echoform:", args);
+        err("Bad arguments to echoforms:", args);
         return this;
       }
     };

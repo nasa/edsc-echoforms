@@ -3,7 +3,7 @@ module.exports = function(grunt) {
 	grunt.initConfig({
 
 		// Import package manifest
-		pkg: grunt.file.readJSON("echo-forms.json"),
+		pkg: grunt.file.readJSON("echoforms.json"),
 
 		meta: {
 			banner: "/*\n" +
@@ -16,7 +16,7 @@ module.exports = function(grunt) {
 
 		// Lint definitions
 		jshint: {
-			files: ["src/echo-forms.js"],
+			files: ["src/echoforms.js"],
 			options: {
 				jshintrc: ".jshintrc"
 			}
@@ -35,8 +35,8 @@ module.exports = function(grunt) {
 		// Minify definitions
 		uglify: {
 			my_target: {
-				src: ["dist/echo-forms.js"],
-				dest: "dist/echo-forms.min.js"
+				src: ["dist/echoforms.js"],
+				dest: "dist/echoforms.min.js"
 			},
 			options: {
 				report: 'min',
@@ -53,8 +53,8 @@ module.exports = function(grunt) {
                   "src/util.coffee",
                   "src/constraints.coffee",
                   "src/controls.coffee",
-                  "src/echo-forms.coffee"],
-            dest: "dist/echo-forms.js"
+                  "src/echoforms.coffee"],
+            dest: "dist/echoforms.js"
           },
           {
             expand: true,
@@ -83,7 +83,7 @@ module.exports = function(grunt) {
     sass: {
       dist: {
         files: {
-          'dist/echo-forms.min.css': 'src/echo-forms.scss'
+          'dist/echoforms.min.css': 'src/echoforms.scss'
         },
         options: {
           style: 'compressed'

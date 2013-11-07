@@ -57,18 +57,18 @@
         return expect($('#control')).toBeVisible();
       });
     });
-    describe('"required" attribute', function() {
-      it("contains an xpath which requires the control to have a value when it evaluates to true", function() {
-        template.form(dom, {
-          attributes: 'required="prov:reference=\'required\'"'
+    if (!options['skip_input_specs']) {
+      describe('"required" attribute', function() {
+        it("contains an xpath which requires the control to have a value when it evaluates to true", function() {
+          template.form(dom, {
+            attributes: 'required="prov:reference=\'required\'"'
+          });
+          expect('#control').not.toHaveError('Required field');
+          $('#reference :input').val('required').change();
+          expect('#control').toHaveError('Required field');
+          $('#reference :input').val('optional').change();
+          return expect('#control').not.toHaveError('Required field');
         });
-        expect('#control').not.toHaveError('Required field');
-        $('#reference :input').val('required').change();
-        expect('#control').toHaveError('Required field');
-        $('#reference :input').val('optional').change();
-        return expect('#control').not.toHaveError('Required field');
-      });
-      if (!options['skip_input_specs']) {
         return it("produces no error if the control has a non-empty value", function() {
           template.form(dom, {
             attributes: 'required="prov:reference=\'required\'"'
@@ -80,8 +80,8 @@
           $('#control :input').val('').change();
           return expect('#control').toHaveError('Required field');
         });
-      }
-    });
+      });
+    }
     describe('"reaodnly" attribute', function() {
       return it("contains an xpath which causes the control to become readonly", function() {
         template.form(dom, {
