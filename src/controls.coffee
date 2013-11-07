@@ -52,7 +52,7 @@
       if @refExpr? then $.trim(@ref().text()) else undefined
 
     inputValue: ->
-      console.warn("#{@constructor.name} must override inputValue")
+      warn("#{@constructor.name} must override inputValue")
 
     loadFromModel: ->
       @validate()
@@ -183,8 +183,10 @@
   class InputControl extends TypedControl
     @selector: 'input'
 
+    inputElementType: 'text'
+
     buildElementsChildrenDom: ->
-      element = $("<input id=\"#{@id}-element\" type=\"text\" class=\"echoforms-element-input echoforms-element-input-#{@inputType}\" autocomplete=\"off\">")
+      element = $("<input id=\"#{@id}-element\" type=\"#{@inputElementType}\" class=\"echoforms-element-input echoforms-element-input-#{@inputType}\" autocomplete=\"off\">")
       element.attr('placeholder', 'MM/DD/YYYYTHH:MM:SS') if @inputType == 'datetime'
       element
 
@@ -198,8 +200,7 @@
       super()
       @inputs().attr('checked', @refValue() == 'true') if @refExpr
 
-    buildElementsChildrenDom: ->
-      super().attr('type', 'checkbox')
+    inputElementType: 'checkbox'
 
   class OutputControl extends TypedControl
     @selector: 'output'
@@ -290,6 +291,7 @@
         el.addClass('echoforms-element-select-open')
       for [label, value] in @items
         el.append("<option value=\"#{value}\">#{label}</option>")
+      el
 
   class RangeControl extends InputControl
     @selector: 'range'
@@ -303,8 +305,7 @@
   class SecretControl extends InputControl
     @selector: 'secret'
 
-    buildElementsChildrenDom: ->
-      super().attr('type', 'password')
+    inputElementType: 'password'
 
   class TextareaControl extends TypedControl
     @selector: 'textarea'
@@ -341,7 +342,7 @@
             children = children.add(control.el)
             found = true
             break
-        console.log("No class available for element:", child) unless found
+        warn("No class available for element:", child) unless found
       root.find('.echoforms-elements').replaceWith($('<div class="echoforms-children"/>').append(children))
       root
 
@@ -359,7 +360,7 @@
       @loadFromModel()
 
     bindEvents: ->
-      @el.on 'echoforms:modelchange', '.echoforms-control', =>
+      @el.bind 'echoforms:modelchange', =>
         @loadFromModel()
 
     isValid: ->

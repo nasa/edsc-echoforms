@@ -25,8 +25,7 @@ module.exports = function(grunt) {
     concat: {
       dist: {
         files: {
-          "dist/wgxpath.install.js" : ["vendor/wgxpath.install.js"],
-          "dist/jquery-compat.js": ["src/jquery-compat.js"]
+          "dist/wgxpath.install.js" : ["vendor/wgxpath.install.js"]
         }
       },
       options: {

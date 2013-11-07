@@ -1,3 +1,24 @@
+  log = (args...) ->
+    console.log(args...) if window.console && console.log
+
+  debug = (args...) ->
+    if console && console.debug
+      console.debug(args...)
+    else
+      log(args...)
+
+  warn = (args...) ->
+    if console && console.warn
+      console.warn(args...)
+    else
+      log(args...)
+
+  error = (args...) ->
+    if console && console.error
+      console.error(args...)
+    else
+      log(args...)
+
   wgxpath.install(window)
 
   execXPath = (root, xpath, resolver) ->
@@ -15,3 +36,25 @@
       when XPathResult.STRING_TYPE then result.stringValue
       when XPathResult.BOOLEAN_TYPE then result.booleanValue
       else result.iterateNext()
+
+
+  # Parse the given xml string and return the resulting elements.
+  # Based on jQuery's XML parser.  We include our own because $.parseXML did
+  # not exist in jQuery 1.4.4
+  parseXML = (data) ->
+    return null if !data || typeof data != 'string'
+
+    xml = undefined
+    try
+      if window.DOMParser
+        xml = new DOMParser().parseFromString(data, 'text/xml')
+      else
+        xml = new ActiveXObject("Microsoft.XMLDOM")
+        xml.async = "false"
+        xml.loadXML(data)
+    catch error
+
+    if !xml || !xml.documentElement || xml.getElementsByTagName( "parsererror" ).length
+      error "Invalid XML: #{data}"
+
+    xml

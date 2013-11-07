@@ -1,10 +1,45 @@
 (function() {
-  var __hasProp = {}.hasOwnProperty,
+  var __slice = [].slice,
+    __hasProp = {}.hasOwnProperty,
     __extends = function(child, parent) { for (var key in parent) { if (__hasProp.call(parent, key)) child[key] = parent[key]; } function ctor() { this.constructor = child; } ctor.prototype = parent.prototype; child.prototype = new ctor(); child.__super__ = parent.prototype; return child; },
     __bind = function(fn, me){ return function(){ return fn.apply(me, arguments); }; };
 
   (function($, window, document) {
-    var BaseConstraint, BaseControl, CheckboxControl, EchoFormsBuilder, EchoFormsInterface, FormControl, GroupControl, GroupingControl, InputControl, OutputControl, PatternConstraint, RangeControl, RequiredConstraint, SecretControl, SelectControl, SelectrefControl, TextareaControl, TypeConstraint, TypedControl, UrlOutputControl, XPathConstraint, XPathResolver, defaultControls, defaults, echoformsControlUniqueId, execXPath, pluginName, _ref, _ref1, _ref2, _ref3, _ref4, _ref5, _ref6;
+    var BaseConstraint, BaseControl, CheckboxControl, EchoFormsBuilder, EchoFormsInterface, FormControl, GroupControl, GroupingControl, InputControl, OutputControl, PatternConstraint, RangeControl, RequiredConstraint, SecretControl, SelectControl, SelectrefControl, TextareaControl, TypeConstraint, TypedControl, UrlOutputControl, XPathConstraint, XPathResolver, debug, defaultControls, defaults, echoformsControlUniqueId, error, execXPath, log, parseXML, pluginName, warn, _ref, _ref1, _ref2, _ref3, _ref4, _ref5, _ref6;
+    log = function() {
+      var args;
+      args = 1 <= arguments.length ? __slice.call(arguments, 0) : [];
+      if (window.console && console.log) {
+        return console.log.apply(console, args);
+      }
+    };
+    debug = function() {
+      var args;
+      args = 1 <= arguments.length ? __slice.call(arguments, 0) : [];
+      if (console && console.debug) {
+        return console.debug.apply(console, args);
+      } else {
+        return log.apply(null, args);
+      }
+    };
+    warn = function() {
+      var args;
+      args = 1 <= arguments.length ? __slice.call(arguments, 0) : [];
+      if (console && console.warn) {
+        return console.warn.apply(console, args);
+      } else {
+        return log.apply(null, args);
+      }
+    };
+    error = function() {
+      var args;
+      args = 1 <= arguments.length ? __slice.call(arguments, 0) : [];
+      if (console && console.error) {
+        return console.error.apply(console, args);
+      } else {
+        return log.apply(null, args);
+      }
+    };
     wgxpath.install(window);
     execXPath = function(root, xpath, resolver) {
       var result;
@@ -29,13 +64,35 @@
           return result.iterateNext();
       }
     };
+    parseXML = function(data) {
+      var xml;
+      if (!data || typeof data !== 'string') {
+        return null;
+      }
+      xml = void 0;
+      try {
+        if (window.DOMParser) {
+          xml = new DOMParser().parseFromString(data, 'text/xml');
+        } else {
+          xml = new ActiveXObject("Microsoft.XMLDOM");
+          xml.async = "false";
+          xml.loadXML(data);
+        }
+      } catch (_error) {
+        error = _error;
+      }
+      if (!xml || !xml.documentElement || xml.getElementsByTagName("parsererror").length) {
+        error("Invalid XML: " + data);
+      }
+      return xml;
+    };
     BaseConstraint = (function() {
       function BaseConstraint(message) {
         this.message = message;
       }
 
       BaseConstraint.prototype.check = function(value, model, resolver) {
-        return console.warn("" + this.constructor.name + " must override check");
+        return warn("" + this.constructor.name + " must override check");
       };
 
       return BaseConstraint;
@@ -137,7 +194,7 @@
           case "boolean":
             return this.checkBoolean(value);
           default:
-            console.warn("Unable to validate type: ", this.type);
+            warn("Unable to validate type: ", this.type);
             return true;
         }
       };
@@ -291,7 +348,7 @@
       };
 
       BaseControl.prototype.inputValue = function() {
-        return console.warn("" + this.constructor.name + " must override inputValue");
+        return warn("" + this.constructor.name + " must override inputValue");
       };
 
       BaseControl.prototype.loadFromModel = function() {
@@ -416,7 +473,7 @@
       };
 
       BaseControl.prototype.setErrors = function(messages) {
-        var error, errors, message, _i, _len;
+        var errors, message, _i, _len;
         errors = $();
         for (_i = 0, _len = messages.length; _i < _len; _i++) {
           message = messages[_i];
@@ -491,9 +548,11 @@
 
       InputControl.selector = 'input';
 
+      InputControl.prototype.inputElementType = 'text';
+
       InputControl.prototype.buildElementsChildrenDom = function() {
         var element;
-        element = $("<input id=\"" + this.id + "-element\" type=\"text\" class=\"echoforms-element-input echoforms-element-input-" + this.inputType + "\" autocomplete=\"off\">");
+        element = $("<input id=\"" + this.id + "-element\" type=\"" + this.inputElementType + "\" class=\"echoforms-element-input echoforms-element-input-" + this.inputType + "\" autocomplete=\"off\">");
         if (this.inputType === 'datetime') {
           element.attr('placeholder', 'MM/DD/YYYYTHH:MM:SS');
         }
@@ -524,9 +583,7 @@
         }
       };
 
-      CheckboxControl.prototype.buildElementsChildrenDom = function() {
-        return CheckboxControl.__super__.buildElementsChildrenDom.call(this).attr('type', 'checkbox');
-      };
+      CheckboxControl.prototype.inputElementType = 'checkbox';
 
       return CheckboxControl;
 
@@ -684,7 +741,7 @@
       };
 
       SelectControl.prototype.buildElementsChildrenDom = function() {
-        var el, label, value, _i, _len, _ref3, _ref4, _results;
+        var el, label, value, _i, _len, _ref3, _ref4;
         el = $("<select id=\"" + this.id + "-element\" class=\"echoforms-element-select\" autocomplete=\"off\"/>");
         if (this.isMultiple) {
           el.addClass('echoforms-element-select-multiple');
@@ -696,12 +753,11 @@
           el.addClass('echoforms-element-select-open');
         }
         _ref3 = this.items;
-        _results = [];
         for (_i = 0, _len = _ref3.length; _i < _len; _i++) {
           _ref4 = _ref3[_i], label = _ref4[0], value = _ref4[1];
-          _results.push(el.append("<option value=\"" + value + "\">" + label + "</option>"));
+          el.append("<option value=\"" + value + "\">" + label + "</option>");
         }
-        return _results;
+        return el;
       };
 
       return SelectControl;
@@ -732,9 +788,7 @@
 
       SecretControl.selector = 'secret';
 
-      SecretControl.prototype.buildElementsChildrenDom = function() {
-        return SecretControl.__super__.buildElementsChildrenDom.call(this).attr('type', 'password');
-      };
+      SecretControl.prototype.inputElementType = 'password';
 
       return SecretControl;
 
@@ -806,7 +860,7 @@
             }
           }
           if (!found) {
-            console.log("No class available for element:", child);
+            warn("No class available for element:", child);
           }
         }
         root.find('.echoforms-elements').replaceWith($('<div class="echoforms-children"/>').append(children));
@@ -839,7 +893,7 @@
 
       FormControl.prototype.bindEvents = function() {
         var _this = this;
-        return this.el.on('echoforms:modelchange', '.echoforms-control', function() {
+        return this.el.bind('echoforms:modelchange', function() {
           return _this.loadFromModel();
         });
       };
@@ -918,7 +972,7 @@
         }
         result = this.namespaces[prefix];
         if (!result) {
-          console.log("Bad prefix: " + prefix + ".  Ignoring.");
+          warn("Bad prefix: " + prefix + ".  Ignoring.");
           prefix = " default ";
         }
         return result;
@@ -934,7 +988,7 @@
         var doc, model, ui;
         this.controlClasses = controlClasses;
         this.resolver = new XPathResolver(xml).resolve;
-        doc = $($.parseXML(xml));
+        doc = $(parseXML(xml));
         this.model = model = doc.find('form > model> instance');
         this.ui = ui = doc.find('form > ui');
         window.doc = doc;

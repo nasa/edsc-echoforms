@@ -25,7 +25,7 @@
       prefix = " default " unless prefix?
       result = @namespaces[prefix]
       unless result
-        console.log "Bad prefix: #{prefix}.  Ignoring."
+        warn "Bad prefix: #{prefix}.  Ignoring."
         prefix = " default "
       result
 
@@ -35,7 +35,7 @@
     constructor: (xml, @controlClasses) ->
       @resolver = new XPathResolver(xml).resolve
 
-      doc = $($.parseXML(xml))
+      doc = $(parseXML(xml))
       @model = model = doc.find('form > model> instance')
       @ui = ui = doc.find('form > ui')
 

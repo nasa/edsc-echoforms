@@ -2,7 +2,7 @@
     constructor: (@message) ->
 
     check: (value, model, resolver) ->
-      console.warn("#{@constructor.name} must override check")
+      warn("#{@constructor.name} must override check")
 
 
   class PatternConstraint extends BaseConstraint
@@ -62,7 +62,7 @@
         when "datetime" then @checkDateTime(value)
         when "boolean" then @checkBoolean(value)
         else
-          console.warn("Unable to validate type: ", @type)
+          warn("Unable to validate type: ", @type)
           true
 
     _checkIntegerRange: (min, max, value) ->
