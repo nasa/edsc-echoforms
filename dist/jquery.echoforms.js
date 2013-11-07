@@ -341,12 +341,14 @@
       };
 
       BaseControl.prototype.validate = function() {
-        var c, errors;
+        var c, errors, readonly, relevant;
+        relevant = (this.relevantExpr == null) || !!this.xpath(this.relevantExpr);
+        readonly = (this.readonlyExpr != null) && !!this.xpath(this.readonlyExpr);
         if (this.relevantExpr != null) {
-          this.relevant(!!this.xpath(this.relevantExpr));
+          this.relevant(relevant);
         }
         if (this.readonlyExpr != null) {
-          this.readonly(!!this.xpath(this.readonlyExpr));
+          this.readonly(readonly);
         }
         errors = (function() {
           var _i, _len, _ref, _ref1, _results;
@@ -676,16 +678,22 @@
       };
 
       SelectControl.prototype.saveToModel = function() {
-        var namespace, node, root, value, _i, _len, _ref3, _results;
+        var element, name, namespace, node, root, tagname, value, _i, _len, _ref3, _ref4, _results;
         if ((this.valueElementName != null) && (this.refExpr != null)) {
           root = this.ref().empty();
-          namespace = root[0].nodeName.split(':')[0];
-          _ref3 = this.inputValue();
+          _ref3 = root[0].nodeName.split(':').reverse(), name = _ref3[0], namespace = _ref3[1];
+          tagname = this.valueElementName;
+          if (namespace != null) {
+            tagname = "" + namespace + ":" + tagname;
+          }
+          _ref4 = this.inputValue();
           _results = [];
-          for (_i = 0, _len = _ref3.length; _i < _len; _i++) {
-            value = _ref3[_i];
-            node = $("<" + namespace + ":" + this.valueElementName + "/>").text(value);
-            _results.push(root.append(node));
+          for (_i = 0, _len = _ref4.length; _i < _len; _i++) {
+            value = _ref4[_i];
+            element = document.createElementNS(root[0].namespaceURI, tagname);
+            node = $(element).text(value);
+            root.append(node);
+            _results.push(node[0].namespaceURI = root[0].namespaceURI);
           }
           return _results;
         } else {
@@ -696,6 +704,7 @@
       SelectControl.prototype.loadFromModel = function() {
         var node, value;
         if ((this.valueElementName != null) && (this.refExpr != null)) {
+          this.validate();
           value = (function() {
             var _i, _len, _ref3, _results;
             _ref3 = this.ref().children();
@@ -719,7 +728,7 @@
         var result;
         result = this.inputs().val();
         if ((this.valueElementName != null) && !(result instanceof Array)) {
-          result = result != null ? [result] : [];
+          result = (result != null) && result !== '' ? [result] : [];
         }
         return result;
       };
@@ -883,7 +892,7 @@
       };
 
       FormControl.prototype.isValid = function() {
-        return this.el.find('.echoforms-error').length === 0;
+        return this.el.find('.echoforms-error:visible').length === 0;
       };
 
       FormControl.prototype.serialize = function() {
@@ -948,6 +957,10 @@
         }
         SelectrefControl.__super__.constructor.call(this, ui, model, controlClasses, resolver);
       }
+
+      SelectrefControl.prototype.buildDom = function() {
+        return SelectrefControl.__super__.buildDom.call(this).addClass('echoforms-control-select');
+      };
 
       return SelectrefControl;
 

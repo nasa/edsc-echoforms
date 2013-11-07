@@ -48,13 +48,13 @@
       @resolver = resolver = new XPathResolver(form).resolve
       @doc = doc = $(parseXML(form))
 
-      # This is funky.  We want the model to just deal with namespaces as it defines them.
-      # This fixes a problem where provider forms change the default namespace for the model.
-      #modelXml = $('<div>').append(doc.find('form > model > instance > *')).html()
-      #@resolver = resolver = new XPathResolver(modelXml).resolve
-
       @model = model = doc.find('form > model > instance')
       @ui = ui = doc.find('form > ui')
+
+      #xml2 = $('<div/>').append(doc.find('form > model > instance').children()).html()
+      #@resolver = resolver = new XPathResolver(xml2).resolve
+      #console.log xml2
+      #@model = model = $(parseXML(form))
 
       @control = new FormControl(ui, model, controlClasses, resolver)
       @root.append(@control.element())

@@ -54,8 +54,10 @@
       @validate()
 
     validate: ->
-      @relevant(!!@xpath(@relevantExpr)) if @relevantExpr?
-      @readonly(!!@xpath(@readonlyExpr)) if @readonlyExpr?
+      relevant = !@relevantExpr? || !!@xpath(@relevantExpr)
+      readonly = @readonlyExpr?  && !!@xpath(@readonlyExpr)
+      @relevant(relevant) if @relevantExpr?
+      @readonly(readonly) if @readonlyExpr?
 
       errors = (c.message for c in @constraints when !c.check(@refValue() ? @inputValue(), @model, @resolver))
 
@@ -255,15 +257,20 @@
     saveToModel: ->
       if @valueElementName? and @refExpr?
         root = @ref().empty()
-        namespace = root[0].nodeName.split(':')[0]
+        [name, namespace] = root[0].nodeName.split(':').reverse()
+        tagname = @valueElementName
+        tagname = "#{namespace}:#{tagname}" if namespace?
         for value in @inputValue()
-          node = $("<#{namespace}:#{@valueElementName}/>").text(value)
+          element = document.createElementNS(root[0].namespaceURI, tagname)
+          node = $(element).text(value)
           root.append(node)
+          node[0].namespaceURI = root[0].namespaceURI
       else
         super()
 
     loadFromModel: ->
       if @valueElementName? and @refExpr?
+        @validate()
         value = ($(node).text() for node in @ref().children())
         value = value[0] unless @isMultiple
         @inputs().val(value)
@@ -273,7 +280,7 @@
     inputValue: ->
       result = @inputs().val()
       if @valueElementName? and !(result instanceof Array)
-        result = if result? then [result] else []
+        result = if result? && result != '' then [result] else []
       result
 
     buildElementsChildrenDom: ->
@@ -361,7 +368,7 @@
       @model.children()
 
     isValid: ->
-      @el.find('.echoforms-error').length == 0
+      @el.find('.echoforms-error:visible').length == 0
 
     serialize: ->
       model = @model.children().clone()
@@ -402,3 +409,6 @@
       ui.attr('valueElementName', 'value') unless valueElementName?
 
       super(ui, model, controlClasses, resolver)
+
+    buildDom: ->
+      super().addClass('echoforms-control-select')

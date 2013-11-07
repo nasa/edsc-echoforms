@@ -21,7 +21,6 @@
       when XPathResult.BOOLEAN_TYPE then result.booleanValue
       else result.iterateNext()
 
-
   # Parse the given xml string and return the resulting elements.
   # Based on jQuery's XML parser.  We include our own because $.parseXML did
   # not exist in jQuery 1.4.4
