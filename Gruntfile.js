@@ -32,11 +32,23 @@ module.exports = function(grunt) {
       }
     },
 
+		// Minify definitions
+		uglify: {
+			dist: {
+				src: ["dist/jquery.echoforms.js"],
+				dest: "dist/jquery.echoforms.min.js"
+			},
+			options: {
+				report: 'min',
+        banner: "<%= meta.banner %>"
+			}
+		},
+
     'closure-compiler': {
       dist: {
         js: ["dist/jquery.echoforms.js"],
         closurePath: 'vendor/closure',
-        jsOutputFile: "dist/jquery.echoforms.min.js",
+        jsOutputFile: "dist/jquery.echoforms.min.closure.js",
         noreport: true,
         options: {
           compilation_level: 'ADVANCED_OPTIMIZATIONS',
@@ -102,5 +114,6 @@ module.exports = function(grunt) {
 	grunt.loadNpmTasks("grunt-contrib-sass");
 	grunt.loadNpmTasks("grunt-closure-compiler");
 
-	grunt.registerTask("default", ["coffee", "concat", "jshint", "sass", "closure-compiler"]);
+	grunt.registerTask("default", ["coffee", "concat", "jshint", "uglify", "sass"]);
+
 };
