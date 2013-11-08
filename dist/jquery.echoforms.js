@@ -494,7 +494,7 @@
         if (classes == null) {
           classes = null;
         }
-        return this.buildControlDom().append(this.buildLabelDom()).append(this.buildElementsDom()).append(this.buildHelpDom()).append(this.buildErrorsDom());
+        return this.buildControlDom().append(this.buildLabelDom()).append(this.buildElementsDom()).append(this.buildErrorsDom()).append(this.buildHelpDom());
       };
 
       return BaseControl;
@@ -615,6 +615,7 @@
       CheckboxControl.prototype.buildDom = function() {
         var result;
         result = CheckboxControl.__super__.buildDom.call(this);
+        result.addClass('echoforms-control-checkbox');
         result.children('.echoforms-elements').after(result.children('.echoforms-label'));
         return result;
       };
@@ -627,6 +628,8 @@
 
       OutputControl.selector = 'output';
 
+      OutputControl.prototype.inputTag = 'p';
+
       function OutputControl(ui, model, controlClasses, resolver) {
         this.valueExpr = ui.attr('value');
         OutputControl.__super__.constructor.call(this, ui, model, controlClasses, resolver);
@@ -634,6 +637,13 @@
 
       OutputControl.prototype.inputs = function() {
         return $();
+      };
+
+      OutputControl.prototype.inputAttrs = function() {
+        var attrs;
+        attrs = OutputControl.__super__.inputAttrs.call(this);
+        delete attrs.autocomplete;
+        return attrs;
       };
 
       OutputControl.prototype.refValue = function() {
@@ -651,10 +661,6 @@
         }
       };
 
-      OutputControl.prototype.buildElementsDom = function() {
-        return OutputControl.__super__.buildElementsDom.call(this).append('<p/>');
-      };
-
       return OutputControl;
 
     })(TypedControl);
@@ -668,16 +674,20 @@
 
       UrlOutputControl.selector = 'output[type$=anyURI], output[type$=anyuri]';
 
+      UrlOutputControl.prototype.inputTag = 'a';
+
+      UrlOutputControl.prototype.inputAttrs = function() {
+        return $.extend(UrlOutputControl.__super__.inputAttrs.call(this), {
+          href: '#'
+        });
+      };
+
       UrlOutputControl.prototype.loadFromModel = function() {
         var value;
         value = this.refValue();
         if (this.refExpr || this.valueExpr) {
           return this.el.find('.echoforms-elements > a').text(value).attr('href', value);
         }
-      };
-
-      UrlOutputControl.prototype.buildElementsDom = function() {
-        return UrlOutputControl.__super__.buildElementsDom.call(this).append('<a href="#" />');
       };
 
       return UrlOutputControl;

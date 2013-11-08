@@ -1,7 +1,25 @@
 $echoforms-label-column-width: 11em;
 
+$group-header-bg-color: #e0e0e0;
+$group-help-bg-color: #eee;
+$group-border-color: #888;
+$label-column-bg-color: #f8f8f8;
+
+$font-color: #222;
+$error-font-color: #b94a48;
+$help-font-color: #3a87ad;
+$header-help-font-color: $font-color;
+
 // The root control
 .echoforms-control-ui {
+  color: $font-color;
+  font-family: Helvetica, Arial, sans-serif;
+  border-left: $echoforms-label-column-width solid $label-column-bg-color;
+
+  > .echoforms-children {
+    margin-left: -$echoforms-label-column-width;
+  }
+
   p {
     margin: {
       top: 0;
@@ -19,7 +37,10 @@ $echoforms-label-column-width: 11em;
   > .echoforms-elements,
   > .echoforms-help {
     display: block;
-    padding: .2em 0;
+    padding: {
+      top: .2em;
+      bottom: .2em;
+    }
   }
 }
 
@@ -27,6 +48,7 @@ $echoforms-label-column-width: 11em;
 .echoforms-typed-control {
   > * {
     margin-left: $echoforms-label-column-width;
+    padding-left: 1em;
   }
 
   > .echoforms-label {
@@ -42,8 +64,21 @@ $echoforms-label-column-width: 11em;
 
 // <group> controls
 .echoforms-control-group {
-  border: solid #aaa;
+  border: solid $group-border-color;
   border-width: 1px 0px;
+  padding: 0;
+
+  > .echoforms-label {
+    background: $group-header-bg-color;
+    margin: 0;
+    padding: 1em;
+  }
+
+  > .echoforms-help {
+    background: $group-help-bg-color;
+    padding: .5em 1em;
+    color: $header-help-font-color;
+  }
 
   &:first-child {
     border-top-width: 0;
@@ -67,7 +102,19 @@ $echoforms-label-column-width: 11em;
 .echoforms-control-output {
   > .echoforms-elements {
     // Use the same vertical padding as their corresponding label
-    padding:.3em 0 .2em;
+    padding: {
+      top: .3em;
+      bottom: .2em;
+    }
   }
 
+}
+
+.echoforms-error {
+  color: $error-font-color;
+}
+
+.echoforms-help {
+  color: $help-font-color;
+  font-style: italic;
 }
