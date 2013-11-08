@@ -1,3 +1,0 @@
-[submodule "vendor/jquery-xpath"]
-	path = vendor/jquery-xpath
-	url = https://github.com/ilinsky/jquery-xpath.git
