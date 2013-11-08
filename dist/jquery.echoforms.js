@@ -5,28 +5,22 @@
     __bind = function(fn, me){ return function(){ return fn.apply(me, arguments); }; };
 
   (function($, window, document) {
-    var BaseConstraint, BaseControl, CheckboxControl, EchoFormsInterface, FormControl, GroupControl, GroupingControl, InputControl, OutputControl, PatternConstraint, RangeControl, RequiredConstraint, SecretControl, SelectControl, SelectrefControl, TextareaControl, TypeConstraint, TypedControl, UrlOutputControl, XPathConstraint, XPathResolver, debug, defaultControls, defaults, echoformsControlUniqueId, err, error, execXPath, log, parseXML, pluginName, warn, _ref, _ref1, _ref2, _ref3, _ref4, _ref5;
-    log = function() {
-      var args;
-      args = 1 <= arguments.length ? __slice.call(arguments, 0) : [];
-      return typeof console !== "undefined" && console !== null ? typeof console.log === "function" ? console.log.apply(console, args) : void 0 : void 0;
-    };
-    debug = function() {
-      var args;
-      args = 1 <= arguments.length ? __slice.call(arguments, 0) : [];
-      return typeof console !== "undefined" && console !== null ? typeof console.debug === "function" ? console.debug.apply(console, args) : void 0 : void 0;
-    };
+    var BaseConstraint, BaseControl, CheckboxControl, EchoFormsInterface, FormControl, GroupControl, GroupingControl, InputControl, OutputControl, PatternConstraint, RangeControl, RequiredConstraint, SecretControl, SelectControl, SelectrefControl, TextareaControl, TypeConstraint, TypedControl, UrlOutputControl, XPathConstraint, buildXPathResolverFn, c, controls, defaultControls, defaults, echoformsControlUniqueId, err, execXPath, parseXML, pluginName, warn, _i, _len, _ref, _ref1, _ref2, _ref3, _ref4, _ref5;
     warn = function() {
       var args;
       args = 1 <= arguments.length ? __slice.call(arguments, 0) : [];
       return typeof console !== "undefined" && console !== null ? typeof console.warn === "function" ? console.warn.apply(console, args) : void 0 : void 0;
     };
-    error = err = function() {
+    err = function() {
       var args;
       args = 1 <= arguments.length ? __slice.call(arguments, 0) : [];
       return typeof console !== "undefined" && console !== null ? typeof console.error === "function" ? console.error.apply(console, args) : void 0 : void 0;
     };
-    wgxpath.install(window);
+    if (typeof wgxpath !== "undefined" && wgxpath !== null) {
+      if (typeof wgxpath.install === "function") {
+        wgxpath.install(window);
+      }
+    }
     execXPath = function(root, xpath, resolver) {
       var result;
       if ((xpath != null ? xpath.charAt(0) : void 0) === '[') {
@@ -51,7 +45,7 @@
       }
     };
     parseXML = function(data) {
-      var xml;
+      var error, xml;
       if (!data || typeof data !== 'string') {
         return null;
       }
@@ -68,9 +62,22 @@
         error = _error;
       }
       if (!xml || !xml.documentElement || xml.getElementsByTagName("parsererror").length) {
-        error("Invalid XML: " + data);
+        err("Invalid XML: " + data);
       }
       return xml;
+    };
+    buildXPathResolverFn = function(xml) {
+      var defaultName, match, name, namespaceRegexp, namespaces, uri, _ref;
+      namespaces = {};
+      defaultName = " default ";
+      namespaceRegexp = /\sxmlns(?::(\w+))?=\"([^\"]+)\"/g;
+      while ((match = namespaceRegexp.exec(xml)) != null) {
+        _ref = match.slice(1, 3), name = _ref[0], uri = _ref[1];
+        namespaces[name != null ? name : defaultName] = uri;
+      }
+      return function(prefix) {
+        return namespaces[prefix != null ? prefix : defaultName];
+      };
     };
     BaseConstraint = (function() {
       function BaseConstraint(message) {
@@ -428,7 +435,10 @@
 
       BaseControl.prototype.buildLabelDom = function() {
         if (this.label != null) {
-          return $("<label class=\"echoforms-control-label\" for=\"" + this.id + "-element\">" + this.label + "</label>");
+          return $('<label/>', {
+            "class": 'echoforms-label',
+            "for": "" + this.id + "-element"
+          }).text(this.label);
         } else {
           return $();
         }
@@ -436,29 +446,40 @@
 
       BaseControl.prototype.buildHelpDom = function() {
         var help, result, _i, _len, _ref;
-        result = $();
+        result = $('<div/>', {
+          "class": 'echoforms-help'
+        });
         _ref = this.ui.children('help');
         for (_i = 0, _len = _ref.length; _i < _len; _i++) {
           help = _ref[_i];
-          result = result.add("<label class=\"echoforms-help\" for=\"" + this.id + "-element\">" + ($(help).text()) + "</label>");
+          $('<p/>', {
+            "class": 'echoforms-help-item'
+          }).text($(help).text()).appendTo(result);
         }
         return result;
       };
 
       BaseControl.prototype.buildControlDom = function() {
-        return $("<div id=\"" + this.id + "\" class=\"echoforms-control echoforms-control-" + this.ui[0].nodeName + "\"/>");
+        return $("<div/>", {
+          id: this.id,
+          "class": "echoforms-control echoforms-control-" + this.ui[0].nodeName
+        });
       };
 
       BaseControl.prototype.buildElementsDom = function() {
-        return $('<div class="echoforms-elements"/>').append(this.buildElementsChildrenDom());
+        return $('<div/>', {
+          "class": 'echoforms-elements'
+        });
       };
 
       BaseControl.prototype.buildErrorsDom = function() {
-        return $('<div class="echoforms-errors"/>');
+        return $('<div/>', {
+          "class": 'echoforms-errors'
+        });
       };
 
       BaseControl.prototype.setErrors = function(messages) {
-        var errors, message, _i, _len;
+        var error, errors, message, _i, _len;
         errors = $();
         for (_i = 0, _len = messages.length; _i < _len; _i++) {
           message = messages[_i];
@@ -469,11 +490,10 @@
         return this.el.find('.echoforms-errors').empty().append(errors);
       };
 
-      BaseControl.prototype.buildElementsChildrenDom = function() {
-        return $();
-      };
-
-      BaseControl.prototype.buildDom = function() {
+      BaseControl.prototype.buildDom = function(classes) {
+        if (classes == null) {
+          classes = null;
+        }
         return this.buildControlDom().append(this.buildLabelDom()).append(this.buildElementsDom()).append(this.buildHelpDom()).append(this.buildErrorsDom());
       };
 
@@ -503,6 +523,15 @@
         return $.trim(this.inputs().val());
       };
 
+      TypedControl.prototype.inputAttrs = function() {
+        var _ref, _ref1;
+        return {
+          id: "" + this.id + "-element",
+          "class": "echoforms-element-" + ((_ref = (_ref1 = this.inputElementType) != null ? _ref1 : this.inputClass) != null ? _ref : this.ui[0].nodeName),
+          autocomplete: "off"
+        };
+      };
+
       TypedControl.prototype.saveToModel = function() {
         TypedControl.__super__.saveToModel.call(this);
         if (this.refExpr) {
@@ -515,6 +544,14 @@
         if (this.refExpr) {
           return this.inputs().val(this.refValue());
         }
+      };
+
+      TypedControl.prototype.buildDom = function() {
+        return TypedControl.__super__.buildDom.call(this).addClass('echoforms-typed-control');
+      };
+
+      TypedControl.prototype.buildElementsDom = function() {
+        return TypedControl.__super__.buildElementsDom.call(this).append($("<" + this.inputTag + "/>", this.inputAttrs()));
       };
 
       return TypedControl;
@@ -530,15 +567,21 @@
 
       InputControl.selector = 'input';
 
+      InputControl.prototype.inputClass = 'input';
+
+      InputControl.prototype.inputTag = 'input';
+
       InputControl.prototype.inputElementType = 'text';
 
-      InputControl.prototype.buildElementsChildrenDom = function() {
-        var element;
-        element = $("<input id=\"" + this.id + "-element\" type=\"" + this.inputElementType + "\" class=\"echoforms-element-input echoforms-element-input-" + this.inputType + "\" autocomplete=\"off\">");
+      InputControl.prototype.inputAttrs = function() {
+        var attrs;
+        attrs = $.extend(InputControl.__super__.inputAttrs.call(this), {
+          type: this.inputElementType
+        });
         if (this.inputType === 'datetime') {
-          element.attr('placeholder', 'MM/DD/YYYYTHH:MM:SS');
+          attrs['placeholder'] = 'MM/DD/YYYYTHH:MM:SS';
         }
-        return element;
+        return attrs;
       };
 
       return InputControl;
@@ -554,24 +597,25 @@
 
       CheckboxControl.selector = 'input[type$=boolean]';
 
+      CheckboxControl.prototype.inputClass = 'checkbox';
+
       CheckboxControl.prototype.inputElementType = 'checkbox';
 
       CheckboxControl.prototype.inputValue = function() {
-        return this.inputs().is(':checked').toString();
+        return this.inputs().prop('checked').toString();
       };
 
       CheckboxControl.prototype.loadFromModel = function() {
         CheckboxControl.__super__.loadFromModel.call(this);
         if (this.refExpr) {
-          return this.inputs().attr('checked', this.refValue() === 'true');
+          return this.inputs().prop('checked', this.refValue() === 'true');
         }
       };
 
       CheckboxControl.prototype.buildDom = function() {
         var result;
         result = CheckboxControl.__super__.buildDom.call(this);
-        result.addClass('echoforms-control-checkbox');
-        result.children('.echoforms-elements').after(result.children('.echoforms-control-label'));
+        result.children('.echoforms-elements').after(result.children('.echoforms-label'));
         return result;
       };
 
@@ -607,8 +651,8 @@
         }
       };
 
-      OutputControl.prototype.buildElementsChildrenDom = function() {
-        return $('<p/>');
+      OutputControl.prototype.buildElementsDom = function() {
+        return OutputControl.__super__.buildElementsDom.call(this).append('<p/>');
       };
 
       return OutputControl;
@@ -632,8 +676,8 @@
         }
       };
 
-      UrlOutputControl.prototype.buildElementsChildrenDom = function() {
-        return $('<a href="#" />');
+      UrlOutputControl.prototype.buildElementsDom = function() {
+        return UrlOutputControl.__super__.buildElementsDom.call(this).append('<a href="#" />');
       };
 
       return UrlOutputControl;
@@ -643,6 +687,8 @@
       __extends(SelectControl, _super);
 
       SelectControl.selector = 'select';
+
+      SelectControl.prototype.inputTag = 'select';
 
       function SelectControl(ui, model, controlClasses, resolver) {
         var item, label, value;
@@ -733,21 +779,27 @@
         return result;
       };
 
-      SelectControl.prototype.buildElementsChildrenDom = function() {
-        var el, label, value, _i, _len, _ref3, _ref4;
-        el = $("<select id=\"" + this.id + "-element\" class=\"echoforms-element-select\" autocomplete=\"off\"/>");
-        if (this.isMultiple) {
-          el.addClass('echoforms-element-select-multiple');
-          el.attr('multiple', 'multiple');
-        } else {
+      SelectControl.prototype.inputAttrs = function() {
+        return $.extend(SelectControl.__super__.inputAttrs.call(this), {
+          multiple: this.isMultiple
+        });
+      };
+
+      SelectControl.prototype.buildElementsDom = function() {
+        var el, label, result, value, _i, _len, _ref3, _ref4;
+        result = SelectControl.__super__.buildElementsDom.call(this);
+        el = result.children('select');
+        if (!this.multiple) {
           el.append('<option value=""> -- Select a value -- </option>');
         }
         _ref3 = this.items;
         for (_i = 0, _len = _ref3.length; _i < _len; _i++) {
           _ref4 = _ref3[_i], label = _ref4[0], value = _ref4[1];
-          el.append("<option value=\"" + value + "\">" + label + "</option>");
+          $('<option/>', {
+            value: value
+          }).text(label).appendTo(el);
         }
-        return el;
+        return result;
       };
 
       return SelectControl;
@@ -793,9 +845,7 @@
 
       TextareaControl.selector = 'textarea';
 
-      TextareaControl.prototype.buildElementsChildrenDom = function() {
-        return $("<textarea id=\"" + this.id + "-element\" class=\"echoforms-element-textarea\" autocomplete=\"off\"/>");
-      };
+      TextareaControl.prototype.inputTag = 'textarea';
 
       return TextareaControl;
 
@@ -824,9 +874,20 @@
         return _results;
       };
 
+      GroupingControl.prototype.buildLabelDom = function() {
+        if (this.label != null) {
+          return $('<h1/>', {
+            "class": 'echoforms-label'
+          }).text(this.label);
+        } else {
+          return $();
+        }
+      };
+
       GroupingControl.prototype.buildDom = function() {
-        var ControlClass, child, childModel, children, control, controls, found, root, ui, _i, _j, _len, _len1, _ref5, _ref6;
-        root = GroupingControl.__super__.buildDom.call(this);
+        var ControlClass, child, childModel, children, control, controls, root, ui, _i, _j, _len, _len1, _ref5, _ref6;
+        root = GroupingControl.__super__.buildDom.call(this).addClass('echoforms-grouping-control');
+        root.children('.echoforms-label').after(root.children('.echoforms-help'));
         childModel = this.ref();
         ui = this.ui;
         children = $();
@@ -837,7 +898,6 @@
           if (child.nodeName === 'help' || child.nodeName === 'constraints') {
             continue;
           }
-          found = false;
           _ref6 = this.controlClasses;
           for (_j = 0, _len1 = _ref6.length; _j < _len1; _j++) {
             ControlClass = _ref6[_j];
@@ -845,12 +905,8 @@
               control = new ControlClass($(child), childModel, this.controlClasses, this.resolver);
               controls.push(control);
               children = children.add(control.el);
-              found = true;
               break;
             }
-          }
-          if (!found) {
-            warn("No class available for element:", child);
           }
         }
         root.find('.echoforms-elements').replaceWith($('<div class="echoforms-children"/>').append(children));
@@ -912,32 +968,6 @@
 
       GroupControl.selector = 'group';
 
-      GroupControl.prototype.buildLabelDom = function() {
-        if (this.label != null) {
-          return $("<h1 class=\"echoforms-control-label\">" + this.label + "</h1>");
-        } else {
-          return $();
-        }
-      };
-
-      GroupControl.prototype.buildHelpDom = function() {
-        var help, result, _i, _len, _ref6;
-        result = $();
-        _ref6 = this.ui.children('help');
-        for (_i = 0, _len = _ref6.length; _i < _len; _i++) {
-          help = _ref6[_i];
-          result = result.add("<p class=\"echoforms-help\">" + ($(help).text()) + "</>");
-        }
-        return result;
-      };
-
-      GroupControl.prototype.buildDom = function() {
-        var result;
-        result = GroupControl.__super__.buildDom.call(this);
-        result.children('.echoforms-control-label').after(result.children('.echoforms-help'));
-        return result;
-      };
-
       return GroupControl;
 
     })(GroupingControl);
@@ -967,29 +997,6 @@
       controls: []
     };
     defaultControls = [CheckboxControl, InputControl, UrlOutputControl, OutputControl, SelectControl, RangeControl, SecretControl, TextareaControl, GroupControl, SelectrefControl];
-    XPathResolver = (function() {
-      function XPathResolver(xml) {
-        this.resolve = __bind(this.resolve, this);
-        var match, name, namespaceRegexp, namespaces, uri, _ref6;
-        namespaces = {};
-        namespaceRegexp = /\sxmlns(?::(\w+))?=\"([^\"]+)\"/g;
-        match = namespaceRegexp.exec(xml);
-        while (match != null) {
-          name = (_ref6 = match[1]) != null ? _ref6 : ' default ';
-          uri = match[2];
-          namespaces[name] = uri;
-          match = namespaceRegexp.exec(xml);
-        }
-        this.namespaces = namespaces;
-      }
-
-      XPathResolver.prototype.resolve = function(prefix) {
-        return this.namespaces[prefix != null ? prefix : " default "];
-      };
-
-      return XPathResolver;
-
-    })();
     EchoFormsInterface = (function() {
       function EchoFormsInterface(root, options) {
         var controlClasses, doc, form, model, resolver, ui;
@@ -998,9 +1005,9 @@
         this.form = form = this.options['form'];
         this.controlClasses = controlClasses = this.options['controls'].concat(defaultControls);
         if (form == null) {
-          error("You must specify a 'form' option when creating an echoforms instance");
+          error("You must specify a 'form' option when creating " + pluginName + " instances");
         }
-        this.resolver = resolver = new XPathResolver(form).resolve;
+        this.resolver = resolver = buildXPathResolverFn(form);
         this.doc = doc = $(parseXML(form));
         this.model = model = doc.find('form > model > instance');
         this.ui = ui = doc.find('form > ui');
@@ -1009,7 +1016,7 @@
       }
 
       EchoFormsInterface.prototype.destroy = function() {
-        return this.root.removeData('echoforms').empty();
+        return this.root.removeData(pluginName).empty();
       };
 
       EchoFormsInterface.prototype.isValid = function() {
@@ -1023,16 +1030,34 @@
       return EchoFormsInterface;
 
     })();
-    $.fn[pluginName] = function() {
+    controls = {};
+    for (_i = 0, _len = defaultControls.length; _i < _len; _i++) {
+      c = defaultControls[_i];
+      controls[c.name] = c;
+    }
+    $[pluginName] = {
+      control: function(controlClass, options) {
+        if (options == null) {
+          options = {};
+        }
+        defaultControls.unshift(controlClass);
+        if (options['export']) {
+          controls[controlClass.name] = controlClass;
+        }
+        return this;
+      },
+      controls: controls
+    };
+    return $.fn[pluginName] = function() {
       var args, method, result, _ref6;
       args = 1 <= arguments.length ? __slice.call(arguments, 0) : [];
       if (args.length > 0 && typeof args[0] === 'string') {
         _ref6 = args, method = _ref6[0], args = 2 <= _ref6.length ? __slice.call(_ref6, 1) : [];
         result = this.map(function() {
           var attr, form, x, _ref7;
-          form = $.data(this, "echoforms");
+          form = $.data(this, pluginName);
           if (!form) {
-            warn("ECHO Form not found on instance");
+            warn("" + pluginName + " not found on instance");
             return this;
           } else if (/^debug_/.test(method)) {
             _ref7 = method.split('_'), x = _ref7[0], attr = 2 <= _ref7.length ? __slice.call(_ref7, 1) : [];
@@ -1040,7 +1065,7 @@
           } else if (!/^_/.test(method) && typeof (form != null ? form[method] : void 0) === 'function') {
             return form[method].apply(form, args);
           } else {
-            err("Could not call " + method + " on echoforms instance:", this);
+            err("Could not call " + method + " on " + pluginName + " instance:", this);
             return null;
           }
         });
@@ -1049,16 +1074,15 @@
         return this.each(function() {
           var options;
           options = args[0];
-          if (!$.data(this, "echoforms")) {
-            return $.data(this, "echoforms", new EchoFormsInterface($(this), options));
+          if ($.data(this, pluginName) == null) {
+            return $.data(this, pluginName, new EchoFormsInterface($(this), options));
           }
         });
       } else {
-        err("Bad arguments to echoforms:", args);
+        err("Bad arguments to " + pluginName + ":", args);
         return this;
       }
     };
-    return $(document).ready(function() {});
   })(jQuery, window, document);
 
 }).call(this);

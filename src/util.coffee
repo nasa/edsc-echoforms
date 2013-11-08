@@ -1,9 +1,7 @@
-  log =   (args...) -> console?.log?(args...)
-  debug = (args...) -> console?.debug?(args...)
   warn =  (args...) -> console?.warn?(args...)
-  error = err = (args...) -> console?.error?(args...)
+  err = (args...) -> console?.error?(args...)
 
-  wgxpath.install(window)
+  wgxpath?.install?(window)
 
   execXPath = (root, xpath, resolver) ->
     # Handle slightly bad expressions received from providers.
@@ -38,6 +36,17 @@
     catch error
 
     if !xml || !xml.documentElement || xml.getElementsByTagName( "parsererror" ).length
-      error "Invalid XML: #{data}"
+      err "Invalid XML: #{data}"
 
     xml
+
+  buildXPathResolverFn = (xml) ->
+    namespaces = {}
+    defaultName = " default "
+
+    namespaceRegexp = /\sxmlns(?::(\w+))?=\"([^\"]+)\"/g
+    while (match = namespaceRegexp.exec(xml))?
+      [name, uri] = match[1..2]
+      namespaces[name ? defaultName] = uri
+
+    (prefix) -> namespaces[prefix ? defaultName]

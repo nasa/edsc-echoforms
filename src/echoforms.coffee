@@ -19,23 +19,6 @@
     SelectrefControl
     ]
 
-  class XPathResolver
-    constructor: (xml) ->
-      namespaces = {}
-
-      namespaceRegexp = /\sxmlns(?::(\w+))?=\"([^\"]+)\"/g
-      match = namespaceRegexp.exec(xml)
-      while match?
-        name = match[1] ? ' default '
-        uri = match[2]
-        namespaces[name] = uri
-        match = namespaceRegexp.exec(xml)
-
-      @namespaces = namespaces
-
-    resolve: (prefix) =>
-      @namespaces[prefix ? " default "]
-
   class EchoFormsInterface
     constructor: (@root, options) ->
       @options = $.extend({}, defaults, options)
@@ -43,24 +26,19 @@
       @controlClasses = controlClasses = @options['controls'].concat(defaultControls)
 
       unless form?
-        error "You must specify a 'form' option when creating an echoforms instance"
+        error "You must specify a 'form' option when creating #{pluginName} instances"
 
-      @resolver = resolver = new XPathResolver(form).resolve
+      @resolver = resolver = buildXPathResolverFn(form) #new XPathResolver(form).resolve
       @doc = doc = $(parseXML(form))
 
       @model = model = doc.find('form > model > instance')
       @ui = ui = doc.find('form > ui')
 
-      #xml2 = $('<div/>').append(doc.find('form > model > instance').children()).html()
-      #@resolver = resolver = new XPathResolver(xml2).resolve
-      #console.log xml2
-      #@model = model = $(parseXML(form))
-
       @control = new FormControl(ui, model, controlClasses, resolver)
       @root.append(@control.element())
 
     destroy: ->
-      @root.removeData('echoforms').empty()
+      @root.removeData(pluginName).empty()
 
     isValid: ->
       @control.isValid()
@@ -68,23 +46,37 @@
     serialize: ->
       @control.serialize()
 
+  controls = {}
+  controls[c.name] = c for c in defaultControls
+
+  $[pluginName] =
+    control: (controlClass, options={}) ->
+      defaultControls.unshift(controlClass)
+      controls[controlClass.name] = controlClass if options['export']
+      this
+
+    controls: controls
+
   $.fn[pluginName] = (args...) ->
     if args.length > 0 && typeof args[0] == 'string'
       # Method call
       [method, args...] = args
       result = @map ->
-        form = $.data(this, "echoforms")
+        form = $.data(this, pluginName)
 
         if !form
-          warn "ECHO Form not found on instance"
+          warn "#{pluginName} not found on instance"
           this
         else if /^debug_/.test(method)
+          # Calling el.echoforms('debug_attrname') returns the attribute named attrname for
+          # debugging purposes
           [x, attr...] = method.split('_')
           form[attr.join('_')]
         else if !/^_/.test(method) && typeof form?[method] == 'function'
+          # Calling el.echoforms(method, args...) calls the given method passing the given args
           form[method](args...)
         else
-          err "Could not call #{method} on echoforms instance:", this
+          err "Could not call #{method} on #{pluginName} instance:", this
           null
       result[0]
     else if args.length < 2
@@ -92,15 +84,8 @@
         # Constructor call
         options = args[0]
         # Prevent multiple instantiations
-        if !$.data(this, "echoforms")
-          $.data(this, "echoforms", new EchoFormsInterface($(this), options))
+        unless $.data(this, pluginName)?
+          $.data(this, pluginName, new EchoFormsInterface($(this), options))
     else
-      err "Bad arguments to echoforms:", args
+      err "Bad arguments to #{pluginName}:", args
       this
-
-  $(document).ready ->
-    #formatXml = (xml) ->
-    #  xml.replace(/\s+/g, ' ').replace(/> </g, '>\n<')
-
-    #$(document).bind 'echoforms:instanceChange', (event, instance) ->
-    #  $('#debug').text(formatXml(instance.serialize()))

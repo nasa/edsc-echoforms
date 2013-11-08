@@ -1,66 +1,73 @@
-  //-moz-box-sizing: border-box;
-  //box-sizing: border-box;
-
+$echoforms-label-column-width: 11em;
 
 // The root control
 .echoforms-control-ui {
+  p {
+    margin: {
+      top: 0;
+      bottom: 0;
+    }
+  }
 }
 
 // All controls
 .echoforms-control {
   clear: both;
   padding: .5em 0;
-  margin: .5em 0;
+
+  > .echoforms-label,
+  > .echoforms-elements,
+  > .echoforms-help {
+    display: block;
+    padding: .2em 0;
+  }
 }
 
+// All non-grouping controls
+.echoforms-typed-control {
+  > * {
+    margin-left: $echoforms-label-column-width;
+  }
+
+  > .echoforms-label {
+    -moz-box-sizing: border-box;
+    box-sizing: border-box;
+    float: left;
+    margin-left: 0;
+    width: $echoforms-label-column-width;
+    padding: .3em .5em .2em;
+    text-align: right;
+  }
+}
+
+// <group> controls
 .echoforms-control-group {
-  border: 1px solid #aaa;
+  border: solid #aaa;
   border-width: 1px 0px;
 
   &:first-child {
     border-top-width: 0;
   }
+
   &:last-child {
     border-bottom-width: 0;
   }
 }
 
+// <input type="xs:boolean"> controls (checkboxes)
 .echoforms-control-checkbox {
-  .echoforms-elements {
-    display: inline;
-  }
-
-  .echoforms-control-label {
+  > .echoforms-elements,
+  > .echoforms-label {
     display: inline;
     float: none;
   }
 }
 
+// <output> controls
 .echoforms-control-output {
-  .echoforms-elements {
+  > .echoforms-elements {
+    // Use the same vertical padding as their corresponding label
     padding:.3em 0 .2em;
   }
-}
 
-label.echoforms-control-label {
-  float: left;
-  width: 10em;
-  padding: .3em .5em .2em;
-  text-align: right;
-}
-
-.echoforms-elements {
-  p {
-    margin: 0;
-    padding: 0;
-  }
-}
-
-.echoforms-help, .echoforms-control-label, .echoforms-elements, .echoforms-errors, .echoforms-control {
-  display: block;
-  padding: .2em 0;
-}
-
-label.echoforms-help, .echoforms-elements, .echoforms-errors {
-  margin-left: 11em;
 }

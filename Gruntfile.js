@@ -25,7 +25,8 @@ module.exports = function(grunt) {
     concat: {
       dist: {
         files: {
-          "dist/wgxpath.install.js" : ["vendor/wgxpath.install.js"]
+          "dist/wgxpath.install.js" : ["vendor/wgxpath.install.js"],
+          "dist/jquery.simple-slider.min.js" : ["vendor/jquery-simple-slider/js/simple-slider.min.js"]
         }
       },
       options: {
@@ -102,6 +103,18 @@ module.exports = function(grunt) {
           style: 'compressed'
         }
       }
+    },
+
+    cssmin: {
+      dist: {
+        files: {
+          'dist/jquery.echoforms.min.css': ['vendor/jquery-simple-slider/css/simple-slider.css',
+                                            'dist/jquery.echoforms.min.css']
+        }
+      },
+			options: {
+        banner: "<%= meta.banner %>"
+			}
     }
 
 	});
@@ -112,8 +125,9 @@ module.exports = function(grunt) {
 	grunt.loadNpmTasks("grunt-contrib-coffee");
 	grunt.loadNpmTasks("grunt-contrib-watch");
 	grunt.loadNpmTasks("grunt-contrib-sass");
+  grunt.loadNpmTasks('grunt-contrib-cssmin');
 	grunt.loadNpmTasks("grunt-closure-compiler");
 
-	grunt.registerTask("default", ["coffee", "concat", "jshint", "uglify", "sass"]);
+	grunt.registerTask("default", ["coffee", "concat", "jshint", "uglify", "sass", "cssmin"]);
 
 };

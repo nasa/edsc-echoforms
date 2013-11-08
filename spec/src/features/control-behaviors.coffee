@@ -6,7 +6,7 @@ window.sharedBehaviorForControls = (template, options={}) ->
 
   it "displays its label", ->
     template.form(dom, attributes: 'label="Control label"')
-    expect($('#control > .echoforms-control-label')).toHaveText('Control label')
+    expect($('#control > .echoforms-label')).toHaveText('Control label')
 
   it "displays help", ->
     template.form(dom, children: '<help>Helpful text</help>')

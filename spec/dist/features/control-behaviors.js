@@ -11,7 +11,7 @@
       template.form(dom, {
         attributes: 'label="Control label"'
       });
-      return expect($('#control > .echoforms-control-label')).toHaveText('Control label');
+      return expect($('#control > .echoforms-label')).toHaveText('Control label');
     });
     it("displays help", function() {
       template.form(dom, {

@@ -1,0 +1,3 @@
+[submodule "vendor/jquery-simple-slider"]
+	path = vendor/jquery-simple-slider
+	url = https://github.com/loopj/jquery-simple-slider

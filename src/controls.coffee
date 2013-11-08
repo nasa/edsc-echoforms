@@ -110,24 +110,24 @@
 
     buildLabelDom: ->
       if @label?
-        $("<label class=\"echoforms-control-label\" for=\"#{@id}-element\">#{@label}</label>")
+        $('<label/>', class: 'echoforms-label', for: "#{@id}-element").text(@label)
       else
         $()
 
     buildHelpDom: ->
-      result = $()
+      result = $('<div/>', class: 'echoforms-help')
       for help in @ui.children('help')
-        result = result.add("<label class=\"echoforms-help\" for=\"#{@id}-element\">#{$(help).text()}</label>")
+        $('<p/>', class: 'echoforms-help-item').text($(help).text()).appendTo(result)
       result
 
     buildControlDom: ->
-      $("<div id=\"#{@id}\" class=\"echoforms-control echoforms-control-#{@ui[0].nodeName}\"/>")
+      $("<div/>", id: @id, class: "echoforms-control echoforms-control-#{@ui[0].nodeName}")
 
     buildElementsDom: ->
-      $('<div class="echoforms-elements"/>').append(@buildElementsChildrenDom())
+      $('<div/>', class: 'echoforms-elements')
 
     buildErrorsDom: ->
-      $('<div class="echoforms-errors"/>')
+      $('<div/>', class: 'echoforms-errors')
 
     setErrors: (messages) ->
       errors = $()
@@ -137,10 +137,7 @@
         errors = errors.add(error)
       @el.find('.echoforms-errors').empty().append(errors)
 
-    buildElementsChildrenDom: ->
-      $()
-
-    buildDom: ->
+    buildDom: (classes=null)->
       @buildControlDom()
         .append(@buildLabelDom())
         .append(@buildElementsDom())
@@ -167,6 +164,11 @@
     inputValue:() ->
       $.trim(@inputs().val())
 
+    inputAttrs: ->
+      id: "#{@id}-element"
+      class: "echoforms-element-#{@inputElementType ? @inputClass ? @ui[0].nodeName}"
+      autocomplete: "off"
+
     saveToModel: ->
       super()
       @ref().text(@inputValue()) if @refExpr
@@ -175,32 +177,41 @@
       super()
       @inputs().val(@refValue()) if @refExpr
 
+    buildDom: ->
+      super().addClass('echoforms-typed-control')
+
+    buildElementsDom: ->
+      super().append($("<#{@inputTag}/>", @inputAttrs()))
+
   class InputControl extends TypedControl
     @selector: 'input'
 
+    inputClass: 'input'
+    inputTag: 'input'
     inputElementType: 'text'
 
-    buildElementsChildrenDom: ->
-      element = $("<input id=\"#{@id}-element\" type=\"#{@inputElementType}\" class=\"echoforms-element-input echoforms-element-input-#{@inputType}\" autocomplete=\"off\">")
-      element.attr('placeholder', 'MM/DD/YYYYTHH:MM:SS') if @inputType == 'datetime'
-      element
+    inputAttrs: ->
+      attrs = $.extend(super(), type: @inputElementType)
+      attrs['placeholder'] = 'MM/DD/YYYYTHH:MM:SS' if @inputType == 'datetime'
+      attrs
 
   class CheckboxControl extends InputControl
     @selector: 'input[type$=boolean]'
+
+    inputClass: 'checkbox'
     inputElementType: 'checkbox'
 
     inputValue:() ->
-      @inputs().is(':checked').toString()
+      @inputs().prop('checked').toString()
 
     loadFromModel: ->
       super()
-      @inputs().attr('checked', @refValue() == 'true') if @refExpr
+      @inputs().prop('checked', @refValue() == 'true') if @refExpr
 
     buildDom: ->
       # Put the label after the element as is expected of checkboxes
       result = super()
-      result.addClass('echoforms-control-checkbox')
-      result.children('.echoforms-elements').after(result.children('.echoforms-control-label'))
+      result.children('.echoforms-elements').after(result.children('.echoforms-label'))
       result
 
 
@@ -223,8 +234,8 @@
       super()
       @el.find('.echoforms-elements > p').text(@refValue()) if @refExpr || @valueExpr
 
-    buildElementsChildrenDom: ->
-      $('<p/>')
+    buildElementsDom: ->
+      super().append('<p/>')
 
   class UrlOutputControl extends OutputControl
     @selector: 'output[type$=anyURI], output[type$=anyuri]'
@@ -233,11 +244,13 @@
       value = @refValue()
       @el.find('.echoforms-elements > a').text(value).attr('href', value) if @refExpr || @valueExpr
 
-    buildElementsChildrenDom: ->
-      $('<a href="#" />')
+    buildElementsDom: ->
+      super().append('<a href="#" />')
 
   class SelectControl extends TypedControl
     @selector: 'select'
+
+    inputTag: 'select'
 
     constructor: (ui, model, controlClasses, resolver) ->
       @isMultiple = ui.attr('multiple') == 'true'
@@ -283,16 +296,16 @@
         result = if result? && result != '' then [result] else []
       result
 
-    buildElementsChildrenDom: ->
-      el = $("<select id=\"#{@id}-element\" class=\"echoforms-element-select\" autocomplete=\"off\"/>")
-      if @isMultiple
-        el.addClass('echoforms-element-select-multiple')
-        el.attr('multiple', 'multiple')
-      else
-        el.append('<option value=""> -- Select a value -- </option>')
+    inputAttrs: ->
+      $.extend(super(), multiple: @isMultiple)
+
+    buildElementsDom: ->
+      result = super()
+      el = result.children('select')
+      el.append('<option value=""> -- Select a value -- </option>') unless @multiple
       for [label, value] in @items
-        el.append("<option value=\"#{value}\">#{label}</option>")
-      el
+        $('<option/>', value: value).text(label).appendTo(el)
+      result
 
   class RangeControl extends InputControl
     @selector: 'range'
@@ -311,8 +324,7 @@
   class TextareaControl extends TypedControl
     @selector: 'textarea'
 
-    buildElementsChildrenDom: ->
-      $("<textarea id=\"#{@id}-element\" class=\"echoforms-element-textarea\" autocomplete=\"off\"/>")
+    inputTag: 'textarea'
 
   #####################
   # Grouping Controls
@@ -330,23 +342,32 @@
       super()
       control.loadFromModel() for control in @controls
 
+    buildLabelDom: ->
+      # Use an <h1> for the label instead of the default <label>
+      if @label?
+        $('<h1/>', class: 'echoforms-label').text(@label)
+      else
+        $()
+
     buildDom: ->
-      root = super()
+      root = super().addClass('echoforms-grouping-control')
+
+      # Put help near the title of the control instead of near the bottom, since there
+      # can be a lot of controls between the title and the help
+      root.children('.echoforms-label').after(root.children('.echoforms-help'))
+
       childModel = @ref()
       ui = @ui
       children = $()
       @controls = controls = []
       for child in ui.children()
         continue if child.nodeName == 'help' || child.nodeName == 'constraints'
-        found = false
         for ControlClass in @controlClasses
           if $(child).is(ControlClass.selector)
             control = new ControlClass($(child), childModel, @controlClasses, @resolver)
             controls.push(control)
             children = children.add(control.el)
-            found = true
             break
-        warn("No class available for element:", child) unless found
       root.find('.echoforms-elements').replaceWith($('<div class="echoforms-children"/>').append(children))
       root
 
@@ -375,23 +396,6 @@
 
   class GroupControl extends GroupingControl
     @selector: 'group'
-
-    buildLabelDom: ->
-      if @label?
-        $("<h1 class=\"echoforms-control-label\">#{@label}</h1>")
-      else
-        $()
-
-    buildHelpDom: ->
-      result = $()
-      for help in @ui.children('help')
-        result = result.add("<p class=\"echoforms-help\">#{$(help).text()}</>")
-      result
-
-    buildDom: ->
-      result = super()
-      result.children('.echoforms-control-label').after(result.children('.echoforms-help'))
-      result
 
   #####################
   # Reference Controls
