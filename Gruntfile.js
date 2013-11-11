@@ -25,7 +25,7 @@ module.exports = function(grunt) {
     concat: {
       dist: {
         files: {
-          "dist/wgxpath.install.js" : ["vendor/wgxpath.install.js"],
+          "dist/wgxpath.install.patched.js" : ["vendor/wgxpath/wgxpath.install.js"],
           "dist/jquery.simple-slider.min.js" : ["vendor/jquery-simple-slider/js/simple-slider.min.js"]
         }
       },

@@ -1,0 +1,34 @@
+diff --git nameTest.js nameTest.js
+index 060d23a..5dfc7db 100644
+--- nameTest.js
++++ nameTest.js
+@@ -52,17 +52,24 @@ wgxpath.NameTest.HTML_NAMESPACE_URI_ = 'http://www.w3.org/1999/xhtml';
+  */
+ wgxpath.NameTest.prototype.matches = function(node) {
+   var type = node.nodeType;
++  var nodeName = node.nodeName
++
+   if (type != goog.dom.NodeType.ELEMENT &&
+       type != goog.dom.NodeType.ATTRIBUTE) {
+     return false;
+   }
+-  if (this.name_ != '*' && this.name_ != node.nodeName.toLowerCase()) {
++
++  if (this.name_ == '*') {
++    return true;
++  }
++
++  nodeName = nodeName.split(':').pop()
++  if (this.name_ != nodeName.toLowerCase()) {
+     return false;
+-  } else {
+-    var namespaceUri = node.namespaceURI ? node.namespaceURI.toLowerCase() :
+-        wgxpath.NameTest.HTML_NAMESPACE_URI_;
+-    return this.namespaceUri_ == namespaceUri;
+   }
++  var namespaceUri = node.namespaceURI ? node.namespaceURI.toLowerCase() :
++      wgxpath.NameTest.HTML_NAMESPACE_URI_;
++  return this.namespaceUri_ == namespaceUri;
+ };
+ 
+ 
