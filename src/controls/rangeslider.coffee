@@ -1,10 +1,22 @@
 do ($ = jQuery, controls = jQuery.echoforms.controls, window, document) ->
 
-  class RangeControl extends controls.InputControl
+  class RangeSliderControl extends controls.RangeControl
     @selector: 'range'
 
-    constructor: (args...) ->
-      super(args...)
+    addedToDom: ->
+      super()
+
+      input = @inputs()
+
+      $('<div/>').addClass('slider-output').insertAfter(input)
 
 
-  $.echoforms.control(RangeControl, export: true)
+
+      input.bind 'slider:ready slider:changed', (e, data) ->
+        $(this).nextAll('.slider-output').html(data.value)
+      input.simpleSlider
+        snap: true
+        range: [@start, @end]
+        step: @step
+
+  $.echoforms.control(RangeSliderControl, export: true)

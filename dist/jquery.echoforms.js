@@ -530,6 +530,8 @@
         return this.buildControlDom().append(this.buildLabelDom()).append(this.buildElementsDom()).append(this.buildErrorsDom()).append(this.buildHelpDom());
       };
 
+      BaseControl.prototype.addedToDom = function() {};
+
       return BaseControl;
 
     })();
@@ -854,9 +856,9 @@
       RangeControl.selector = 'range';
 
       function RangeControl(ui, model, controlClasses, resolver) {
-        this.start = ui.attr('start');
-        this.end = ui.attr('end');
-        this.step = ui.attr('step');
+        this.start = parseInt(ui.attr('start'), 10);
+        this.end = parseInt(ui.attr('end'), 10);
+        this.step = parseInt(ui.attr('step'), 10);
         RangeControl.__super__.constructor.call(this, ui, model, controlClasses, resolver);
       }
 
@@ -968,6 +970,18 @@
         return _results;
       };
 
+      GroupingControl.prototype.addedToDom = function() {
+        var control, _i, _len, _ref5, _results;
+        GroupingControl.__super__.addedToDom.call(this);
+        _ref5 = this.controls;
+        _results = [];
+        for (_i = 0, _len = _ref5.length; _i < _len; _i++) {
+          control = _ref5[_i];
+          _results.push(control.addedToDom());
+        }
+        return _results;
+      };
+
       return GroupingControl;
 
     })(BaseControl);
@@ -1056,6 +1070,7 @@
         this.ui = ui = doc.find('form > ui');
         this.control = new FormControl(ui, model, controlClasses, resolver);
         this.root.append(this.control.element());
+        this.control.addedToDom();
       }
 
       EchoFormsInterface.prototype.destroy = function() {

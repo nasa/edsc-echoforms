@@ -36,6 +36,7 @@
 
       @control = new FormControl(ui, model, controlClasses, resolver)
       @root.append(@control.element())
+      @control.addedToDom()
 
     destroy: ->
       @root.removeData(pluginName).empty()

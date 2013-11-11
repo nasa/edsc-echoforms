@@ -145,6 +145,8 @@
         .append(@buildErrorsDom())
         .append(@buildHelpDom())
 
+    addedToDom: ->
+
   #####################
   # Typed Controls
   #####################
@@ -319,9 +321,9 @@
     @selector: 'range'
 
     constructor: (ui, model, controlClasses, resolver) ->
-      @start = ui.attr('start')
-      @end = ui.attr('end')
-      @step = ui.attr('step')
+      @start = parseInt(ui.attr('start'), 10)
+      @end = parseInt(ui.attr('end'), 10)
+      @step = parseInt(ui.attr('step'), 10)
       super(ui, model, controlClasses, resolver)
 
   class SecretControl extends InputControl
@@ -384,6 +386,11 @@
       super(isReadonly)
       for control in @controls
         control.updateReadonly(isReadonly)
+
+    addedToDom: ->
+      super()
+      for control in @controls
+        control.addedToDom()
 
   class FormControl extends GroupingControl
     constructor: (ui, model, controlClasses, resolver) ->
