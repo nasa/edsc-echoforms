@@ -9,6 +9,7 @@
   # If we do this, we should strip bracketed expressions before listening.
   # They are rare and evaluating them up-front is unnecessary and has
   # pitfalls.
+  #
 
   echoformsControlUniqueId = 0
 
@@ -111,29 +112,29 @@
 
     buildLabelDom: ->
       if @label?
-        $('<label/>', class: 'echoforms-label', for: "#{@id}-element").text(@label)
+        $('<label>', class: 'echoforms-label', for: "#{@id}-element").text(@label)
       else
         $()
 
     buildHelpDom: ->
-      result = $('<div/>', class: 'echoforms-help')
+      result = $('<div>', class: 'echoforms-help')
       for help in @ui.children('help')
-        $('<p/>', class: 'echoforms-help-item').text($(help).text()).appendTo(result)
+        $('<p>', class: 'echoforms-help-item').text($(help).text()).appendTo(result)
       result
 
     buildControlDom: ->
-      $("<div/>", id: @id, class: "echoforms-control echoforms-control-#{@ui[0].nodeName}")
+      $("<div>", id: @id, class: "echoforms-control echoforms-control-#{@ui[0].nodeName}")
 
     buildElementsDom: ->
-      $('<div/>', class: 'echoforms-elements')
+      $('<div>', class: 'echoforms-elements')
 
     buildErrorsDom: ->
-      $('<div/>', class: 'echoforms-errors')
+      $('<div>', class: 'echoforms-errors')
 
     setErrors: (messages) ->
       errors = $()
       for message in messages
-        error = $('<div class="echoforms-error"/>')
+        error = $('<div class="echoforms-error">')
         error.text(message)
         errors = errors.add(error)
       @el.find('.echoforms-errors').empty().append(errors)
@@ -146,286 +147,3 @@
         .append(@buildHelpDom())
 
     addedToDom: ->
-
-  #####################
-  # Typed Controls
-  #####################
-
-  class TypedControl extends BaseControl
-    constructor: (ui, model, controlClasses, resolver) ->
-      @inputType = (ui.attr('type') ? 'string').replace(/^.*:/, '').toLowerCase()
-      super(ui, model, controlClasses, resolver)
-      @inputs().bind('click change', @onChange)
-
-    loadConstraints: ->
-      super()
-      @constraints.push(new TypeConstraint(@inputType))
-
-    inputs: () ->
-      @_inputs ?= @el.find(':input')
-
-    inputValue:() ->
-      $.trim(@inputs().val())
-
-    inputAttrs: ->
-      id: "#{@id}-element"
-      class: "echoforms-element-#{@inputElementType ? @inputClass ? @ui[0].nodeName}"
-      autocomplete: "off"
-
-    saveToModel: ->
-      super()
-      @ref().text(@inputValue()) if @refExpr
-
-    loadFromModel: ->
-      super()
-      @inputs().val(@refValue()) if @refExpr
-
-    buildDom: ->
-      super().addClass('echoforms-typed-control')
-
-    buildElementsDom: ->
-      super().append($("<#{@inputTag}/>", @inputAttrs()))
-
-  class InputControl extends TypedControl
-    @selector: 'input'
-
-    inputClass: 'input'
-    inputTag: 'input'
-    inputElementType: 'text'
-
-    inputAttrs: ->
-      attrs = $.extend(super(), type: @inputElementType)
-      attrs['placeholder'] = 'MM/DD/YYYYTHH:MM:SS' if @inputType == 'datetime'
-      attrs
-
-  class CheckboxControl extends InputControl
-    @selector: 'input[type$=boolean]'
-
-    inputClass: 'checkbox'
-    inputElementType: 'checkbox'
-
-    inputValue:() ->
-      @inputs()[0].checked.toString()
-
-    loadFromModel: ->
-      super()
-      @inputs()[0].checked = @refValue() == 'true' if @refExpr
-
-    buildDom: ->
-      # Put the label after the element as is expected of checkboxes
-      result = super()
-      result.addClass('echoforms-control-checkbox')
-      result.children('.echoforms-elements').after(result.children('.echoforms-label'))
-      result
-
-
-  class OutputControl extends TypedControl
-    @selector: 'output'
-
-    inputTag: 'p'
-
-    constructor: (ui, model, controlClasses, resolver) ->
-      @valueExpr = ui.attr('value')
-      super(ui, model, controlClasses, resolver)
-
-    inputs: () -> $()
-
-    inputAttrs: ->
-      attrs = super()
-      delete attrs.autocomplete
-      attrs
-
-    refValue: ->
-      if @valueExpr
-        @xpath(@valueExpr)
-      else
-        super()
-
-    loadFromModel: ->
-      super()
-      @el.find('.echoforms-elements > p').text(@refValue()) if @refExpr || @valueExpr
-
-  class UrlOutputControl extends OutputControl
-    @selector: 'output[type$=anyURI], output[type$=anyuri]'
-
-    inputTag: 'a'
-
-    inputAttrs: ->
-      $.extend(super(), href: '#')
-
-    loadFromModel: ->
-      value = @refValue()
-      @el.find('.echoforms-elements > a').text(value).attr('href', value) if @refExpr || @valueExpr
-
-  class SelectControl extends TypedControl
-    @selector: 'select'
-
-    inputTag: 'select'
-
-    constructor: (ui, model, controlClasses, resolver) ->
-      @isMultiple = ui.attr('multiple') == 'true'
-      @valueElementName = ui.attr('valueElementName')
-      @items = for item in ui.children('item')
-        [label, value] = [$(item).attr('label'), $(item).attr('value')]
-        [label ? value, value]
-
-      super(ui, model, controlClasses, resolver)
-
-    refValue: ->
-      if @valueElementName? and @refExpr?
-        $(child).text() for child in @ref().children(@valueElementName)
-      else
-        super()
-
-    saveToModel: ->
-      if @valueElementName? and @refExpr?
-        root = @ref().empty()
-        [name, namespace] = root[0].nodeName.split(':').reverse()
-        tagname = @valueElementName
-        tagname = "#{namespace}:#{tagname}" if namespace?
-        for value in @inputValue()
-          element = document.createElementNS(root[0].namespaceURI, tagname)
-          node = $(element).text(value)
-          root.append(node)
-          node[0].namespaceURI = root[0].namespaceURI
-      else
-        super()
-
-    loadFromModel: ->
-      if @valueElementName? and @refExpr?
-        @validate()
-        value = ($(node).text() for node in @ref().children())
-        value = value[0] unless @isMultiple
-        @inputs().val(value)
-      else
-        super()
-
-    inputValue: ->
-      result = @inputs().val()
-      if @valueElementName? and !(result instanceof Array)
-        result = if result? && result != '' then [result] else []
-      result
-
-    inputAttrs: ->
-      $.extend(super(), multiple: @isMultiple)
-
-    buildElementsDom: ->
-      result = super()
-      el = result.children('select')
-      el.append('<option value=""> -- Select a value -- </option>') unless @multiple
-      for [label, value] in @items
-        $('<option/>', value: value).text(label).appendTo(el)
-      result
-
-  class RangeControl extends InputControl
-    @selector: 'range'
-
-    constructor: (ui, model, controlClasses, resolver) ->
-      @start = parseInt(ui.attr('start'), 10)
-      @end = parseInt(ui.attr('end'), 10)
-      @step = parseInt(ui.attr('step'), 10)
-      super(ui, model, controlClasses, resolver)
-
-  class SecretControl extends InputControl
-    @selector: 'secret'
-
-    inputElementType: 'password'
-
-  class TextareaControl extends TypedControl
-    @selector: 'textarea'
-
-    inputTag: 'textarea'
-
-  #####################
-  # Grouping Controls
-  #####################
-
-  class GroupingControl extends BaseControl
-    constructor: (ui, model, controlClasses, resolver) ->
-      # Grouping controls ignore the 'required' attribute
-      ui.removeAttr('required')
-      super(ui, model, controlClasses, resolver)
-
-    inputs: () -> $()
-
-    loadFromModel: ->
-      super()
-      control.loadFromModel() for control in @controls
-
-    buildLabelDom: ->
-      # Use an <h1> for the label instead of the default <label>
-      if @label?
-        $('<h1/>', class: 'echoforms-label').text(@label)
-      else
-        $()
-
-    buildDom: ->
-      root = super().addClass('echoforms-grouping-control')
-
-      # Put help near the title of the control instead of near the bottom, since there
-      # can be a lot of controls between the title and the help
-      root.children('.echoforms-label').after(root.children('.echoforms-help'))
-
-      childModel = @ref()
-      ui = @ui
-      children = $()
-      @controls = controls = []
-      for child in ui.children()
-        continue if child.nodeName == 'help' || child.nodeName == 'constraints'
-        for ControlClass in @controlClasses
-          if $(child).is(ControlClass.selector)
-            control = new ControlClass($(child), childModel, @controlClasses, @resolver)
-            controls.push(control)
-            children = children.add(control.el)
-            break
-      root.find('.echoforms-elements').replaceWith($('<div class="echoforms-children"/>').append(children))
-      root
-
-    updateReadonly: (isReadonly) ->
-      # Grouping controls cause child controls to inherit the readonly flag
-      super(isReadonly)
-      for control in @controls
-        control.updateReadonly(isReadonly)
-
-    addedToDom: ->
-      super()
-      for control in @controls
-        control.addedToDom()
-
-  class FormControl extends GroupingControl
-    constructor: (ui, model, controlClasses, resolver) ->
-      super(ui, model, controlClasses, resolver)
-      @el.bind 'echoforms:modelchange', => @loadFromModel()
-      @loadFromModel()
-
-    ref: ->
-      @model.children()
-
-    isValid: ->
-      @el.find('.echoforms-error:visible').length == 0
-
-    serialize: ->
-      model = @model.children().clone()
-      model.find('*[pruned=true]').remove()
-      serializeXML(model)
-
-  class GroupControl extends GroupingControl
-    @selector: 'group'
-
-  #####################
-  # Reference Controls
-  #####################
-
-  # As used, selectrefs turn out to be identical to selects, with valueElementName defaulted to 'value'
-  # The lack of reference controls hugely simplifies client code
-  class SelectrefControl extends SelectControl
-    @selector: 'selectref'
-
-    constructor: (ui, model, controlClasses, resolver) ->
-      valueElementName = ui.attr('valueElementName')
-      ui.attr('valueElementName', 'value') unless valueElementName?
-
-      super(ui, model, controlClasses, resolver)
-
-    buildDom: ->
-      super().addClass('echoforms-control-select')

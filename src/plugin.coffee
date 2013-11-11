@@ -19,6 +19,12 @@
     SelectrefControl
     ]
 
+  abstractControls = [
+    BaseControl,
+    TypedControl,
+    GroupingControl
+    ]
+
   class EchoFormsInterface
     constructor: (@root, options) ->
       @options = $.extend({}, defaults, options)
@@ -48,7 +54,8 @@
       @control.serialize()
 
   controls = {}
-  controls[c.name] = c for c in defaultControls
+  controls[c.name] = c for c in defaultControls.concat(abstractControls)
+
 
   $[pluginName] =
     control: (controlClass, options={}) ->

@@ -25,7 +25,8 @@
         return input.simpleSlider({
           snap: true,
           range: [this.start, this.end],
-          step: this.step
+          step: this.step,
+          classPrefix: 'echoforms'
         });
       };
 

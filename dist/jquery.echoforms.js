@@ -5,7 +5,7 @@
     __bind = function(fn, me){ return function(){ return fn.apply(me, arguments); }; };
 
   (function($, window, document) {
-    var BaseConstraint, BaseControl, CheckboxControl, ECHOFORMS_NS_URI, EchoFormsInterface, FormControl, GroupControl, GroupingControl, InputControl, OutputControl, PatternConstraint, RangeControl, RequiredConstraint, SecretControl, SelectControl, SelectrefControl, TextareaControl, TypeConstraint, TypedControl, UrlOutputControl, XPathConstraint, buildXPathResolverFn, c, controls, defaultControls, defaults, echoformsControlUniqueId, err, execXPath, mapElements, parseXML, pluginName, serializeXML, warn, _i, _len, _ref, _ref1, _ref2, _ref3, _ref4, _ref5;
+    var BaseConstraint, BaseControl, CheckboxControl, EchoFormsInterface, FormControl, GroupControl, GroupingControl, InputControl, OutputControl, PatternConstraint, RangeControl, RequiredConstraint, SecretControl, SelectControl, SelectrefControl, TextareaControl, TypeConstraint, TypedControl, UrlOutputControl, XPathConstraint, abstractControls, buildXPathResolverFn, c, controls, defaultControls, defaults, echoformsControlUniqueId, err, execXPath, parseXML, pluginName, warn, _i, _len, _ref, _ref1, _ref2, _ref3, _ref4, _ref5, _ref6;
     warn = function() {
       var args;
       args = 1 <= arguments.length ? __slice.call(arguments, 0) : [];
@@ -52,29 +52,6 @@
         }
       })();
       return val;
-    };
-    mapElements = function(doc, node, fn) {
-      var child, next, nextResult, result;
-      if (node.nodeType === Node.ELEMENT_NODE) {
-        result = fn(node);
-        if (result) {
-          next = node.firstChild;
-          while (child = next) {
-            next = child.nextSibling;
-            nextResult = mapElements(doc, child, fn);
-            if (nextResult != null) {
-              result.appendChild(nextResult);
-            }
-          }
-        }
-      } else {
-        result = node.cloneNode();
-      }
-      return result;
-    };
-    ECHOFORMS_NS_URI = 'http://echo.nasa.gov/v9/echoforms';
-    serializeXML = function(node) {
-      return $('<div>').append(node).html();
     };
     parseXML = function(data) {
       var error, xml;
@@ -468,7 +445,7 @@
 
       BaseControl.prototype.buildLabelDom = function() {
         if (this.label != null) {
-          return $('<label/>', {
+          return $('<label>', {
             "class": 'echoforms-label',
             "for": "" + this.id + "-element"
           }).text(this.label);
@@ -479,13 +456,13 @@
 
       BaseControl.prototype.buildHelpDom = function() {
         var help, result, _i, _len, _ref;
-        result = $('<div/>', {
+        result = $('<div>', {
           "class": 'echoforms-help'
         });
         _ref = this.ui.children('help');
         for (_i = 0, _len = _ref.length; _i < _len; _i++) {
           help = _ref[_i];
-          $('<p/>', {
+          $('<p>', {
             "class": 'echoforms-help-item'
           }).text($(help).text()).appendTo(result);
         }
@@ -493,20 +470,20 @@
       };
 
       BaseControl.prototype.buildControlDom = function() {
-        return $("<div/>", {
+        return $("<div>", {
           id: this.id,
           "class": "echoforms-control echoforms-control-" + this.ui[0].nodeName
         });
       };
 
       BaseControl.prototype.buildElementsDom = function() {
-        return $('<div/>', {
+        return $('<div>', {
           "class": 'echoforms-elements'
         });
       };
 
       BaseControl.prototype.buildErrorsDom = function() {
-        return $('<div/>', {
+        return $('<div>', {
           "class": 'echoforms-errors'
         });
       };
@@ -516,7 +493,7 @@
         errors = $();
         for (_i = 0, _len = messages.length; _i < _len; _i++) {
           message = messages[_i];
-          error = $('<div class="echoforms-error"/>');
+          error = $('<div class="echoforms-error">');
           error.text(message);
           errors = errors.add(error);
         }
@@ -586,7 +563,7 @@
       };
 
       TypedControl.prototype.buildElementsDom = function() {
-        return TypedControl.__super__.buildElementsDom.call(this).append($("<" + this.inputTag + "/>", this.inputAttrs()));
+        return TypedControl.__super__.buildElementsDom.call(this).append($("<" + this.inputTag + ">", this.inputAttrs()));
       };
 
       return TypedControl;
@@ -840,7 +817,7 @@
         _ref3 = this.items;
         for (_i = 0, _len = _ref3.length; _i < _len; _i++) {
           _ref4 = _ref3[_i], label = _ref4[0], value = _ref4[1];
-          $('<option/>', {
+          $('<option>', {
             value: value
           }).text(label).appendTo(el);
         }
@@ -921,7 +898,7 @@
 
       GroupingControl.prototype.buildLabelDom = function() {
         if (this.label != null) {
-          return $('<h1/>', {
+          return $('<h1>', {
             "class": 'echoforms-label'
           }).text(this.label);
         } else {
@@ -954,7 +931,7 @@
             }
           }
         }
-        root.find('.echoforms-elements').replaceWith($('<div class="echoforms-children"/>').append(children));
+        root.find('.echoforms-elements').replaceWith($('<div class="echoforms-children">').append(children));
         return root;
       };
 
@@ -985,6 +962,19 @@
       return GroupingControl;
 
     })(BaseControl);
+    GroupControl = (function(_super) {
+      __extends(GroupControl, _super);
+
+      function GroupControl() {
+        _ref5 = GroupControl.__super__.constructor.apply(this, arguments);
+        return _ref5;
+      }
+
+      GroupControl.selector = 'group';
+
+      return GroupControl;
+
+    })(GroupingControl);
     FormControl = (function(_super) {
       __extends(FormControl, _super);
 
@@ -1009,23 +999,10 @@
         var model;
         model = this.model.children().clone();
         model.find('*[pruned=true]').remove();
-        return serializeXML(model);
+        return $('<div>').append(model).html();
       };
 
       return FormControl;
-
-    })(GroupingControl);
-    GroupControl = (function(_super) {
-      __extends(GroupControl, _super);
-
-      function GroupControl() {
-        _ref5 = GroupControl.__super__.constructor.apply(this, arguments);
-        return _ref5;
-      }
-
-      GroupControl.selector = 'group';
-
-      return GroupControl;
 
     })(GroupingControl);
     SelectrefControl = (function(_super) {
@@ -1054,6 +1031,7 @@
       controls: []
     };
     defaultControls = [CheckboxControl, InputControl, UrlOutputControl, OutputControl, SelectControl, RangeControl, SecretControl, TextareaControl, GroupControl, SelectrefControl];
+    abstractControls = [BaseControl, TypedControl, GroupingControl];
     EchoFormsInterface = (function() {
       function EchoFormsInterface(root, options) {
         var controlClasses, doc, form, model, resolver, ui;
@@ -1089,8 +1067,9 @@
 
     })();
     controls = {};
-    for (_i = 0, _len = defaultControls.length; _i < _len; _i++) {
-      c = defaultControls[_i];
+    _ref6 = defaultControls.concat(abstractControls);
+    for (_i = 0, _len = _ref6.length; _i < _len; _i++) {
+      c = _ref6[_i];
       controls[c.name] = c;
     }
     $[pluginName] = {
@@ -1107,18 +1086,18 @@
       controls: controls
     };
     return $.fn[pluginName] = function() {
-      var args, method, result, _ref6;
+      var args, method, result, _ref7;
       args = 1 <= arguments.length ? __slice.call(arguments, 0) : [];
       if (args.length > 0 && typeof args[0] === 'string') {
-        _ref6 = args, method = _ref6[0], args = 2 <= _ref6.length ? __slice.call(_ref6, 1) : [];
+        _ref7 = args, method = _ref7[0], args = 2 <= _ref7.length ? __slice.call(_ref7, 1) : [];
         result = this.map(function() {
-          var attr, form, x, _ref7;
+          var attr, form, x, _ref8;
           form = $.data(this, pluginName);
           if (!form) {
             warn("" + pluginName + " not found on instance");
             return this;
           } else if (/^debug_/.test(method)) {
-            _ref7 = method.split('_'), x = _ref7[0], attr = 2 <= _ref7.length ? __slice.call(_ref7, 1) : [];
+            _ref8 = method.split('_'), x = _ref8[0], attr = 2 <= _ref8.length ? __slice.call(_ref8, 1) : [];
             return form[attr.join('_')];
           } else if (!/^_/.test(method) && typeof (form != null ? form[method] : void 0) === 'function') {
             return form[method].apply(form, args);

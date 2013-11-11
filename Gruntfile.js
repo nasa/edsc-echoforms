@@ -25,7 +25,7 @@ module.exports = function(grunt) {
     concat: {
       dist: {
         files: {
-          "dist/wgxpath.install.patched.js" : ["vendor/wgxpath/wgxpath.install.js"],
+          "dist/wgxpath.install.patched.js" : ["vendor/wgxpath/wgxpath.install.patched.js"],
           "dist/jquery.simple-slider.min.js" : ["vendor/jquery-simple-slider/js/simple-slider.min.js"]
         }
       },
@@ -71,11 +71,22 @@ module.exports = function(grunt) {
                   "src/util.coffee",
                   "src/constraints.coffee",
                   "src/controls/base.coffee",
-                  "src/echoforms.coffee"],
+                  "src/controls/typed.coffee",
+                  "src/controls/input.coffee",
+                  "src/controls/output.coffee",
+                  "src/controls/select.coffee",
+                  "src/controls/range.coffee",
+                  "src/controls/secret.coffee",
+                  "src/controls/textarea.coffee",
+                  "src/controls/grouping.coffee",
+                  "src/controls/group.coffee",
+                  "src/controls/form.coffee",
+                  "src/controls/selectref.coffee",
+                  "src/plugin.coffee"],
             dest: "dist/jquery.echoforms.js"
           },
           {
-            src: ["src/controls/rangeslider.coffee"],
+            src: ["src/controls/extras/rangeslider.coffee"],
             dest: "dist/jquery.echoforms.extras.js"
           },
           {
@@ -116,8 +127,7 @@ module.exports = function(grunt) {
     cssmin: {
       dist: {
         files: {
-          'dist/jquery.echoforms.min.css': ['vendor/jquery-simple-slider/css/simple-slider.css',
-                                            'dist/jquery.echoforms.min.css']
+          'dist/jquery.echoforms.min.css': ['dist/jquery.echoforms.min.css']
         }
       },
 			options: {

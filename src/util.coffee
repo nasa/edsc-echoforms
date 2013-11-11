@@ -24,30 +24,10 @@
       else result.iterateNext()
     val
 
-  mapElements = (doc, node, fn) ->
-    if node.nodeType == Node.ELEMENT_NODE
-      result = fn(node)
-      if result
-        next = node.firstChild
-        while child = next
-          next = child.nextSibling
-          nextResult = mapElements(doc, child, fn)
-          result.appendChild(nextResult) if nextResult?
-    else
-      result = node.cloneNode()
-    result
-
-  ECHOFORMS_NS_URI = 'http://echo.nasa.gov/v9/echoforms'
-
-  serializeXML = (node) ->
-    $('<div>').append(node).html()
-
-
   # Parse the given xml string and return the resulting elements.
   # Based on jQuery's XML parser.  We include our own because $.parseXML did
   # not exist in jQuery 1.4.4
   parseXML = (data) ->
-    #console.log data
     return null if !data || typeof data != 'string'
 
     xml = undefined
@@ -62,11 +42,6 @@
 
     if !xml || !xml.documentElement || xml.getElementsByTagName( "parsererror" ).length
       err "Invalid XML: #{data}"
-
-    #removeNodeNamespaces(xml, xml.documentElement)
-    #console.log "Removed:", serializeXML(xml.documentElement)
-    #addNodeNamespaces(xml)
-    #console.log "Added:", serializeXML(xml.documentElement)
     xml
 
   buildXPathResolverFn = (xml) ->
@@ -79,5 +54,4 @@
       namespaces[name ? defaultName] = uri
 
     (prefix) ->
-      #console.log "[ns] #{prefix} -> #{namespaces[prefix ? defaultName]}"
       namespaces[prefix ? defaultName]
