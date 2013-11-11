@@ -1,10 +1,12 @@
 <!DOCTYPE html>
 <html lang="en">
 	<head>
+    <meta charset="utf-8">
 		<title>ECHO Forms</title>
 	  <script src="http://ajax.googleapis.com/ajax/libs/jquery/2.0.3/jquery.min.js"></script>
-	  <script src="../dist/wgxpath.install.js"></script>
+	  <script src="../tmp/wicked-good-xpath/wgxpath.install.js"></script>
 		<script src="../dist/jquery.echoforms.js"></script>
+		<!-- <script src="../dist/jquery.echoforms.extras.js"></script> -->
     <link rel="stylesheet" href="../dist/jquery.echoforms.min.css">
 
     <style>
@@ -51,13 +53,34 @@
         $(root).on('echoforms:modelchange', displayModel)
 			});
 		</script>
-
 	</head>
 	<body>
     <h1>ECHO Forms jQuery Plugin Demo</h1>
     <h2>ECHO Forms XML</h2>
     <p>Enter ECHO Forms XML in the box below to see it rendered</p>
+
+    <textarea style="display:none" id="demo-echoforms-xml">
+&lt;form xmlns=&quot;http://echo.nasa.gov/v9/echoforms&quot;
+      xmlns:xs=&quot;http://www.w3.org/2001/XMLSchema&quot;
+      targetNamespace=&quot;http://www.example.com/echoforms&quot;&gt;
+  &lt;model&gt;
+    &lt;instance&gt;
+      &lt;prov:options xmlns:prov=&quot;http://www.example.com/orderoptions&quot;&gt;
+        &lt;prov:reference /&gt;
+
+      &lt;/prov:options&gt;
+    &lt;/instance&gt;
+  &lt;/model&gt;
+  &lt;ui&gt;
+    &lt;input id=&quot;reference&quot; label=&quot;Reference value&quot; ref=&quot;prov:reference&quot; type=&quot;xs:string&quot;/&gt;
+    &lt;input id=&quot;control&quot; type=&quot;xs:boolean&quot; ref=&quot;prov:reference&quot;&gt;
+
+    &lt;/input&gt;
+  &lt;/ui&gt;
+&lt;/form&gt;
+</textarea>
     <textarea style="display:none" id="demo-echoforms-xml2">
+
   &lt;form xmlns=&quot;http://echo.nasa.gov/v9/echoforms&quot; xmlns:echo=&quot;http://provider_refer_system_must_match_this&quot; xmlns:xs=&quot;http://www.w3.org/2001/XMLSchema&quot; targetNamespace=&quot;http://for_further_reference&quot;&gt;
     &lt;!-- This form creates ASF options for SAR frame products.
    Author: Matthew Moore &lt;mmoore@asf.alaska.edu&gt;
@@ -115,7 +138,7 @@
     &lt;/ui&gt;
   &lt;/form&gt;
 </textarea>
-<textarea style="" id="demo-echoforms-xml">
+<textarea style="display:none;" id="demo-echoforms-xml3">
     &lt;form xmlns=&quot;http://echo.nasa.gov/v9/echoforms&quot;
           xmlns:xs=&quot;http://www.w3.org/2001/XMLSchema&quot;
           targetNamespace=&quot;http://www.example.com/echoforms&quot;&gt;

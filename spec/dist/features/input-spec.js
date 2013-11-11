@@ -48,13 +48,17 @@
         return expect($('#control :checkbox')).not.toBeChecked();
       });
       return it("updates the model based on its checked state", function() {
+        var checkbox;
         template.form(dom, {
           attributes: 'type="xs:boolean" ref="prov:reference"'
         });
+        checkbox = $('#control :input');
         expect($('#reference :input').val()).toBe('');
-        $('#control :input').attr('checked', true).change();
+        checkbox[0].checked = true;
+        checkbox.change();
         expect($('#reference :input').val()).toBe('true');
-        $('#control :input').attr('checked', false).change();
+        checkbox[0].checked = false;
+        checkbox.change();
         return expect($('#reference :input').val()).toBe('false');
       });
     });

@@ -36,8 +36,10 @@ module.exports = function(grunt) {
 		// Minify definitions
 		uglify: {
 			dist: {
-				src: ["dist/jquery.echoforms.js"],
-				dest: "dist/jquery.echoforms.min.js"
+        files: {
+          "dist/jquery.echoforms.min.js": ["dist/jquery.echoforms.js"],
+          "dist/jquery.echoforms.extras.min.js": ["dist/jquery.echoforms.extras.js"]
+        }
 			},
 			options: {
 				report: 'min',
@@ -45,11 +47,12 @@ module.exports = function(grunt) {
 			}
 		},
 
+    /*
     'closure-compiler': {
       dist: {
         js: ["dist/jquery.echoforms.js"],
         closurePath: 'vendor/closure',
-        jsOutputFile: "dist/jquery.echoforms.min.closure.js",
+        jsOutputFile: "dist/jquery.echoforms.min.js",
         noreport: true,
         options: {
           compilation_level: 'ADVANCED_OPTIMIZATIONS',
@@ -57,6 +60,7 @@ module.exports = function(grunt) {
         }
       }
     },
+    */
 
 		// CoffeeScript compilation
 		coffee: {
@@ -66,9 +70,13 @@ module.exports = function(grunt) {
 					  src: ["src/preamble.coffee",
                   "src/util.coffee",
                   "src/constraints.coffee",
-                  "src/controls.coffee",
+                  "src/controls/base.coffee",
                   "src/echoforms.coffee"],
             dest: "dist/jquery.echoforms.js"
+          },
+          {
+            src: ["src/controls/rangeslider.coffee"],
+            dest: "dist/jquery.echoforms.extras.js"
           },
           {
             expand: true,
@@ -126,7 +134,7 @@ module.exports = function(grunt) {
 	grunt.loadNpmTasks("grunt-contrib-watch");
 	grunt.loadNpmTasks("grunt-contrib-sass");
   grunt.loadNpmTasks('grunt-contrib-cssmin');
-	grunt.loadNpmTasks("grunt-closure-compiler");
+	//grunt.loadNpmTasks("grunt-closure-compiler");
 
 	grunt.registerTask("default", ["coffee", "concat", "jshint", "uglify", "sass", "cssmin"]);
 

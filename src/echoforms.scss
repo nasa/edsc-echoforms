@@ -69,13 +69,13 @@ $header-help-font-color: $font-color;
   padding: 0;
 
   > .echoforms-label {
-    background: $group-header-bg-color;
+    background-color: $group-header-bg-color;
     margin: 0;
     padding: 1em;
   }
 
   > .echoforms-help {
-    background: $group-help-bg-color;
+    background-color: $group-help-bg-color;
     padding: .5em 1em;
     color: $header-help-font-color;
   }

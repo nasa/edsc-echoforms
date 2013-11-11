@@ -84,9 +84,10 @@
           @el.toggleClass('echoforms-irrelevant', !isRelevant)
           @el.toggle(isRelevant)
           ref = @ref()
-          ref.toggleClass('echoforms-pruned', !isRelevant)
-          # Ensure there's no class="" from the previous statement
-          ref.removeAttr('class') if ref.attr('class') == ''
+          if isRelevant
+            ref[0].removeAttribute('pruned')
+          else
+            ref[0].setAttribute('pruned', 'true')
       else
         !@el.hasClass('echoforms-irrelevant')
 
@@ -202,11 +203,11 @@
     inputElementType: 'checkbox'
 
     inputValue:() ->
-      @inputs().prop('checked').toString()
+      @inputs()[0].checked.toString()
 
     loadFromModel: ->
       super()
-      @inputs().prop('checked', @refValue() == 'true') if @refExpr
+      @inputs()[0].checked = @refValue() == 'true' if @refExpr
 
     buildDom: ->
       # Put the label after the element as is expected of checkboxes
@@ -398,8 +399,8 @@
 
     serialize: ->
       model = @model.children().clone()
-      model.find('.echoforms-pruned').remove()
-      $('<div>').append(model).html()
+      model.find('*[pruned=true]').remove()
+      serializeXML(model)
 
   class GroupControl extends GroupingControl
     @selector: 'group'

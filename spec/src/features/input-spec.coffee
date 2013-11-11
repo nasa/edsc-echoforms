@@ -64,8 +64,17 @@ describe '"input" control', ->
 
     it "updates the model based on its checked state", ->
       template.form(dom, attributes: 'type="xs:boolean" ref="prov:reference"')
+      checkbox = $('#control :input')
+
       expect($('#reference :input').val()).toBe('')
-      $('#control :input').attr('checked', true).change()
+
+      # We're checking the box this way instead of using jQuery because
+      # the way jQuery checks checkboxes changed after 1.6 and we support
+      # earlier versions
+      checkbox[0].checked = true
+      checkbox.change()
       expect($('#reference :input').val()).toBe('true')
-      $('#control :input').attr('checked', false).change()
+
+      checkbox[0].checked = false
+      checkbox.change()
       expect($('#reference :input').val()).toBe('false')

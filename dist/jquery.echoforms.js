@@ -5,7 +5,7 @@
     __bind = function(fn, me){ return function(){ return fn.apply(me, arguments); }; };
 
   (function($, window, document) {
-    var BaseConstraint, BaseControl, CheckboxControl, EchoFormsInterface, FormControl, GroupControl, GroupingControl, InputControl, OutputControl, PatternConstraint, RangeControl, RequiredConstraint, SecretControl, SelectControl, SelectrefControl, TextareaControl, TypeConstraint, TypedControl, UrlOutputControl, XPathConstraint, buildXPathResolverFn, c, controls, defaultControls, defaults, echoformsControlUniqueId, err, execXPath, parseXML, pluginName, warn, _i, _len, _ref, _ref1, _ref2, _ref3, _ref4, _ref5;
+    var BaseConstraint, BaseControl, CheckboxControl, ECHOFORMS_NS_URI, EchoFormsInterface, FormControl, GroupControl, GroupingControl, InputControl, OutputControl, PatternConstraint, RangeControl, RequiredConstraint, SecretControl, SelectControl, SelectrefControl, TextareaControl, TypeConstraint, TypedControl, UrlOutputControl, XPathConstraint, buildXPathResolverFn, c, controls, defaultControls, defaults, echoformsControlUniqueId, err, execXPath, mapElements, parseXML, pluginName, serializeXML, warn, _i, _len, _ref, _ref1, _ref2, _ref3, _ref4, _ref5;
     warn = function() {
       var args;
       args = 1 <= arguments.length ? __slice.call(arguments, 0) : [];
@@ -22,7 +22,7 @@
       }
     }
     execXPath = function(root, xpath, resolver) {
-      var result;
+      var doc, result, val;
       if ((xpath != null ? xpath.charAt(0) : void 0) === '[') {
         xpath = "self::*" + xpath;
       }
@@ -32,17 +32,49 @@
       if (xpath === "false") {
         return false;
       }
-      result = document.evaluate(xpath, root[0], resolver, XPathResult.ANY_TYPE, null);
-      switch (result.resultType) {
-        case XPathResult.NUMBER_TYPE:
-          return result.numberValue;
-        case XPathResult.STRING_TYPE:
-          return result.stringValue;
-        case XPathResult.BOOLEAN_TYPE:
-          return result.booleanValue;
-        default:
-          return result.iterateNext();
+      doc = root[0].ownerDocument;
+      if (doc['evaluate'] == null) {
+        wgxpath.install({
+          document: doc
+        });
       }
+      result = doc.evaluate(xpath, root[0], resolver, XPathResult.ANY_TYPE, null);
+      val = (function() {
+        switch (result.resultType) {
+          case XPathResult.NUMBER_TYPE:
+            return result.numberValue;
+          case XPathResult.STRING_TYPE:
+            return result.stringValue;
+          case XPathResult.BOOLEAN_TYPE:
+            return result.booleanValue;
+          default:
+            return result.iterateNext();
+        }
+      })();
+      return val;
+    };
+    mapElements = function(doc, node, fn) {
+      var child, next, nextResult, result;
+      if (node.nodeType === Node.ELEMENT_NODE) {
+        result = fn(node);
+        if (result) {
+          next = node.firstChild;
+          while (child = next) {
+            next = child.nextSibling;
+            nextResult = mapElements(doc, child, fn);
+            if (nextResult != null) {
+              result.appendChild(nextResult);
+            }
+          }
+        }
+      } else {
+        result = node.cloneNode();
+      }
+      return result;
+    };
+    ECHOFORMS_NS_URI = 'http://echo.nasa.gov/v9/echoforms';
+    serializeXML = function(node) {
+      return $('<div>').append(node).html();
     };
     parseXML = function(data) {
       var error, xml;
@@ -398,9 +430,10 @@
             this.el.toggleClass('echoforms-irrelevant', !isRelevant);
             this.el.toggle(isRelevant);
             ref = this.ref();
-            ref.toggleClass('echoforms-pruned', !isRelevant);
-            if (ref.attr('class') === '') {
-              return ref.removeAttr('class');
+            if (isRelevant) {
+              return ref[0].removeAttribute('pruned');
+            } else {
+              return ref[0].setAttribute('pruned', 'true');
             }
           }
         } else {
@@ -602,13 +635,13 @@
       CheckboxControl.prototype.inputElementType = 'checkbox';
 
       CheckboxControl.prototype.inputValue = function() {
-        return this.inputs().prop('checked').toString();
+        return this.inputs()[0].checked.toString();
       };
 
       CheckboxControl.prototype.loadFromModel = function() {
         CheckboxControl.__super__.loadFromModel.call(this);
         if (this.refExpr) {
-          return this.inputs().prop('checked', this.refValue() === 'true');
+          return this.inputs()[0].checked = this.refValue() === 'true';
         }
       };
 
@@ -961,8 +994,8 @@
       FormControl.prototype.serialize = function() {
         var model;
         model = this.model.children().clone();
-        model.find('.echoforms-pruned').remove();
-        return $('<div>').append(model).html();
+        model.find('*[pruned=true]').remove();
+        return serializeXML(model);
       };
 
       return FormControl;
