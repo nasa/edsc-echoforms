@@ -1048,7 +1048,7 @@
         this.form = form = this.options['form'];
         this.controlClasses = controlClasses = this.options['controls'].concat(defaultControls);
         if (form == null) {
-          error("You must specify a 'form' option when creating " + pluginName + " instances");
+          err("You must specify a 'form' option when creating " + pluginName + " instances");
         }
         this.resolver = resolver = buildXPathResolverFn(form);
         this.doc = doc = $(parseXML(form));

@@ -26,7 +26,7 @@
       @controlClasses = controlClasses = @options['controls'].concat(defaultControls)
 
       unless form?
-        error "You must specify a 'form' option when creating #{pluginName} instances"
+        err "You must specify a 'form' option when creating #{pluginName} instances"
 
       @resolver = resolver = buildXPathResolverFn(form) #new XPathResolver(form).resolve
       @doc = doc = $(parseXML(form))
