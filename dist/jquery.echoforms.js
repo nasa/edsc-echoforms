@@ -352,9 +352,7 @@
         return warn("" + this.constructor.name + " must override inputValue");
       };
 
-      BaseControl.prototype.loadFromModel = function() {
-        return this.validate();
-      };
+      BaseControl.prototype.loadFromModel = function() {};
 
       BaseControl.prototype.validate = function() {
         var c, errors, readonly, relevant;
@@ -497,7 +495,7 @@
           error.text(message);
           errors = errors.add(error);
         }
-        return this.el.find('.echoforms-errors').empty().append(errors);
+        return this.el.children('.echoforms-errors').empty().append(errors);
       };
 
       BaseControl.prototype.buildDom = function(classes) {
@@ -730,10 +728,23 @@
         SelectControl.__super__.constructor.call(this, ui, model, controlClasses, resolver);
       }
 
+      SelectControl.prototype.valueElementTagName = function(root) {
+        var nameParts, ns;
+        if (root == null) {
+          root = this.ref();
+        }
+        nameParts = [this.valueElementName];
+        ns = root[0].nodeName.split(':').shift();
+        if (ns != null) {
+          nameParts.unshift(ns);
+        }
+        return nameParts.join(':');
+      };
+
       SelectControl.prototype.refValue = function() {
         var child, _i, _len, _ref3, _results;
         if ((this.valueElementName != null) && (this.refExpr != null)) {
-          _ref3 = this.ref().children(this.valueElementName);
+          _ref3 = this.ref().children();
           _results = [];
           for (_i = 0, _len = _ref3.length; _i < _len; _i++) {
             child = _ref3[_i];
@@ -746,18 +757,14 @@
       };
 
       SelectControl.prototype.saveToModel = function() {
-        var element, name, namespace, node, root, tagname, value, _i, _len, _ref3, _ref4, _results;
+        var element, node, root, tagname, value, _i, _len, _ref3, _results;
         if ((this.valueElementName != null) && (this.refExpr != null)) {
           root = this.ref().empty();
-          _ref3 = root[0].nodeName.split(':').reverse(), name = _ref3[0], namespace = _ref3[1];
-          tagname = this.valueElementName;
-          if (namespace != null) {
-            tagname = "" + namespace + ":" + tagname;
-          }
-          _ref4 = this.inputValue();
+          tagname = this.valueElementTagName(root);
+          _ref3 = this.inputValue();
           _results = [];
-          for (_i = 0, _len = _ref4.length; _i < _len; _i++) {
-            value = _ref4[_i];
+          for (_i = 0, _len = _ref3.length; _i < _len; _i++) {
+            value = _ref3[_i];
             element = document.createElementNS(root[0].namespaceURI, tagname);
             node = $(element).text(value);
             root.append(node);
@@ -947,6 +954,18 @@
         return _results;
       };
 
+      GroupingControl.prototype.validate = function() {
+        var control, _i, _len, _ref5, _results;
+        GroupingControl.__super__.validate.call(this);
+        _ref5 = this.controls;
+        _results = [];
+        for (_i = 0, _len = _ref5.length; _i < _len; _i++) {
+          control = _ref5[_i];
+          _results.push(control.validate());
+        }
+        return _results;
+      };
+
       GroupingControl.prototype.addedToDom = function() {
         var control, _i, _len, _ref5, _results;
         GroupingControl.__super__.addedToDom.call(this);
@@ -982,9 +1001,11 @@
         var _this = this;
         FormControl.__super__.constructor.call(this, ui, model, controlClasses, resolver);
         this.el.bind('echoforms:modelchange', function() {
-          return _this.loadFromModel();
+          _this.loadFromModel();
+          return _this.validate();
         });
         this.loadFromModel();
+        this.validate();
       }
 
       FormControl.prototype.ref = function() {

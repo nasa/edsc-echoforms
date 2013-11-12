@@ -1,8 +1,11 @@
   class FormControl extends GroupingControl
     constructor: (ui, model, controlClasses, resolver) ->
       super(ui, model, controlClasses, resolver)
-      @el.bind 'echoforms:modelchange', => @loadFromModel()
+      @el.bind 'echoforms:modelchange', =>
+        @loadFromModel()
+        @validate()
       @loadFromModel()
+      @validate()
 
     ref: ->
       @model.children()

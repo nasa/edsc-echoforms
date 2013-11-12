@@ -14,13 +14,18 @@
 
       RangeSliderControl.selector = 'range';
 
+      RangeSliderControl.prototype.loadFromModel = function() {
+        RangeSliderControl.__super__.loadFromModel.call(this);
+        return this.inputs().change();
+      };
+
       RangeSliderControl.prototype.addedToDom = function() {
         var input;
         RangeSliderControl.__super__.addedToDom.call(this);
         input = this.inputs();
         $('<div/>').addClass('slider-output').insertAfter(input);
         input.bind('slider:ready slider:changed', function(e, data) {
-          return $(this).nextAll('.slider-output').html(data.value);
+          return $(this).nextAll('.slider-output').html(input.val());
         });
         return input.simpleSlider({
           snap: true,

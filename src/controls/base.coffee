@@ -65,7 +65,7 @@
       warn("#{@constructor.name} must override inputValue")
 
     loadFromModel: ->
-      @validate()
+      #@validate()
 
     validate: ->
       relevant = !@relevantExpr? || !!@xpath(@relevantExpr)
@@ -150,7 +150,7 @@
         error = $('<div class="echoforms-error">')
         error.text(message)
         errors = errors.add(error)
-      @el.find('.echoforms-errors').empty().append(errors)
+      @el.children('.echoforms-errors').empty().append(errors)
 
     buildDom: (classes=null)->
       @buildControlDom()

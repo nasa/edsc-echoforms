@@ -12,18 +12,22 @@
 
       super(ui, model, controlClasses, resolver)
 
+    valueElementTagName: (root=@ref()) ->
+      nameParts = [@valueElementName]
+      ns = root[0].nodeName.split(':').shift()
+      nameParts.unshift(ns) if ns?
+      nameParts.join(':')
+
     refValue: ->
       if @valueElementName? and @refExpr?
-        $(child).text() for child in @ref().children(@valueElementName)
+        $(child).text() for child in @ref().children()
       else
         super()
 
     saveToModel: ->
       if @valueElementName? and @refExpr?
         root = @ref().empty()
-        [name, namespace] = root[0].nodeName.split(':').reverse()
-        tagname = @valueElementName
-        tagname = "#{namespace}:#{tagname}" if namespace?
+        tagname = @valueElementTagName(root)
         for value in @inputValue()
           element = document.createElementNS(root[0].namespaceURI, tagname)
           node = $(element).text(value)

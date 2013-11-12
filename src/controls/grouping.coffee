@@ -45,6 +45,11 @@
       for control in @controls
         control.updateReadonly(isReadonly)
 
+    validate: ->
+      super()
+      for control in @controls
+        control.validate()
+
     addedToDom: ->
       super()
       for control in @controls
