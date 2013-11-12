@@ -1,39 +1,48 @@
-  # Note: There's a pretty fantastic opportunity for optimization here.
-  # All node xpaths are alphanumeric with at least one colon and 0 or
-  # more forward slashes, periods, and dashes, possibly (rarely) followed
-  # by a single bracketed expression.
-  # Because of this, we should be able to pick out node selectors from
-  # within xpaths, see which model nodes they reference, and listen for
-  # change events on those nodes only.  Instead of refreshing the whole
-  # UI, we should only have to refresh elements which actually change.
-  # If we do this, we should strip bracketed expressions before listening.
-  # They are rare and evaluating them up-front is unnecessary and has
-  # pitfalls.
-  #
-
-  echoformsControlUniqueId = 0
-
+  # This class is the base of all ECHO Forms controls.  It exposes many methods to
+  # make it easier to produce new controls.
   class BaseControl
+
+    # We need to generate id attributes so our labels can point to something.  This
+    # we'll increment this number to ensure they're unique across all instance of
+    # the plugin
+    @echoformsControlUniqueId: 0
+
+    # Constructs the control
+    # Parameters:
+    #   ui - The xml element in the ECHO Form which caused this class to be constructed
+    #   model - The ECHO Forms model.  For descendants of grouping controls, this may be
+    #           a node somewhere within the overall model instance
+    #   controlClasses - A list of classes to use when constructing child controls.  This
+    #           is only used by grouping controls
+    #   resolver - A function used to resolve xpath namespaces, used by the `xpath` method.
     constructor: (@ui, @model, @controlClasses, @resolver) ->
+      # Read and store common attributes
       @refExpr      = ui.attr('ref')
-      @id           = ui.attr('id') ? "echoforms-control-#{echoformsControlUniqueId++}"
+      @id           = ui.attr('id') ? "echoforms-control-#{BaseControl.echoformsControlUniqueId++}"
       @relevantExpr = ui.attr('relevant')
       @requiredExpr = ui.attr('required')
       @readonlyExpr = ui.attr('readonly')
       @label        = ui.attr('label')
       @help         = $(help).text() for help in ui.children('help')
 
+      # Load validation constraints
       @loadConstraints()
+
+      # Build the HTML elements used to display the control
       @el = @buildDom()
 
+    # Loads the constraints used to validate this control, producing an array, @constraints,
+    # containing Constraint objects (see `BaseConstraint`).
     loadConstraints: ->
       @constraints  = []
+
+      # We treat the "required" attribute as a constraint, since it acts similarly
       if @requiredExpr
         @constraints.push(new RequiredConstraint(@requiredExpr))
 
-      constraintNodes = @ui.children('constraints')
-      for node in constraintNodes.children('constraint')
-        node = $ node
+      # Look for constraint elements and build the appropriate constraint type
+      for node in @ui.find('> constraints > constraint')
+        node = $(node)
         message = node.children('alert').text()
         patternNode = node.children('pattern')
         xpathNode = node.children('xpath')
@@ -42,9 +51,13 @@
         if xpathNode.length > 0
           @constraints.push(new XPathConstraint(xpathNode.text(), message))
 
+    # Retrieve the node pointed to by the ref attribute, or the entire model if
+    # there is no ref attribute (useful for grouping controls)
     ref: ->
       if @refExpr? then $(@xpath(@refExpr)) else @model
 
+    # Retrieve the trimmed text value of the node pointed to by the ref attribute,
+    # or undefined if there is no ref attribute
     refValue: ->
       if @refExpr? then $.trim(@ref().text()) else undefined
 

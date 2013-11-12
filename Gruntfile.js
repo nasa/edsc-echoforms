@@ -69,7 +69,15 @@ module.exports = function(grunt) {
           {
 					  src: ["src/preamble.coffee",
                   "src/util.coffee",
-                  "src/constraints.coffee",
+
+                  // Constraint classes
+                  "src/constraints/base.coffee",
+                  "src/constraints/pattern.coffee",
+                  "src/constraints/required.coffee",
+                  "src/constraints/type.coffee",
+                  "src/constraints/xpath.coffee",
+
+                  // Control classes
                   "src/controls/base.coffee",
                   "src/controls/typed.coffee",
                   "src/controls/input.coffee",
@@ -82,6 +90,8 @@ module.exports = function(grunt) {
                   "src/controls/group.coffee",
                   "src/controls/form.coffee",
                   "src/controls/selectref.coffee",
+
+                  // jQuery Plugin
                   "src/plugin.coffee"],
             dest: "dist/jquery.echoforms.js"
           },

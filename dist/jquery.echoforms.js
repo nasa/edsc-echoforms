@@ -5,7 +5,7 @@
     __bind = function(fn, me){ return function(){ return fn.apply(me, arguments); }; };
 
   (function($, window, document) {
-    var BaseConstraint, BaseControl, CheckboxControl, EchoFormsInterface, FormControl, GroupControl, GroupingControl, InputControl, OutputControl, PatternConstraint, RangeControl, RequiredConstraint, SecretControl, SelectControl, SelectrefControl, TextareaControl, TypeConstraint, TypedControl, UrlOutputControl, XPathConstraint, abstractControls, buildXPathResolverFn, c, controls, defaultControls, defaults, echoformsControlUniqueId, err, execXPath, parseXML, pluginName, warn, _i, _len, _ref, _ref1, _ref2, _ref3, _ref4, _ref5, _ref6;
+    var BaseConstraint, BaseControl, CheckboxControl, EchoFormsInterface, FormControl, GroupControl, GroupingControl, InputControl, OutputControl, PatternConstraint, RangeControl, RequiredConstraint, SecretControl, SelectControl, SelectrefControl, TextareaControl, TypeConstraint, TypedControl, UrlOutputControl, XPathConstraint, abstractControls, buildXPathResolverFn, c, controls, defaultControls, defaults, err, execXPath, parseXML, pluginName, warn, _i, _len, _ref, _ref1, _ref2, _ref3, _ref4, _ref5, _ref6;
     warn = function() {
       var args;
       args = 1 <= arguments.length ? __slice.call(arguments, 0) : [];
@@ -115,19 +115,25 @@
       return PatternConstraint;
 
     })(BaseConstraint);
-    XPathConstraint = (function(_super) {
-      __extends(XPathConstraint, _super);
+    RequiredConstraint = (function(_super) {
+      __extends(RequiredConstraint, _super);
 
-      function XPathConstraint(xpath, message) {
+      function RequiredConstraint(xpath, message) {
         this.xpath = xpath;
-        XPathConstraint.__super__.constructor.call(this, message != null ? message : 'Invalid');
+        if (message == null) {
+          message = "Required field";
+        }
+        RequiredConstraint.__super__.constructor.call(this, message);
       }
 
-      XPathConstraint.prototype.check = function(value, model, resolver) {
-        return execXPath(model, this.xpath, resolver);
+      RequiredConstraint.prototype.check = function(value, model, resolver) {
+        if (value instanceof Array && value.length === 0) {
+          value = null;
+        }
+        return !!value || !execXPath(model, this.xpath, resolver);
       };
 
-      return XPathConstraint;
+      return RequiredConstraint;
 
     })(BaseConstraint);
     TypeConstraint = (function(_super) {
@@ -259,29 +265,24 @@
       return TypeConstraint;
 
     })(BaseConstraint);
-    RequiredConstraint = (function(_super) {
-      __extends(RequiredConstraint, _super);
+    XPathConstraint = (function(_super) {
+      __extends(XPathConstraint, _super);
 
-      function RequiredConstraint(xpath, message) {
+      function XPathConstraint(xpath, message) {
         this.xpath = xpath;
-        if (message == null) {
-          message = "Required field";
-        }
-        RequiredConstraint.__super__.constructor.call(this, message);
+        XPathConstraint.__super__.constructor.call(this, message != null ? message : 'Invalid');
       }
 
-      RequiredConstraint.prototype.check = function(value, model, resolver) {
-        if (value instanceof Array && value.length === 0) {
-          value = null;
-        }
-        return !!value || !execXPath(model, this.xpath, resolver);
+      XPathConstraint.prototype.check = function(value, model, resolver) {
+        return execXPath(model, this.xpath, resolver);
       };
 
-      return RequiredConstraint;
+      return XPathConstraint;
 
     })(BaseConstraint);
-    echoformsControlUniqueId = 0;
     BaseControl = (function() {
+      BaseControl.echoformsControlUniqueId = 0;
+
       function BaseControl(ui, model, controlClasses, resolver) {
         var help, _i, _len, _ref, _ref1;
         this.ui = ui;
@@ -291,7 +292,7 @@
         this.onChange = __bind(this.onChange, this);
         this.changed = __bind(this.changed, this);
         this.refExpr = ui.attr('ref');
-        this.id = (_ref = ui.attr('id')) != null ? _ref : "echoforms-control-" + (echoformsControlUniqueId++);
+        this.id = (_ref = ui.attr('id')) != null ? _ref : "echoforms-control-" + (BaseControl.echoformsControlUniqueId++);
         this.relevantExpr = ui.attr('relevant');
         this.requiredExpr = ui.attr('required');
         this.readonlyExpr = ui.attr('readonly');
@@ -306,13 +307,12 @@
       }
 
       BaseControl.prototype.loadConstraints = function() {
-        var constraintNodes, message, node, patternNode, xpathNode, _i, _len, _ref, _results;
+        var message, node, patternNode, xpathNode, _i, _len, _ref, _results;
         this.constraints = [];
         if (this.requiredExpr) {
           this.constraints.push(new RequiredConstraint(this.requiredExpr));
         }
-        constraintNodes = this.ui.children('constraints');
-        _ref = constraintNodes.children('constraint');
+        _ref = this.ui.find('> constraints > constraint');
         _results = [];
         for (_i = 0, _len = _ref.length; _i < _len; _i++) {
           node = _ref[_i];

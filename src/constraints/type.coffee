@@ -1,25 +1,3 @@
-  class BaseConstraint
-    constructor: (@message) ->
-
-    check: (value, model, resolver) ->
-      warn("#{@constructor.name} must override check")
-
-
-  class PatternConstraint extends BaseConstraint
-    constructor: (patternStr, message) ->
-      @pattern = new RegExp('^' + patternStr + '$')
-      super(message ? 'Invalid')
-
-    check: (value, model, resolver) ->
-      !value || @pattern.exec(value) != null;
-
-  class XPathConstraint extends BaseConstraint
-    constructor: (@xpath, message) ->
-      super(message ? 'Invalid')
-
-    check: (value, model, resolver) ->
-      execXPath(model, @xpath, resolver)
-
   class TypeConstraint extends BaseConstraint
     # Constants
     # 16 bit signed shorts
@@ -85,11 +63,3 @@
        hour < 24 and
        minute < 60 and
        second < 60)
-
-  class RequiredConstraint extends BaseConstraint
-    constructor: (@xpath, message="Required field") ->
-      super(message)
-
-    check: (value, model, resolver) ->
-      value = null if value instanceof Array and value.length == 0
-      !!value || !execXPath(model, @xpath, resolver)
