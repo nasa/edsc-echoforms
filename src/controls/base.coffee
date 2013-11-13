@@ -65,7 +65,6 @@
       warn("#{@constructor.name} must override inputValue")
 
     loadFromModel: ->
-      #@validate()
 
     validate: ->
       relevant = !@relevantExpr? || !!@xpath(@relevantExpr)

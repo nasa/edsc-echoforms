@@ -37,7 +37,7 @@ $header-help-font-color: $font-color;
 
   > .echoforms-label,
   > .echoforms-elements,
-  > .echoforms-help {
+  > .echoforms-help > .echoforms-help-item {
     display: block;
     padding: {
       top: .2em;
@@ -76,7 +76,7 @@ $header-help-font-color: $font-color;
     padding: 1em;
   }
 
-  > .echoforms-help {
+  > .echoforms-help > .echoforms-help-item {
     background-color: $group-help-bg-color;
     padding: .5em 1em;
     color: $header-help-font-color;
@@ -116,7 +116,7 @@ $header-help-font-color: $font-color;
   color: $error-font-color;
 }
 
-.echoforms-help {
+.echoforms-help-item {
   color: $help-font-color;
   font-style: italic;
 }
