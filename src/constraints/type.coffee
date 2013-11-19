@@ -22,7 +22,7 @@
         when "long" then "integer between -2^63 and 2^63-1"
         when "int" then "integer between -2,147,483,648 and 2,147,483,647"
         when "short" then "integer between -32,768 and 32,767"
-        when "datetime" then "date/time with format MM/DD/YYYYTHH:MM:SS"
+        when "datetime" then "date/time with format MM-DD-YYYYTHH:MM:SS"
         when "boolean" then "true or false"
         else @type
       a = if (/^[aeiou]/i).test(human_type) then 'an' else 'a'

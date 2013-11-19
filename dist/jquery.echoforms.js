@@ -169,7 +169,7 @@
             case "short":
               return "integer between -32,768 and 32,767";
             case "datetime":
-              return "date/time with format MM/DD/YYYYTHH:MM:SS";
+              return "date/time with format MM-DD-YYYYTHH:MM:SS";
             case "boolean":
               return "true or false";
             default:
@@ -589,7 +589,7 @@
           type: this.inputElementType
         });
         if (this.inputType === 'datetime') {
-          attrs['placeholder'] = 'MM/DD/YYYYTHH:MM:SS';
+          attrs['placeholder'] = 'MM-DD-YYYYTHH:MM:SS';
         }
         return attrs;
       };
