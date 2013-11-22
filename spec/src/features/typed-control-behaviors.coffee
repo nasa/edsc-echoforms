@@ -127,7 +127,7 @@ window.sharedBehaviorForTypedControls = (template) ->
 
     it "shows placeholder text when possible", ->
       if $('#control :input').is('input')
-        expect($('#control :input').attr('placeholder')).toBe('MM/DD/YYYYTHH:MM:SS')
+        expect($('#control :input').attr('placeholder')).toBe('YYYY-MM-DDTHH:MM:SS')
 
     it "accepts a blank value", ->
       setValue('')
@@ -141,26 +141,26 @@ window.sharedBehaviorForTypedControls = (template) ->
 
     it "displays an error for inputs not in ISO date/time format", ->
       setValue('2010-01-01 00:00:00')
-      expect('#control').toHaveError('Value must be a date/time with format MM/DD/YYYYTHH:MM:SS')
+      expect('#control').toHaveError('Value must be a date/time with format YYYY-MM-DDTHH:MM:SS')
       setValue('2010-01-01')
-      expect('#control').toHaveError('Value must be a date/time with format MM/DD/YYYYTHH:MM:SS')
+      expect('#control').toHaveError('Value must be a date/time with format YYYY-MM-DDTHH:MM:SS')
       setValue('Not a date')
-      expect('#control').toHaveError('Value must be a date/time with format MM/DD/YYYYTHH:MM:SS')
+      expect('#control').toHaveError('Value must be a date/time with format YYYY-MM-DDTHH:MM:SS')
 
     it "displays an error for correctly-formatted inputs which are not valid dates", ->
       setValue('2010-00-01T00:00:00')
-      expect('#control').toHaveError('Value must be a date/time with format MM/DD/YYYYTHH:MM:SS')
+      expect('#control').toHaveError('Value must be a date/time with format YYYY-MM-DDTHH:MM:SS')
       setValue('2010-13-01T00:00:00')
-      expect('#control').toHaveError('Value must be a date/time with format MM/DD/YYYYTHH:MM:SS')
+      expect('#control').toHaveError('Value must be a date/time with format YYYY-MM-DDTHH:MM:SS')
 
       setValue('2010-01-00T00:00:00')
-      expect('#control').toHaveError('Value must be a date/time with format MM/DD/YYYYTHH:MM:SS')
+      expect('#control').toHaveError('Value must be a date/time with format YYYY-MM-DDTHH:MM:SS')
       setValue('2010-01-32T00:00:00')
-      expect('#control').toHaveError('Value must be a date/time with format MM/DD/YYYYTHH:MM:SS')
+      expect('#control').toHaveError('Value must be a date/time with format YYYY-MM-DDTHH:MM:SS')
 
       setValue('2010-01-01T60:00:00')
-      expect('#control').toHaveError('Value must be a date/time with format MM/DD/YYYYTHH:MM:SS')
+      expect('#control').toHaveError('Value must be a date/time with format YYYY-MM-DDTHH:MM:SS')
       setValue('2010-01-01T00:60:00')
-      expect('#control').toHaveError('Value must be a date/time with format MM/DD/YYYYTHH:MM:SS')
+      expect('#control').toHaveError('Value must be a date/time with format YYYY-MM-DDTHH:MM:SS')
       setValue('2010-01-01T00:00:60')
-      expect('#control').toHaveError('Value must be a date/time with format MM/DD/YYYYTHH:MM:SS')
+      expect('#control').toHaveError('Value must be a date/time with format YYYY-MM-DDTHH:MM:SS')

@@ -7,7 +7,7 @@
 
     inputAttrs: ->
       attrs = $.extend(super(), type: @inputElementType)
-      attrs['placeholder'] = 'MM-DD-YYYYTHH:MM:SS' if @inputType == 'datetime'
+      attrs['placeholder'] = 'YYYY-MM-DDTHH:MM:SS' if @inputType == 'datetime'
       attrs
 
   class CheckboxControl extends InputControl

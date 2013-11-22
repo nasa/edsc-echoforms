@@ -142,7 +142,7 @@
       });
       it("shows placeholder text when possible", function() {
         if ($('#control :input').is('input')) {
-          return expect($('#control :input').attr('placeholder')).toBe('MM/DD/YYYYTHH:MM:SS');
+          return expect($('#control :input').attr('placeholder')).toBe('YYYY-MM-DDTHH:MM:SS');
         }
       });
       it("accepts a blank value", function() {
@@ -157,27 +157,27 @@
       });
       it("displays an error for inputs not in ISO date/time format", function() {
         setValue('2010-01-01 00:00:00');
-        expect('#control').toHaveError('Value must be a date/time with format MM/DD/YYYYTHH:MM:SS');
+        expect('#control').toHaveError('Value must be a date/time with format YYYY-MM-DDTHH:MM:SS');
         setValue('2010-01-01');
-        expect('#control').toHaveError('Value must be a date/time with format MM/DD/YYYYTHH:MM:SS');
+        expect('#control').toHaveError('Value must be a date/time with format YYYY-MM-DDTHH:MM:SS');
         setValue('Not a date');
-        return expect('#control').toHaveError('Value must be a date/time with format MM/DD/YYYYTHH:MM:SS');
+        return expect('#control').toHaveError('Value must be a date/time with format YYYY-MM-DDTHH:MM:SS');
       });
       return it("displays an error for correctly-formatted inputs which are not valid dates", function() {
         setValue('2010-00-01T00:00:00');
-        expect('#control').toHaveError('Value must be a date/time with format MM/DD/YYYYTHH:MM:SS');
+        expect('#control').toHaveError('Value must be a date/time with format YYYY-MM-DDTHH:MM:SS');
         setValue('2010-13-01T00:00:00');
-        expect('#control').toHaveError('Value must be a date/time with format MM/DD/YYYYTHH:MM:SS');
+        expect('#control').toHaveError('Value must be a date/time with format YYYY-MM-DDTHH:MM:SS');
         setValue('2010-01-00T00:00:00');
-        expect('#control').toHaveError('Value must be a date/time with format MM/DD/YYYYTHH:MM:SS');
+        expect('#control').toHaveError('Value must be a date/time with format YYYY-MM-DDTHH:MM:SS');
         setValue('2010-01-32T00:00:00');
-        expect('#control').toHaveError('Value must be a date/time with format MM/DD/YYYYTHH:MM:SS');
+        expect('#control').toHaveError('Value must be a date/time with format YYYY-MM-DDTHH:MM:SS');
         setValue('2010-01-01T60:00:00');
-        expect('#control').toHaveError('Value must be a date/time with format MM/DD/YYYYTHH:MM:SS');
+        expect('#control').toHaveError('Value must be a date/time with format YYYY-MM-DDTHH:MM:SS');
         setValue('2010-01-01T00:60:00');
-        expect('#control').toHaveError('Value must be a date/time with format MM/DD/YYYYTHH:MM:SS');
+        expect('#control').toHaveError('Value must be a date/time with format YYYY-MM-DDTHH:MM:SS');
         setValue('2010-01-01T00:00:60');
-        return expect('#control').toHaveError('Value must be a date/time with format MM/DD/YYYYTHH:MM:SS');
+        return expect('#control').toHaveError('Value must be a date/time with format YYYY-MM-DDTHH:MM:SS');
       });
     });
   };
