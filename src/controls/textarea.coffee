@@ -1,4 +1,8 @@
-  class TextareaControl extends TypedControl
-    @selector: 'textarea'
+Typed = require './typed.coffee'
 
-    inputTag: 'textarea'
+class Textarea extends Typed
+  @selector: 'textarea'
+
+  inputTag: 'textarea'
+
+module.exports = Textarea

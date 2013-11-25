@@ -1,25 +1,26 @@
-do ($ = jQuery, controls = jQuery.echoforms.controls, window, document) ->
+$ = require 'jquery'
+Range = require '../range.coffee'
 
-  class RangeSliderControl extends controls.RangeControl
-    @selector: 'range'
+class RangeSlider extends Range
+  @selector: 'range'
 
-    loadFromModel: ->
-      super()
-      @inputs().change()
+  loadFromModel: ->
+    super()
+    @inputs().change()
 
-    addedToDom: ->
-      super()
-      input = @inputs()
+  addedToDom: ->
+    super()
+    input = @inputs()
 
-      $('<div/>').addClass('slider-output').insertAfter(input)
+    $('<div/>').addClass('slider-output').insertAfter(input)
 
-      input.bind 'slider:ready slider:changed', (e, data) ->
-        $(this).nextAll('.slider-output').html(input.val())
+    input.bind 'slider:ready slider:changed', (e, data) ->
+      $(this).nextAll('.slider-output').html(input.val())
 
-      input.simpleSlider
-        snap: true
-        range: [@start, @end]
-        step: @step
-        classPrefix: 'echoforms'
+    input.simpleSlider
+      snap: true
+      range: [@start, @end]
+      step: @step
+      classPrefix: 'echoforms'
 
-  $.echoforms.control(RangeSliderControl, export: true)
+module.exports = RangeSlider

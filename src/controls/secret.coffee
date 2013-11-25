@@ -1,4 +1,8 @@
-  class SecretControl extends InputControl
-    @selector: 'secret'
+Input = require './input.coffee'
 
-    inputElementType: 'password'
+class Secret extends Input
+  @selector: 'secret'
+
+  inputElementType: 'password'
+
+module.exports = Secret

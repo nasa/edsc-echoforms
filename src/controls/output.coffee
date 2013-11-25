@@ -1,37 +1,30 @@
-  class OutputControl extends TypedControl
-    @selector: 'output'
+$ = require 'jquery'
+Typed = require './typed.coffee'
 
-    inputTag: 'p'
+class Output extends Typed
+  @selector: 'output'
 
-    constructor: (ui, model, controlClasses, resolver) ->
-      @valueExpr = ui.attr('value')
-      super(ui, model, controlClasses, resolver)
+  inputTag: 'p'
 
-    inputs: () -> $()
+  constructor: (ui, model, controlClasses, resolver) ->
+    @valueExpr = ui.attr('value')
+    super(ui, model, controlClasses, resolver)
 
-    inputAttrs: ->
-      attrs = super()
-      delete attrs.autocomplete
-      attrs
+  inputs: () -> $()
 
-    refValue: ->
-      if @valueExpr
-        @xpath(@valueExpr)
-      else
-        super()
+  inputAttrs: ->
+    attrs = super()
+    delete attrs.autocomplete
+    attrs
 
-    loadFromModel: ->
+  refValue: ->
+    if @valueExpr
+      @xpath(@valueExpr)
+    else
       super()
-      @el.find('.echoforms-elements > p').text(@refValue()) if @refExpr || @valueExpr
 
-  class UrlOutputControl extends OutputControl
-    @selector: 'output[type$=anyURI], output[type$=anyuri]'
+  loadFromModel: ->
+    super()
+    @el.find('.echoforms-elements > p').text(@refValue()) if @refExpr || @valueExpr
 
-    inputTag: 'a'
-
-    inputAttrs: ->
-      $.extend(super(), href: '#')
-
-    loadFromModel: ->
-      value = @refValue()
-      @el.find('.echoforms-elements > a').text(value).attr('href', value) if @refExpr || @valueExpr
+module.exports = Output

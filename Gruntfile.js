@@ -37,13 +37,16 @@ module.exports = function(grunt) {
 		uglify: {
 			dist: {
         files: {
-          "dist/jquery.echoforms.min.js": ["dist/jquery.echoforms.js"],
-          "dist/jquery.echoforms.extras.min.js": ["dist/jquery.echoforms.extras.js"]
+          "dist/jquery.echoforms.min.js": ["dist/jquery.echoforms.js"]
         }
 			},
 			options: {
 				report: 'min',
         banner: "<%= meta.banner %>"
+        // The following is useful to see the gzipped size occasionally, but it's expensive
+        // report: 'gzip',
+        // Generate source maps
+        // sourceMap: function(dest) {return dest + '.map';}
 			}
 		},
 
@@ -62,43 +65,26 @@ module.exports = function(grunt) {
     },
     */
 
-		// CoffeeScript compilation
-		coffee: {
+		// Source compilation
+		browserify: {
 			compile: {
         files: [
           {
-					  src: ["src/preamble.coffee",
-                  "src/util.coffee",
-
-                  // Constraint classes
-                  "src/constraints/base.coffee",
-                  "src/constraints/pattern.coffee",
-                  "src/constraints/required.coffee",
-                  "src/constraints/type.coffee",
-                  "src/constraints/xpath.coffee",
-
-                  // Control classes
-                  "src/controls/base.coffee",
-                  "src/controls/typed.coffee",
-                  "src/controls/input.coffee",
-                  "src/controls/output.coffee",
-                  "src/controls/select.coffee",
-                  "src/controls/range.coffee",
-                  "src/controls/secret.coffee",
-                  "src/controls/textarea.coffee",
-                  "src/controls/grouping.coffee",
-                  "src/controls/group.coffee",
-                  "src/controls/form.coffee",
-                  "src/controls/selectref.coffee",
-
-                  // jQuery Plugin
-                  "src/plugin.coffee"],
+            src: ["src/**/*.js", "src/**/*.coffee"],
             dest: "dist/jquery.echoforms.js"
-          },
-          {
-            src: ["src/controls/extras/rangeslider.coffee"],
-            dest: "dist/jquery.echoforms.extras.js"
-          },
+          }
+        ],
+        options: {
+          transform: ['coffeeify'],
+          alias: ['src/extern/jquery.coffee:jquery', 'src/extern/browser.coffee:browser']
+        }
+      }
+		},
+
+    // Spec compilation
+    coffee: {
+      compile: {
+        files: [
           {
             expand: true,
             cwd: 'spec/src/',
@@ -106,12 +92,9 @@ module.exports = function(grunt) {
             src: ['**/*.coffee'],
             dest: 'spec/dist/'
           }
-        ],
-        options: {
-          join: true
-        }
+        ]
       }
-		},
+    },
 
     watch: {
       scripts: {
@@ -154,8 +137,9 @@ module.exports = function(grunt) {
 	grunt.loadNpmTasks("grunt-contrib-watch");
 	grunt.loadNpmTasks("grunt-contrib-sass");
   grunt.loadNpmTasks('grunt-contrib-cssmin');
+  grunt.loadNpmTasks('grunt-browserify');
 	//grunt.loadNpmTasks("grunt-closure-compiler");
 
-	grunt.registerTask("default", ["coffee", "concat", "jshint", "uglify", "sass", "cssmin"]);
+	grunt.registerTask("default", ["browserify", "coffee", "concat", "jshint", "uglify", "sass", "cssmin"]);
 
 };

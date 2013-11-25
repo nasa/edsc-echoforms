@@ -1,63 +1,68 @@
-  class SelectControl extends TypedControl
-    @selector: 'select'
+$ = require 'jquery'
+Typed = require './typed.coffee'
 
-    inputTag: 'select'
+class Select extends Typed
+  @selector: 'select'
 
-    constructor: (ui, model, controlClasses, resolver) ->
-      @isMultiple = ui.attr('multiple') == 'true'
-      @valueElementName = ui.attr('valueElementName')
-      @items = for item in ui.children('item')
-        [label, value] = [$(item).attr('label'), $(item).attr('value')]
-        [label ? value, value]
+  inputTag: 'select'
 
-      super(ui, model, controlClasses, resolver)
+  constructor: (ui, model, controlClasses, resolver) ->
+    @isMultiple = ui.attr('multiple') == 'true'
+    @valueElementName = ui.attr('valueElementName')
+    @items = for item in ui.children('item')
+      [label, value] = [$(item).attr('label'), $(item).attr('value')]
+      [label ? value, value]
 
-    valueElementTagName: (root=@ref()) ->
-      nameParts = [@valueElementName]
-      ns = root[0].nodeName.split(':').shift()
-      nameParts.unshift(ns) if ns?
-      nameParts.join(':')
+    super(ui, model, controlClasses, resolver)
 
-    refValue: ->
-      if @valueElementName? and @refExpr?
-        $(child).text() for child in @ref().children()
-      else
-        super()
+  valueElementTagName: (root=@ref()) ->
+    nameParts = [@valueElementName]
+    ns = root[0].nodeName.split(':').shift()
+    nameParts.unshift(ns) if ns?
+    nameParts.join(':')
 
-    saveToModel: ->
-      if @valueElementName? and @refExpr?
-        root = @ref().empty()
-        tagname = @valueElementTagName(root)
-        for value in @inputValue()
-          element = document.createElementNS(root[0].namespaceURI, tagname)
-          node = $(element).text(value)
-          root.append(node)
-          node[0].namespaceURI = root[0].namespaceURI
-      else
-        super()
+  refValue: ->
+    if @valueElementName? and @refExpr?
+      $(child).text() for child in @ref().children()
+    else
+      super()
 
-    loadFromModel: ->
-      if @valueElementName? and @refExpr?
-        @validate()
-        value = ($(node).text() for node in @ref().children())
-        value = value[0] unless @isMultiple
-        @inputs().val(value)
-      else
-        super()
+  saveToModel: ->
+    if @valueElementName? and @refExpr?
+      root = @ref().empty()
+      tagname = @valueElementTagName(root)
+      for value in @inputValue()
+        element = document.createElementNS(root[0].namespaceURI, tagname)
+        node = $(element).text(value)
+        root.append(node)
+        node[0].namespaceURI = root[0].namespaceURI
+    else
+      super()
 
-    inputValue: ->
-      result = @inputs().val()
-      if @valueElementName? and !(result instanceof Array)
-        result = if result? && result != '' then [result] else []
-      result
+  loadFromModel: ->
+    if @valueElementName? and @refExpr?
+      @validate()
+      value = ($(node).text() for node in @ref().children())
+      value = value[0] unless @isMultiple
+      @inputs().val(value)
+    else
+      super()
 
-    inputAttrs: ->
-      $.extend(super(), multiple: @isMultiple)
+  inputValue: ->
+    result = @inputs().val()
+    if @valueElementName? and !(result instanceof Array)
+      result = if result? && result != '' then [result] else []
+    result
 
-    buildElementsDom: ->
-      result = super()
-      el = result.children('select')
-      el.append('<option value=""> -- Select a value -- </option>') unless @multiple
-      for [label, value] in @items
-        $('<option>', value: value).text(label).appendTo(el)
-      result
+  inputAttrs: ->
+    $.extend(super(), multiple: @isMultiple)
+
+  buildElementsDom: ->
+    result = super()
+    el = result.children('select')
+    el.append('<option value=""> -- Select a value -- </option>') unless @multiple
+    for [label, value] in @items
+      $('<option>', value: value).text(label).appendTo(el)
+    result
+
+module.exports = Select

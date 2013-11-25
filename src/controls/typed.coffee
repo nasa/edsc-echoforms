@@ -1,34 +1,40 @@
-  class TypedControl extends BaseControl
-    constructor: (ui, model, controlClasses, resolver) ->
-      @inputType = (ui.attr('type') ? 'string').replace(/^.*:/, '').toLowerCase()
-      super(ui, model, controlClasses, resolver)
-      @inputs().bind('click change', @onChange)
+$ = require 'jquery'
+Base = require './base.coffee'
+TypeConstraint = require '../constraints/type.coffee'
 
-    loadConstraints: ->
-      super()
-      @constraints.push(new TypeConstraint(@inputType))
+class Typed extends Base
+  constructor: (ui, model, controlClasses, resolver) ->
+    @inputType = (ui.attr('type') ? 'string').replace(/^.*:/, '').toLowerCase()
+    super(ui, model, controlClasses, resolver)
+    @inputs().bind('click change', @onChange)
 
-    inputs: () ->
-      @_inputs ?= @el.find(':input')
+  loadConstraints: ->
+    super()
+    @constraints.push(new TypeConstraint(@inputType))
 
-    inputValue:() ->
-      $.trim(@inputs().val())
+  inputs: () ->
+    @_inputs ?= @el.find(':input')
 
-    inputAttrs: ->
-      id: "#{@id}-element"
-      class: "echoforms-element-#{@inputElementType ? @inputClass ? @ui[0].nodeName}"
-      autocomplete: "off"
+  inputValue:() ->
+    $.trim(@inputs().val())
 
-    saveToModel: ->
-      super()
-      @ref().text(@inputValue()) if @refExpr
+  inputAttrs: ->
+    id: "#{@id}-element"
+    class: "echoforms-element-#{@inputElementType ? @inputClass ? @ui[0].nodeName}"
+    autocomplete: "off"
 
-    loadFromModel: ->
-      super()
-      @inputs().val(@refValue()) if @refExpr
+  saveToModel: ->
+    super()
+    @ref().text(@inputValue()) if @refExpr
 
-    buildDom: ->
-      super().addClass('echoforms-typed-control')
+  loadFromModel: ->
+    super()
+    @inputs().val(@refValue()) if @refExpr
 
-    buildElementsDom: ->
-      super().append($("<#{@inputTag}>", @inputAttrs()))
+  buildDom: ->
+    super().addClass('echoforms-typed-control')
+
+  buildElementsDom: ->
+    super().append($("<#{@inputTag}>", @inputAttrs()))
+
+module.exports = Typed

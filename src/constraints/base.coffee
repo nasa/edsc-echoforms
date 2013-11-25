@@ -1,5 +1,9 @@
-  class BaseConstraint
-    constructor: (@message) ->
+util = require '../util.coffee'
 
-    check: (value, model, resolver) ->
-      warn("#{@constructor.name} must override check")
+class Base
+  constructor: (@message) ->
+
+  check: (value, model, resolver) ->
+    util.warn("#{@constructor.name} must override check")
+
+module.exports = Base

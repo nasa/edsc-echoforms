@@ -1,7 +1,11 @@
-  class PatternConstraint extends BaseConstraint
-    constructor: (patternStr, message) ->
-      @pattern = new RegExp('^' + patternStr + '$')
-      super(message ? 'Invalid')
+Base = require './base.coffee'
 
-    check: (value, model, resolver) ->
-      !value || @pattern.exec(value) != null;
+class Pattern extends Base
+  constructor: (patternStr, message) ->
+    @pattern = new RegExp('^' + patternStr + '$')
+    super(message ? 'Invalid')
+
+  check: (value, model, resolver) ->
+    !value || @pattern.exec(value) != null;
+
+module.exports = Pattern

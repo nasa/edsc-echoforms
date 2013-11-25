@@ -5,9 +5,8 @@
 		<title>ECHO Forms</title>
 	  <script src="http://ajax.googleapis.com/ajax/libs/jquery/2.0.3/jquery.min.js"></script>
 	  <script src="../dist/wgxpath.install.patched.js"></script>
-		<script src="../dist/jquery.echoforms.js"></script>
 		<script src="../dist/jquery.simple-slider.min.js"></script>
-		<script src="../dist/jquery.echoforms.extras.js"></script>
+		<script src="../dist/jquery.echoforms.js"></script>
     <link rel="stylesheet" href="../dist/jquery.echoforms.min.css">
 
     <style>
@@ -29,6 +28,8 @@
 
 		<script>
 			$(function() {
+        $.echoforms.control($.echoforms.extras.RangeSlider);
+
         var root = "#demo-echoforms-form";
         var source = "#demo-echoforms-xml";
         var model = "#demo-echoforms-model";
@@ -112,7 +113,7 @@
         &lt;output id=&quot;urloutput&quot; label=&quot;URL Output&quot; type=&quot;xs:anyURI&quot; a=&quot;a&quot; ref=&quot;prov:reference&quot;&gt;
           &lt;help&gt;Helpful text&lt;/help&gt;
         &lt;/output&gt;
-        &lt;range id=&quot;range&quot; label=&quot;Range&quot; start=&quot;1&quot; end=&quot;10&quot; step=&quot;1&quot; type=&quot;xs:int&quot; a=&quot;a&quot; ref=&quot;prov:reference&quot; readonly=&quot;prov:boolreference&quot;&gt;
+        &lt;range id=&quot;range&quot; label=&quot;Range&quot; start=&quot;1&quot; end=&quot;10&quot; step=&quot;1&quot; type=&quot;xs:int&quot; a=&quot;a&quot; ref=&quot;prov:reference&quot; readonly=&quot;prov:boolreference='true'&quot;&gt;
           &lt;help&gt;Helpful text&lt;/help&gt;
         &lt;/range&gt;
         &lt;select id=&quot;select&quot; required=&quot;prov:boolreference='true'&quot label=&quot;Select&quot; a=&quot;a&quot; ref=&quot;prov:selectReference&quot; valueElementName=&quot;selectValue&quot;&gt;

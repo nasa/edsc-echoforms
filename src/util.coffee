@@ -1,57 +1,69 @@
-  warn =  (args...) -> console?.warn?(args...)
-  err = (args...) -> console?.error?(args...)
+{window} = require('browser')
 
-  wgxpath?.install?(window)
+wgxpathInstalled = false
 
-  execXPath = (root, xpath, resolver) ->
-    # Handle slightly bad expressions received from providers.
-    # "[foo=bar]" becomes ".[foo=bar]"
-    xpath = "self::*#{xpath}" if xpath?.charAt(0) == '['
+warn =  (args...) -> console?.warn?(args...)
+error = (args...) -> console?.error?(args...)
 
-    # "true" and "false" become "true()" and "false()"
-    return true if xpath == "true"
-    return false if xpath == "false"
+execXPath = (root, xpath, resolver) ->
+  wgxpath?.install?(window) unless wgxpathInstalled
+  wgxpathInstalled = true
 
-    doc = root[0].ownerDocument
+  # Handle slightly bad expressions received from providers.
+  # "[foo=bar]" becomes ".[foo=bar]"
+  xpath = "self::*#{xpath}" if xpath?.charAt(0) == '['
 
-    wgxpath.install(document: doc) unless doc['evaluate']?
-    result = doc.evaluate(xpath, root[0], resolver, XPathResult.ANY_TYPE, null)
+  # "true" and "false" become "true()" and "false()"
+  return true if xpath == "true"
+  return false if xpath == "false"
 
-    val = switch result.resultType
-      when XPathResult.NUMBER_TYPE then result.numberValue
-      when XPathResult.STRING_TYPE then result.stringValue
-      when XPathResult.BOOLEAN_TYPE then result.booleanValue
-      else result.iterateNext()
-    val
+  doc = root[0].ownerDocument
 
-  # Parse the given xml string and return the resulting elements.
-  # Based on jQuery's XML parser.  We include our own because $.parseXML did
-  # not exist in jQuery 1.4.4
-  parseXML = (data) ->
-    return null if !data || typeof data != 'string'
+  wgxpath.install(document: doc) unless doc['evaluate']?
+  result = doc.evaluate(xpath, root[0], resolver, XPathResult.ANY_TYPE, null)
 
-    xml = undefined
-    try
-      if window.DOMParser
-        xml = new DOMParser().parseFromString(data, 'text/xml')
-      else
-        xml = new ActiveXObject("Microsoft.XMLDOM")
-        xml.async = "false"
-        xml.loadXML(data)
-    catch error
+  val = switch result.resultType
+    when XPathResult.NUMBER_TYPE then result.numberValue
+    when XPathResult.STRING_TYPE then result.stringValue
+    when XPathResult.BOOLEAN_TYPE then result.booleanValue
+    else result.iterateNext()
+  val
 
-    if !xml || !xml.documentElement || xml.getElementsByTagName( "parsererror" ).length
-      err "Invalid XML: #{data}"
-    xml
+# Parse the given xml string and return the resulting elements.
+# Based on jQuery's XML parser.  We include our own because $.parseXML did
+# not exist in jQuery 1.4.4
+parseXML = (data) ->
+  return null if !data || typeof data != 'string'
 
-  buildXPathResolverFn = (xml) ->
-    namespaces = {}
-    defaultName = " default "
+  xml = undefined
+  try
+    if window.DOMParser
+      xml = new DOMParser().parseFromString(data, 'text/xml')
+    else
+      xml = new ActiveXObject("Microsoft.XMLDOM")
+      xml.async = "false"
+      xml.loadXML(data)
+  catch err
 
-    namespaceRegexp = /\sxmlns(?::(\w+))?=\"([^\"]+)\"/g
-    while (match = namespaceRegexp.exec(xml))?
-      [name, uri] = match[1..2]
-      namespaces[name ? defaultName] = uri
+  if !xml || !xml.documentElement || xml.getElementsByTagName( "parsererror" ).length
+    error "Invalid XML: #{data}"
+  xml
 
-    (prefix) ->
-      namespaces[prefix ? defaultName]
+buildXPathResolverFn = (xml) ->
+  namespaces = {}
+  defaultName = " default "
+
+  namespaceRegexp = /\sxmlns(?::(\w+))?=\"([^\"]+)\"/g
+  while (match = namespaceRegexp.exec(xml))?
+    [name, uri] = match[1..2]
+    namespaces[name ? defaultName] = uri
+
+  (prefix) ->
+    namespaces[prefix ? defaultName]
+
+module.exports =
+  warn: warn
+  error: error
+  execXPath: execXPath
+  parseXML: parseXML
+  buildXPathResolverFn: buildXPathResolverFn
