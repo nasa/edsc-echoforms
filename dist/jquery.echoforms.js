@@ -785,19 +785,26 @@ module.exports = Grouping;
 
 
 },{"./base.coffee":8,"jquery":"d1/tsi"}],14:[function(require,module,exports){
-var c, classes, matchList, unmatched, _i, _len, _ref;
+var classes, matchList;
 
-matchList = [require('./checkbox.coffee'), require('./input.coffee'), require('./urloutput.coffee'), require('./output.coffee'), require('./select.coffee'), require('./range.coffee'), require('./secret.coffee'), require('./textarea.coffee'), require('./group.coffee'), require('./selectref.coffee')];
+classes = {
+  Checkbox: require('./checkbox.coffee'),
+  Input: require('./input.coffee'),
+  UrlOutput: require('./urloutput.coffee'),
+  Output: require('./output.coffee'),
+  Select: require('./select.coffee'),
+  Range: require('./range.coffee'),
+  Secret: require('./secret.coffee'),
+  Textarea: require('./textarea.coffee'),
+  Group: require('./group.coffee'),
+  Select: require('./select.coffee'),
+  Selectref: require('./selectref.coffee'),
+  Base: require('./base.coffee'),
+  Typed: require('./typed.coffee'),
+  Grouping: require('./grouping.coffee')
+};
 
-unmatched = [require('./base.coffee'), require('./typed.coffee'), require('./grouping.coffee')];
-
-classes = {};
-
-_ref = matchList.concat(unmatched);
-for (_i = 0, _len = _ref.length; _i < _len; _i++) {
-  c = _ref[_i];
-  classes[c.name] = c;
-}
+matchList = [classes.Checkbox, classes.Input, classes.UrlOutput, classes.Output, classes.Select, classes.Range, classes.Secret, classes.Group, classes.Select, classes.Selectref];
 
 module.exports = {
   matchList: matchList,
@@ -1331,7 +1338,9 @@ EchoForm = (function() {
 module.exports = EchoForm;
 
 
-},{"./controls/form.coffee":11,"./controls/index.coffee":14,"./util.coffee":31,"jquery":"d1/tsi"}],"SiSrby":[function(require,module,exports){
+},{"./controls/form.coffee":11,"./controls/index.coffee":14,"./util.coffee":31,"jquery":"d1/tsi"}],"browser":[function(require,module,exports){
+module.exports=require('SiSrby');
+},{}],"SiSrby":[function(require,module,exports){
 (function(document, window) {
   return module.exports = {
     document: document,
@@ -1340,8 +1349,6 @@ module.exports = EchoForm;
 })(document, window);
 
 
-},{}],"browser":[function(require,module,exports){
-module.exports=require('SiSrby');
 },{}],"jquery":[function(require,module,exports){
 module.exports=require('d1/tsi');
 },{}],"d1/tsi":[function(require,module,exports){
@@ -1530,5 +1537,5 @@ module.exports = {
 };
 
 
-},{"browser":"SiSrby"}]},{},[1,2,3,4,5,6,7,8,9,10,11,12,13,14,15,16,17,18,19,20,21,23,22,"SiSrby",24,"d1/tsi",29,30,31])
+},{"browser":"SiSrby"}]},{},[1,2,3,4,5,6,7,8,9,10,12,11,13,14,15,16,17,18,19,20,21,22,23,24,"SiSrby","d1/tsi",29,30,31])
 ;

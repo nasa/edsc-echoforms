@@ -1,25 +1,31 @@
+classes =
+  Checkbox: require('./checkbox.coffee')
+  Input: require('./input.coffee')
+  UrlOutput: require('./urloutput.coffee')
+  Output: require('./output.coffee')
+  Select: require('./select.coffee')
+  Range: require('./range.coffee')
+  Secret: require('./secret.coffee')
+  Textarea: require('./textarea.coffee')
+  Group: require('./group.coffee')
+  Select: require('./select.coffee')
+  Selectref: require('./selectref.coffee')
+  Base: require('./base.coffee')
+  Typed: require('./typed.coffee')
+  Grouping: require('./grouping.coffee')
+
 matchList = [
-  require('./checkbox.coffee')
-  require('./input.coffee')
-  require('./urloutput.coffee')
-  require('./output.coffee')
-  require('./select.coffee')
-  require('./range.coffee')
-  require('./secret.coffee')
-  require('./textarea.coffee')
-  require('./group.coffee')
-  require('./selectref.coffee')
+  classes.Checkbox,
+  classes.Input,
+  classes.UrlOutput,
+  classes.Output,
+  classes.Select,
+  classes.Range,
+  classes.Secret,
+  classes.Group,
+  classes.Select,
+  classes.Selectref
 ]
-
-unmatched = [
-  require('./base.coffee')
-  require('./typed.coffee')
-  require('./grouping.coffee')
-]
-
-classes = {}
-
-(classes[c.name] = c for c in matchList.concat(unmatched))
 
 module.exports =
   matchList: matchList
