@@ -19,6 +19,9 @@ execXPath = (root, xpath, resolver) ->
 
   doc = root[0].ownerDocument
 
+  # wgxpath chokes on '//' for whatever reason
+  xpath = xpath.replace(/\/\//g, '/descendant-or-self::node()/')
+
   wgxpath.install(document: doc) unless doc['evaluate']?
   result = doc.evaluate(xpath, root[0], resolver, XPathResult.ANY_TYPE, null)
 

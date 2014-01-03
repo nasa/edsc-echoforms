@@ -1470,6 +1470,7 @@ execXPath = function(root, xpath, resolver) {
     return false;
   }
   doc = root[0].ownerDocument;
+  xpath = xpath.replace(/\/\//g, '/descendant-or-self::node()/');
   if (doc['evaluate'] == null) {
     wgxpath.install({
       document: doc
@@ -1537,5 +1538,5 @@ module.exports = {
 };
 
 
-},{"browser":"SiSrby"}]},{},[1,2,3,4,5,6,7,8,9,10,12,11,13,14,15,16,17,18,19,20,21,22,23,24,"SiSrby","d1/tsi",29,30,31])
+},{"browser":"SiSrby"}]},{},[1,2,3,4,5,8,9,7,6,10,11,12,13,14,15,16,17,18,19,20,21,22,23,24,"SiSrby","d1/tsi",29,30,31])
 ;
