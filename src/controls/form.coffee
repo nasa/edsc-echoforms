@@ -18,6 +18,7 @@ class Form extends Grouping
   serialize: ->
     model = @model.children().clone()
     model.find('*[pruned=true]').remove()
-    $('<div>').append(model).html()
+    new XMLSerializer().serializeToString(model[0])
+
 
 module.exports = Form

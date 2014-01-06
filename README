@@ -1,0 +1,24 @@
+#To compile assets for exporting you'll need to do the following:
+#Download & install the installation package for node and npm from http://nodejs.org/ (it's one package for both npm and node.js)
+
+cd ~/workspace/echo-forms-plugin/
+
+#Then set up your npm repo list with the latest files:
+
+npm install 
+gem install sass
+npm install sass
+npm install grunt
+
+#Since we are not running with RVM environment set up properly, you need to make sure there is a Ruby executable set up in your shell environment.  
+which ruby 
+#if the above finds a ruby executable, then you should be good to go.  Otherwise, you will need to find Ruby and add it to your path
+export PATH=$PATH:<PATH_TO_RUBY> (if not already in your path)
+
+#make sure ./node_modules/.bin and /usr/local/bin are in your path.
+
+#to compile, run
+grunt
+
+#if you want grunt to watch for changes to the coffee script files and compile automagically, run:
+grunt watch
