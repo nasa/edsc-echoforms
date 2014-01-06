@@ -1338,9 +1338,7 @@ EchoForm = (function() {
 module.exports = EchoForm;
 
 
-},{"./controls/form.coffee":11,"./controls/index.coffee":14,"./util.coffee":31,"jquery":"usFOt+"}],"browser":[function(require,module,exports){
-module.exports=require('b9SDEC');
-},{}],"b9SDEC":[function(require,module,exports){
+},{"./controls/form.coffee":11,"./controls/index.coffee":14,"./util.coffee":31,"jquery":"usFOt+"}],"b9SDEC":[function(require,module,exports){
 (function(document, window) {
   return module.exports = {
     document: document,
@@ -1349,6 +1347,8 @@ module.exports=require('b9SDEC');
 })(document, window);
 
 
+},{}],"browser":[function(require,module,exports){
+module.exports=require('b9SDEC');
 },{}],"jquery":[function(require,module,exports){
 module.exports=require('usFOt+');
 },{}],"usFOt+":[function(require,module,exports){
@@ -1538,5 +1538,5 @@ module.exports = {
 };
 
 
-},{"browser":"b9SDEC"}]},{},[1,2,4,3,5,6,7,8,9,10,11,12,13,14,15,16,17,18,19,20,21,22,23,24,"b9SDEC","usFOt+",29,30,31])
+},{"browser":"b9SDEC"}]},{},[1,2,3,4,5,6,7,8,9,10,11,12,13,14,15,16,17,18,19,20,21,23,22,24,"b9SDEC","usFOt+",29,30,31])
 ;
