@@ -15,7 +15,7 @@
         console.log(msg);
  
         // Exit as soon as the last test finishes.
-        if (msg && msg.indexOf("Dixi.") !== -1) {
+        if (msg && msg.indexOf("progressFinish") !== -1) {
             phantom.exit();
         }
     };
