@@ -24,7 +24,8 @@ matchList = [
   classes.Secret,
   classes.Group,
   classes.Select,
-  classes.Selectref
+  classes.Selectref,
+  classes.Textarea
 ]
 
 module.exports =
