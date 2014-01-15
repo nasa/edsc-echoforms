@@ -1,4 +1,5 @@
 Grouping = require './grouping.coffee'
+util = require '../util.coffee'
 
 class Form extends Grouping
   constructor: (ui, model, controlClasses, resolver) ->
@@ -18,7 +19,8 @@ class Form extends Grouping
   serialize: ->
     model = @model.children().clone()
     model.find('*[pruned=true]').remove()
-    new XMLSerializer().serializeToString(model[0])
+    #new XMLSerializer().serializeToString(model[0])
+    util.printDOMToString(model[0])
 
 
 module.exports = Form

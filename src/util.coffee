@@ -64,9 +64,29 @@ buildXPathResolverFn = (xml) ->
   (prefix) ->
     namespaces[prefix ? defaultName]
 
+printDOMToString = (dom_object) ->
+    output = ""
+    if dom_object.nodeName == "#text"
+      return "#{output}#{dom_object.nodeValue}"
+    else if dom_object.nodeName == "#comment"
+      return "#{output}<!--#{dom_object.nodeValue}-->"
+    output += "<#{dom_object.nodeName}"
+    #Note the raw javascript loops below.  cannot use for...in as explained here:
+    #https://developer.mozilla.org/en-US/docs/Web/API/NodeList
+    #using normal coffeescript macros results in for...in, or really ugly javascript.
+    `for (var i=0; i < dom_object.attributes.length; i++){
+            output += ' ' + dom_object.attributes[i].name + '="' + dom_object.attributes[i].value +'"';
+        }`
+    output +=">"
+    `for (var i=0; i < dom_object.childNodes.length; i++){
+            output += printDOMToString(dom_object.childNodes[i]);
+        }`
+    return "#{output}</#{dom_object.nodeName}>"
+
 module.exports =
   warn: warn
   error: error
   execXPath: execXPath
   parseXML: parseXML
   buildXPathResolverFn: buildXPathResolverFn
+  printDOMToString:printDOMToString
