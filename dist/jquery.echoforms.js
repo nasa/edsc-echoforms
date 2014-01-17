@@ -1003,7 +1003,9 @@ Select = (function(_super) {
       root = this.ref();
     }
     nameParts = [this.valueElementName];
-    ns = root[0].nodeName.split(':').shift();
+    if (/:/.test(root[0].nodeName)) {
+      ns = root[0].nodeName.split(':').shift();
+    }
     if (ns != null) {
       nameParts.unshift(ns);
     }
@@ -1340,7 +1342,9 @@ EchoForm = (function() {
 module.exports = EchoForm;
 
 
-},{"./controls/form.coffee":11,"./controls/index.coffee":14,"./util.coffee":31,"jquery":"9mK/17"}],"1X57VY":[function(require,module,exports){
+},{"./controls/form.coffee":11,"./controls/index.coffee":14,"./util.coffee":31,"jquery":"9mK/17"}],"browser":[function(require,module,exports){
+module.exports=require('1X57VY');
+},{}],"1X57VY":[function(require,module,exports){
 (function(document, window) {
   return module.exports = {
     document: document,
@@ -1349,8 +1353,6 @@ module.exports = EchoForm;
 })(document, window);
 
 
-},{}],"browser":[function(require,module,exports){
-module.exports=require('1X57VY');
 },{}],"jquery":[function(require,module,exports){
 module.exports=require('9mK/17');
 },{}],"9mK/17":[function(require,module,exports){
@@ -1531,21 +1533,40 @@ buildXPathResolverFn = function(xml) {
   };
 };
 
-printDOMToString = function(dom_object) {
-  var output;
+printDOMToString = function(dom_object, ns_map) {
+  var attributes, output;
+  if (ns_map == null) {
+    ns_map = {};
+  }
   output = "";
+  attributes = "";
   if (dom_object.nodeName === "#text") {
     return "" + output + dom_object.nodeValue;
   } else if (dom_object.nodeName === "#comment") {
     return "" + output + "<!--" + dom_object.nodeValue + "-->";
   }
-  output += "<" + dom_object.nodeName;
   for (var i=0; i < dom_object.attributes.length; i++){
-            output += ' ' + dom_object.attributes[i].name + '="' + dom_object.attributes[i].value +'"';
+            var name = dom_object.attributes[i].name;
+            var value = dom_object.attributes[i].value;
+            attributes += ' ' + name + '="' + value +'"';
+            if (/xmlns/.test(name) && name != "xmlns"){
+              ns_map[name.split(":").pop()] = value;
+            }
         };
-  output += ">";
+  if (dom_object.prefix == null) {
+    for (prefix in ns_map){
+        if (ns_map.hasOwnProperty(prefix)){
+          if (ns_map[prefix] == dom_object.namespaceURI){
+            dom_object.prefix = prefix;
+            break;
+          }
+        }
+      };
+  }
+  output += "<" + dom_object.nodeName;
+  output += "" + attributes + ">";
   for (var i=0; i < dom_object.childNodes.length; i++){
-            output += printDOMToString(dom_object.childNodes[i]);
+            output += printDOMToString(dom_object.childNodes[i], ns_map);
         };
   return "" + output + "</" + dom_object.nodeName + ">";
 };
@@ -1560,5 +1581,5 @@ module.exports = {
 };
 
 
-},{"browser":"1X57VY"}]},{},[1,3,5,6,7,8,2,10,9,11,13,14,15,16,17,18,12,4,19,20,21,22,23,24,"1X57VY","9mK/17",29,30,31])
+},{"browser":"1X57VY"}]},{},[1,2,3,4,5,6,7,8,9,10,11,12,14,13,15,16,17,18,19,20,21,22,23,24,"1X57VY","9mK/17",29,30,31])
 ;

@@ -17,7 +17,8 @@ class Select extends Typed
 
   valueElementTagName: (root=@ref()) ->
     nameParts = [@valueElementName]
-    ns = root[0].nodeName.split(':').shift()
+    #Get namespace only if it exists
+    ns = root[0].nodeName.split(':').shift() if /:/.test(root[0].nodeName)
     nameParts.unshift(ns) if ns?
     nameParts.join(':')
 

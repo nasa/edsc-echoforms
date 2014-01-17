@@ -64,22 +64,39 @@ buildXPathResolverFn = (xml) ->
   (prefix) ->
     namespaces[prefix ? defaultName]
 
-printDOMToString = (dom_object) ->
+printDOMToString = (dom_object, ns_map = {}) ->
     output = ""
+    attributes = ""
     if dom_object.nodeName == "#text"
       return "#{output}#{dom_object.nodeValue}"
     else if dom_object.nodeName == "#comment"
       return "#{output}<!--#{dom_object.nodeValue}-->"
-    output += "<#{dom_object.nodeName}"
     #Note the raw javascript loops below.  cannot use for...in as explained here:
     #https://developer.mozilla.org/en-US/docs/Web/API/NodeList
     #using normal coffeescript macros results in for...in, or really ugly javascript.
     `for (var i=0; i < dom_object.attributes.length; i++){
-            output += ' ' + dom_object.attributes[i].name + '="' + dom_object.attributes[i].value +'"';
+            var name = dom_object.attributes[i].name;
+            var value = dom_object.attributes[i].value;
+            attributes += ' ' + name + '="' + value +'"';
+            if (/xmlns/.test(name) && name != "xmlns"){
+              ns_map[name.split(":").pop()] = value;
+            }
         }`
-    output +=">"
+    #if we dont have an explicit namespace, try to add it.
+    if !dom_object.prefix?
+      `for (prefix in ns_map){
+        if (ns_map.hasOwnProperty(prefix)){
+          if (ns_map[prefix] == dom_object.namespaceURI){
+            dom_object.prefix = prefix;
+            break;
+          }
+        }
+      }`
+
+    output += "<#{dom_object.nodeName}"
+    output +="#{attributes}>"
     `for (var i=0; i < dom_object.childNodes.length; i++){
-            output += printDOMToString(dom_object.childNodes[i]);
+            output += printDOMToString(dom_object.childNodes[i], ns_map);
         }`
     return "#{output}</#{dom_object.nodeName}>"
 
