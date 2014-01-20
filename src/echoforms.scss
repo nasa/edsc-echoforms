@@ -33,7 +33,7 @@ $header-help-font-color: $font-color;
 // All controls
 .echoforms-control {
   clear: both;
-  padding: .5em 0;
+  padding: .7em 0;
 
   > .echoforms-label,
   > .echoforms-elements,
@@ -68,7 +68,6 @@ $header-help-font-color: $font-color;
 .echoforms-control-group {
   border: solid $group-border-color;
   border-width: 1px 0px;
-  padding: 0;
 
   > .echoforms-label {
     background-color: $group-header-bg-color;
