@@ -1541,7 +1541,7 @@ printDOMToString = function(dom_object, ns_map) {
   output = "";
   attributes = "";
   if (dom_object.nodeName === "#text") {
-    return "" + output + dom_object.nodeValue;
+    return "" + output + ($('<div/>').text(dom_object.nodeValue).html());
   } else if (dom_object.nodeName === "#comment") {
     return "" + output + "<!--" + dom_object.nodeValue + "-->";
   }

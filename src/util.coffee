@@ -68,7 +68,8 @@ printDOMToString = (dom_object, ns_map = {}) ->
     output = ""
     attributes = ""
     if dom_object.nodeName == "#text"
-      return "#{output}#{dom_object.nodeValue}"
+      #use jquery to escape embedded XML entities
+      return "#{output}#{$('<div/>').text(dom_object.nodeValue).html()}"
     else if dom_object.nodeName == "#comment"
       return "#{output}<!--#{dom_object.nodeValue}-->"
     #Note the raw javascript loops below.  cannot use for...in as explained here:
