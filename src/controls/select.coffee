@@ -11,7 +11,8 @@ class Select extends Typed
     @valueElementName = ui.attr('valueElementName')
     @items = for item in ui.children('item')
       [label, value] = [$(item).attr('label'), $(item).attr('value')]
-      [label ? value, value]
+      label = value unless label? && label.length > 0
+      [label, value]
 
     super(ui, model, controlClasses, resolver)
 

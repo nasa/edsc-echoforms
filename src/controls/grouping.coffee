@@ -1,5 +1,6 @@
 $ = require 'jquery'
 Base = require './base.coffee'
+util = require '../util.coffee'
 
 class Grouping extends Base
   constructor: (ui, model, controlClasses, resolver) ->
@@ -28,6 +29,7 @@ class Grouping extends Base
     root.children('.echoforms-label').after(root.children('.echoforms-help'))
 
     childModel = @ref()
+    util.error("Could not find the model element associated with this group.  Verify that @ref [#{@refExpr}] is correct and that the namespace is set correctly") if childModel.length < 1
     ui = @ui
     children = $()
     @controls = controls = []

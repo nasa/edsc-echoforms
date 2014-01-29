@@ -13,22 +13,26 @@ class EchoForm
     defaultControls.unshift(controlClass)
 
   constructor: (@root, options) ->
-    @options = $.extend({}, defaults, options)
-    @form = form = @options['form']
-    @controlClasses = controlClasses = @options['controls'].concat(defaultControls)
+    try
+      @options = $.extend({}, defaults, options)
+      @form = form = @options['form']
+      @controlClasses = controlClasses = @options['controls'].concat(defaultControls)
 
-    unless form?
-      util.error "You must specify a 'form' option when creating a new ECHO Forms instance"
+      unless form?
+        util.error "You must specify a 'form' option when creating a new ECHO Forms instance"
 
-    @resolver = resolver = util.buildXPathResolverFn(form)
-    @doc = doc = $(util.parseXML(form))
+      @resolver = resolver = util.buildXPathResolverFn(form)
+      @doc = doc = $(util.parseXML(form))
 
-    @model = model = doc.find('form > model > instance')
-    @ui = ui = doc.find('form > ui')
+      @model = model = doc.find('form > model > instance')
+      @ui = ui = doc.find('form > ui')
 
-    @control = new FormControl(ui, model, controlClasses, resolver)
-    @root.append(@control.element())
-    @control.addedToDom()
+      @control = new FormControl(ui, model, controlClasses, resolver)
+      @root.append(@control.element())
+      @control.addedToDom()
+    catch exception
+      util.error(exception)
+      throw exception
 
   destroy: ->
     @root.empty()

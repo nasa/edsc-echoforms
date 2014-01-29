@@ -24,7 +24,10 @@ class Output extends Typed
       super()
 
   loadFromModel: ->
-    super()
-    @el.find('.echoforms-elements > p').text(@refValue()) if @refExpr || @valueExpr
+    try
+      super()
+      @el.find('.echoforms-elements > p').text(@refValue()) if @refExpr || @valueExpr
+    catch exception
+      throw "#{exception}<br/>Error found while setting initial value of output control: [#{$('<div/>').text(this.ui[0].outerHTML).html()}]."
 
 module.exports = Output

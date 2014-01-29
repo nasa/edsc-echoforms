@@ -59,10 +59,14 @@ class Base
   ref: ->
     if @refExpr? then $(@xpath(@refExpr)) else @model
 
+
   # Retrieve the trimmed text value of the node pointed to by the ref attribute,
   # or undefined if there is no ref attribute
   refValue: ->
-    if @refExpr? then $.trim(@ref().text()) else undefined
+    try
+      if @refExpr? then $.trim(@ref().text()) else undefined
+    catch exception
+      throw "#{exception}<br/>Error found while accessing the model element associated with form ui control: [#{$('<div/>').text(this.ui[0].outerHTML).html()}]."
 
   inputValue: ->
     util.warn("#{@constructor.name} must override inputValue")

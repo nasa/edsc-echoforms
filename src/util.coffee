@@ -3,11 +3,17 @@
 wgxpathInstalled = false
 
 warn =  (args...) -> console?.warn?(args...)
-error = (args...) -> console?.error?(args...)
+error = (args...) ->
+  console?.error?(args...)
+  if $("#form_load_errors")?
+    $("#form_load_errors").append("<div class='form_load_error'>#{args}</div>")
 
 execXPath = (root, xpath, resolver) ->
   wgxpath?.install?(window) unless wgxpathInstalled
   wgxpathInstalled = true
+
+  if root.length < 1
+    error("Error processing xpath [#{xpath}].  Provided context node was not valid. Verify that the ref attribute of the parent group is valid (including the namespace).")
 
   # Handle slightly bad expressions received from providers.
   # "[foo=bar]" becomes ".[foo=bar]"
@@ -19,6 +25,9 @@ execXPath = (root, xpath, resolver) ->
 
   doc = root[0].ownerDocument
 
+  # replace leading '/' with '//'.  This is not technically equivalent, but the root of the document being
+  # referred to is actually <form>, not <model>, so absolute xpaths will not work as expected.  // should return what is desired
+  xpath = xpath.replace(/^\//g, '//')
   # wgxpath chokes on '//' for whatever reason
   xpath = xpath.replace(/\/\//g, '/descendant-or-self::node()/')
 

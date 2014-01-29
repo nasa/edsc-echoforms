@@ -95,3 +95,20 @@ describe '"select" control', ->
       template.form(dom, model: model, attributes: attrs, ui: ui)
       $('#control :input').val('alphabetic').change()
       expect($('#referenceSelect :input').val()).toEqual('alphabetic')
+
+  describe 'When label is undefined', ->
+    attrs = 'ref="prov:selectReference" valueElementName="selectValue"'
+
+    it "populates teh label properly label ", ->
+      model = "<prov:selectReference></prov:selectReference>"
+      ui = """
+          <select id="referenceSelect" #{attrs}>
+            <item value="value_with_label" label="a label"/>
+            <item value="value_with_empty_label" label = ""/>
+            <item value="value_with_no_label"/>
+          </select>
+        """
+      template.form(dom, model: model, attributes: attrs, ui: ui)
+      expect($('#referenceSelect select > option[value="value_with_label"]').attr("label")).toEqual('a label')
+      expect($('#referenceSelect select > option[value="value_with_empty_label"]').attr("label")).toEqual('value_with_empty_label')
+      expect($('#referenceSelect select > option[value="value_with_no_label"]').attr("label")).toEqual('value_with_no_label')

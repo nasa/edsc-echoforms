@@ -335,10 +335,16 @@ Base = (function() {
   };
 
   Base.prototype.refValue = function() {
-    if (this.refExpr != null) {
-      return $.trim(this.ref().text());
-    } else {
-      return void 0;
+    var exception;
+    try {
+      if (this.refExpr != null) {
+        return $.trim(this.ref().text());
+      } else {
+        return void 0;
+      }
+    } catch (_error) {
+      exception = _error;
+      throw "" + exception + "<br/>Error found while accessing the model element associated with form ui control: [" + ($('<div/>').text(this.ui[0].outerHTML).html()) + "].";
     }
   };
 
@@ -672,13 +678,15 @@ module.exports = Group;
 
 
 },{"./grouping.coffee":13}],13:[function(require,module,exports){
-var $, Base, Grouping,
+var $, Base, Grouping, util,
   __hasProp = {}.hasOwnProperty,
   __extends = function(child, parent) { for (var key in parent) { if (__hasProp.call(parent, key)) child[key] = parent[key]; } function ctor() { this.constructor = child; } ctor.prototype = parent.prototype; child.prototype = new ctor(); child.__super__ = parent.prototype; return child; };
 
 $ = require('jquery');
 
 Base = require('./base.coffee');
+
+util = require('../util.coffee');
 
 Grouping = (function(_super) {
   __extends(Grouping, _super);
@@ -719,6 +727,9 @@ Grouping = (function(_super) {
     root = Grouping.__super__.buildDom.call(this).addClass('echoforms-grouping-control');
     root.children('.echoforms-label').after(root.children('.echoforms-help'));
     childModel = this.ref();
+    if (childModel.length < 1) {
+      util.error("Could not find the model element associated with this group.  Verify that @ref [" + this.refExpr + "] is correct and that the namespace is set correctly");
+    }
     ui = this.ui;
     children = $();
     this.controls = controls = [];
@@ -786,7 +797,7 @@ Grouping = (function(_super) {
 module.exports = Grouping;
 
 
-},{"./base.coffee":8,"jquery":"9mK/17"}],14:[function(require,module,exports){
+},{"../util.coffee":31,"./base.coffee":8,"jquery":"9mK/17"}],14:[function(require,module,exports){
 var classes, matchList;
 
 classes = {
@@ -898,9 +909,15 @@ Output = (function(_super) {
   };
 
   Output.prototype.loadFromModel = function() {
-    Output.__super__.loadFromModel.call(this);
-    if (this.refExpr || this.valueExpr) {
-      return this.el.find('.echoforms-elements > p').text(this.refValue());
+    var exception;
+    try {
+      Output.__super__.loadFromModel.call(this);
+      if (this.refExpr || this.valueExpr) {
+        return this.el.find('.echoforms-elements > p').text(this.refValue());
+      }
+    } catch (_error) {
+      exception = _error;
+      throw "" + exception + "<br/>Error found while setting initial value of output control: [" + ($('<div/>').text(this.ui[0].outerHTML).html()) + "].";
     }
   };
 
@@ -990,7 +1007,10 @@ Select = (function(_super) {
       for (_i = 0, _len = _ref.length; _i < _len; _i++) {
         item = _ref[_i];
         _ref1 = [$(item).attr('label'), $(item).attr('value')], label = _ref1[0], value = _ref1[1];
-        _results.push([label != null ? label : value, value]);
+        if (!((label != null) && label.length > 0)) {
+          label = value;
+        }
+        _results.push([label, value]);
       }
       return _results;
     })();
@@ -1306,21 +1326,27 @@ EchoForm = (function() {
   };
 
   function EchoForm(root, options) {
-    var controlClasses, doc, form, model, resolver, ui;
+    var controlClasses, doc, exception, form, model, resolver, ui;
     this.root = root;
-    this.options = $.extend({}, defaults, options);
-    this.form = form = this.options['form'];
-    this.controlClasses = controlClasses = this.options['controls'].concat(defaultControls);
-    if (form == null) {
-      util.error("You must specify a 'form' option when creating a new ECHO Forms instance");
+    try {
+      this.options = $.extend({}, defaults, options);
+      this.form = form = this.options['form'];
+      this.controlClasses = controlClasses = this.options['controls'].concat(defaultControls);
+      if (form == null) {
+        util.error("You must specify a 'form' option when creating a new ECHO Forms instance");
+      }
+      this.resolver = resolver = util.buildXPathResolverFn(form);
+      this.doc = doc = $(util.parseXML(form));
+      this.model = model = doc.find('form > model > instance');
+      this.ui = ui = doc.find('form > ui');
+      this.control = new FormControl(ui, model, controlClasses, resolver);
+      this.root.append(this.control.element());
+      this.control.addedToDom();
+    } catch (_error) {
+      exception = _error;
+      util.error(exception);
+      throw exception;
     }
-    this.resolver = resolver = util.buildXPathResolverFn(form);
-    this.doc = doc = $(util.parseXML(form));
-    this.model = model = doc.find('form > model > instance');
-    this.ui = ui = doc.find('form > ui');
-    this.control = new FormControl(ui, model, controlClasses, resolver);
-    this.root.append(this.control.element());
-    this.control.addedToDom();
   }
 
   EchoForm.prototype.destroy = function() {
@@ -1342,7 +1368,9 @@ EchoForm = (function() {
 module.exports = EchoForm;
 
 
-},{"./controls/form.coffee":11,"./controls/index.coffee":14,"./util.coffee":31,"jquery":"9mK/17"}],"1X57VY":[function(require,module,exports){
+},{"./controls/form.coffee":11,"./controls/index.coffee":14,"./util.coffee":31,"jquery":"9mK/17"}],"browser":[function(require,module,exports){
+module.exports=require('1X57VY');
+},{}],"1X57VY":[function(require,module,exports){
 (function(document, window) {
   return module.exports = {
     document: document,
@@ -1351,8 +1379,6 @@ module.exports = EchoForm;
 })(document, window);
 
 
-},{}],"browser":[function(require,module,exports){
-module.exports=require('1X57VY');
 },{}],"jquery":[function(require,module,exports){
 module.exports=require('9mK/17');
 },{}],"9mK/17":[function(require,module,exports){
@@ -1451,7 +1477,14 @@ warn = function() {
 error = function() {
   var args;
   args = 1 <= arguments.length ? __slice.call(arguments, 0) : [];
-  return typeof console !== "undefined" && console !== null ? typeof console.error === "function" ? console.error.apply(console, args) : void 0 : void 0;
+  if (typeof console !== "undefined" && console !== null) {
+    if (typeof console.error === "function") {
+      console.error.apply(console, args);
+    }
+  }
+  if ($("#form_load_errors") != null) {
+    return $("#form_load_errors").append("<div class='form_load_error'>" + args + "</div>");
+  }
 };
 
 execXPath = function(root, xpath, resolver) {
@@ -1464,6 +1497,9 @@ execXPath = function(root, xpath, resolver) {
     }
   }
   wgxpathInstalled = true;
+  if (root.length < 1) {
+    error("Error processing xpath [" + xpath + "].  Provided context node was not valid. Verify that the ref attribute of the parent group is valid (including the namespace).");
+  }
   if ((xpath != null ? xpath.charAt(0) : void 0) === '[') {
     xpath = "self::*" + xpath;
   }
@@ -1474,6 +1510,7 @@ execXPath = function(root, xpath, resolver) {
     return false;
   }
   doc = root[0].ownerDocument;
+  xpath = xpath.replace(/^\//g, '//');
   xpath = xpath.replace(/\/\//g, '/descendant-or-self::node()/');
   if (doc['evaluate'] == null) {
     wgxpath.install({

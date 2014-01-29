@@ -36,7 +36,7 @@
         return expect($('#referenceSelect :input').val()).toEqual(['value', '12345']);
       });
     });
-    return describe('"valueElementName" attribute for single selects', function() {
+    describe('"valueElementName" attribute for single selects', function() {
       var attrs;
       attrs = 'ref="prov:selectReference" valueElementName="selectValue"';
       it("defaults to no selections", function() {
@@ -67,6 +67,23 @@
         });
         $('#control :input').val('alphabetic').change();
         return expect($('#referenceSelect :input').val()).toEqual('alphabetic');
+      });
+    });
+    return describe('When label is undefined', function() {
+      var attrs;
+      attrs = 'ref="prov:selectReference" valueElementName="selectValue"';
+      return it("populates teh label properly label ", function() {
+        var model, ui;
+        model = "<prov:selectReference></prov:selectReference>";
+        ui = "<select id=\"referenceSelect\" " + attrs + ">\n  <item value=\"value_with_label\" label=\"a label\"/>\n  <item value=\"value_with_empty_label\" label = \"\"/>\n  <item value=\"value_with_no_label\"/>\n</select>";
+        template.form(dom, {
+          model: model,
+          attributes: attrs,
+          ui: ui
+        });
+        expect($('#referenceSelect select > option[value="value_with_label"]').attr("label")).toEqual('a label');
+        expect($('#referenceSelect select > option[value="value_with_empty_label"]').attr("label")).toEqual('value_with_empty_label');
+        return expect($('#referenceSelect select > option[value="value_with_no_label"]').attr("label")).toEqual('value_with_no_label');
       });
     });
   });
