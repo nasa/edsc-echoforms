@@ -1368,9 +1368,7 @@ EchoForm = (function() {
 module.exports = EchoForm;
 
 
-},{"./controls/form.coffee":11,"./controls/index.coffee":14,"./util.coffee":31,"jquery":"9mK/17"}],"browser":[function(require,module,exports){
-module.exports=require('1X57VY');
-},{}],"1X57VY":[function(require,module,exports){
+},{"./controls/form.coffee":11,"./controls/index.coffee":14,"./util.coffee":31,"jquery":"9mK/17"}],"1X57VY":[function(require,module,exports){
 (function(document, window) {
   return module.exports = {
     document: document,
@@ -1379,6 +1377,8 @@ module.exports=require('1X57VY');
 })(document, window);
 
 
+},{}],"browser":[function(require,module,exports){
+module.exports=require('1X57VY');
 },{}],"jquery":[function(require,module,exports){
 module.exports=require('9mK/17');
 },{}],"9mK/17":[function(require,module,exports){
@@ -1510,8 +1510,7 @@ execXPath = function(root, xpath, resolver) {
     return false;
   }
   doc = root[0].ownerDocument;
-  xpath = xpath.replace(/^\//g, '//');
-  xpath = xpath.replace(/\/\//g, '/descendant-or-self::node()/');
+  xpath = xpath.replace(/^\/+|\/\//g, '/descendant-or-self::node()/');
   if (doc['evaluate'] == null) {
     wgxpath.install({
       document: doc

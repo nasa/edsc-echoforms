@@ -25,11 +25,11 @@ execXPath = (root, xpath, resolver) ->
 
   doc = root[0].ownerDocument
 
-  # replace leading '/' with '//'.  This is not technically equivalent, but the root of the document being
-  # referred to is actually <form>, not <model>, so absolute xpaths will not work as expected.  // should return what is desired
-  xpath = xpath.replace(/^\//g, '//')
-  # wgxpath chokes on '//' for whatever reason
-  xpath = xpath.replace(/\/\//g, '/descendant-or-self::node()/')
+  #wgxpath seems to not like '//'.  In addition, the root of the document being
+  # referred to is actually <form>, not <model>, so absolute xpaths will not work as expected.
+  # so we need to replace '/' at the beginning of the path, as well as '//' anywhere with:
+  # descendant-or-self::node()
+  xpath = xpath.replace(/^\/+|\/\//g, '/descendant-or-self::node()/')
 
   wgxpath.install(document: doc) unless doc['evaluate']?
   result = doc.evaluate(xpath, root[0], resolver, XPathResult.ANY_TYPE, null)
