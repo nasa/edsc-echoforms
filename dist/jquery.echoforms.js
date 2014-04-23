@@ -514,7 +514,7 @@ Base = (function() {
 module.exports = Base;
 
 
-},{"../constraints/index.coffee":3,"../util.coffee":31,"jquery":"9mK/17"}],9:[function(require,module,exports){
+},{"../constraints/index.coffee":3,"../util.coffee":31,"jquery":"usFOt+"}],9:[function(require,module,exports){
 var Checkbox, Input, _ref,
   __hasProp = {}.hasOwnProperty,
   __extends = function(child, parent) { for (var key in parent) { if (__hasProp.call(parent, key)) child[key] = parent[key]; } function ctor() { this.constructor = child; } ctor.prototype = parent.prototype; child.prototype = new ctor(); child.__super__ = parent.prototype; return child; };
@@ -608,7 +608,7 @@ RangeSlider = (function(_super) {
 module.exports = RangeSlider;
 
 
-},{"../range.coffee":17,"jquery":"9mK/17"}],11:[function(require,module,exports){
+},{"../range.coffee":17,"jquery":"usFOt+"}],11:[function(require,module,exports){
 var Form, Grouping, util,
   __hasProp = {}.hasOwnProperty,
   __extends = function(child, parent) { for (var key in parent) { if (__hasProp.call(parent, key)) child[key] = parent[key]; } function ctor() { this.constructor = child; } ctor.prototype = parent.prototype; child.prototype = new ctor(); child.__super__ = parent.prototype; return child; };
@@ -797,7 +797,7 @@ Grouping = (function(_super) {
 module.exports = Grouping;
 
 
-},{"../util.coffee":31,"./base.coffee":8,"jquery":"9mK/17"}],14:[function(require,module,exports){
+},{"../util.coffee":31,"./base.coffee":8,"jquery":"usFOt+"}],14:[function(require,module,exports){
 var classes, matchList;
 
 classes = {
@@ -928,7 +928,7 @@ Output = (function(_super) {
 module.exports = Output;
 
 
-},{"./typed.coffee":22,"jquery":"9mK/17"}],17:[function(require,module,exports){
+},{"./typed.coffee":22,"jquery":"usFOt+"}],17:[function(require,module,exports){
 var Input, Range,
   __hasProp = {}.hasOwnProperty,
   __extends = function(child, parent) { for (var key in parent) { if (__hasProp.call(parent, key)) child[key] = parent[key]; } function ctor() { this.constructor = child; } ctor.prototype = parent.prototype; child.prototype = new ctor(); child.__super__ = parent.prototype; return child; };
@@ -1129,7 +1129,7 @@ Select = (function(_super) {
 module.exports = Select;
 
 
-},{"./typed.coffee":22,"jquery":"9mK/17"}],20:[function(require,module,exports){
+},{"./typed.coffee":22,"jquery":"usFOt+"}],20:[function(require,module,exports){
 var Select, Selectref,
   __hasProp = {}.hasOwnProperty,
   __extends = function(child, parent) { for (var key in parent) { if (__hasProp.call(parent, key)) child[key] = parent[key]; } function ctor() { this.constructor = child; } ctor.prototype = parent.prototype; child.prototype = new ctor(); child.__super__ = parent.prototype; return child; };
@@ -1259,7 +1259,7 @@ Typed = (function(_super) {
 module.exports = Typed;
 
 
-},{"../constraints/type.coffee":6,"./base.coffee":8,"jquery":"9mK/17"}],23:[function(require,module,exports){
+},{"../constraints/type.coffee":6,"./base.coffee":8,"jquery":"usFOt+"}],23:[function(require,module,exports){
 var Output, UrlOutput, _ref,
   __hasProp = {}.hasOwnProperty,
   __extends = function(child, parent) { for (var key in parent) { if (__hasProp.call(parent, key)) child[key] = parent[key]; } function ctor() { this.constructor = child; } ctor.prototype = parent.prototype; child.prototype = new ctor(); child.__super__ = parent.prototype; return child; };
@@ -1368,7 +1368,7 @@ EchoForm = (function() {
 module.exports = EchoForm;
 
 
-},{"./controls/form.coffee":11,"./controls/index.coffee":14,"./util.coffee":31,"jquery":"9mK/17"}],"1X57VY":[function(require,module,exports){
+},{"./controls/form.coffee":11,"./controls/index.coffee":14,"./util.coffee":31,"jquery":"usFOt+"}],"b9SDEC":[function(require,module,exports){
 (function(document, window) {
   return module.exports = {
     document: document,
@@ -1378,13 +1378,13 @@ module.exports = EchoForm;
 
 
 },{}],"browser":[function(require,module,exports){
-module.exports=require('1X57VY');
-},{}],"jquery":[function(require,module,exports){
-module.exports=require('9mK/17');
-},{}],"9mK/17":[function(require,module,exports){
+module.exports=require('b9SDEC');
+},{}],"usFOt+":[function(require,module,exports){
 module.exports = jQuery;
 
 
+},{}],"jquery":[function(require,module,exports){
+module.exports=require('usFOt+');
 },{}],29:[function(require,module,exports){
 module.exports = require('./echoform.coffee');
 
@@ -1460,7 +1460,7 @@ $.fn[pluginName] = function() {
 };
 
 
-},{"./config.coffee":1,"./controls/index.coffee":14,"./echoform.coffee":24,"./util.coffee":31,"jquery":"9mK/17"}],31:[function(require,module,exports){
+},{"./config.coffee":1,"./controls/index.coffee":14,"./echoform.coffee":24,"./util.coffee":31,"jquery":"usFOt+"}],31:[function(require,module,exports){
 var buildXPathResolverFn, error, execXPath, parseXML, printDOMToString, warn, wgxpathInstalled, window,
   __slice = [].slice;
 
@@ -1510,7 +1510,7 @@ execXPath = function(root, xpath, resolver) {
     return false;
   }
   doc = root[0].ownerDocument;
-  xpath = xpath.replace(/^\/+|\/\//g, '/descendant-or-self::node()/');
+  xpath = xpath.replace(/((?!http:\/\/).)*^\/+|^\/\//g, '/descendant-or-self::node()/');
   if (doc['evaluate'] == null) {
     wgxpath.install({
       document: doc
@@ -1617,5 +1617,5 @@ module.exports = {
 };
 
 
-},{"browser":"1X57VY"}]},{},[1,2,3,4,5,6,7,8,9,10,11,12,13,14,15,16,17,18,19,20,21,22,23,24,"1X57VY","9mK/17",29,30,31])
+},{"browser":"b9SDEC"}]},{},[1,2,5,6,7,8,9,11,10,12,13,14,15,16,17,18,19,20,21,3,4,22,23,24,"b9SDEC","usFOt+",29,30,31])
 ;
