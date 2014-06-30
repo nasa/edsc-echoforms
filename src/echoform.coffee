@@ -40,7 +40,7 @@ class EchoForm
   isValid: ->
     @control.isValid()
 
-  serialize: ->
-    @control.serialize()
+  serialize: (options) ->
+    @control.serialize(options)
 
 module.exports = EchoForm

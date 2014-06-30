@@ -16,9 +16,9 @@ class Form extends Grouping
   isValid: ->
     @el.find('.echoforms-error:visible').length == 0
 
-  serialize: ->
+  serialize: (options={}) ->
     model = @model.children().clone()
-    model.find('*[pruned=true]').remove()
+    model.find('*[pruned=true]').remove() if !options.prune? || options.prune == true
     #new XMLSerializer().serializeToString(model[0])
     util.printDOMToString(model[0])
 

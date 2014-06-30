@@ -514,7 +514,7 @@ Base = (function() {
 module.exports = Base;
 
 
-},{"../constraints/index.coffee":3,"../util.coffee":31,"jquery":"usFOt+"}],9:[function(require,module,exports){
+},{"../constraints/index.coffee":3,"../util.coffee":31,"jquery":"d1/tsi"}],9:[function(require,module,exports){
 var Checkbox, Input, _ref,
   __hasProp = {}.hasOwnProperty,
   __extends = function(child, parent) { for (var key in parent) { if (__hasProp.call(parent, key)) child[key] = parent[key]; } function ctor() { this.constructor = child; } ctor.prototype = parent.prototype; child.prototype = new ctor(); child.__super__ = parent.prototype; return child; };
@@ -608,7 +608,7 @@ RangeSlider = (function(_super) {
 module.exports = RangeSlider;
 
 
-},{"../range.coffee":17,"jquery":"usFOt+"}],11:[function(require,module,exports){
+},{"../range.coffee":17,"jquery":"d1/tsi"}],11:[function(require,module,exports){
 var Form, Grouping, util,
   __hasProp = {}.hasOwnProperty,
   __extends = function(child, parent) { for (var key in parent) { if (__hasProp.call(parent, key)) child[key] = parent[key]; } function ctor() { this.constructor = child; } ctor.prototype = parent.prototype; child.prototype = new ctor(); child.__super__ = parent.prototype; return child; };
@@ -639,10 +639,15 @@ Form = (function(_super) {
     return this.el.find('.echoforms-error:visible').length === 0;
   };
 
-  Form.prototype.serialize = function() {
+  Form.prototype.serialize = function(options) {
     var model;
+    if (options == null) {
+      options = {};
+    }
     model = this.model.children().clone();
-    model.find('*[pruned=true]').remove();
+    if ((options.prune == null) || options.prune === true) {
+      model.find('*[pruned=true]').remove();
+    }
     return util.printDOMToString(model[0]);
   };
 
@@ -797,7 +802,7 @@ Grouping = (function(_super) {
 module.exports = Grouping;
 
 
-},{"../util.coffee":31,"./base.coffee":8,"jquery":"usFOt+"}],14:[function(require,module,exports){
+},{"../util.coffee":31,"./base.coffee":8,"jquery":"d1/tsi"}],14:[function(require,module,exports){
 var classes, matchList;
 
 classes = {
@@ -928,7 +933,7 @@ Output = (function(_super) {
 module.exports = Output;
 
 
-},{"./typed.coffee":22,"jquery":"usFOt+"}],17:[function(require,module,exports){
+},{"./typed.coffee":22,"jquery":"d1/tsi"}],17:[function(require,module,exports){
 var Input, Range,
   __hasProp = {}.hasOwnProperty,
   __extends = function(child, parent) { for (var key in parent) { if (__hasProp.call(parent, key)) child[key] = parent[key]; } function ctor() { this.constructor = child; } ctor.prototype = parent.prototype; child.prototype = new ctor(); child.__super__ = parent.prototype; return child; };
@@ -1129,7 +1134,7 @@ Select = (function(_super) {
 module.exports = Select;
 
 
-},{"./typed.coffee":22,"jquery":"usFOt+"}],20:[function(require,module,exports){
+},{"./typed.coffee":22,"jquery":"d1/tsi"}],20:[function(require,module,exports){
 var Select, Selectref,
   __hasProp = {}.hasOwnProperty,
   __extends = function(child, parent) { for (var key in parent) { if (__hasProp.call(parent, key)) child[key] = parent[key]; } function ctor() { this.constructor = child; } ctor.prototype = parent.prototype; child.prototype = new ctor(); child.__super__ = parent.prototype; return child; };
@@ -1259,7 +1264,7 @@ Typed = (function(_super) {
 module.exports = Typed;
 
 
-},{"../constraints/type.coffee":6,"./base.coffee":8,"jquery":"usFOt+"}],23:[function(require,module,exports){
+},{"../constraints/type.coffee":6,"./base.coffee":8,"jquery":"d1/tsi"}],23:[function(require,module,exports){
 var Output, UrlOutput, _ref,
   __hasProp = {}.hasOwnProperty,
   __extends = function(child, parent) { for (var key in parent) { if (__hasProp.call(parent, key)) child[key] = parent[key]; } function ctor() { this.constructor = child; } ctor.prototype = parent.prototype; child.prototype = new ctor(); child.__super__ = parent.prototype; return child; };
@@ -1357,8 +1362,8 @@ EchoForm = (function() {
     return this.control.isValid();
   };
 
-  EchoForm.prototype.serialize = function() {
-    return this.control.serialize();
+  EchoForm.prototype.serialize = function(options) {
+    return this.control.serialize(options);
   };
 
   return EchoForm;
@@ -1368,7 +1373,9 @@ EchoForm = (function() {
 module.exports = EchoForm;
 
 
-},{"./controls/form.coffee":11,"./controls/index.coffee":14,"./util.coffee":31,"jquery":"usFOt+"}],"b9SDEC":[function(require,module,exports){
+},{"./controls/form.coffee":11,"./controls/index.coffee":14,"./util.coffee":31,"jquery":"d1/tsi"}],"browser":[function(require,module,exports){
+module.exports=require('SiSrby');
+},{}],"SiSrby":[function(require,module,exports){
 (function(document, window) {
   return module.exports = {
     document: document,
@@ -1377,14 +1384,12 @@ module.exports = EchoForm;
 })(document, window);
 
 
-},{}],"browser":[function(require,module,exports){
-module.exports=require('b9SDEC');
-},{}],"usFOt+":[function(require,module,exports){
+},{}],"jquery":[function(require,module,exports){
+module.exports=require('d1/tsi');
+},{}],"d1/tsi":[function(require,module,exports){
 module.exports = jQuery;
 
 
-},{}],"jquery":[function(require,module,exports){
-module.exports=require('usFOt+');
 },{}],29:[function(require,module,exports){
 module.exports = require('./echoform.coffee');
 
@@ -1460,7 +1465,7 @@ $.fn[pluginName] = function() {
 };
 
 
-},{"./config.coffee":1,"./controls/index.coffee":14,"./echoform.coffee":24,"./util.coffee":31,"jquery":"usFOt+"}],31:[function(require,module,exports){
+},{"./config.coffee":1,"./controls/index.coffee":14,"./echoform.coffee":24,"./util.coffee":31,"jquery":"d1/tsi"}],31:[function(require,module,exports){
 var buildXPathResolverFn, error, execXPath, parseXML, printDOMToString, warn, wgxpathInstalled, window,
   __slice = [].slice;
 
@@ -1617,5 +1622,5 @@ module.exports = {
 };
 
 
-},{"browser":"b9SDEC"}]},{},[1,2,5,6,7,8,9,11,10,12,13,14,15,16,17,18,19,20,21,3,4,22,23,24,"b9SDEC","usFOt+",29,30,31])
+},{"browser":"SiSrby"}]},{},[1,2,3,4,5,6,7,8,9,10,11,12,13,14,15,16,17,18,19,20,21,22,23,24,"SiSrby","d1/tsi",29,30,31])
 ;
