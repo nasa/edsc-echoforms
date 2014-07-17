@@ -99,6 +99,21 @@ $header-help-font-color: $font-color;
   }
 }
 
+// Tree controls
+.echoforms-control-tree {
+  .echoforms-help
+  {
+    position: absolute;
+    margin-left: 10px;
+    > .echoforms-help-item {
+      text-overflow: ellipsis;
+      width: 500px;
+      white-space: nowrap;
+      overflow: hidden;
+    }
+  }
+}
+
 // <output> controls
 .echoforms-control-output {
   > .echoforms-elements {

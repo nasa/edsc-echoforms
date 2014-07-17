@@ -26,7 +26,8 @@ module.exports = function(grunt) {
       dist: {
         files: {
           "dist/wgxpath.install.patched.js" : ["vendor/wgxpath/wgxpath.install.patched.js"],
-          "dist/jquery.simple-slider.min.js" : ["vendor/jquery-simple-slider/js/simple-slider.min.js"]
+          "dist/jquery.simple-slider.min.js" : ["vendor/jquery-simple-slider/js/simple-slider.min.js"],
+          "dist/jstree.min.js" : ["vendor/vakata-jstree-5aaf257/dist/jstree.min.js"]
         }
       },
       options: {
@@ -120,15 +121,25 @@ module.exports = function(grunt) {
     cssmin: {
       dist: {
         files: {
-          'dist/jquery.echoforms.min.css': ['dist/jquery.echoforms.min.css']
+          'dist/jquery.echoforms.min.css': ['dist/jquery.echoforms.min.css'],
+          'dist/jstree-default.css': ['vendor/vakata-jstree-5aaf257/dist/themes/default/style.min.css']
         }
       },
 			options: {
         banner: "<%= meta.banner %>"
 			}
     }
+ 
+    //img: {
+//	copy: {
+//	  files:{
+//	     'dist': ['vendor/vakata-jstree-5aaf257/dist/themes/default/*.gif'],
+//	  'dist': ['vendor/vakata-jstree-5aaf257/dist/themes/default/*.png']
+//	  }
+//	}
+//    }
 
-	});
+	});	
 
 	grunt.loadNpmTasks("grunt-contrib-concat");
 	grunt.loadNpmTasks("grunt-contrib-jshint");

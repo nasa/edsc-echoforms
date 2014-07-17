@@ -9,6 +9,8 @@ classes =
   Textarea: require('./textarea.coffee')
   Group: require('./group.coffee')
   Select: require('./select.coffee')
+  Tree: require('./tree.coffee')
+  TreeItem: require('./treeitem.coffee')
   Selectref: require('./selectref.coffee')
   Base: require('./base.coffee')
   Typed: require('./typed.coffee')
@@ -25,6 +27,8 @@ matchList = [
   classes.Group,
   classes.Select,
   classes.Selectref,
+  classes.Tree,
+  classes.TreeItem,
   classes.Textarea
 ]
 

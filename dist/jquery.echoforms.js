@@ -25,7 +25,7 @@ Base = (function() {
 module.exports = Base;
 
 
-},{"../util.coffee":31}],3:[function(require,module,exports){
+},{"../util.coffee":33}],3:[function(require,module,exports){
 module.exports = {
   Pattern: require('./pattern.coffee'),
   Required: require('./required.coffee'),
@@ -94,7 +94,7 @@ Required = (function(_super) {
 module.exports = Required;
 
 
-},{"../util.coffee":31,"./base.coffee":2}],6:[function(require,module,exports){
+},{"../util.coffee":33,"./base.coffee":2}],6:[function(require,module,exports){
 var Base, Type, util,
   __hasProp = {}.hasOwnProperty,
   __extends = function(child, parent) { for (var key in parent) { if (__hasProp.call(parent, key)) child[key] = parent[key]; } function ctor() { this.constructor = child; } ctor.prototype = parent.prototype; child.prototype = new ctor(); child.__super__ = parent.prototype; return child; };
@@ -236,7 +236,7 @@ Type = (function(_super) {
 module.exports = Type;
 
 
-},{"../util.coffee":31,"./base.coffee":2}],7:[function(require,module,exports){
+},{"../util.coffee":33,"./base.coffee":2}],7:[function(require,module,exports){
 var Base, XPath, execXPath,
   __hasProp = {}.hasOwnProperty,
   __extends = function(child, parent) { for (var key in parent) { if (__hasProp.call(parent, key)) child[key] = parent[key]; } function ctor() { this.constructor = child; } ctor.prototype = parent.prototype; child.prototype = new ctor(); child.__super__ = parent.prototype; return child; };
@@ -264,7 +264,7 @@ XPath = (function(_super) {
 module.exports = XPath;
 
 
-},{"../util.coffee":31,"./base.coffee":2}],8:[function(require,module,exports){
+},{"../util.coffee":33,"./base.coffee":2}],8:[function(require,module,exports){
 var $, Base, constraints, util,
   __bind = function(fn, me){ return function(){ return fn.apply(me, arguments); }; };
 
@@ -514,7 +514,7 @@ Base = (function() {
 module.exports = Base;
 
 
-},{"../constraints/index.coffee":3,"../util.coffee":31,"jquery":"d1/tsi"}],9:[function(require,module,exports){
+},{"../constraints/index.coffee":3,"../util.coffee":33,"jquery":"9mK/17"}],9:[function(require,module,exports){
 var Checkbox, Input, _ref,
   __hasProp = {}.hasOwnProperty,
   __extends = function(child, parent) { for (var key in parent) { if (__hasProp.call(parent, key)) child[key] = parent[key]; } function ctor() { this.constructor = child; } ctor.prototype = parent.prototype; child.prototype = new ctor(); child.__super__ = parent.prototype; return child; };
@@ -608,7 +608,7 @@ RangeSlider = (function(_super) {
 module.exports = RangeSlider;
 
 
-},{"../range.coffee":17,"jquery":"d1/tsi"}],11:[function(require,module,exports){
+},{"../range.coffee":17,"jquery":"9mK/17"}],11:[function(require,module,exports){
 var Form, Grouping, util,
   __hasProp = {}.hasOwnProperty,
   __extends = function(child, parent) { for (var key in parent) { if (__hasProp.call(parent, key)) child[key] = parent[key]; } function ctor() { this.constructor = child; } ctor.prototype = parent.prototype; child.prototype = new ctor(); child.__super__ = parent.prototype; return child; };
@@ -658,7 +658,7 @@ Form = (function(_super) {
 module.exports = Form;
 
 
-},{"../util.coffee":31,"./grouping.coffee":13}],12:[function(require,module,exports){
+},{"../util.coffee":33,"./grouping.coffee":13}],12:[function(require,module,exports){
 var Group, Grouping, _ref,
   __hasProp = {}.hasOwnProperty,
   __extends = function(child, parent) { for (var key in parent) { if (__hasProp.call(parent, key)) child[key] = parent[key]; } function ctor() { this.constructor = child; } ctor.prototype = parent.prototype; child.prototype = new ctor(); child.__super__ = parent.prototype; return child; };
@@ -802,7 +802,7 @@ Grouping = (function(_super) {
 module.exports = Grouping;
 
 
-},{"../util.coffee":31,"./base.coffee":8,"jquery":"d1/tsi"}],14:[function(require,module,exports){
+},{"../util.coffee":33,"./base.coffee":8,"jquery":"9mK/17"}],14:[function(require,module,exports){
 var classes, matchList;
 
 classes = {
@@ -816,13 +816,15 @@ classes = {
   Textarea: require('./textarea.coffee'),
   Group: require('./group.coffee'),
   Select: require('./select.coffee'),
+  Tree: require('./tree.coffee'),
+  TreeItem: require('./treeitem.coffee'),
   Selectref: require('./selectref.coffee'),
   Base: require('./base.coffee'),
   Typed: require('./typed.coffee'),
   Grouping: require('./grouping.coffee')
 };
 
-matchList = [classes.Checkbox, classes.Input, classes.UrlOutput, classes.Output, classes.Select, classes.Range, classes.Secret, classes.Group, classes.Select, classes.Selectref, classes.Textarea];
+matchList = [classes.Checkbox, classes.Input, classes.UrlOutput, classes.Output, classes.Select, classes.Range, classes.Secret, classes.Group, classes.Select, classes.Selectref, classes.Tree, classes.TreeItem, classes.Textarea];
 
 module.exports = {
   matchList: matchList,
@@ -833,7 +835,7 @@ module.exports = {
 };
 
 
-},{"./base.coffee":8,"./checkbox.coffee":9,"./extras/rangeslider.coffee":10,"./group.coffee":12,"./grouping.coffee":13,"./input.coffee":15,"./output.coffee":16,"./range.coffee":17,"./secret.coffee":18,"./select.coffee":19,"./selectref.coffee":20,"./textarea.coffee":21,"./typed.coffee":22,"./urloutput.coffee":23}],15:[function(require,module,exports){
+},{"./base.coffee":8,"./checkbox.coffee":9,"./extras/rangeslider.coffee":10,"./group.coffee":12,"./grouping.coffee":13,"./input.coffee":15,"./output.coffee":16,"./range.coffee":17,"./secret.coffee":18,"./select.coffee":19,"./selectref.coffee":20,"./textarea.coffee":21,"./tree.coffee":22,"./treeitem.coffee":23,"./typed.coffee":24,"./urloutput.coffee":25}],15:[function(require,module,exports){
 var Input, Typed, _ref,
   __hasProp = {}.hasOwnProperty,
   __extends = function(child, parent) { for (var key in parent) { if (__hasProp.call(parent, key)) child[key] = parent[key]; } function ctor() { this.constructor = child; } ctor.prototype = parent.prototype; child.prototype = new ctor(); child.__super__ = parent.prototype; return child; };
@@ -873,7 +875,7 @@ Input = (function(_super) {
 module.exports = Input;
 
 
-},{"./typed.coffee":22}],16:[function(require,module,exports){
+},{"./typed.coffee":24}],16:[function(require,module,exports){
 var $, Output, Typed,
   __hasProp = {}.hasOwnProperty,
   __extends = function(child, parent) { for (var key in parent) { if (__hasProp.call(parent, key)) child[key] = parent[key]; } function ctor() { this.constructor = child; } ctor.prototype = parent.prototype; child.prototype = new ctor(); child.__super__ = parent.prototype; return child; };
@@ -933,7 +935,7 @@ Output = (function(_super) {
 module.exports = Output;
 
 
-},{"./typed.coffee":22,"jquery":"d1/tsi"}],17:[function(require,module,exports){
+},{"./typed.coffee":24,"jquery":"9mK/17"}],17:[function(require,module,exports){
 var Input, Range,
   __hasProp = {}.hasOwnProperty,
   __extends = function(child, parent) { for (var key in parent) { if (__hasProp.call(parent, key)) child[key] = parent[key]; } function ctor() { this.constructor = child; } ctor.prototype = parent.prototype; child.prototype = new ctor(); child.__super__ = parent.prototype; return child; };
@@ -1134,7 +1136,7 @@ Select = (function(_super) {
 module.exports = Select;
 
 
-},{"./typed.coffee":22,"jquery":"d1/tsi"}],20:[function(require,module,exports){
+},{"./typed.coffee":24,"jquery":"9mK/17"}],20:[function(require,module,exports){
 var Select, Selectref,
   __hasProp = {}.hasOwnProperty,
   __extends = function(child, parent) { for (var key in parent) { if (__hasProp.call(parent, key)) child[key] = parent[key]; } function ctor() { this.constructor = child; } ctor.prototype = parent.prototype; child.prototype = new ctor(); child.__super__ = parent.prototype; return child; };
@@ -1192,7 +1194,252 @@ Textarea = (function(_super) {
 module.exports = Textarea;
 
 
-},{"./typed.coffee":22}],22:[function(require,module,exports){
+},{"./typed.coffee":24}],22:[function(require,module,exports){
+var $, Tree, TreeItem, Typed,
+  __hasProp = {}.hasOwnProperty,
+  __extends = function(child, parent) { for (var key in parent) { if (__hasProp.call(parent, key)) child[key] = parent[key]; } function ctor() { this.constructor = child; } ctor.prototype = parent.prototype; child.prototype = new ctor(); child.__super__ = parent.prototype; return child; },
+  __indexOf = [].indexOf || function(item) { for (var i = 0, l = this.length; i < l; i++) { if (i in this && this[i] === item) return i; } return -1; };
+
+$ = require('jquery');
+
+Typed = require('./typed.coffee');
+
+TreeItem = require('./treeitem.coffee');
+
+Tree = (function(_super) {
+  __extends(Tree, _super);
+
+  Tree.selector = 'tree';
+
+  Tree.prototype.inputTag = 'div';
+
+  function Tree(ui, model, controlClasses, resolver) {
+    var item;
+    this.separator = ui.attr('separator');
+    this.cascade = ui.attr('cascade') != null ? ui.attr('cascade') === "true" : true;
+    this.valueElementName = ui.attr('valueElementName') || 'value';
+    this.items = (function() {
+      var _i, _len, _ref, _results;
+      _ref = ui.children('item');
+      _results = [];
+      for (_i = 0, _len = _ref.length; _i < _len; _i++) {
+        item = _ref[_i];
+        _results.push(new TreeItem($(item), model, controlClasses, resolver, '', this.separator));
+      }
+      return _results;
+    }).call(this);
+    Tree.__super__.constructor.call(this, ui, model, controlClasses, resolver);
+  }
+
+  Tree.prototype.valueElementTagName = function(root) {
+    var nameParts, ns;
+    if (root == null) {
+      root = this.ref();
+    }
+    nameParts = [this.valueElementName];
+    if (/:/.test(root[0].nodeName)) {
+      ns = root[0].nodeName.split(':').shift();
+    }
+    if (ns != null) {
+      nameParts.unshift(ns);
+    }
+    return nameParts.join(':');
+  };
+
+  Tree.prototype.refValue = function() {
+    var child, _i, _len, _ref, _results;
+    if ((this.valueElementName != null) && (this.refExpr != null)) {
+      _ref = this.ref().children();
+      _results = [];
+      for (_i = 0, _len = _ref.length; _i < _len; _i++) {
+        child = _ref[_i];
+        _results.push($(child).text());
+      }
+      return _results;
+    } else {
+      return Tree.__super__.refValue.call(this);
+    }
+  };
+
+  Tree.prototype.saveToModel = function() {
+    var element, node, root, tagname, value, _i, _len, _ref, _results;
+    if ((this.valueElementName != null) && (this.refExpr != null)) {
+      root = this.ref().empty();
+      tagname = this.valueElementTagName(root);
+      _ref = this.inputValue();
+      _results = [];
+      for (_i = 0, _len = _ref.length; _i < _len; _i++) {
+        value = _ref[_i];
+        element = document.createElementNS(root[0].namespaceURI, tagname);
+        node = $(element).text(value);
+        root.append(node);
+        _results.push(node[0].namespaceURI = root[0].namespaceURI);
+      }
+      return _results;
+    } else {
+      return Tree.__super__.saveToModel.call(this);
+    }
+  };
+
+  Tree.prototype.loadFromModel = function() {};
+
+  Tree.prototype.modelValues = function() {
+    var value, values;
+    if ((this.valueElementName != null) && (this.refExpr != null)) {
+      values = (function() {
+        var _i, _len, _ref, _results;
+        _ref = this.ref().children();
+        _results = [];
+        for (_i = 0, _len = _ref.length; _i < _len; _i++) {
+          value = _ref[_i];
+          _results.push($(value).text());
+        }
+        return _results;
+      }).call(this);
+      return values;
+    } else {
+      return [];
+    }
+  };
+
+  Tree.prototype.inputs = function() {
+    return this.el.find('div.jstree');
+  };
+
+  Tree.prototype.inputValue = function() {
+    return this.inputs().find('.jstree-clicked').map(function(node) {
+      return $(this).parent().attr('value');
+    });
+  };
+
+  Tree.prototype.inputAttrs = function() {
+    return $.extend(Tree.__super__.inputAttrs.call(this), {
+      separator: this.separator,
+      cascade: this.cascade
+    });
+  };
+
+  Tree.prototype.buildElementsDom = function() {
+    var item, model_val, node, result, root, ul, _i, _j, _len, _len1, _ref, _ref1, _ref2;
+    result = Tree.__super__.buildElementsDom.call(this);
+    root = result.children('div');
+    root.addClass('jstree');
+    root.append('<ul>');
+    ul = root.children('ul');
+    _ref = this.items;
+    for (_i = 0, _len = _ref.length; _i < _len; _i++) {
+      item = _ref[_i];
+      node = item.buildElementsDom();
+      node.appendTo(ul);
+    }
+    model_val = this.modelValues();
+    if (model_val.length > 0) {
+      _ref1 = root.find('li');
+      for (_j = 0, _len1 = _ref1.length; _j < _len1; _j++) {
+        node = _ref1[_j];
+        if (_ref2 = $(node).attr("value"), __indexOf.call(model_val, _ref2) >= 0) {
+          $(node).attr('data-jstree', '{"selected":true, "opened":false}');
+        }
+      }
+    }
+    root.jstree({
+      checkbox: {
+        keep_selected_style: false,
+        three_state: this.cascade
+      },
+      plugins: ["checkbox"]
+    });
+    this.tree_root = root;
+    return result;
+  };
+
+  return Tree;
+
+})(Typed);
+
+module.exports = Tree;
+
+
+},{"./treeitem.coffee":23,"./typed.coffee":24,"jquery":"9mK/17"}],23:[function(require,module,exports){
+var $, TreeItem;
+
+$ = require('jquery');
+
+TreeItem = (function() {
+  TreeItem.selector = 'item';
+
+  TreeItem.prototype.inputTag = 'li';
+
+  function TreeItem(ui, model, controlClasses, resolver, parent_path, separator) {
+    var item;
+    this.separator = separator;
+    this.label = $(ui).attr('label');
+    this.value = $(ui).attr('value');
+    if (!((this.label != null) && this.label.length > 0)) {
+      this.label = this.value;
+    }
+    if ((separator != null) && separator.length > 0) {
+      this.value = parent_path + this.separator + this.value;
+    }
+    this.ui = ui;
+    this.items = (function() {
+      var _i, _len, _ref, _results;
+      _ref = ui.children('item');
+      _results = [];
+      for (_i = 0, _len = _ref.length; _i < _len; _i++) {
+        item = _ref[_i];
+        _results.push(new TreeItem($(item), model, controlClasses, resolver, this.value, this.separator));
+      }
+      return _results;
+    }).call(this);
+  }
+
+  TreeItem.prototype.buildHelpDom = function() {
+    var help, result, _i, _len, _ref;
+    result = $('<span>', {
+      "class": 'echoforms-help'
+    });
+    _ref = this.ui.children('help');
+    for (_i = 0, _len = _ref.length; _i < _len; _i++) {
+      help = _ref[_i];
+      $('<p>', {
+        "class": 'echoforms-help-item'
+      }).text($(help).text()).attr({
+        title: $(help).text()
+      }).appendTo(result);
+    }
+    return result;
+  };
+
+  TreeItem.prototype.buildElementsDom = function() {
+    var childlist, el, item, node, _i, _len, _ref;
+    el = $('<li>');
+    el.attr({
+      value: this.value
+    });
+    el.text(this.label);
+    el.append(this.buildHelpDom());
+    childlist = $('<ul>');
+    _ref = this.items;
+    for (_i = 0, _len = _ref.length; _i < _len; _i++) {
+      item = _ref[_i];
+      node = item.buildElementsDom();
+      node.appendTo(childlist);
+    }
+    if (this.items.length > 0) {
+      childlist.appendTo(el);
+    }
+    return el;
+  };
+
+  return TreeItem;
+
+})();
+
+module.exports = TreeItem;
+
+
+},{"jquery":"9mK/17"}],24:[function(require,module,exports){
 var $, Base, TypeConstraint, Typed,
   __hasProp = {}.hasOwnProperty,
   __extends = function(child, parent) { for (var key in parent) { if (__hasProp.call(parent, key)) child[key] = parent[key]; } function ctor() { this.constructor = child; } ctor.prototype = parent.prototype; child.prototype = new ctor(); child.__super__ = parent.prototype; return child; };
@@ -1264,7 +1511,7 @@ Typed = (function(_super) {
 module.exports = Typed;
 
 
-},{"../constraints/type.coffee":6,"./base.coffee":8,"jquery":"d1/tsi"}],23:[function(require,module,exports){
+},{"../constraints/type.coffee":6,"./base.coffee":8,"jquery":"9mK/17"}],25:[function(require,module,exports){
 var Output, UrlOutput, _ref,
   __hasProp = {}.hasOwnProperty,
   __extends = function(child, parent) { for (var key in parent) { if (__hasProp.call(parent, key)) child[key] = parent[key]; } function ctor() { this.constructor = child; } ctor.prototype = parent.prototype; child.prototype = new ctor(); child.__super__ = parent.prototype; return child; };
@@ -1305,7 +1552,7 @@ UrlOutput = (function(_super) {
 module.exports = UrlOutput;
 
 
-},{"./output.coffee":16}],24:[function(require,module,exports){
+},{"./output.coffee":16}],26:[function(require,module,exports){
 var $, EchoForm, FormControl, controls, defaultControls, defaults, util;
 
 $ = require('jquery');
@@ -1373,9 +1620,9 @@ EchoForm = (function() {
 module.exports = EchoForm;
 
 
-},{"./controls/form.coffee":11,"./controls/index.coffee":14,"./util.coffee":31,"jquery":"d1/tsi"}],"browser":[function(require,module,exports){
-module.exports=require('SiSrby');
-},{}],"SiSrby":[function(require,module,exports){
+},{"./controls/form.coffee":11,"./controls/index.coffee":14,"./util.coffee":33,"jquery":"9mK/17"}],"browser":[function(require,module,exports){
+module.exports=require('1X57VY');
+},{}],"1X57VY":[function(require,module,exports){
 (function(document, window) {
   return module.exports = {
     document: document,
@@ -1385,16 +1632,16 @@ module.exports=require('SiSrby');
 
 
 },{}],"jquery":[function(require,module,exports){
-module.exports=require('d1/tsi');
-},{}],"d1/tsi":[function(require,module,exports){
+module.exports=require('9mK/17');
+},{}],"9mK/17":[function(require,module,exports){
 module.exports = jQuery;
 
 
-},{}],29:[function(require,module,exports){
+},{}],31:[function(require,module,exports){
 module.exports = require('./echoform.coffee');
 
 
-},{"./echoform.coffee":24}],30:[function(require,module,exports){
+},{"./echoform.coffee":26}],32:[function(require,module,exports){
 var $, EchoForm, controls, pluginName, util,
   __slice = [].slice;
 
@@ -1465,7 +1712,7 @@ $.fn[pluginName] = function() {
 };
 
 
-},{"./config.coffee":1,"./controls/index.coffee":14,"./echoform.coffee":24,"./util.coffee":31,"jquery":"d1/tsi"}],31:[function(require,module,exports){
+},{"./config.coffee":1,"./controls/index.coffee":14,"./echoform.coffee":26,"./util.coffee":33,"jquery":"9mK/17"}],33:[function(require,module,exports){
 var buildXPathResolverFn, error, execXPath, parseXML, printDOMToString, warn, wgxpathInstalled, window,
   __slice = [].slice;
 
@@ -1622,5 +1869,5 @@ module.exports = {
 };
 
 
-},{"browser":"SiSrby"}]},{},[1,2,3,4,5,6,7,8,9,10,11,12,13,14,15,16,17,18,19,20,21,22,23,24,"SiSrby","d1/tsi",29,30,31])
+},{"browser":"1X57VY"}]},{},[1,2,3,4,5,6,7,8,9,10,11,12,13,14,15,16,17,18,19,20,21,22,23,24,25,26,"1X57VY","9mK/17",31,32,33])
 ;
