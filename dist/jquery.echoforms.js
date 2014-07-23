@@ -1620,9 +1620,7 @@ EchoForm = (function() {
 module.exports = EchoForm;
 
 
-},{"./controls/form.coffee":11,"./controls/index.coffee":14,"./util.coffee":33,"jquery":"9mK/17"}],"browser":[function(require,module,exports){
-module.exports=require('1X57VY');
-},{}],"1X57VY":[function(require,module,exports){
+},{"./controls/form.coffee":11,"./controls/index.coffee":14,"./util.coffee":33,"jquery":"9mK/17"}],"1X57VY":[function(require,module,exports){
 (function(document, window) {
   return module.exports = {
     document: document,
@@ -1631,6 +1629,8 @@ module.exports=require('1X57VY');
 })(document, window);
 
 
+},{}],"browser":[function(require,module,exports){
+module.exports=require('1X57VY');
 },{}],"jquery":[function(require,module,exports){
 module.exports=require('9mK/17');
 },{}],"9mK/17":[function(require,module,exports){
@@ -1762,7 +1762,13 @@ execXPath = function(root, xpath, resolver) {
     return false;
   }
   doc = root[0].ownerDocument;
-  xpath = xpath.replace(/((?!http:\/\/).)*^\/+|^\/\//g, '/descendant-or-self::node()/');
+  xpath = xpath.replace(/^\/+|(https:)?\/\//g, function($0, $1) {
+    if ($1) {
+      return $0;
+    } else {
+      return '/descendant-or-self::node()/';
+    }
+  });
   if (doc['evaluate'] == null) {
     wgxpath.install({
       document: doc
@@ -1869,5 +1875,5 @@ module.exports = {
 };
 
 
-},{"browser":"1X57VY"}]},{},[1,2,3,4,5,6,7,8,9,10,11,12,13,14,15,16,17,18,19,20,21,22,23,24,25,26,"1X57VY","9mK/17",31,32,33])
+},{"browser":"1X57VY"}]},{},[2,1,3,4,5,6,7,8,9,10,11,12,13,14,15,16,17,18,19,20,21,22,23,24,25,26,"1X57VY","9mK/17",31,32,33])
 ;

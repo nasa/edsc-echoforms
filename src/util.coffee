@@ -29,7 +29,9 @@ execXPath = (root, xpath, resolver) ->
   # referred to is actually <form>, not <model>, so absolute xpaths will not work as expected.
   # so we need to replace '/' at the beginning of the path, as well as '//' anywhere with:
   # descendant-or-self::node()
-  xpath = xpath.replace(/((?!http:\/\/).)*^\/+|^\/\//g, '/descendant-or-self::node()/')
+  # xpath = xpath.replace(/((?!http:\/\/).)*^\/+|^\/\//g, '/descendant-or-self::node()/')
+  xpath = xpath.replace /^\/+|(https:)?\/\//g, ($0, $1) ->
+    if $1 then $0 else '/descendant-or-self::node()/'
 
   wgxpath.install(document: doc) unless doc['evaluate']?
   result = doc.evaluate(xpath, root[0], resolver, XPathResult.ANY_TYPE, null)
