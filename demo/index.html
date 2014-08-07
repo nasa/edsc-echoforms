@@ -78,6 +78,9 @@
             &lt;prov:parentReference&gt;
               &lt;prov:childReference&gt;Child value&lt;/prov:childReference&gt;
             &lt;/prov:parentReference&gt;
+            &lt;prov:SUBSET_DATA_LAYERS type="tree"&gt;
+                &lt;prov:data_layer&gt;/GLAH01/Data_1HZ_VAL/Engineering/d_T_detID_VAL&lt;/prov:data_layer&gt;
+            &lt;/prov:SUBSET_DATA_LAYERS&gt;
           &lt;/prov:options&gt;
         &lt;/instance&gt;
       &lt;/model&gt;
@@ -130,6 +133,20 @@
           &lt;item label=&quot;654321&quot; value=&quot;654321&quot; /&gt;
           &lt;help&gt;Helpful text&lt;/help&gt;
         &lt;/select&gt;
+        &lt;tree id="subset_datalayer_tree" label="Choose datasets" ref="prov:SUBSET_DATA_LAYERS" required="false()" type="xsd:string" valueElementName="data_layer" separator="/"&gt;
+            &lt;item value="GLAH01"&gt;
+                &lt;item label="Data_1HZ" value="Data_1HZ_VAL"&gt;
+                    &lt;help&gt; help text &lt;/help&gt;
+                    &lt;item label="Parameter: DS_UTCTime_1" value="DS_UTCTime_1"/&gt;
+                    &lt;item label="Engineering" value="Engineering"&gt;
+                        &lt;item label="Parameter: d_T_detID" value="d_T_detID_VAL"/&gt;
+                        &lt;item label="Parameter: d_T_detID" value="d_T_detID_VAL_2"/&gt;
+                    &lt;/item&gt;
+                &lt;/item&gt;
+                &lt;item label="Data_40HZ" value="Data_40HZ_VAL"/&gt;
+            &lt;/item&gt;
+            &lt;item value="GLAH02"/&gt;
+        &lt;/tree&gt;
       &lt;/ui&gt;
     &lt;/form&gt;
     </textarea>

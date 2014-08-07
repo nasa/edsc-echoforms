@@ -57,7 +57,7 @@ class Tree extends Typed
     @el.find('div.jstree')
 
   inputValue: ->
-    @inputs().find('.jstree-clicked').map (node) -> $(this).parent().attr('value')
+    @inputs().find('.jstree-clicked').map (node) -> $(this).parent().attr('node_value')
 
   inputAttrs: ->
     $.extend(super(), separator: @separator, cascade: @cascade)
@@ -75,7 +75,7 @@ class Tree extends Typed
     if model_val.length > 0
       #select values based on the model value.  This could perform badly
       for node in root.find('li')
-        $(node).attr('data-jstree','{"selected":true, "opened":false}') if $(node).attr("value") in model_val
+        $(node).attr('data-jstree','{"selected":true, "opened":false}') if $(node).attr("node_value") in model_val
     root.jstree
       checkbox:
         keep_selected_style: false

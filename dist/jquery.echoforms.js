@@ -1308,7 +1308,7 @@ Tree = (function(_super) {
 
   Tree.prototype.inputValue = function() {
     return this.inputs().find('.jstree-clicked').map(function(node) {
-      return $(this).parent().attr('value');
+      return $(this).parent().attr('node_value');
     });
   };
 
@@ -1337,7 +1337,7 @@ Tree = (function(_super) {
       _ref1 = root.find('li');
       for (_j = 0, _len1 = _ref1.length; _j < _len1; _j++) {
         node = _ref1[_j];
-        if (_ref2 = $(node).attr("value"), __indexOf.call(model_val, _ref2) >= 0) {
+        if (_ref2 = $(node).attr("node_value"), __indexOf.call(model_val, _ref2) >= 0) {
           $(node).attr('data-jstree', '{"selected":true, "opened":false}');
         }
       }
@@ -1415,7 +1415,7 @@ TreeItem = (function() {
     var childlist, el, item, node, _i, _len, _ref;
     el = $('<li>');
     el.attr({
-      value: this.value
+      node_value: this.value
     });
     el.text(this.label);
     el.append(this.buildHelpDom());
@@ -1620,7 +1620,9 @@ EchoForm = (function() {
 module.exports = EchoForm;
 
 
-},{"./controls/form.coffee":11,"./controls/index.coffee":14,"./util.coffee":33,"jquery":"9mK/17"}],"1X57VY":[function(require,module,exports){
+},{"./controls/form.coffee":11,"./controls/index.coffee":14,"./util.coffee":33,"jquery":"9mK/17"}],"browser":[function(require,module,exports){
+module.exports=require('1X57VY');
+},{}],"1X57VY":[function(require,module,exports){
 (function(document, window) {
   return module.exports = {
     document: document,
@@ -1629,14 +1631,12 @@ module.exports = EchoForm;
 })(document, window);
 
 
-},{}],"browser":[function(require,module,exports){
-module.exports=require('1X57VY');
-},{}],"jquery":[function(require,module,exports){
-module.exports=require('9mK/17');
 },{}],"9mK/17":[function(require,module,exports){
 module.exports = jQuery;
 
 
+},{}],"jquery":[function(require,module,exports){
+module.exports=require('9mK/17');
 },{}],31:[function(require,module,exports){
 module.exports = require('./echoform.coffee');
 
@@ -1875,5 +1875,5 @@ module.exports = {
 };
 
 
-},{"browser":"1X57VY"}]},{},[2,1,3,4,5,6,7,8,9,10,11,12,13,14,15,16,17,18,19,20,21,22,23,24,25,26,"1X57VY","9mK/17",31,32,33])
+},{"browser":"1X57VY"}]},{},[1,2,5,6,7,8,9,10,11,12,13,14,15,16,17,18,19,20,21,22,23,24,25,26,"1X57VY","9mK/17",31,33,32,3,4])
 ;

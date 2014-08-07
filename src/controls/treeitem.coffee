@@ -25,7 +25,7 @@ class TreeItem #extends Base
 
   buildElementsDom: ->
     el = $('<li>')
-    el.attr(value: @value)
+    el.attr(node_value: @value)
     el.text(@label)
     el.append(@buildHelpDom())
     childlist = $('<ul>')
