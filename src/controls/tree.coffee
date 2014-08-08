@@ -1,6 +1,7 @@
 $ = require 'jquery'
 Typed = require './typed.coffee'
 TreeItem = require './treeitem.coffee'
+Base = require './base.coffee'
 
 class Tree extends Typed
   @selector: 'tree'
@@ -8,6 +9,12 @@ class Tree extends Typed
   inputTag: 'div'
 
   constructor: (ui, model, controlClasses, resolver) ->
+    #Need to ensure that ID is unique, including between different copies of the same form which may exist in the same client DOM
+    #duplicate IDs break jstree
+    id = ui.attr('id')
+    if id
+      id += "-#{Base.echoformsControlUniqueId++}"
+      ui.attr('id', id)
     @separator = ui.attr('separator')
     @cascade = if ui.attr('cascade')? then ui.attr('cascade') == "true" else true
     @valueElementName = ui.attr('valueElementName') || 'value'

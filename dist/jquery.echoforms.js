@@ -1195,7 +1195,7 @@ module.exports = Textarea;
 
 
 },{"./typed.coffee":24}],22:[function(require,module,exports){
-var $, Tree, TreeItem, Typed,
+var $, Base, Tree, TreeItem, Typed,
   __hasProp = {}.hasOwnProperty,
   __extends = function(child, parent) { for (var key in parent) { if (__hasProp.call(parent, key)) child[key] = parent[key]; } function ctor() { this.constructor = child; } ctor.prototype = parent.prototype; child.prototype = new ctor(); child.__super__ = parent.prototype; return child; },
   __indexOf = [].indexOf || function(item) { for (var i = 0, l = this.length; i < l; i++) { if (i in this && this[i] === item) return i; } return -1; };
@@ -1206,6 +1206,8 @@ Typed = require('./typed.coffee');
 
 TreeItem = require('./treeitem.coffee');
 
+Base = require('./base.coffee');
+
 Tree = (function(_super) {
   __extends(Tree, _super);
 
@@ -1214,7 +1216,12 @@ Tree = (function(_super) {
   Tree.prototype.inputTag = 'div';
 
   function Tree(ui, model, controlClasses, resolver) {
-    var item;
+    var id, item;
+    id = ui.attr('id');
+    if (id) {
+      id += "-" + (Base.echoformsControlUniqueId++);
+      ui.attr('id', id);
+    }
     this.separator = ui.attr('separator');
     this.cascade = ui.attr('cascade') != null ? ui.attr('cascade') === "true" : true;
     this.valueElementName = ui.attr('valueElementName') || 'value';
@@ -1360,7 +1367,7 @@ Tree = (function(_super) {
 module.exports = Tree;
 
 
-},{"./treeitem.coffee":23,"./typed.coffee":24,"jquery":"9mK/17"}],23:[function(require,module,exports){
+},{"./base.coffee":8,"./treeitem.coffee":23,"./typed.coffee":24,"jquery":"9mK/17"}],23:[function(require,module,exports){
 var $, TreeItem;
 
 $ = require('jquery');
@@ -1620,9 +1627,7 @@ EchoForm = (function() {
 module.exports = EchoForm;
 
 
-},{"./controls/form.coffee":11,"./controls/index.coffee":14,"./util.coffee":33,"jquery":"9mK/17"}],"browser":[function(require,module,exports){
-module.exports=require('1X57VY');
-},{}],"1X57VY":[function(require,module,exports){
+},{"./controls/form.coffee":11,"./controls/index.coffee":14,"./util.coffee":33,"jquery":"9mK/17"}],"1X57VY":[function(require,module,exports){
 (function(document, window) {
   return module.exports = {
     document: document,
@@ -1631,12 +1636,14 @@ module.exports=require('1X57VY');
 })(document, window);
 
 
+},{}],"browser":[function(require,module,exports){
+module.exports=require('1X57VY');
+},{}],"jquery":[function(require,module,exports){
+module.exports=require('9mK/17');
 },{}],"9mK/17":[function(require,module,exports){
 module.exports = jQuery;
 
 
-},{}],"jquery":[function(require,module,exports){
-module.exports=require('9mK/17');
 },{}],31:[function(require,module,exports){
 module.exports = require('./echoform.coffee');
 
@@ -1875,5 +1882,5 @@ module.exports = {
 };
 
 
-},{"browser":"1X57VY"}]},{},[1,2,5,6,7,8,9,10,11,12,13,14,15,16,17,18,19,20,21,22,23,24,25,26,"1X57VY","9mK/17",31,33,32,3,4])
+},{"browser":"1X57VY"}]},{},[1,2,4,3,5,6,7,8,9,10,11,12,13,14,15,16,17,18,19,20,21,22,23,24,25,26,"1X57VY","9mK/17",31,32,33])
 ;
