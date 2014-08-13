@@ -15,7 +15,7 @@ describe '"tree" control', ->
       </model>
       <ui>
         <input id="reference" label="Reference value" ref="prov:reference" type="xs:string"/>
-        <tree id="subset_datalayer_tree" label="Choose datasets" ref="prov:SUBSET_DATA_LAYERS" required="false()" type="xsd:string" valueElementName="data_layer" separator="/">
+        <tree id="control" {{attributes}}>
             <item value="GLAH01">
                 <item label="Data_1HZ" value="Data_1HZ_VAL">
                     <help> help text </help>
@@ -28,6 +28,7 @@ describe '"tree" control', ->
                 <item label="Data_40HZ" value="Data_40HZ_VAL"/>
             </item>
             <item value="GLAH02"/>
+            {{children}}
         </tree>
         {{ui}}
       </ui>
@@ -38,9 +39,9 @@ describe '"tree" control', ->
     template.form(dom)
     expect($(':jstree')).toBeMatchedBy('div')
 
-  #sharedBehaviorForControls(template)
+  sharedBehaviorForControls(template, skip_input_specs: true)
 
-  attrs = 'ref="prov:treeReference" valueElementName="data_layer"'
+  attrs = 'ref="prov:treeReference" valueElementName="data_layer" separator="\/"'
 
   it "defaults to no selections", ->
     model = "<prov:treeReference></prov:treeReference>"
@@ -52,28 +53,71 @@ describe '"tree" control', ->
       </prov:treeReference>
     """
     template.form(dom, model: model, attributes: attrs)
-    expect($('#control').find("prov\\:treeReference[type='tree'] >> prov\\:data_layer")[0].text()).toBe("/GLAH01/Data_1HZ_VAL/Engineering/d_T_detID_VAL");
+    expect($('.jstree-clicked').parent().attr('node_value')).toBe("/GLAH01/Data_1HZ_VAL/Engineering/d_T_detID_VAL");
 
 
   it "updates the model when selections change", ->
     model = "<prov:treeReference></prov:treeReference>"
     template.form(dom, model: model, attributes: attrs)
+    $(':jstree').jstree('open_all')
     $(":jstree li[node_value='/GLAH01/Data_40HZ_VAL'] > a ").each ->
       $(this).click()
-    expect($('#control').find("prov\\:treeReference[type='tree'] >> prov\\:data_layer")[0].text()).toBe("/GLAH01/Data_40HZ_VAL");
+    expect($('.jstree-clicked').parent().attr('node_value')).toBe("/GLAH01/Data_40HZ_VAL");
 
-  it "properly populates the label property when not provided", ->
-    model = "<prov:treeReference></prov:treeReference>"
-    ui = """
-        <tree id="referenceSelect" #{attrs}>
-          <item value="value_with_label" label="a label"/>
-          <item value="value_with_empty_label" label = ""/>
-          <item value="value_with_no_label"/>
-        </tree>
+  describe "label property", ->
+    it "properly populates the label property when not provided", ->
+      model = "<prov:treeReference></prov:treeReference>"
+      ui = """
+          <tree id="referenceSelect" #{attrs}>
+            <item value="value_with_label" label="a label"/>
+            <item value="value_with_empty_label" label = ""/>
+            <item value="value_with_no_label"/>
+          </tree>
+        """
+      template.form(dom, model: model, attributes: attrs, ui: ui)
+      expect($(':jstree li[node_value="/value_with_label"]').text()).toEqual('a label')
+      expect($(':jstree li[node_value="/value_with_empty_label"]').text()).toEqual('value_with_empty_label')
+      expect($(':jstree li[node_value="/value_with_no_label"]').text()).toEqual('value_with_no_label')
+  describe "'cascade' option", ->
+
+  describe "'separator' option", ->
+
+  describe "other test cases", ->
+    model = """
+        <prov:treeReference type="tree">
+        </prov:treeReference>
+        <prov:treeReference2 type="tree">
+        </prov:treeReference2>
       """
-    template.form(dom, model: model, attributes: attrs, ui: ui)
-    expect($('#referenceSelect li[node_value="value_with_label"]').text()).toEqual('a label')
-    expect($('#referenceSelect li[node_value="value_with_empty_label"]').text()).toEqual('value_with_empty_label')
-    expect($('#referenceSelect li[node_value="value_with_no_label"]').text()).toEqual('value_with_no_label')
+    it "handles multiple identical trees", ->
+      #this is necessary to make sure multiple identical forms in the same DOM will not have id collisions
+      attrs = 'valueElementName="data_layer" separator="\/"'
+      ui = """
+          <tree id="duplicate_test" #{attrs} ref='prov:treeReference'>
+            <item value="value_with_label" label="a label"/>
+            <item value="value_with_empty_label" label = ""/>
+            <item value="value_with_no_label"/>
+          </tree>
+          <tree id="duplicate_test" #{attrs} ref='prov:treeReference2'>
+            <item value="value_with_label" label="a label"/>
+            <item value="value_with_empty_label" label = ""/>
+            <item value="value_with_no_label"/>
+          </tree>
+        """
+      form = template.form(dom, model: model, attributes: attrs, ui: ui)
+      expect($(':jstree').size()).toEqual(3)
+      expect($(':jstree').filter ->
+        /duplicate_test/.test(this.id)
+      .size()).toEqual(2)
+      $($(":jstree")[1]).find("li[node_value='/value_with_label'] > a").each ->
+        $(this).click()
+      $($(":jstree")[2]).find("li[node_value='/value_with_no_label'] > a").each ->
+        $(this).click()
+      expect($('.jstree-clicked').size()).toEqual(2)
+      expect($($('.jstree-clicked')[0]).parent().attr('node_value')).toBe("/value_with_label");
+      expect($($('.jstree-clicked')[1]).parent().attr('node_value')).toBe("/value_with_no_label");
+      expect(form.echoforms('serialize')).toMatch(/value_with_label/)
+      expect(form.echoforms('serialize')).toMatch(/value_with_no_label/)
 
-    #need to also test separator and cascade functionality
+
+

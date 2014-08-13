@@ -112,13 +112,13 @@
           $('#control :input').val('12345').change();
           return expect('#control').not.toHaveError('Must be numeric');
         });
-      }
-      return it("displays no error when the control is left blank", function() {
-        template.form(dom, {
-          children: constraints
+        return it("displays no error when the control is left blank", function() {
+          template.form(dom, {
+            children: constraints
+          });
+          return expect('#control').not.toHaveError('Must be numeric');
         });
-        return expect('#control').not.toHaveError('Must be numeric');
-      });
+      }
     });
     return describe('"xpath" constriants', function() {
       var constraints;

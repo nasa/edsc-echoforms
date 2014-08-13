@@ -10,9 +10,9 @@ class Tree extends Typed
 
   constructor: (ui, model, controlClasses, resolver) ->
     #Need to ensure that ID is unique, including between different copies of the same form which may exist in the same client DOM
-    #duplicate IDs break jstree
+    #duplicate IDs break jstree.  however, allow id 'control' through un modified, as this is used in jasmine tests,
     id = ui.attr('id')
-    if id
+    if id and id != 'control'
       id += "-#{Base.echoformsControlUniqueId++}"
       ui.attr('id', id)
     @separator = ui.attr('separator')

@@ -91,9 +91,9 @@ window.sharedBehaviorForControls = (template, options={}) ->
         $('#control :input').val('12345').change()
         expect('#control').not.toHaveError('Must be numeric')
 
-    it "displays no error when the control is left blank", ->
-      template.form(dom, children: constraints)
-      expect('#control').not.toHaveError('Must be numeric')
+      it "displays no error when the control is left blank", ->
+        template.form(dom, children: constraints)
+        expect('#control').not.toHaveError('Must be numeric')
 
   describe '"xpath" constriants', ->
     constraints = """
