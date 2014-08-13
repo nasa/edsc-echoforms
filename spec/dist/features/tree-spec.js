@@ -51,8 +51,74 @@
         return expect($(':jstree li[node_value="/value_with_no_label"]').text()).toEqual('value_with_no_label');
       });
     });
-    describe("'cascade' option", function() {});
-    describe("'separator' option", function() {});
+    describe("'separator' option", function() {
+      var model;
+      model = "<prov:treeReference type=\"tree\">\n  <prov:data_layer>/GLAH01/Data_1HZ_VAL/Engineering/d_T_detID_VAL</prov:data_layer>\n  <prov:data_layer>Engineering</prov:data_layer>\n</prov:treeReference>";
+      it("should add the provided value to the model if no separator specified", function() {
+        var form;
+        attrs = 'ref="prov:treeReference" valueElementName="data_layer" cascade="false"';
+        form = template.form(dom, {
+          model: model,
+          attributes: attrs
+        });
+        expect($('.jstree-clicked').size()).toEqual(1);
+        expect(form.echoforms('serialize')).toMatch(/>Engineering</);
+        $(':jstree').jstree('open_all');
+        $(":jstree li[node_value='Data_40HZ_VAL'] > a ").each(function() {
+          return $(this).click();
+        });
+        expect($('.jstree-clicked').size()).toEqual(2);
+        return expect(form.echoforms('serialize')).toMatch(/>Data_40HZ_VAL</);
+      });
+      return it("should generate and add a path to the model if a separator is specified", function() {
+        var form;
+        attrs = 'ref="prov:treeReference" valueElementName="data_layer" separator="\/" cascade="false"';
+        form = template.form(dom, {
+          model: model,
+          attributes: attrs
+        });
+        expect($('.jstree-clicked').size()).toEqual(1);
+        expect(form.echoforms('serialize')).toMatch(/>\/GLAH01\/Data_1HZ_VAL\/Engineering\/d_T_detID_VAL</);
+        $(':jstree').jstree('open_all');
+        $(":jstree li[node_value='/GLAH01/Data_40HZ_VAL'] > a ").each(function() {
+          return $(this).click();
+        });
+        expect($('.jstree-clicked').size()).toEqual(2);
+        return expect(form.echoforms('serialize')).toMatch(/>\/GLAH01\/Data_40HZ_VAL</);
+      });
+    });
+    describe("'cascade' option", function() {
+      var model;
+      model = "<prov:treeReference type=\"tree\">\n  <prov:data_layer>/GLAH01/Data_1HZ_VAL/Engineering</prov:data_layer>\n</prov:treeReference>";
+      it("should select all child nodes of selected node when cascade = true", function() {
+        var form;
+        attrs = 'ref="prov:treeReference" valueElementName="data_layer" separator="\/" cascade="true"';
+        form = template.form(dom, {
+          model: model,
+          attributes: attrs
+        });
+        $(':jstree').jstree('open_all');
+        expect($('.jstree-clicked').size()).toEqual(3);
+        $(":jstree li[node_value='/GLAH01/Data_1HZ_VAL'] > a ").each(function() {
+          return $(this).click();
+        });
+        return expect($('.jstree-clicked').size()).toEqual(5);
+      });
+      return it("should select only selected node when cascade = false", function() {
+        var form;
+        attrs = 'ref="prov:treeReference" valueElementName="data_layer" separator="\/" cascade="false"';
+        form = template.form(dom, {
+          model: model,
+          attributes: attrs
+        });
+        $(':jstree').jstree('open_all');
+        expect($('.jstree-clicked').size()).toEqual(1);
+        $(":jstree li[node_value='/GLAH01/Data_1HZ_VAL'] > a ").each(function() {
+          return $(this).click();
+        });
+        return expect($('.jstree-clicked').size()).toEqual(2);
+      });
+    });
     return describe("other test cases", function() {
       var model;
       model = "<prov:treeReference type=\"tree\">\n</prov:treeReference>\n<prov:treeReference2 type=\"tree\">\n</prov:treeReference2>";
