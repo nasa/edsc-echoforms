@@ -1314,8 +1314,10 @@ Tree = (function(_super) {
   };
 
   Tree.prototype.inputValue = function() {
-    return this.inputs().find('.jstree-clicked').map(function(node) {
-      return $(this).parent().attr('node_value');
+    return this.inputs().jstree("get_selected", "full").map(function(node) {
+      if (node.li_attr && node.li_attr.node_value) {
+        return node.li_attr.node_value;
+      }
     });
   };
 

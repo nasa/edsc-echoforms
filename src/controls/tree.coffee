@@ -64,7 +64,9 @@ class Tree extends Typed
     @el.find('div.jstree')
 
   inputValue: ->
-    @inputs().find('.jstree-clicked').map (node) -> $(this).parent().attr('node_value')
+    @inputs().jstree("get_selected", "full").map (node) ->
+      if node.li_attr and node.li_attr.node_value
+        node.li_attr.node_value
 
   inputAttrs: ->
     $.extend(super(), separator: @separator, cascade: @cascade)
