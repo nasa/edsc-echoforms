@@ -48,7 +48,7 @@
         return $(this).click();
       });
       $(':jstree').jstree('close_all');
-      return expect(form.echoforms('serialize')).toMatch(/\/GLAH02\/Data_1HZ_VAL\/Engineering\/d_T_detID_VAL_2/);
+      return expect(form.echoforms('serialize')).toMatch(/\/GLAH01\/Data_1HZ_VAL\/Engineering\/d_T_detID_VAL_2/);
     });
     describe("label property", function() {
       return it("properly populates the label property when not provided", function() {

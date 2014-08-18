@@ -70,7 +70,7 @@ describe '"tree" control', ->
     $(":jstree li[node_value='/GLAH01/Data_1HZ_VAL/Engineering/d_T_detID_VAL_2'] > a ").each ->
       $(this).click()
     $(':jstree').jstree('close_all')
-    expect(form.echoforms('serialize')).toMatch(/\/GLAH02\/Data_1HZ_VAL\/Engineering\/d_T_detID_VAL_2/)
+    expect(form.echoforms('serialize')).toMatch(/\/GLAH01\/Data_1HZ_VAL\/Engineering\/d_T_detID_VAL_2/)
 
   describe "label property", ->
     it "properly populates the label property when not provided", ->
