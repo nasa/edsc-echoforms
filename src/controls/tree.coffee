@@ -72,25 +72,43 @@ class Tree extends Typed
     $.extend(super(), separator: @separator, cascade: @cascade)
 
   buildElementsDom: ->
+    start = new Date().getTime()
     result = super()
     root = result.children('div')
     root.addClass('jstree')
     root.append('<ul>')
     ul = root.children('ul')
-    for item in @items
-      node = item.buildElementsDom()
-      node.appendTo(ul)
+    i = 0
+    items = @items
+    do () ->
+      for j in [i..items.length - 1] by 1
+        item = items[j]
+        break unless item?
+        node = item.buildElementsDom()
+        node.appendTo(ul)
+        if i < (items.length - 1) and (new Date().getTime() - start > 40)
+          console.log ("Tree construction yielding to browser to avoid unresponsive script")
+          setTimeout(arguments.callee, 0)
     model_val = @modelValues()
     if model_val.length > 0
       #select values based on the model value.  This could perform badly
-      for node in root.find('li')
-        $(node).attr('data-jstree','{"selected":true, "opened":false}') if $(node).attr("node_value") in model_val
+      i = 0
+      nodes = root.find('li')
+      do () ->
+        for j in [i..nodes.length - 1] by 1
+          node = nodes[j]
+          break unless node?
+          $(node).attr('data-jstree','{"selected":true, "opened":false}') if $(node).attr("node_value") in model_val
+          if i < (items.length - 1) and (new Date().getTime() - start > 40)
+            console.log ("Tree initial value population yielding to browser to avoid unresponsive script")
+            setTimeout(arguments.callee, 0)
     root.jstree
       checkbox:
         keep_selected_style: false
         three_state: @cascade
       plugins: [ "checkbox" ]
     @tree_root = root
+    console.log "Completed building Tree control in " + (new Date().getTime() - start)/1000 + " seconds"
 
     result
 

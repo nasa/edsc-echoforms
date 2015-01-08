@@ -29,9 +29,18 @@ class TreeItem #extends Base
     el.text(@label)
     el.append(@buildHelpDom())
     childlist = $('<ul>')
-    for item in @items
-      node = item.buildElementsDom()
-      node.appendTo(childlist)
+    i = 0
+    items = @items
+    do () ->
+      start = new Date().getTime()
+      for j in [i..items.length - 1] by 1
+        item = items[j]
+        break unless item?
+        node = item.buildElementsDom()
+        node.appendTo(childlist)
+        if i < (items.length - 1) and (new Date().getTime() - start > 40)
+          console.log ("TreeItem construction yielding to browser to avoid unresponsive script")
+          setTimeout(arguments.callee, 0)
     childlist.appendTo(el) if @items.length > 0
     el
 

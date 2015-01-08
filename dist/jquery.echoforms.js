@@ -1329,27 +1329,58 @@ Tree = (function(_super) {
   };
 
   Tree.prototype.buildElementsDom = function() {
-    var item, model_val, node, result, root, ul, _i, _j, _len, _len1, _ref, _ref1, _ref2;
+    var i, items, model_val, nodes, result, root, start, ul;
+    start = new Date().getTime();
     result = Tree.__super__.buildElementsDom.call(this);
     root = result.children('div');
     root.addClass('jstree');
     root.append('<ul>');
     ul = root.children('ul');
-    _ref = this.items;
-    for (_i = 0, _len = _ref.length; _i < _len; _i++) {
-      item = _ref[_i];
-      node = item.buildElementsDom();
-      node.appendTo(ul);
-    }
-    model_val = this.modelValues();
-    if (model_val.length > 0) {
-      _ref1 = root.find('li');
-      for (_j = 0, _len1 = _ref1.length; _j < _len1; _j++) {
-        node = _ref1[_j];
-        if (_ref2 = $(node).attr("node_value"), __indexOf.call(model_val, _ref2) >= 0) {
-          $(node).attr('data-jstree', '{"selected":true, "opened":false}');
+    i = 0;
+    items = this.items;
+    (function() {
+      var item, j, node, _i, _ref, _results;
+      _results = [];
+      for (j = _i = i, _ref = items.length - 1; _i <= _ref; j = _i += 1) {
+        item = items[j];
+        if (item == null) {
+          break;
+        }
+        node = item.buildElementsDom();
+        node.appendTo(ul);
+        if (i < (items.length - 1) && (new Date().getTime() - start > 40)) {
+          console.log("yielding to browser to avoid unresponsive script");
+          _results.push(setTimeout(arguments.callee, 0));
+        } else {
+          _results.push(void 0);
         }
       }
+      return _results;
+    })();
+    model_val = this.modelValues();
+    if (model_val.length > 0) {
+      i = 0;
+      nodes = root.find('li');
+      (function() {
+        var j, node, _i, _ref, _ref1, _results;
+        _results = [];
+        for (j = _i = i, _ref = nodes.length - 1; _i <= _ref; j = _i += 1) {
+          node = nodes[j];
+          if (node == null) {
+            break;
+          }
+          if (_ref1 = $(node).attr("node_value"), __indexOf.call(model_val, _ref1) >= 0) {
+            $(node).attr('data-jstree', '{"selected":true, "opened":false}');
+          }
+          if (i < (items.length - 1) && (new Date().getTime() - start > 40)) {
+            console.log("yielding to browser to avoid unresponsive script");
+            _results.push(setTimeout(arguments.callee, 0));
+          } else {
+            _results.push(void 0);
+          }
+        }
+        return _results;
+      })();
     }
     root.jstree({
       checkbox: {
@@ -1359,6 +1390,7 @@ Tree = (function(_super) {
       plugins: ["checkbox"]
     });
     this.tree_root = root;
+    console.log("Completed building jstree control in " + (new Date().getTime() - start) / 1000 + " seconds");
     return result;
   };
 
@@ -1421,7 +1453,7 @@ TreeItem = (function() {
   };
 
   TreeItem.prototype.buildElementsDom = function() {
-    var childlist, el, item, node, _i, _len, _ref;
+    var childlist, el, i, items;
     el = $('<li>');
     el.attr({
       node_value: this.value
@@ -1429,12 +1461,28 @@ TreeItem = (function() {
     el.text(this.label);
     el.append(this.buildHelpDom());
     childlist = $('<ul>');
-    _ref = this.items;
-    for (_i = 0, _len = _ref.length; _i < _len; _i++) {
-      item = _ref[_i];
-      node = item.buildElementsDom();
-      node.appendTo(childlist);
-    }
+    i = 0;
+    items = this.items;
+    (function() {
+      var item, j, node, start, _i, _ref, _results;
+      start = new Date().getTime();
+      _results = [];
+      for (j = _i = i, _ref = items.length - 1; _i <= _ref; j = _i += 1) {
+        item = items[j];
+        if (item == null) {
+          break;
+        }
+        node = item.buildElementsDom();
+        node.appendTo(childlist);
+        if (i < (items.length - 1) && (new Date().getTime() - start > 40)) {
+          console.log("TreeItem construction yielding to browser to avoid unresponsive script");
+          _results.push(setTimeout(arguments.callee, 0));
+        } else {
+          _results.push(void 0);
+        }
+      }
+      return _results;
+    })();
     if (this.items.length > 0) {
       childlist.appendTo(el);
     }
@@ -1884,5 +1932,5 @@ module.exports = {
 };
 
 
-},{"browser":"1X57VY"}]},{},[1,2,3,4,5,6,7,8,9,10,11,12,13,14,15,16,17,19,18,20,21,22,23,24,25,26,"1X57VY","9mK/17",31,32,33])
+},{"browser":"1X57VY"}]},{},[1,2,3,4,5,6,7,8,9,10,11,12,13,14,15,16,17,18,19,20,21,22,23,24,25,26,"1X57VY","9mK/17",31,32,33])
 ;
