@@ -6,6 +6,6 @@ class Pattern extends Base
     super(message ? 'Invalid')
 
   check: (value, model, resolver) ->
-    !value || @pattern.exec(value) != null;
+    !value || (value instanceof Array && value.length == 0) || @pattern.exec(value) != null;
 
 module.exports = Pattern

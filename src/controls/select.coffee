@@ -11,6 +11,7 @@ class Select extends Typed
     @valueElementName = ui.attr('valueElementName')
     @items = for item in ui.children('item')
       [label, value] = [$(item).attr('label'), $(item).attr('value')]
+      @hasBlankOption = true if $(item).attr('value') == ''
       label = value unless label? && label.length > 0
       [label, value]
 
@@ -59,10 +60,19 @@ class Select extends Typed
   inputAttrs: ->
     $.extend(super(), multiple: @isMultiple)
 
+  hasModelVal: ->
+    @ref().children().length > 0
+
   buildElementsDom: ->
     result = super()
     el = result.children('select')
-    el.append('<option value=""> -- Select a value -- </option>') unless @multiple
+    # Add a default blank option unless the form provides either an item with value = "" or a default option
+    # Note: if a field is required, selecting the 'blank' option will not be valid and will give a 'Required Field' error.
+    if @required()
+      el.append('<option value=""> -- Select a value -- </option>') unless @hasBlankOption or @hasModelVal()
+    else
+      el.append('<option value=""> -- No Selection -- </option>') unless @hasBlankOption or @hasModelVal()
+
     for [label, value] in @items
       $('<option>', value: value).text(label).appendTo(el)
     result

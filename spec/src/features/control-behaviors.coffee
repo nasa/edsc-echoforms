@@ -45,7 +45,9 @@ window.sharedBehaviorForControls = (template, options={}) ->
   unless options['skip_input_specs']
     describe '"required" attribute', ->
       it "contains an xpath which requires the control to have a value when it evaluates to true", ->
-        template.form(dom, attributes: 'required="prov:reference=\'required\'"')
+        template.form(dom,
+          model: '<prov:value/>',
+          attributes: 'required="prov:reference=\'required\'" ref="prov:value"')
         expect('#control').not.toHaveError('Required field')
         $('#reference :input').val('required').change()
         expect('#control').toHaveError('Required field')
@@ -53,7 +55,9 @@ window.sharedBehaviorForControls = (template, options={}) ->
         expect('#control').not.toHaveError('Required field')
 
       it "produces no error if the control has a non-empty value", ->
-        template.form(dom, attributes: 'required="prov:reference=\'required\'"')
+        template.form(dom,
+          model: '<prov:value/>',
+          attributes: 'required="prov:reference=\'required\'" ref="prov:value"')
         $('#reference :input').val('required').change()
         expect('#control').toHaveError('Required field')
         $('#control :input').val('value').change()
@@ -92,7 +96,10 @@ window.sharedBehaviorForControls = (template, options={}) ->
         expect('#control').not.toHaveError('Must be numeric')
 
       it "displays no error when the control is left blank", ->
-        template.form(dom, children: constraints)
+        template.form(dom,
+          children: constraints,
+          model: '<prov:value/>',
+          attributes: 'ref="prov:value"')
         expect('#control').not.toHaveError('Must be numeric')
 
   describe '"xpath" constriants', ->

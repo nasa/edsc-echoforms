@@ -50,7 +50,7 @@ Pattern = (function(_super) {
   }
 
   Pattern.prototype.check = function(value, model, resolver) {
-    return !value || this.pattern.exec(value) !== null;
+    return !value || (value instanceof Array && value.length === 0) || this.pattern.exec(value) !== null;
   };
 
   return Pattern;
@@ -304,7 +304,8 @@ Base = (function() {
     var message, node, patternNode, xpathNode, _i, _len, _ref, _results;
     this.constraints = [];
     if (this.requiredExpr) {
-      this.constraints.push(new constraints.Required(this.requiredExpr));
+      this.requiredConstraint = new constraints.Required(this.requiredExpr);
+      this.constraints.push(this.requiredConstraint);
     }
     _ref = this.ui.find('> constraints > constraint');
     _results = [];
@@ -324,6 +325,12 @@ Base = (function() {
       }
     }
     return _results;
+  };
+
+  Base.prototype.required = function() {
+    if (this.requiredConstraint != null) {
+      return !this.requiredConstraint.check(void 0, this.model, this.resolver);
+    }
   };
 
   Base.prototype.ref = function() {
@@ -1014,13 +1021,16 @@ Select = (function(_super) {
       for (_i = 0, _len = _ref.length; _i < _len; _i++) {
         item = _ref[_i];
         _ref1 = [$(item).attr('label'), $(item).attr('value')], label = _ref1[0], value = _ref1[1];
+        if ($(item).attr('value') === '') {
+          this.hasBlankOption = true;
+        }
         if (!((label != null) && label.length > 0)) {
           label = value;
         }
         _results.push([label, value]);
       }
       return _results;
-    })();
+    }).call(this);
     Select.__super__.constructor.call(this, ui, model, controlClasses, resolver);
   }
 
@@ -1112,12 +1122,22 @@ Select = (function(_super) {
     });
   };
 
+  Select.prototype.hasModelVal = function() {
+    return this.ref().children().length > 0;
+  };
+
   Select.prototype.buildElementsDom = function() {
     var el, label, result, value, _i, _len, _ref, _ref1;
     result = Select.__super__.buildElementsDom.call(this);
     el = result.children('select');
-    if (!this.multiple) {
-      el.append('<option value=""> -- Select a value -- </option>');
+    if (this.required()) {
+      if (!(this.hasBlankOption || this.hasModelVal())) {
+        el.append('<option value=""> -- Select a value -- </option>');
+      }
+    } else {
+      if (!(this.hasBlankOption || this.hasModelVal())) {
+        el.append('<option value=""> -- No Selection -- </option>');
+      }
     }
     _ref = this.items;
     for (_i = 0, _len = _ref.length; _i < _len; _i++) {
@@ -1349,7 +1369,7 @@ Tree = (function(_super) {
         node = item.buildElementsDom();
         node.appendTo(ul);
         if (i < (items.length - 1) && (new Date().getTime() - start > 40)) {
-          console.log("yielding to browser to avoid unresponsive script");
+          console.log("Tree construction yielding to browser to avoid unresponsive script");
           _results.push(setTimeout(arguments.callee, 0));
         } else {
           _results.push(void 0);
@@ -1373,7 +1393,7 @@ Tree = (function(_super) {
             $(node).attr('data-jstree', '{"selected":true, "opened":false}');
           }
           if (i < (items.length - 1) && (new Date().getTime() - start > 40)) {
-            console.log("yielding to browser to avoid unresponsive script");
+            console.log("Tree initial value population yielding to browser to avoid unresponsive script");
             _results.push(setTimeout(arguments.callee, 0));
           } else {
             _results.push(void 0);
@@ -1390,7 +1410,7 @@ Tree = (function(_super) {
       plugins: ["checkbox"]
     });
     this.tree_root = root;
-    console.log("Completed building jstree control in " + (new Date().getTime() - start) / 1000 + " seconds");
+    console.log("Completed building Tree control in " + (new Date().getTime() - start) / 1000 + " seconds");
     return result;
   };
 

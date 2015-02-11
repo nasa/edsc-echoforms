@@ -69,7 +69,7 @@
         return expect($('#referenceSelect :input').val()).toEqual('alphabetic');
       });
     });
-    return describe('When label is undefined', function() {
+    describe('When label is undefined', function() {
       var attrs;
       attrs = 'ref="prov:selectReference" valueElementName="selectValue"';
       return it("properly populates the label property", function() {
@@ -84,6 +84,85 @@
         expect($('#referenceSelect select > option[value="value_with_label"]').text()).toEqual('a label');
         expect($('#referenceSelect select > option[value="value_with_empty_label"]').text()).toEqual('value_with_empty_label');
         return expect($('#referenceSelect select > option[value="value_with_no_label"]').text()).toEqual('value_with_no_label');
+      });
+    });
+    return describe('"Blank" option behavior', function() {
+      it("adds a '-- Select a value --' option if the select is required and there is no blank option or default provided", function() {
+        var attrs, model;
+        attrs = 'ref="prov:selectReference" valueElementName="selectValue" required="true"';
+        model = "<prov:selectReference></prov:selectReference>";
+        template.form(dom, {
+          model: model,
+          attributes: attrs
+        });
+        return expect($('#control select > option[value=""]').text()).toEqual(' -- Select a value -- ');
+      });
+      it("does not add a '-- Select a value --' option if the select is required but there is a blank option provided", function() {
+        var attrs, children, model;
+        attrs = 'ref="prov:selectReference" valueElementName="selectValue" required="true"';
+        children = "<item value='' label='empty'/>";
+        model = "<prov:selectReference></prov:selectReference>";
+        template.form(dom, {
+          model: model,
+          attributes: attrs,
+          children: children
+        });
+        return expect($('#control select > option[value=""]').text()).toEqual('empty');
+      });
+      it("does not add a '-- Select a value --' option if the select is required but there is a default value provided", function() {
+        var attrs, model;
+        attrs = 'ref="prov:selectReference" valueElementName="selectValue" required="true"';
+        model = "<prov:selectReference><prov:selectValue>default value</prov:selectValue></prov:selectReference>";
+        template.form(dom, {
+          model: model,
+          attributes: attrs
+        });
+        return expect($('#control select > option[value=""]').text()).toEqual('');
+      });
+      it("gives an error if the select is required, but the default value is ''", function() {
+        var attrs, children, model;
+        attrs = 'ref="prov:selectReference" valueElementName="selectValue" required="true"';
+        model = "<prov:selectReference></prov:selectReference>";
+        children = "<item value='' label='empty'/>";
+        template.form(dom, {
+          model: model,
+          attributes: attrs,
+          children: children
+        });
+        expect($('#control select > option[value=""]').text()).toEqual('empty');
+        return expect('#control').toHaveError('Required field');
+      });
+      it("adds a '-- No Selection --' option if the select is not required and there is no blank option or default provided", function() {
+        var attrs, model;
+        attrs = 'ref="prov:selectReference" valueElementName="selectValue" required="false"';
+        model = "<prov:selectReference></prov:selectReference>";
+        template.form(dom, {
+          model: model,
+          attributes: attrs
+        });
+        return expect($('#control select > option[value=""]').text()).toEqual(' -- No Selection -- ');
+      });
+      it("does not add a '-- No Selection--' option if the select is not required but there is a blank option provided", function() {
+        var attrs, children, model;
+        attrs = 'ref="prov:selectReference" valueElementName="selectValue" required="true"';
+        children = "<item value='' label='empty'/>";
+        model = "<prov:selectReference></prov:selectReference>";
+        template.form(dom, {
+          model: model,
+          attributes: attrs,
+          children: children
+        });
+        return expect($('#control select > option[value=""]').text()).toEqual('empty');
+      });
+      return it("does not add a '-- No Selection--' option if the select is not required but there is a default value provided", function() {
+        var attrs, model;
+        attrs = 'ref="prov:selectReference" valueElementName="selectValue" required="true"';
+        model = "<prov:selectReference><prov:selectValue>default value</prov:selectValue></prov:selectReference>";
+        template.form(dom, {
+          model: model,
+          attributes: attrs
+        });
+        return expect($('#control select > option[value=""]').text()).toEqual('');
       });
     });
   });

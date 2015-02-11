@@ -41,7 +41,8 @@ class Base
 
     # We treat the "required" attribute as a constraint, since it acts similarly
     if @requiredExpr
-      @constraints.push(new constraints.Required(@requiredExpr))
+      @requiredConstraint = new constraints.Required(@requiredExpr)
+      @constraints.push(@requiredConstraint)
 
     # Look for constraint elements and build the appropriate constraint type
     for node in @ui.find('> constraints > constraint')
@@ -53,6 +54,10 @@ class Base
         @constraints.push(new constraints.Pattern(patternNode.text(), message))
       if xpathNode.length > 0
         @constraints.push(new constraints.XPath(xpathNode.text(), message))
+
+  # Return true if the control is required
+  required: ->
+    !@requiredConstraint.check(undefined,@model,@resolver) if @requiredConstraint?
 
   # Retrieve the node pointed to by the ref attribute, or the entire model if
   # there is no ref attribute (useful for grouping controls)

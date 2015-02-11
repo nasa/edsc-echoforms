@@ -61,7 +61,8 @@
       describe('"required" attribute', function() {
         it("contains an xpath which requires the control to have a value when it evaluates to true", function() {
           template.form(dom, {
-            attributes: 'required="prov:reference=\'required\'"'
+            model: '<prov:value/>',
+            attributes: 'required="prov:reference=\'required\'" ref="prov:value"'
           });
           expect('#control').not.toHaveError('Required field');
           $('#reference :input').val('required').change();
@@ -71,7 +72,8 @@
         });
         return it("produces no error if the control has a non-empty value", function() {
           template.form(dom, {
-            attributes: 'required="prov:reference=\'required\'"'
+            model: '<prov:value/>',
+            attributes: 'required="prov:reference=\'required\'" ref="prov:value"'
           });
           $('#reference :input').val('required').change();
           expect('#control').toHaveError('Required field');
@@ -114,7 +116,9 @@
         });
         return it("displays no error when the control is left blank", function() {
           template.form(dom, {
-            children: constraints
+            children: constraints,
+            model: '<prov:value/>',
+            attributes: 'ref="prov:value"'
           });
           return expect('#control').not.toHaveError('Must be numeric');
         });
