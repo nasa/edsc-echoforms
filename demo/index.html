@@ -44,6 +44,7 @@
         function reloadForm() {
           $(root).echoforms('destroy');
           loadForm();
+
         }
 
         function displayModel() {
@@ -53,8 +54,8 @@
 
         loadForm();
 
-        $(source).on('change', reloadForm)
-        $(root).on('echoforms:modelchange', displayModel)
+        $(source).on('change', function(event){ reloadForm();event.preventDefault();event.stopPropagation();});
+        $(root).on('echoforms:modelchange', displayModel);
 			});
 		</script>
 	</head>
