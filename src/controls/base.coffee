@@ -171,7 +171,6 @@ class Base
       .append(@buildHelpDom())
 
   addedToDom: ->
-jQuery.expr[':'].hasNoValue = (obj) ->
-  jQuery.trim(jQuery(obj).text()).length ==0;
+
 
 module.exports = Base

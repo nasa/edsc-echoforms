@@ -3,6 +3,9 @@ util = require './util.coffee'
 controls = require './controls/index.coffee'
 FormControl = require './controls/form.coffee'
 
+jQuery.expr[':'].hasNoValue = (obj) ->
+  jQuery.trim(jQuery(obj).text()).length ==0;
+
 defaultControls = controls.matchList.concat()
 
 defaults =
