@@ -172,4 +172,5 @@ class Base
 
   addedToDom: ->
 
+
 module.exports = Base

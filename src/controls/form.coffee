@@ -19,8 +19,8 @@ class Form extends Grouping
   serialize: (options={}) ->
     model = @model.children().clone()
     model.find('*[pruned=true]').remove() if !options.prune? || options.prune == true
+    model.find('*:hasNoValue').remove() if !options.prune? || options.prune == true
     #new XMLSerializer().serializeToString(model[0])
     util.printDOMToString(model[0])
-
 
 module.exports = Form
