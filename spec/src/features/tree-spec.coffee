@@ -55,6 +55,67 @@ describe '"tree" control', ->
     template.form(dom, model: model, attributes: attrs)
     expect($('.jstree-clicked').parent().attr('node_value')).toBe("/GLAH01/Data_1HZ_VAL/Engineering/d_T_detID_VAL");
 
+  it "will not allow irrelevant nodes to be selected", ->
+    model = """
+      <prov:treeReference type="tree">
+        <prov:data_layer></prov:data_layer>
+      </prov:treeReference>
+    """
+    children = """
+      <item value="irrelevantNode" relevant="false()"/>
+      <item value="relevantNode" relevant="true()"/>
+    """
+
+    form = template.form(dom, model: model, attributes: attrs, children: children)
+    $(":jstree li[node_value = '/irrelevantNode'] > a ").each ->
+      $(this).click()
+    $(":jstree li[node_value = '/relevantNode'] > a ").each ->
+      $(this).click()
+    expect($('.jstree-clicked').parent().attr('node_value')).not.toMatch("irrelevantNode");
+    expect($('.jstree-clicked').parent().attr('node_value')).toMatch("relevantNode");
+    expect(form.echoforms('serialize')).not.toMatch(/irrelevantNode/)
+    expect(form.echoforms('serialize')).toMatch(/relevantNode/)
+
+  it "excludes from output any preselected nodes which are not relevant", ->
+    model = """
+      <prov:treeReference type="tree">
+        <prov:data_layer>/irrelevantNode</prov:data_layer>
+      </prov:treeReference>
+    """
+    children = """
+      <item value="irrelevantNode" relevant="false()"/>
+    """
+
+    template.form(dom, model: model, attributes: attrs, children: children)
+    expect($('.jstree-clicked').parent().attr('node_value')).not.toMatch("/GLAH01/Data_1HZ_VAL/Engineering/d_T_detID_VAL");
+    expect($('.jstree-clicked').parent().attr('node_value')).not.toMatch("irrelevantNode");
+
+  it "automatically selects required nodes", ->
+    model = """
+      <prov:treeReference type="tree">
+        <prov:data_layer></prov:data_layer>
+      </prov:treeReference>
+    """
+    children = """
+      <item value="requiredNode" required="true()"/>
+    """
+
+    template.form(dom, model: model, attributes: attrs, children: children)
+    expect($('.jstree-clicked').parent().attr('node_value')).toMatch("requiredNode");
+
+  it "relevancy takes precedence over required", ->
+    model = """
+      <prov:treeReference type="tree">
+        <prov:data_layer></prov:data_layer>
+      </prov:treeReference>
+    """
+    children = """
+      <item value="requiredIrrelevantNode" required="true()" relevant="false()"/>
+    """
+
+    form = template.form(dom, model: model, attributes: attrs, children: children)
+    expect(form.echoforms('serialize')).not.toMatch(/requiredIrrelevantNode/)
+
   it "updates the model when selections change", ->
     model = "<prov:treeReference></prov:treeReference>"
     template.form(dom, model: model, attributes: attrs)
