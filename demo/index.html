@@ -141,13 +141,14 @@
                     &lt;help&gt; help text &lt;/help&gt;
                     &lt;item label="Parameter: DS_UTCTime_1" value="DS_UTCTime_1"/&gt;
                     &lt;item label="Engineering" value="Engineering"&gt;
-                        &lt;item label="Parameter: d_T_detID" value="d_T_detID_VAL"/&gt;
-                        &lt;item label="Parameter: d_T_detID" value="d_T_detID_VAL_2"/&gt;
+                        &lt;item label="Parameter: d_T_detID" value="d_T_detID_VAL" relevant="not(contains('654321',//prov:selectReference))"/&gt;
+                        &lt;item label="Parameter: d_T_detID" value="d_T_detID_VAL_2" relevant="contains('654321',//prov:selectReference)"/&gt;
                     &lt;/item&gt;
                 &lt;/item&gt;
-                &lt;item label="Data_40HZ" value="Data_40HZ_VAL"/&gt;
+                &lt;item label="Data_40HZ" value="Data_40HZ_VAL" required="true()"/&gt;
             &lt;/item&gt;
             &lt;item value="GLAH02"/&gt;
+                &lt;item label="Data_1HZ" value="Data_1HZ_VAL" required="prov:boolreference='true'"/&gt;
         &lt;/tree&gt;
       &lt;/ui&gt;
     &lt;/form&gt;

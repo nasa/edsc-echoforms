@@ -521,7 +521,7 @@ Base = (function() {
 module.exports = Base;
 
 
-},{"../constraints/index.coffee":3,"../util.coffee":33,"jquery":"usFOt+"}],9:[function(require,module,exports){
+},{"../constraints/index.coffee":3,"../util.coffee":33,"jquery":"9mK/17"}],9:[function(require,module,exports){
 var Checkbox, Input, _ref,
   __hasProp = {}.hasOwnProperty,
   __extends = function(child, parent) { for (var key in parent) { if (__hasProp.call(parent, key)) child[key] = parent[key]; } function ctor() { this.constructor = child; } ctor.prototype = parent.prototype; child.prototype = new ctor(); child.__super__ = parent.prototype; return child; };
@@ -615,7 +615,7 @@ RangeSlider = (function(_super) {
 module.exports = RangeSlider;
 
 
-},{"../range.coffee":17,"jquery":"usFOt+"}],11:[function(require,module,exports){
+},{"../range.coffee":17,"jquery":"9mK/17"}],11:[function(require,module,exports){
 var Form, Grouping, util,
   __hasProp = {}.hasOwnProperty,
   __extends = function(child, parent) { for (var key in parent) { if (__hasProp.call(parent, key)) child[key] = parent[key]; } function ctor() { this.constructor = child; } ctor.prototype = parent.prototype; child.prototype = new ctor(); child.__super__ = parent.prototype; return child; };
@@ -654,6 +654,9 @@ Form = (function(_super) {
     model = this.model.children().clone();
     if ((options.prune == null) || options.prune === true) {
       model.find('*[pruned=true]').remove();
+    }
+    if ((options.prune == null) || options.prune === true) {
+      model.find('*:hasNoValue').remove();
     }
     return util.printDOMToString(model[0]);
   };
@@ -809,7 +812,7 @@ Grouping = (function(_super) {
 module.exports = Grouping;
 
 
-},{"../util.coffee":33,"./base.coffee":8,"jquery":"usFOt+"}],14:[function(require,module,exports){
+},{"../util.coffee":33,"./base.coffee":8,"jquery":"9mK/17"}],14:[function(require,module,exports){
 var classes, matchList;
 
 classes = {
@@ -942,7 +945,7 @@ Output = (function(_super) {
 module.exports = Output;
 
 
-},{"./typed.coffee":24,"jquery":"usFOt+"}],17:[function(require,module,exports){
+},{"./typed.coffee":24,"jquery":"9mK/17"}],17:[function(require,module,exports){
 var Input, Range,
   __hasProp = {}.hasOwnProperty,
   __extends = function(child, parent) { for (var key in parent) { if (__hasProp.call(parent, key)) child[key] = parent[key]; } function ctor() { this.constructor = child; } ctor.prototype = parent.prototype; child.prototype = new ctor(); child.__super__ = parent.prototype; return child; };
@@ -1156,7 +1159,7 @@ Select = (function(_super) {
 module.exports = Select;
 
 
-},{"./typed.coffee":24,"jquery":"usFOt+"}],20:[function(require,module,exports){
+},{"./typed.coffee":24,"jquery":"9mK/17"}],20:[function(require,module,exports){
 var Select, Selectref,
   __hasProp = {}.hasOwnProperty,
   __extends = function(child, parent) { for (var key in parent) { if (__hasProp.call(parent, key)) child[key] = parent[key]; } function ctor() { this.constructor = child; } ctor.prototype = parent.prototype; child.prototype = new ctor(); child.__super__ = parent.prototype; return child; };
@@ -1217,8 +1220,7 @@ module.exports = Textarea;
 },{"./typed.coffee":24}],22:[function(require,module,exports){
 var $, Base, Tree, TreeItem, Typed,
   __hasProp = {}.hasOwnProperty,
-  __extends = function(child, parent) { for (var key in parent) { if (__hasProp.call(parent, key)) child[key] = parent[key]; } function ctor() { this.constructor = child; } ctor.prototype = parent.prototype; child.prototype = new ctor(); child.__super__ = parent.prototype; return child; },
-  __indexOf = [].indexOf || function(item) { for (var i = 0, l = this.length; i < l; i++) { if (i in this && this[i] === item) return i; } return -1; };
+  __extends = function(child, parent) { for (var key in parent) { if (__hasProp.call(parent, key)) child[key] = parent[key]; } function ctor() { this.constructor = child; } ctor.prototype = parent.prototype; child.prototype = new ctor(); child.__super__ = parent.prototype; return child; };
 
 $ = require('jquery');
 
@@ -1251,12 +1253,25 @@ Tree = (function(_super) {
       _results = [];
       for (_i = 0, _len = _ref.length; _i < _len; _i++) {
         item = _ref[_i];
-        _results.push(new TreeItem($(item), model, controlClasses, resolver, '', this.separator));
+        _results.push(new TreeItem($(item), model, controlClasses, resolver, '', this.separator, this));
       }
       return _results;
     }).call(this);
     Tree.__super__.constructor.call(this, ui, model, controlClasses, resolver);
   }
+
+  Tree.prototype.validate = function() {
+    var item, _i, _len, _ref;
+    Tree.__super__.validate.call(this);
+    _ref = this.items;
+    for (_i = 0, _len = _ref.length; _i < _len; _i++) {
+      item = _ref[_i];
+      item.subtree_handle_relevant_or_required();
+    }
+    if (this.el != null) {
+      return this.saveToModel();
+    }
+  };
 
   Tree.prototype.valueElementTagName = function(root) {
     var nameParts, ns;
@@ -1334,9 +1349,11 @@ Tree = (function(_super) {
   };
 
   Tree.prototype.inputValue = function() {
-    return this.inputs().jstree("get_selected", "full").map(function(node) {
-      if (node.li_attr && node.li_attr.node_value) {
-        return node.li_attr.node_value;
+    return this.inputs().find('a.jstree-clicked').parent().map(function() {
+      var node;
+      node = $(this);
+      if (node.attr('node_value') && node.attr('relevant') === 'true') {
+        return node.attr('node_value');
       }
     });
   };
@@ -1349,7 +1366,7 @@ Tree = (function(_super) {
   };
 
   Tree.prototype.buildElementsDom = function() {
-    var i, items, model_val, nodes, result, root, start, ul;
+    var i, items, result, root, start, ul;
     start = new Date().getTime();
     result = Tree.__super__.buildElementsDom.call(this);
     root = result.children('div');
@@ -1377,31 +1394,6 @@ Tree = (function(_super) {
       }
       return _results;
     })();
-    model_val = this.modelValues();
-    if (model_val.length > 0) {
-      i = 0;
-      nodes = root.find('li');
-      (function() {
-        var j, node, _i, _ref, _ref1, _results;
-        _results = [];
-        for (j = _i = i, _ref = nodes.length - 1; _i <= _ref; j = _i += 1) {
-          node = nodes[j];
-          if (node == null) {
-            break;
-          }
-          if (_ref1 = $(node).attr("node_value"), __indexOf.call(model_val, _ref1) >= 0) {
-            $(node).attr('data-jstree', '{"selected":true, "opened":false}');
-          }
-          if (i < (items.length - 1) && (new Date().getTime() - start > 40)) {
-            console.log("Tree initial value population yielding to browser to avoid unresponsive script");
-            _results.push(setTimeout(arguments.callee, 0));
-          } else {
-            _results.push(void 0);
-          }
-        }
-        return _results;
-      })();
-    }
     root.jstree({
       checkbox: {
         keep_selected_style: false,
@@ -1421,21 +1413,28 @@ Tree = (function(_super) {
 module.exports = Tree;
 
 
-},{"./base.coffee":8,"./treeitem.coffee":23,"./typed.coffee":24,"jquery":"usFOt+"}],23:[function(require,module,exports){
-var $, TreeItem;
+},{"./base.coffee":8,"./treeitem.coffee":23,"./typed.coffee":24,"jquery":"9mK/17"}],23:[function(require,module,exports){
+var $, TreeItem, util,
+  __indexOf = [].indexOf || function(item) { for (var i = 0, l = this.length; i < l; i++) { if (i in this && this[i] === item) return i; } return -1; };
 
 $ = require('jquery');
+
+util = require('../util.coffee');
 
 TreeItem = (function() {
   TreeItem.selector = 'item';
 
   TreeItem.prototype.inputTag = 'li';
 
-  function TreeItem(ui, model, controlClasses, resolver, parent_path, separator) {
+  function TreeItem(ui, model, controlClasses, resolver, parent_path, separator, tree) {
     var item;
     this.separator = separator;
     this.label = $(ui).attr('label');
     this.value = $(ui).attr('value');
+    this.relevantExpr = $(ui).attr('relevant');
+    this.requiredExpr = $(ui).attr('required');
+    this.model = model;
+    this.resolver = resolver;
     if (!((this.label != null) && this.label.length > 0)) {
       this.label = this.value;
     }
@@ -1443,17 +1442,58 @@ TreeItem = (function() {
       this.value = parent_path + this.separator + this.value;
     }
     this.ui = ui;
+    this.tree = tree;
     this.items = (function() {
       var _i, _len, _ref, _results;
       _ref = ui.children('item');
       _results = [];
       for (_i = 0, _len = _ref.length; _i < _len; _i++) {
         item = _ref[_i];
-        _results.push(new TreeItem($(item), model, controlClasses, resolver, this.value, this.separator));
+        _results.push(new TreeItem($(item), model, controlClasses, resolver, this.value, this.separator, tree));
       }
       return _results;
     }).call(this);
   }
+
+  TreeItem.prototype.xpath = function(xpath) {
+    return util.execXPath(this.model, xpath, this.resolver);
+  };
+
+  TreeItem.prototype.node_required = function() {
+    return !((this.requiredExpr == null) || !this.xpath(this.requiredExpr));
+  };
+
+  TreeItem.prototype.node_relevant = function() {
+    return (this.relevantExpr == null) || !!this.xpath(this.relevantExpr);
+  };
+
+  TreeItem.prototype.handle_relevant_or_required = function() {
+    var current_node, tree_div;
+    tree_div = this.tree.tree_root;
+    current_node = tree_div.find("[node_value = '" + this.value + "']");
+    current_node.attr('relevant', this.node_relevant());
+    if (!this.node_relevant()) {
+      tree_div.jstree('disable_node', current_node);
+      return tree_div.jstree('deselect_node', current_node);
+    } else if (this.node_required()) {
+      tree_div.jstree('select_node', current_node);
+      return tree_div.jstree('disable_node', current_node);
+    } else {
+      return tree_div.jstree('enable_node', current_node);
+    }
+  };
+
+  TreeItem.prototype.subtree_handle_relevant_or_required = function() {
+    var item, _i, _len, _ref, _results;
+    this.handle_relevant_or_required();
+    _ref = this.items;
+    _results = [];
+    for (_i = 0, _len = _ref.length; _i < _len; _i++) {
+      item = _ref[_i];
+      _results.push(item.subtree_handle_relevant_or_required());
+    }
+    return _results;
+  };
 
   TreeItem.prototype.buildHelpDom = function() {
     var help, result, _i, _len, _ref;
@@ -1463,31 +1503,57 @@ TreeItem = (function() {
     _ref = this.ui.children('help');
     for (_i = 0, _len = _ref.length; _i < _len; _i++) {
       help = _ref[_i];
-      $('<p>', {
-        "class": 'echoforms-help-item'
-      }).text($(help).text()).attr({
-        title: $(help).text()
-      }).appendTo(result);
+      this.addHelpText(result, $(help).text());
     }
     return result;
   };
 
+  TreeItem.prototype.addHelpText = function(help_container, text) {
+    return $('<p>', {
+      "class": 'echoforms-help-item'
+    }).text(text).attr({
+      title: text
+    }).appendTo(help_container);
+  };
+
   TreeItem.prototype.buildElementsDom = function() {
-    var childlist, el, i, items;
+    var childlist, data_jstree, el, help, i, items, model_vals, _ref;
     el = $('<li>');
     el.attr({
       node_value: this.value
     });
+    help = this.buildHelpDom();
+    data_jstree = {};
+    model_vals = this.tree.modelValues();
+    if (model_vals.length > 0 && (_ref = this.value, __indexOf.call(model_vals, _ref) >= 0)) {
+      data_jstree['selected'] = true;
+    }
+    if (!this.node_relevant()) {
+      data_jstree['disabled'] = true;
+      data_jstree['selected'] = false;
+    }
+    if (this.node_required()) {
+      data_jstree['disabled'] = true;
+      data_jstree['selected'] = true;
+    }
+    el.attr({
+      relevant: this.node_relevant()
+    });
+    if (Object.keys(data_jstree).length > 0) {
+      el.attr({
+        'data-jstree': JSON.stringify(data_jstree)
+      });
+    }
     el.text(this.label);
-    el.append(this.buildHelpDom());
+    el.append(help);
     childlist = $('<ul>');
     i = 0;
     items = this.items;
     (function() {
-      var item, j, node, start, _i, _ref, _results;
+      var item, j, node, start, _i, _ref1, _results;
       start = new Date().getTime();
       _results = [];
-      for (j = _i = i, _ref = items.length - 1; _i <= _ref; j = _i += 1) {
+      for (j = _i = i, _ref1 = items.length - 1; _i <= _ref1; j = _i += 1) {
         item = items[j];
         if (item == null) {
           break;
@@ -1516,7 +1582,7 @@ TreeItem = (function() {
 module.exports = TreeItem;
 
 
-},{"jquery":"usFOt+"}],24:[function(require,module,exports){
+},{"../util.coffee":33,"jquery":"9mK/17"}],24:[function(require,module,exports){
 var $, Base, TypeConstraint, Typed,
   __hasProp = {}.hasOwnProperty,
   __extends = function(child, parent) { for (var key in parent) { if (__hasProp.call(parent, key)) child[key] = parent[key]; } function ctor() { this.constructor = child; } ctor.prototype = parent.prototype; child.prototype = new ctor(); child.__super__ = parent.prototype; return child; };
@@ -1588,7 +1654,7 @@ Typed = (function(_super) {
 module.exports = Typed;
 
 
-},{"../constraints/type.coffee":6,"./base.coffee":8,"jquery":"usFOt+"}],25:[function(require,module,exports){
+},{"../constraints/type.coffee":6,"./base.coffee":8,"jquery":"9mK/17"}],25:[function(require,module,exports){
 var Output, UrlOutput, _ref,
   __hasProp = {}.hasOwnProperty,
   __extends = function(child, parent) { for (var key in parent) { if (__hasProp.call(parent, key)) child[key] = parent[key]; } function ctor() { this.constructor = child; } ctor.prototype = parent.prototype; child.prototype = new ctor(); child.__super__ = parent.prototype; return child; };
@@ -1639,6 +1705,10 @@ util = require('./util.coffee');
 controls = require('./controls/index.coffee');
 
 FormControl = require('./controls/form.coffee');
+
+jQuery.expr[':'].hasNoValue = function(obj) {
+  return jQuery.trim(jQuery(obj).text()).length === 0;
+};
 
 defaultControls = controls.matchList.concat();
 
@@ -1697,9 +1767,9 @@ EchoForm = (function() {
 module.exports = EchoForm;
 
 
-},{"./controls/form.coffee":11,"./controls/index.coffee":14,"./util.coffee":33,"jquery":"usFOt+"}],"browser":[function(require,module,exports){
-module.exports=require('b9SDEC');
-},{}],"b9SDEC":[function(require,module,exports){
+},{"./controls/form.coffee":11,"./controls/index.coffee":14,"./util.coffee":33,"jquery":"9mK/17"}],"browser":[function(require,module,exports){
+module.exports=require('1X57VY');
+},{}],"1X57VY":[function(require,module,exports){
 (function(document, window) {
   return module.exports = {
     document: document,
@@ -1708,12 +1778,12 @@ module.exports=require('b9SDEC');
 })(document, window);
 
 
-},{}],"jquery":[function(require,module,exports){
-module.exports=require('usFOt+');
-},{}],"usFOt+":[function(require,module,exports){
+},{}],"9mK/17":[function(require,module,exports){
 module.exports = jQuery;
 
 
+},{}],"jquery":[function(require,module,exports){
+module.exports=require('9mK/17');
 },{}],31:[function(require,module,exports){
 module.exports = require('./echoform.coffee');
 
@@ -1789,7 +1859,7 @@ $.fn[pluginName] = function() {
 };
 
 
-},{"./config.coffee":1,"./controls/index.coffee":14,"./echoform.coffee":26,"./util.coffee":33,"jquery":"usFOt+"}],33:[function(require,module,exports){
+},{"./config.coffee":1,"./controls/index.coffee":14,"./echoform.coffee":26,"./util.coffee":33,"jquery":"9mK/17"}],33:[function(require,module,exports){
 var buildXPathResolverFn, error, execXPath, parseXML, printDOMToString, warn, wgxpathInstalled, window,
   __slice = [].slice;
 
@@ -1952,5 +2022,5 @@ module.exports = {
 };
 
 
-},{"browser":"b9SDEC"}]},{},[1,2,3,4,5,6,7,8,9,10,11,12,13,14,15,16,17,18,19,20,21,22,23,24,25,26,"b9SDEC","usFOt+",31,32,33])
+},{"browser":"1X57VY"}]},{},[3,4,2,1,5,6,7,8,9,10,11,12,13,14,15,16,17,19,18,20,21,22,23,24,25,26,"1X57VY","9mK/17",31,32,33])
 ;

@@ -23,6 +23,60 @@
       });
       return expect($('.jstree-clicked').parent().attr('node_value')).toBe("/GLAH01/Data_1HZ_VAL/Engineering/d_T_detID_VAL");
     });
+    it("will not allow irrelevant nodes to be selected", function() {
+      var children, form, model;
+      model = "<prov:treeReference type=\"tree\">\n  <prov:data_layer></prov:data_layer>\n</prov:treeReference>";
+      children = "<item value=\"irrelevantNode\" relevant=\"false()\"/>\n<item value=\"relevantNode\" relevant=\"true()\"/>";
+      form = template.form(dom, {
+        model: model,
+        attributes: attrs,
+        children: children
+      });
+      $(":jstree li[node_value = '/irrelevantNode'] > a ").each(function() {
+        return $(this).click();
+      });
+      $(":jstree li[node_value = '/relevantNode'] > a ").each(function() {
+        return $(this).click();
+      });
+      expect($('.jstree-clicked').parent().attr('node_value')).not.toMatch("irrelevantNode");
+      expect($('.jstree-clicked').parent().attr('node_value')).toMatch("relevantNode");
+      expect(form.echoforms('serialize')).not.toMatch(/irrelevantNode/);
+      return expect(form.echoforms('serialize')).toMatch(/relevantNode/);
+    });
+    it("excludes from output any preselected nodes which are not relevant", function() {
+      var children, model;
+      model = "<prov:treeReference type=\"tree\">\n  <prov:data_layer>/irrelevantNode</prov:data_layer>\n</prov:treeReference>";
+      children = "<item value=\"irrelevantNode\" relevant=\"false()\"/>";
+      template.form(dom, {
+        model: model,
+        attributes: attrs,
+        children: children
+      });
+      expect($('.jstree-clicked').parent().attr('node_value')).not.toMatch("/GLAH01/Data_1HZ_VAL/Engineering/d_T_detID_VAL");
+      return expect($('.jstree-clicked').parent().attr('node_value')).not.toMatch("irrelevantNode");
+    });
+    it("automatically selects required nodes", function() {
+      var children, model;
+      model = "<prov:treeReference type=\"tree\">\n  <prov:data_layer></prov:data_layer>\n</prov:treeReference>";
+      children = "<item value=\"requiredNode\" required=\"true()\"/>";
+      template.form(dom, {
+        model: model,
+        attributes: attrs,
+        children: children
+      });
+      return expect($('.jstree-clicked').parent().attr('node_value')).toMatch("requiredNode");
+    });
+    it("relevancy takes precedence over required", function() {
+      var children, form, model;
+      model = "<prov:treeReference type=\"tree\">\n  <prov:data_layer></prov:data_layer>\n</prov:treeReference>";
+      children = "<item value=\"requiredIrrelevantNode\" required=\"true()\" relevant=\"false()\"/>";
+      form = template.form(dom, {
+        model: model,
+        attributes: attrs,
+        children: children
+      });
+      return expect(form.echoforms('serialize')).not.toMatch(/requiredIrrelevantNode/);
+    });
     it("updates the model when selections change", function() {
       var model;
       model = "<prov:treeReference></prov:treeReference>";

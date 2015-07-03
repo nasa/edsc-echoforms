@@ -19,8 +19,15 @@ class Tree extends Typed
     @cascade = if ui.attr('cascade')? then ui.attr('cascade') == "true" else true
     @valueElementName = ui.attr('valueElementName') || 'value'
     @items = for item in ui.children('item')
-      new TreeItem($(item), model, controlClasses, resolver, '', @separator)
+      new TreeItem($(item), model, controlClasses, resolver, '', @separator, this)
     super(ui, model, controlClasses, resolver)
+
+  validate: ->
+    super()
+    for item in @items
+      item.subtree_handle_relevant_or_required()
+    #propagate relevancy/required rules in the ui to the model
+    @saveToModel() if @el?
 
   valueElementTagName: (root=@ref()) ->
     nameParts = [@valueElementName]
@@ -64,9 +71,17 @@ class Tree extends Typed
     @el.find('div.jstree')
 
   inputValue: ->
-    @inputs().jstree("get_selected", "full").map (node) ->
-      if node.li_attr and node.li_attr.node_value
-        node.li_attr.node_value
+    #The commented out section is the 'correct' way to do this, but we need to be able to
+    #  get tree selections before the tree is fully loaded into the DOM, in order to ensure
+    #  'required' nodes are automatically selected and 'irrelevant' nodes are unselected,
+    #  so we will use this  hack
+    #@inputs().jstree("get_selected", "full").map (node) ->
+    #  if node.li_attr and node.li_attr.node_value and node.li_attr.relevant == 'true'
+    #    node.li_attr.node_value
+    @inputs().find('a.jstree-clicked').parent().map ->
+      node = $(this)
+      if node.attr('node_value') and node.attr('relevant') == 'true'
+        node.attr('node_value')
 
   inputAttrs: ->
     $.extend(super(), separator: @separator, cascade: @cascade)
@@ -89,19 +104,6 @@ class Tree extends Typed
         if i < (items.length - 1) and (new Date().getTime() - start > 40)
           console.log ("Tree construction yielding to browser to avoid unresponsive script")
           setTimeout(arguments.callee, 0)
-    model_val = @modelValues()
-    if model_val.length > 0
-      #select values based on the model value.  This could perform badly
-      i = 0
-      nodes = root.find('li')
-      do () ->
-        for j in [i..nodes.length - 1] by 1
-          node = nodes[j]
-          break unless node?
-          $(node).attr('data-jstree','{"selected":true, "opened":false}') if $(node).attr("node_value") in model_val
-          if i < (items.length - 1) and (new Date().getTime() - start > 40)
-            console.log ("Tree initial value population yielding to browser to avoid unresponsive script")
-            setTimeout(arguments.callee, 0)
     root.jstree
       checkbox:
         keep_selected_style: false
