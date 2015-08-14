@@ -1,22 +1,54 @@
 {
-  "name": "echoforms",
-  "title": "ECHO Forms",
-  "description": "A Javascript implementation of the ECHO Forms.",
-  "author": "Patrick Quinn",
+  "name": "edsc-echoforms",
+  "title": "Earthdata Search Components: ECHO Forms",
+  "description": "A Javascript implementation of the ECHO Forms specification.",
+  "keywords": [
+    "jquery",
+    "echo",
+    "reverb",
+    "forms",
+    "echoforms",
+    "echo forms",
+    "plugins"
+  ],
   "version": "1.0.0",
+  "author": {
+    "name": "Patrick Quinn",
+    "email": "patrick@element84.com"
+  },
+  "maintainers": [
+    {
+      "name": "Patrick Quinn",
+      "email": "patrick@element84.com"
+    }
+  ],
+  "version": "1.0.0",
+  "license": "Apache-2.0",
   "devDependencies": {
-    "grunt": "~0.4.1",
-    "grunt-cli": "~0.1.7",
-    "grunt-contrib-jshint": "~0.4.3",
-    "grunt-contrib-concat": "~0.3.0",
-    "grunt-contrib-uglify": "~0.2.0",
-    "grunt-contrib-coffee": "~0.7.0",
-    "grunt-contrib-cssmin": "~0.7.0",
     "browserify": "~2.35.4",
+    "coffeeify": "~0.5.2",
+    "grunt": "^0.4.5",
     "grunt-browserify": "~1.2.11",
-    "coffeeify": "~0.5.2"
+    "grunt-cli": "~0.1.7",
+    "grunt-contrib-clean": "^0.6.0",
+    "grunt-contrib-coffee": "~0.7.0",
+    "grunt-contrib-concat": "~0.3.0",
+    "grunt-contrib-copy": "^0.8.0",
+    "grunt-contrib-cssmin": "~0.7.0",
+    "grunt-contrib-jasmine": "^0.9.1",
+    "grunt-contrib-jshint": "~0.4.3",
+    "grunt-contrib-less": "^1.0.1",
+    "grunt-contrib-uglify": "~0.2.0",
+    "grunt-contrib-watch": "^0.6.1",
+    "jasmine-jquery": "^2.1.0",
+    "jasmine-reporters": "^2.0.7",
+    "jstree": "3.0.1",
+    "simple-slider": "loopj/jquery-simple-slider#fa64f59",
+    "wicked-good-xpath": "bilts/wicked-good-xpath"
   },
   "scripts": {
-    "test": "grunt travis --verbose"
+    "prepublish": "grunt",
+    "test": "grunt spec",
+    "start": "grunt watch"
   }
 }
