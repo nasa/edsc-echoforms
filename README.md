@@ -1,5 +1,7 @@
 # Earthdata Search Components: ECHO Forms
 
+[![Build Status](https://travis-ci.org/nasa/edsc-echoforms.svg?branch=master)](https://travis-ci.org/nasa/edsc-echoforms)
+
 A jQuery plugin implementing the
 [ECHO Forms](https://earthdata.nasa.gov/files/ECHO_Forms_Specification_0.pdf)
 specification. For a basic usage example and a testbed for changes,
