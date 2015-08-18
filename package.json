@@ -2,6 +2,7 @@
   "name": "edsc-echoforms",
   "title": "Earthdata Search Components: ECHO Forms",
   "description": "A Javascript implementation of the ECHO Forms specification.",
+  "repository": "nasa/edsc-echoforms",
   "keywords": [
     "jquery",
     "echo",
