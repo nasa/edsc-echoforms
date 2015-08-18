@@ -1,1 +1,1 @@
-module.exports = require './echoform.coffee'
+module.exports = require './plugin.coffee'

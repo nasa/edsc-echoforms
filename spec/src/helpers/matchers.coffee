@@ -1,45 +1,27 @@
 beforeEach ->
-  @addMatchers
-    toHaveHelp: (expected) ->
-      actual = @actual
-      actual = [actual] unless actual instanceof Array
+  jasmine.addMatchers
+    toHaveError: (util, customEqualityTesters) ->
+      compare: (actual, expected) ->
+        control = $(actual)
 
-      messages = []
-      result = !@isNot
-      for id in actual
-        el = $("##{id}")
-        if el.is('.echoforms-control')
-          help = el.children('.echoforms-help')
-          matched = $.trim(help.text()) == expected
-          if matched and @isNot
-            result = true
-            messages.push "Expected '#{id}' to not have help text '#{expected}'"
-          if !matched and !@isNot
-            result = false
-            messages.push "Expected '#{id}' to have help text '#{expected}'"
+        result = {pass: false}
+        for message in control.children('.echoforms-errors').children('.echoforms-error')
+          result.pass = true if $.trim($(message).text()) == expected or !expected?
+
+        if result.pass
+          result.message = "Expected #{actual} not to have error #{expected}"
         else
-          result = @isNot
-          messages.push "Could not find element of class 'echoforms-control' with id '#{id}'"
+          result.message = "Expected #{actual} to have error #{expected}"
+        result
 
-      @message = ->
-        messages.join('. ')
+    toBeReadonly: (util, customEqualityTesters) ->
+      compare: (actual) ->
+        control = $(actual)
+        pass: control.is('.echoforms-readonly') && control.find(':input').not('[readonly]').length == 0
 
-      result
+    toMatchXml: (util, customEqualityTesters) ->
+      compare: (actual, expected) ->
+        expected = expected.replace(/\s+/g, ' ').replace('> <', '><')
+        actual = actual.replace(/\s+/g, ' ').replace('> <', '><')
 
-    toHaveError: (expected) ->
-      control = $(@actual)
-
-      for message in control.children('.echoforms-errors').children('.echoforms-error')
-        return true if $.trim($(message).text()) == expected or !expected?
-
-      false
-
-    toBeReadonly: () ->
-      control = $(@actual)
-      control.is('.echoforms-readonly') && control.find(':input').not('[readonly]').length == 0
-
-    toMatchXml: (expected) ->
-      expected = expected.replace(/\s+/g, ' ').replace('> <', '><')
-      actual = @actual.replace(/\s+/g, ' ').replace('> <', '><')
-
-      expected == actual
+        pass: expected == actual
