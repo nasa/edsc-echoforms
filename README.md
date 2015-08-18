@@ -1,9 +1,12 @@
-# Earthdata Search Components: ECHO Forms
+<h1>Earthdata Search Components:<br>ECHO Forms</h1>
 
 A jQuery plugin implementing the
 [ECHO Forms](https://earthdata.nasa.gov/files/ECHO_Forms_Specification_0.pdf)
 specification. For a basic usage example and a testbed for changes,
 see demo/index.html
+
+The ECHO Forms plugin was developed as a component of
+[Earthdata Search](https://github.com/nasa/earthdata-search).
 
 ## Installation and Use
 
