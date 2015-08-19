@@ -126,6 +126,16 @@ To run the tests:
 
     $ grunt spec
 
+### Debugging
+
+The full-packaged and minified scripts are the canonical copies of the plugin,
+however during development it can be useful to use scripts with sourcemaps,
+which the packaged copies do not provide. To use the debugging version or
+test with other versions, edit `demo/index.html`. Inside of the `<head>`
+element, there are sections containing scripts for debug and packaged versions
+of both the full and basic plugins. By default it runs the full packaged
+version. Comment / uncomment the scripts you would like to use for testing.
+
 ### Obtaining and compiling wgxpath from source
 
 First, obtain the source
