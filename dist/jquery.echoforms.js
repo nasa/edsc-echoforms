@@ -521,7 +521,7 @@ Base = (function() {
 module.exports = Base;
 
 
-},{"../constraints/index.coffee":3,"../util.coffee":33,"jquery":"9mK/17"}],9:[function(require,module,exports){
+},{"../constraints/index.coffee":3,"../util.coffee":33,"jquery":"im90Iq"}],9:[function(require,module,exports){
 var Checkbox, Input, _ref,
   __hasProp = {}.hasOwnProperty,
   __extends = function(child, parent) { for (var key in parent) { if (__hasProp.call(parent, key)) child[key] = parent[key]; } function ctor() { this.constructor = child; } ctor.prototype = parent.prototype; child.prototype = new ctor(); child.__super__ = parent.prototype; return child; };
@@ -615,7 +615,7 @@ RangeSlider = (function(_super) {
 module.exports = RangeSlider;
 
 
-},{"../range.coffee":17,"jquery":"9mK/17"}],11:[function(require,module,exports){
+},{"../range.coffee":17,"jquery":"im90Iq"}],11:[function(require,module,exports){
 var Form, Grouping, util,
   __hasProp = {}.hasOwnProperty,
   __extends = function(child, parent) { for (var key in parent) { if (__hasProp.call(parent, key)) child[key] = parent[key]; } function ctor() { this.constructor = child; } ctor.prototype = parent.prototype; child.prototype = new ctor(); child.__super__ = parent.prototype; return child; };
@@ -812,7 +812,7 @@ Grouping = (function(_super) {
 module.exports = Grouping;
 
 
-},{"../util.coffee":33,"./base.coffee":8,"jquery":"9mK/17"}],14:[function(require,module,exports){
+},{"../util.coffee":33,"./base.coffee":8,"jquery":"im90Iq"}],14:[function(require,module,exports){
 var classes, matchList;
 
 classes = {
@@ -945,7 +945,7 @@ Output = (function(_super) {
 module.exports = Output;
 
 
-},{"./typed.coffee":24,"jquery":"9mK/17"}],17:[function(require,module,exports){
+},{"./typed.coffee":24,"jquery":"im90Iq"}],17:[function(require,module,exports){
 var Input, Range,
   __hasProp = {}.hasOwnProperty,
   __extends = function(child, parent) { for (var key in parent) { if (__hasProp.call(parent, key)) child[key] = parent[key]; } function ctor() { this.constructor = child; } ctor.prototype = parent.prototype; child.prototype = new ctor(); child.__super__ = parent.prototype; return child; };
@@ -1159,7 +1159,7 @@ Select = (function(_super) {
 module.exports = Select;
 
 
-},{"./typed.coffee":24,"jquery":"9mK/17"}],20:[function(require,module,exports){
+},{"./typed.coffee":24,"jquery":"im90Iq"}],20:[function(require,module,exports){
 var Select, Selectref,
   __hasProp = {}.hasOwnProperty,
   __extends = function(child, parent) { for (var key in parent) { if (__hasProp.call(parent, key)) child[key] = parent[key]; } function ctor() { this.constructor = child; } ctor.prototype = parent.prototype; child.prototype = new ctor(); child.__super__ = parent.prototype; return child; };
@@ -1258,6 +1258,7 @@ Tree = (function(_super) {
       return _results;
     }).call(this);
     Tree.__super__.constructor.call(this, ui, model, controlClasses, resolver);
+    $.jstree.defaults.checkbox.whole_node = false;
   }
 
   Tree.prototype.validate = function() {
@@ -1349,7 +1350,7 @@ Tree = (function(_super) {
   };
 
   Tree.prototype.inputValue = function() {
-    return this.inputs().find('a.jstree-clicked').parent().map(function() {
+    return this.inputs().find('a.jstree-clicked', '[required=true]').parent().map(function() {
       var node;
       node = $(this);
       if (node.attr('node_value') && node.attr('relevant') === 'true') {
@@ -1413,7 +1414,7 @@ Tree = (function(_super) {
 module.exports = Tree;
 
 
-},{"./base.coffee":8,"./treeitem.coffee":23,"./typed.coffee":24,"jquery":"9mK/17"}],23:[function(require,module,exports){
+},{"./base.coffee":8,"./treeitem.coffee":23,"./typed.coffee":24,"jquery":"im90Iq"}],23:[function(require,module,exports){
 var $, TreeItem, util,
   __indexOf = [].indexOf || function(item) { for (var i = 0, l = this.length; i < l; i++) { if (i in this && this[i] === item) return i; } return -1; };
 
@@ -1474,10 +1475,16 @@ TreeItem = (function() {
     current_node.attr('relevant', this.node_relevant());
     if (!this.node_relevant()) {
       tree_div.jstree('disable_node', current_node);
-      return tree_div.jstree('deselect_node', current_node);
+      tree_div.jstree('set_type', current_node, 'disabled');
+      current_node.css('font-style', 'italic');
+      current_node.find('a').css('font-style', 'italic');
+      return current_node.find('i.jstree-checkbox').addClass('jstree-dissabled-icon').removeClass('jstree-checkbox');
     } else if (this.node_required()) {
-      tree_div.jstree('select_node', current_node);
-      return tree_div.jstree('disable_node', current_node);
+      tree_div.jstree('enable_node', current_node);
+      tree_div.jstree('disable_checkbox', current_node);
+      current_node.css('font-style', 'italic');
+      current_node.find('a').css('font-style', 'italic');
+      return current_node.find('i.jstree-checkbox').addClass('jstree-required-icon').removeClass('jstree-checkbox');
     } else {
       return tree_div.jstree('enable_node', current_node);
     }
@@ -1531,10 +1538,12 @@ TreeItem = (function() {
     if (!this.node_relevant()) {
       data_jstree['disabled'] = true;
       data_jstree['selected'] = false;
+      this.addHelpText(help, '[not available]');
     }
     if (this.node_required()) {
       data_jstree['disabled'] = true;
       data_jstree['selected'] = true;
+      this.addHelpText(help, '[required]');
     }
     el.attr({
       relevant: this.node_relevant()
@@ -1582,7 +1591,7 @@ TreeItem = (function() {
 module.exports = TreeItem;
 
 
-},{"../util.coffee":33,"jquery":"9mK/17"}],24:[function(require,module,exports){
+},{"../util.coffee":33,"jquery":"im90Iq"}],24:[function(require,module,exports){
 var $, Base, TypeConstraint, Typed,
   __hasProp = {}.hasOwnProperty,
   __extends = function(child, parent) { for (var key in parent) { if (__hasProp.call(parent, key)) child[key] = parent[key]; } function ctor() { this.constructor = child; } ctor.prototype = parent.prototype; child.prototype = new ctor(); child.__super__ = parent.prototype; return child; };
@@ -1654,7 +1663,7 @@ Typed = (function(_super) {
 module.exports = Typed;
 
 
-},{"../constraints/type.coffee":6,"./base.coffee":8,"jquery":"9mK/17"}],25:[function(require,module,exports){
+},{"../constraints/type.coffee":6,"./base.coffee":8,"jquery":"im90Iq"}],25:[function(require,module,exports){
 var Output, UrlOutput, _ref,
   __hasProp = {}.hasOwnProperty,
   __extends = function(child, parent) { for (var key in parent) { if (__hasProp.call(parent, key)) child[key] = parent[key]; } function ctor() { this.constructor = child; } ctor.prototype = parent.prototype; child.prototype = new ctor(); child.__super__ = parent.prototype; return child; };
@@ -1767,9 +1776,9 @@ EchoForm = (function() {
 module.exports = EchoForm;
 
 
-},{"./controls/form.coffee":11,"./controls/index.coffee":14,"./util.coffee":33,"jquery":"9mK/17"}],"browser":[function(require,module,exports){
-module.exports=require('1X57VY');
-},{}],"1X57VY":[function(require,module,exports){
+},{"./controls/form.coffee":11,"./controls/index.coffee":14,"./util.coffee":33,"jquery":"im90Iq"}],"browser":[function(require,module,exports){
+module.exports=require('ZyMBMU');
+},{}],"ZyMBMU":[function(require,module,exports){
 (function(document, window) {
   return module.exports = {
     document: document,
@@ -1778,12 +1787,12 @@ module.exports=require('1X57VY');
 })(document, window);
 
 
-},{}],"9mK/17":[function(require,module,exports){
+},{}],"jquery":[function(require,module,exports){
+module.exports=require('im90Iq');
+},{}],"im90Iq":[function(require,module,exports){
 module.exports = jQuery;
 
 
-},{}],"jquery":[function(require,module,exports){
-module.exports=require('9mK/17');
 },{}],31:[function(require,module,exports){
 module.exports = require('./echoform.coffee');
 
@@ -1859,7 +1868,7 @@ $.fn[pluginName] = function() {
 };
 
 
-},{"./config.coffee":1,"./controls/index.coffee":14,"./echoform.coffee":26,"./util.coffee":33,"jquery":"9mK/17"}],33:[function(require,module,exports){
+},{"./config.coffee":1,"./controls/index.coffee":14,"./echoform.coffee":26,"./util.coffee":33,"jquery":"im90Iq"}],33:[function(require,module,exports){
 var buildXPathResolverFn, error, execXPath, parseXML, printDOMToString, warn, wgxpathInstalled, window,
   __slice = [].slice;
 
@@ -2022,5 +2031,5 @@ module.exports = {
 };
 
 
-},{"browser":"1X57VY"}]},{},[3,4,2,1,5,6,7,8,9,10,11,12,13,14,15,16,17,19,18,20,21,22,23,24,25,26,"1X57VY","9mK/17",31,32,33])
+},{"browser":"ZyMBMU"}]},{},[1,2,3,4,5,6,7,8,10,9,11,12,14,13,15,16,17,18,19,20,21,22,23,24,25,26,"ZyMBMU","im90Iq",31,32,33])
 ;

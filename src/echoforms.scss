@@ -135,7 +135,17 @@ $header-help-font-color: $font-color;
   font-style: italic;
 }
 
-
+.jstree-required-icon, .jstree-dissabled-icon {
+  background-image: url("32px.png");
+  background-repeat: no-repeat;
+  background-color: transparent;
+}
+.jstree-required-icon {
+   background-position: -5px -67px;
+}
+.jstree-dissabled-icon {
+  background-position: -36px -68px;
+}
 .slider {
   float:left;
   width: 30em;

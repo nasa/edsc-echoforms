@@ -21,6 +21,7 @@ class Tree extends Typed
     @items = for item in ui.children('item')
       new TreeItem($(item), model, controlClasses, resolver, '', @separator, this)
     super(ui, model, controlClasses, resolver)
+    $.jstree.defaults.checkbox.whole_node = false
 
   validate: ->
     super()
@@ -78,7 +79,7 @@ class Tree extends Typed
     #@inputs().jstree("get_selected", "full").map (node) ->
     #  if node.li_attr and node.li_attr.node_value and node.li_attr.relevant == 'true'
     #    node.li_attr.node_value
-    @inputs().find('a.jstree-clicked').parent().map ->
+    @inputs().find('a.jstree-clicked', '[required=true]').parent().map ->
       node = $(this)
       if node.attr('node_value') and node.attr('relevant') == 'true'
         node.attr('node_value')

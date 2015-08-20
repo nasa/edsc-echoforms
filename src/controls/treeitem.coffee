@@ -38,10 +38,20 @@ class TreeItem #extends Base
     current_node.attr('relevant', @node_relevant())
     if !@node_relevant()
       tree_div.jstree('disable_node', current_node)
-      tree_div.jstree('deselect_node', current_node)
+      #tree_div.jstree('select_node', current_node)
+      #tree_div.jstree('deselect_node', current_node)
+      tree_div.jstree('set_type', current_node, 'disabled')
+      current_node.css('font-style', 'italic')
+      current_node.find('a').css('font-style', 'italic')
+      current_node.find('i.jstree-checkbox').addClass('jstree-dissabled-icon').removeClass('jstree-checkbox')
     else if @node_required()
-      tree_div.jstree('select_node', current_node)
-      tree_div.jstree('disable_node', current_node)
+      #tree_div.jstree('select_node', current_node)
+      #tree_div.jstree('disable_node', current_node)
+      tree_div.jstree('enable_node', current_node)
+      tree_div.jstree('disable_checkbox', current_node)
+      current_node.css('font-style', 'italic')
+      current_node.find('a').css('font-style', 'italic')
+      current_node.find('i.jstree-checkbox').addClass('jstree-required-icon').removeClass('jstree-checkbox')     
     else
       tree_div.jstree('enable_node', current_node)
 
@@ -71,11 +81,11 @@ class TreeItem #extends Base
       data_jstree['disabled'] = true
       data_jstree['selected'] = false
       #may eventually want to dynamically add some help text, but will not do that now
-      #@addHelpText(help, '[disabled]')
+      @addHelpText(help, '[not available]')
     if @node_required()
       data_jstree['disabled'] = true
       data_jstree['selected'] = true
-      #@addHelpText(help, '[required]')
+      @addHelpText(help, '[required]')
     el.attr(relevant: @node_relevant())
     el.attr('data-jstree' : JSON.stringify(data_jstree)) if Object.keys(data_jstree).length > 0
     el.text(@label)
