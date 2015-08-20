@@ -1349,13 +1349,23 @@ Tree = (function(_super) {
   };
 
   Tree.prototype.inputValue = function() {
-    return this.inputs().find('a.jstree-clicked').parent().map(function() {
+    var checked_required_nodes, clicked, required;
+    checked_required_nodes = [];
+    clicked = this.inputs().find('a.jstree-clicked').parent().map(function() {
       var node;
       node = $(this);
-      if (node.attr('node_value') && node.attr('relevant') === 'true') {
-        return node.attr('node_value');
+      if (node.attr('node_value') && node.attr('item-relevant') === 'true' && node.attr('item-required') === 'false') {
+        return checked_required_nodes.push(node.attr('node_value'));
       }
     });
+    required = this.inputs().find('li[item-required=true]').map(function() {
+      var node;
+      node = $(this);
+      if (node.attr('node_value') && node.attr('item-relevant') === 'true') {
+        return checked_required_nodes.push(node.attr('node_value'));
+      }
+    });
+    return checked_required_nodes;
   };
 
   Tree.prototype.inputAttrs = function() {
@@ -1468,18 +1478,27 @@ TreeItem = (function() {
   };
 
   TreeItem.prototype.handle_relevant_or_required = function() {
-    var current_node, tree_div;
+    var current_node, help, tree_div;
     tree_div = this.tree.tree_root;
     current_node = tree_div.find("[node_value = '" + this.value + "']");
-    current_node.attr('relevant', this.node_relevant());
+    current_node.attr('item-required', this.node_required());
+    current_node.attr('item-relevant', this.node_relevant());
+    help = current_node.find('span.echoforms-help');
+    help.find('.not-available-or-required-text').remove();
     if (!this.node_relevant()) {
+      this.addNotAvailableRequiredText(help, '[not available]');
       tree_div.jstree('disable_node', current_node);
-      return tree_div.jstree('deselect_node', current_node);
+      current_node.find('a').css('font-style', 'italic');
+      return current_node.find('a.jstree-anchor > i.jstree-icon').first().addClass('jstree-disabled-icon').removeClass('jstree-checkbox');
     } else if (this.node_required()) {
-      tree_div.jstree('select_node', current_node);
-      return tree_div.jstree('disable_node', current_node);
+      this.addNotAvailableRequiredText(help, '[required]');
+      tree_div.jstree('enable_node', current_node);
+      current_node.find('a').css('font-style', 'italic');
+      return current_node.find('a.jstree-anchor > i.jstree-checkbox').addClass('jstree-required-icon').removeClass('jstree-checkbox');
     } else {
-      return tree_div.jstree('enable_node', current_node);
+      tree_div.jstree('enable_node', current_node);
+      current_node.find('a').css('font-style', 'normal');
+      return current_node.find('a.jstree-anchor > i.jstree-icon').first().addClass('jstree-checkbox').removeClass('jstree-disabled-icon').removeClass('jstree-required-icon');
     }
   };
 
@@ -1508,8 +1527,12 @@ TreeItem = (function() {
     return result;
   };
 
+  TreeItem.prototype.addNotAvailableRequiredText = function(help_container, text) {
+    return this.addHelpText(help_container, text).addClass('not-available-or-required-text');
+  };
+
   TreeItem.prototype.addHelpText = function(help_container, text) {
-    return $('<p>', {
+    return $('<span>', {
       "class": 'echoforms-help-item'
     }).text(text).attr({
       title: text
@@ -1531,13 +1554,17 @@ TreeItem = (function() {
     if (!this.node_relevant()) {
       data_jstree['disabled'] = true;
       data_jstree['selected'] = false;
+      this.addNotAvailableRequiredText(help, '[not available]');
     }
     if (this.node_required()) {
-      data_jstree['disabled'] = true;
       data_jstree['selected'] = true;
+      this.addNotAvailableRequiredText(help, '[required]');
     }
     el.attr({
-      relevant: this.node_relevant()
+      'item-relevant': this.node_relevant()
+    });
+    el.attr({
+      'item-required': this.node_relevant()
     });
     if (Object.keys(data_jstree).length > 0) {
       el.attr({
@@ -1767,9 +1794,7 @@ EchoForm = (function() {
 module.exports = EchoForm;
 
 
-},{"./controls/form.coffee":11,"./controls/index.coffee":14,"./util.coffee":33,"jquery":"9mK/17"}],"browser":[function(require,module,exports){
-module.exports=require('1X57VY');
-},{}],"1X57VY":[function(require,module,exports){
+},{"./controls/form.coffee":11,"./controls/index.coffee":14,"./util.coffee":33,"jquery":"9mK/17"}],"1X57VY":[function(require,module,exports){
 (function(document, window) {
   return module.exports = {
     document: document,
@@ -1778,12 +1803,14 @@ module.exports=require('1X57VY');
 })(document, window);
 
 
+},{}],"browser":[function(require,module,exports){
+module.exports=require('1X57VY');
+},{}],"jquery":[function(require,module,exports){
+module.exports=require('9mK/17');
 },{}],"9mK/17":[function(require,module,exports){
 module.exports = jQuery;
 
 
-},{}],"jquery":[function(require,module,exports){
-module.exports=require('9mK/17');
 },{}],31:[function(require,module,exports){
 module.exports = require('./echoform.coffee');
 
@@ -2022,5 +2049,5 @@ module.exports = {
 };
 
 
-},{"browser":"1X57VY"}]},{},[3,4,2,1,5,6,7,8,9,10,11,12,13,14,15,16,17,19,18,20,21,22,23,24,25,26,"1X57VY","9mK/17",31,32,33])
+},{"browser":"1X57VY"}]},{},[4,1,2,3,5,6,7,8,9,11,10,12,13,14,15,17,18,16,19,21,20,22,23,24,25,"9mK/17",26,"1X57VY",31,32,33])
 ;
