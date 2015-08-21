@@ -43,7 +43,7 @@ class TreeItem #extends Base
       tree_div.jstree('set_type', current_node, 'disabled')
       current_node.css('font-style', 'italic')
       current_node.find('a').css('font-style', 'italic')
-      current_node.find('i.jstree-checkbox').addClass('jstree-dissabled-icon').removeClass('jstree-checkbox')
+      current_node.find('a.jstree-anchor > i.jstree-icon').first().addClass('jstree-disabled-icon').removeClass('jstree-checkbox')
     else if @node_required()
       #tree_div.jstree('select_node', current_node)
       #tree_div.jstree('disable_node', current_node)
@@ -51,9 +51,10 @@ class TreeItem #extends Base
       tree_div.jstree('disable_checkbox', current_node)
       current_node.css('font-style', 'italic')
       current_node.find('a').css('font-style', 'italic')
-      current_node.find('i.jstree-checkbox').addClass('jstree-required-icon').removeClass('jstree-checkbox')     
+      current_node.find('a.jstree-anchor > i.jstree-checkbox').addClass('jstree-required-icon').removeClass('jstree-checkbox')
     else
       tree_div.jstree('enable_node', current_node)
+      current_node.find('a.jstree-anchor > i.jstree-icon').first().addClass('jstree-checkbox').removeClass('jstree-disabled-icon').removeClass('jstree-required-icon')
 
   subtree_handle_relevant_or_required: ->
     @handle_relevant_or_required()
