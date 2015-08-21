@@ -1258,7 +1258,6 @@ Tree = (function(_super) {
       return _results;
     }).call(this);
     Tree.__super__.constructor.call(this, ui, model, controlClasses, resolver);
-    $.jstree.defaults.checkbox.whole_node = false;
   }
 
   Tree.prototype.validate = function() {
@@ -1350,13 +1349,23 @@ Tree = (function(_super) {
   };
 
   Tree.prototype.inputValue = function() {
-    return this.inputs().find('a.jstree-clicked', '[required=true]').parent().map(function() {
+    var checked_required_nodes, clicked, required;
+    checked_required_nodes = [];
+    clicked = this.inputs().find('a.jstree-clicked').parent().map(function() {
+      var node;
+      node = $(this);
+      if (node.attr('node_value') && node.attr('relevant') === 'true' && typeof node.attr('required') === 'undefined') {
+        return checked_required_nodes.push(node.attr('node_value'));
+      }
+    });
+    required = this.inputs().find('li[required=required]').map(function() {
       var node;
       node = $(this);
       if (node.attr('node_value') && node.attr('relevant') === 'true') {
-        return node.attr('node_value');
+        return checked_required_nodes.push(node.attr('node_value'));
       }
     });
+    return checked_required_nodes;
   };
 
   Tree.prototype.inputAttrs = function() {
@@ -1472,6 +1481,7 @@ TreeItem = (function() {
     var current_node, tree_div;
     tree_div = this.tree.tree_root;
     current_node = tree_div.find("[node_value = '" + this.value + "']");
+    current_node.attr('required', this.node_required().toString());
     current_node.attr('relevant', this.node_relevant());
     if (!this.node_relevant()) {
       tree_div.jstree('disable_node', current_node);
@@ -1541,7 +1551,6 @@ TreeItem = (function() {
       this.addHelpText(help, '[not available]');
     }
     if (this.node_required()) {
-      data_jstree['disabled'] = true;
       data_jstree['selected'] = true;
       this.addHelpText(help, '[required]');
     }
@@ -2031,5 +2040,5 @@ module.exports = {
 };
 
 
-},{"browser":"ZyMBMU"}]},{},[1,2,3,4,5,6,7,8,10,9,11,12,14,13,15,16,17,18,19,20,21,22,23,24,25,26,"ZyMBMU","im90Iq",31,32,33])
+},{"browser":"ZyMBMU"}]},{},[1,2,3,5,4,6,7,8,9,10,11,12,14,13,15,16,17,18,19,20,21,22,23,24,25,26,"ZyMBMU","im90Iq",31,32,33])
 ;

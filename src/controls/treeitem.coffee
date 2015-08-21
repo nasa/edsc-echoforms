@@ -34,7 +34,7 @@ class TreeItem #extends Base
   handle_relevant_or_required: ->
     tree_div = @tree.tree_root
     current_node = tree_div.find("[node_value = '" + @value + "']")
-
+    current_node.attr('required', @node_required().toString())
     current_node.attr('relevant', @node_relevant())
     if !@node_relevant()
       tree_div.jstree('disable_node', current_node)
@@ -82,8 +82,7 @@ class TreeItem #extends Base
       data_jstree['selected'] = false
       #may eventually want to dynamically add some help text, but will not do that now
       @addHelpText(help, '[not available]')
-    if @node_required()
-      data_jstree['disabled'] = true
+    if @node_required()      
       data_jstree['selected'] = true
       @addHelpText(help, '[required]')
     el.attr(relevant: @node_relevant())
