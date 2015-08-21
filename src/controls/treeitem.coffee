@@ -81,6 +81,7 @@ class TreeItem #extends Base
       data_jstree['selected'] = true
       @addHelpText(help, '[required]')
     el.attr('item-relevant': @node_relevant())
+    el.attr('item-required': @node_relevant())
     el.attr('data-jstree' : JSON.stringify(data_jstree)) if Object.keys(data_jstree).length > 0
     el.text(@label)
     el.append(help)
