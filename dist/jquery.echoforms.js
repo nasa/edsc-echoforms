@@ -1481,7 +1481,7 @@ TreeItem = (function() {
     var current_node, tree_div;
     tree_div = this.tree.tree_root;
     current_node = tree_div.find("[node_value = '" + this.value + "']");
-    current_node.attr('required', this.node_required().toString());
+    current_node.attr('required', this.node_required());
     current_node.attr('relevant', this.node_relevant());
     if (!this.node_relevant()) {
       tree_div.jstree('disable_node', current_node);
@@ -2040,5 +2040,5 @@ module.exports = {
 };
 
 
-},{"browser":"ZyMBMU"}]},{},[1,2,3,5,4,6,7,8,9,10,11,12,14,13,15,16,17,18,19,20,21,22,23,24,25,26,"ZyMBMU","im90Iq",31,32,33])
+},{"browser":"ZyMBMU"}]},{},[1,2,3,4,5,6,7,8,9,10,11,12,13,14,15,16,17,18,19,20,21,22,23,24,25,26,"ZyMBMU","im90Iq",31,32,33])
 ;

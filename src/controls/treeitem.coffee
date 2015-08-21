@@ -34,7 +34,7 @@ class TreeItem #extends Base
   handle_relevant_or_required: ->
     tree_div = @tree.tree_root
     current_node = tree_div.find("[node_value = '" + @value + "']")
-    current_node.attr('required', @node_required().toString())
+    current_node.attr('required', @node_required())
     current_node.attr('relevant', @node_relevant())
     if !@node_relevant()
       tree_div.jstree('disable_node', current_node)
