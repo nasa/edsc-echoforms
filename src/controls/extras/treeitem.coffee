@@ -34,16 +34,21 @@ class TreeItem #extends Base
   handle_relevant_or_required: ->
     tree_div = @tree.tree_root
     current_node = tree_div.find("[node_value = '" + @value + "']")
-
-    current_node.attr('relevant', @node_relevant())
+    current_node.attr('item-required', @node_required())
+    current_node.attr('item-relevant', @node_relevant())
     if !@node_relevant()
       tree_div.jstree('disable_node', current_node)
-      tree_div.jstree('deselect_node', current_node)
+      current_node.css('font-style', 'italic')
+      current_node.find('a').css('font-style', 'italic')
+      current_node.find('a.jstree-anchor > i.jstree-icon').first().addClass('jstree-disabled-icon').removeClass('jstree-checkbox')
     else if @node_required()
-      tree_div.jstree('select_node', current_node)
-      tree_div.jstree('disable_node', current_node)
+      tree_div.jstree('enable_node', current_node)
+      current_node.css('font-style', 'italic')
+      current_node.find('a').css('font-style', 'italic')
+      current_node.find('a.jstree-anchor > i.jstree-checkbox').addClass('jstree-required-icon').removeClass('jstree-checkbox')
     else
       tree_div.jstree('enable_node', current_node)
+      current_node.find('a.jstree-anchor > i.jstree-icon').first().addClass('jstree-checkbox').removeClass('jstree-disabled-icon').removeClass('jstree-required-icon')
 
   subtree_handle_relevant_or_required: ->
     @handle_relevant_or_required()
@@ -71,12 +76,12 @@ class TreeItem #extends Base
       data_jstree['disabled'] = true
       data_jstree['selected'] = false
       #may eventually want to dynamically add some help text, but will not do that now
-      #@addHelpText(help, '[disabled]')
-    if @node_required()
-      data_jstree['disabled'] = true
+      @addHelpText(help, '[not available]')
+    if @node_required()      
       data_jstree['selected'] = true
-      #@addHelpText(help, '[required]')
-    el.attr(relevant: @node_relevant())
+      @addHelpText(help, '[required]')
+    el.attr('item-relevant': @node_relevant())
+    el.attr('item-required': @node_relevant())
     el.attr('data-jstree' : JSON.stringify(data_jstree)) if Object.keys(data_jstree).length > 0
     el.text(@label)
     el.append(help)

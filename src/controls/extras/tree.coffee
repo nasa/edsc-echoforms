@@ -78,10 +78,16 @@ class Tree extends Typed
     #@inputs().jstree("get_selected", "full").map (node) ->
     #  if node.li_attr and node.li_attr.node_value and node.li_attr.relevant == 'true'
     #    node.li_attr.node_value
-    @inputs().find('a.jstree-clicked').parent().map ->
+    checked_required_nodes = []
+    clicked = @inputs().find('a.jstree-clicked').parent().map ->
       node = $(this)
-      if node.attr('node_value') and node.attr('relevant') == 'true'
-        node.attr('node_value')
+      if node.attr('node_value') and node.attr('item-relevant') == 'true' and node.attr('item-required') == 'false'
+        checked_required_nodes.push(node.attr('node_value'))
+    required = @inputs().find('li[item-required=true]').map ->
+      node = $(this)
+      if node.attr('node_value') and node.attr('item-relevant') == 'true'
+        checked_required_nodes.push(node.attr('node_value'))
+    checked_required_nodes
 
   inputAttrs: ->
     $.extend(super(), separator: @separator, cascade: @cascade)
