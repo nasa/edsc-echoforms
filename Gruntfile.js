@@ -1,99 +1,140 @@
 module.exports = function(grunt) {
 
-	grunt.initConfig({
+  grunt.initConfig({
 
-		// Import package manifest
-		pkg: grunt.file.readJSON("echoforms.json"),
+    // Import package manifest
+    pkg: grunt.file.readJSON("package.json"),
 
-		meta: {
-			banner: "/*\n" +
-				" *  <%= pkg.name %> - v<%= pkg.version %>\n" +
-        // FIXME: If we release this publicly, we need author and license info
-				// " *  Made by <%= pkg.author.name %>\n" +
-				// " *  Under <%= pkg.licenses[0].type %> License\n" +
-				" */\n"
-		},
-
-		// Lint definitions
-		jshint: {
-			files: ["src/echoforms.js"],
-			options: {
-				jshintrc: ".jshintrc"
-			}
-		},
-
-    concat: {
-      dist: {
-        files: {
-          "dist/wgxpath.install.patched.js" : ["vendor/wgxpath/wgxpath.install.patched.js"],
-          "dist/jquery.simple-slider.min.js" : ["vendor/jquery-simple-slider/js/simple-slider.min.js"],
-          "dist/jstree.min.js" : ["vendor/vakata-jstree-5aaf257/dist/jstree.min.js"]
-        }
-      },
-      options: {
-      }
+    meta: {
+      banner: "/*\n" +
+        " * <%= pkg.name %> - v<%= pkg.version %>\n" +
+        " * Copyright © 2007-2014 United States Government as represented by the Administrator of the National Aeronautics and Space Administration. All Rights Reserved.\n" +
+        " * \n" +
+        " * Licensed under the Apache License, Version 2.0 (the \"License\"); you may not use this file except in compliance with the License.\n" +
+        " * You may obtain a copy of the License at\n" +
+        " * \n" +
+        " * http://www.apache.org/licenses/LICENSE-2.0\n" +
+        " * \n" +
+        " * Unless required by applicable law or agreed to in writing, software distributed under the License is distributed on an \"AS IS\" BASIS,\n" +
+        " * WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied. See the License for the specific language governing permissions and limitations under the License.\n" +
+        " */ \n"
     },
 
-		// Minify definitions
-		uglify: {
-			dist: {
-        files: {
-          "dist/jquery.echoforms.min.js": ["dist/jquery.echoforms.js"]
-        }
-			},
-			options: {
-				report: 'min',
-        banner: "<%= meta.banner %>"
-        // The following is useful to see the gzipped size occasionally, but it's expensive
-        // report: 'gzip',
-        // Generate source maps
-        // sourceMap: function(dest) {return dest + '.map';}
-			}
-		},
-
-    /*
-    'closure-compiler': {
-      dist: {
-        js: ["dist/jquery.echoforms.js"],
-        closurePath: 'vendor/closure',
-        jsOutputFile: "dist/jquery.echoforms.min.js",
-        noreport: true,
-        options: {
-          compilation_level: 'ADVANCED_OPTIMIZATIONS',
-          warning_level:"DEFAULT"
-        }
-      }
-    },
-    */
-
-		// Source compilation
-		browserify: {
-			compile: {
+    // Source compilation
+    browserify: {
+      build: {
         files: [
           {
-            src: ["src/**/*.js", "src/**/*.coffee"],
-            dest: "dist/jquery.echoforms.js"
+            src: ["src/index.coffee"],
+            dest: "build/jquery.echoforms.js"
           }
-        ],
-        options: {
-          transform: ['coffeeify'],
-          alias: ['src/extern/jquery.coffee:jquery', 'src/extern/browser.coffee:browser']
-        }
-      }
-		},
-
-    // Spec compilation
-    coffee: {
-      compile: {
+        ]
+      },
+      spec: {
         files: [
           {
             expand: true,
             cwd: 'spec/src/',
             ext: '.js',
             src: ['**/*.coffee'],
-            dest: 'spec/dist/'
+            dest: 'spec/build/'
           }
         ]
+      },
+      options: {
+        debug: true,
+        transform: ['coffeeify', 'uglifyify'],
+        alias: ['src/extern/jquery.coffee:jquery', 'src/extern/browser.coffee:browser']
+      }
+    },
+
+    clean: {
+      dist: ['dist/*'],
+      build: ['build/*'],
+      spec: ['spec/build/**/*']
+    },
+
+    concat: {
+      dist: {
+        files: {
+          "dist/jquery.echoforms.min.js": [
+            "node_modules/wicked-good-xpath/dist/wgxpath.install.js",
+            "build/jquery.echoforms.min.js"
+          ],
+          "dist/jquery.echoforms.min.css": [
+            "build/jquery.echoforms.min.css"
+          ],
+          "dist/jquery.echoforms-full.min.js": [
+            "node_modules/wicked-good-xpath/dist/wgxpath.install.js",
+            "node_modules/simple-slider/js/simple-slider.min.js",
+            "node_modules/jstree/dist/jstree.min.js",
+            "build/jquery.echoforms.min.js",
+            "src/extras.js"
+          ],
+          "dist/jquery.echoforms-full.min.css": [
+            "node_modules/jstree/dist/themes/default/style.min.css",
+            "build/jquery.echoforms.min.css"
+          ]
+        }
+      },
+      options: {
+        banner: "<%= meta.banner %>"
+      }
+    },
+
+    copy: {
+      dist: {
+        files: [
+          {
+            expand: true,
+            flatten: true,
+            src: ['node_modules/jstree/dist/themes/default/*.+(png|gif)'],
+            dest: 'dist/',
+            filter: 'isFile'
+          }
+        ]
+      }
+    },
+
+    jasmine: {
+      spec: {
+        src: [
+          'dist/jquery.echoforms-full.min.js'
+        ],
+        options: {
+          styles: 'dist/jquery.echoforms-full.min.css',
+          vendor: [
+            'http://ajax.googleapis.com/ajax/libs/jquery/2.0.3/jquery.min.js',
+            'node_modules/jasmine-jquery/lib/jasmine-jquery.js'
+          ],
+          specs: 'spec/build/features/**/*.js',
+          helpers: 'spec/build/helpers/**/*.js',
+          template: 'spec/SpecRunner.tmpl'
+        }
+      }
+    },
+
+    less: {
+      build: {
+        files: {
+          'build/jquery.echoforms.min.css': 'src/echoforms.less'
+        },
+        options: {
+          compress: true
+        }
+      }
+    },
+
+    uglify: {
+      build: {
+        files: {
+          "build/jquery.echoforms.min.js": ["build/jquery.echoforms.js"]
+        }
+      },
+      options: {
+        report: 'min'
+        // The following is useful to see the gzipped size occasionally, but it's expensive
+        // report: 'gzip',
       }
     },
 
@@ -107,50 +148,30 @@ module.exports = function(grunt) {
       }
     },
 
-    sass: {
-      dist: {
+    exorcise: {
+      build: {
         files: {
-          'dist/jquery.echoforms.min.css': 'src/echoforms.scss'
+          'build/jquery.echoforms.js.map': ['build/jquery.echoforms.js']
         },
         options: {
-          style: 'compressed'
+          base: require('path').resolve('..')
         }
       }
-    },
-
-    cssmin: {
-      dist: {
-        files: {
-          'dist/jquery.echoforms.min.css': ['dist/jquery.echoforms.min.css'],
-          'dist/jstree-default.css': ['vendor/vakata-jstree-5aaf257/dist/themes/default/style.min.css']
-        }
-      },
-			options: {
-        banner: "<%= meta.banner %>"
-			}
     }
- 
-    //img: {
-//	copy: {
-//	  files:{
-//	     'dist': ['vendor/vakata-jstree-5aaf257/dist/themes/default/*.gif'],
-//	  'dist': ['vendor/vakata-jstree-5aaf257/dist/themes/default/*.png']
-//	  }
-//	}
-//    }
+  });
 
-	});	
-
-	grunt.loadNpmTasks("grunt-contrib-concat");
-	grunt.loadNpmTasks("grunt-contrib-jshint");
-	grunt.loadNpmTasks("grunt-contrib-uglify");
-	grunt.loadNpmTasks("grunt-contrib-coffee");
-	grunt.loadNpmTasks("grunt-contrib-watch");
-	grunt.loadNpmTasks("grunt-contrib-sass");
-  grunt.loadNpmTasks('grunt-contrib-cssmin');
   grunt.loadNpmTasks('grunt-browserify');
-	//grunt.loadNpmTasks("grunt-closure-compiler");
+  grunt.loadNpmTasks("grunt-contrib-clean");
+  grunt.loadNpmTasks("grunt-contrib-concat");
+  grunt.loadNpmTasks("grunt-contrib-copy");
+  grunt.loadNpmTasks('grunt-contrib-jasmine');
+  grunt.loadNpmTasks("grunt-contrib-less");
+  grunt.loadNpmTasks("grunt-contrib-uglify");
+  grunt.loadNpmTasks("grunt-contrib-watch");
+  grunt.loadNpmTasks('grunt-exorcise');
 
-	grunt.registerTask("default", ["browserify", "coffee", "concat", "jshint", "uglify", "sass", "cssmin"]);
+  grunt.registerTask("dist", ["clean", "copy", "browserify:build", "exorcise", "uglify", "less", "concat"]);
+  grunt.registerTask("spec", ["dist", "browserify:spec", "jasmine", "clean:spec"]);
 
+  grunt.registerTask("default", ["dist"]);
 };

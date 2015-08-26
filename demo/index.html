@@ -1,15 +1,34 @@
 <!DOCTYPE html>
 <html lang="en">
-	<head>
+  <head>
     <meta charset="utf-8">
-		<title>ECHO Forms</title>
-	  <script src="http://ajax.googleapis.com/ajax/libs/jquery/2.0.3/jquery.min.js"></script>
-	  <script src="../dist/wgxpath.install.patched.js"></script>
-		<script src="../dist/jquery.simple-slider.min.js"></script>
-		<script src="../dist/jquery.echoforms.js"></script>
-        <script src="../dist/jstree.js"></script>
-    <link rel="stylesheet" href="../dist/jquery.echoforms.min.css">
-    <link rel="stylesheet" href="../dist/jstree-default.css">
+    <title>Earthdata Search Components: ECHO Forms</title>
+    <script src="http://ajax.googleapis.com/ajax/libs/jquery/2.0.3/jquery.min.js"></script>
+    <!-- Use full packaged plugin -->
+    <!-- -->
+    <script src="../dist/jquery.echoforms-full.min.js"></script>
+    <!-- -->
+
+    <!-- Debug full plugin -->
+    <!--
+    <script src="../node_modules/wicked-good-xpath/dist/wgxpath.install.js"></script>
+    <script src="../node_modules/simple-slider/js/simple-slider.min.js"></script>
+    <script src="../node_modules/jstree/dist/jstree.min.js"></script>
+    <script src="../build/jquery.echoforms.js"></script>
+    <script src="../src/extras.js"></script>
+    -->
+
+    <!-- Use basic packaged plugin -->
+    <!--
+    <script src="../dist/jquery.echoforms-full.min.js"></script>
+    -->
+
+    <!-- Debug basic plugin -->
+    <!--
+    <script src="../node_modules/wicked-good-xpath/dist/wgxpath.install.js"></script>
+    <script src="../build/jquery.echoforms.js"></script>
+    -->
+    <link rel="stylesheet" href="../dist/jquery.echoforms-full.min.css">
 
     <style>
       #demo-echoforms-form {
@@ -28,16 +47,14 @@
       }
     </style>
 
-		<script>
-			$(function() {
-        $.echoforms.control($.echoforms.extras.RangeSlider);
-
+    <script>
+      $(function() {
         var root = "#demo-echoforms-form";
         var source = "#demo-echoforms-xml";
         var model = "#demo-echoforms-model";
 
         function loadForm() {
-				  $(root).echoforms({form: $(source).val()});
+          $(root).echoforms({form: $(source).val()});
           displayModel();
         }
 
@@ -56,10 +73,10 @@
 
         $(source).on('change', function(event){ reloadForm();event.preventDefault();event.stopPropagation();});
         $(root).on('echoforms:modelchange', displayModel);
-			});
-		</script>
-	</head>
-	<body>
+      });
+    </script>
+  </head>
+  <body>
     <h1>ECHO Forms jQuery Plugin Demo</h1>
     <h2>ECHO Forms XML</h2>
     <p>Enter ECHO Forms XML in the box below to see it rendered</p>
@@ -159,5 +176,5 @@
     <h2>Serialized Model</h2>
     <pre id="demo-echoforms-model">
     </pre>
-	</body>
+  </body>
 </html>
