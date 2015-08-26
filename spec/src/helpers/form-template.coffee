@@ -16,3 +16,7 @@ class window.FormTemplate
 
   form: (dom, varmap={}) ->
     dom.echoforms(form: @xml(varmap))
+
+  #use for debugging.  allows you to print teh form including substitutions
+  print_form_xml: (dom, varmap={}) ->
+    @xml(varmap)
