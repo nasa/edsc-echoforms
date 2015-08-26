@@ -7,7 +7,7 @@ module.exports = function(grunt) {
 
     meta: {
       banner: "/*\n" +
-        " *  <%= pkg.name %> - v<%= pkg.version %>\n" +
+        " * <%= pkg.name %> - v<%= pkg.version %>\n" +
         " * Copyright © 2007-2014 United States Government as represented by the Administrator of the National Aeronautics and Space Administration. All Rights Reserved.\n" +
         " * \n" +
         " * Licensed under the Apache License, Version 2.0 (the \"License\"); you may not use this file except in compliance with the License.\n" +
@@ -20,12 +20,38 @@ module.exports = function(grunt) {
         " */ \n"
     },
 
-    // Lint definitions
-    jshint: {
-      files: ["src/echoforms.js"],
+    // Source compilation
+    browserify: {
+      build: {
+        files: [
+          {
+            src: ["src/index.coffee"],
+            dest: "build/jquery.echoforms.js"
+          }
+        ]
+      },
+      spec: {
+        files: [
+          {
+            expand: true,
+            cwd: 'spec/src/',
+            ext: '.js',
+            src: ['**/*.coffee'],
+            dest: 'spec/build/'
+          }
+        ]
+      },
       options: {
-        jshintrc: ".jshintrc"
+        debug: true,
+        transform: ['coffeeify', 'uglifyify'],
+        alias: ['src/extern/jquery.coffee:jquery', 'src/extern/browser.coffee:browser']
       }
+    },
+
+    clean: {
+      dist: ['dist/*'],
+      build: ['build/*'],
+      spec: ['spec/build/**/*']
     },
 
     concat: {
@@ -70,9 +96,37 @@ module.exports = function(grunt) {
       }
     },
 
-    // Minify definitions
+    jasmine: {
+      spec: {
+        src: [
+          'dist/jquery.echoforms-full.min.js'
+        ],
+        options: {
+          styles: 'dist/jquery.echoforms-full.min.css',
+          vendor: [
+            'http://ajax.googleapis.com/ajax/libs/jquery/2.0.3/jquery.min.js',
+            'node_modules/jasmine-jquery/lib/jasmine-jquery.js'
+          ],
+          specs: 'spec/build/features/**/*.js',
+          helpers: 'spec/build/helpers/**/*.js',
+          template: 'spec/SpecRunner.tmpl'
+        }
+      }
+    },
+
+    less: {
+      build: {
+        files: {
+          'build/jquery.echoforms.min.css': 'src/echoforms.less'
+        },
+        options: {
+          compress: true
+        }
+      }
+    },
+
     uglify: {
-      dist: {
+      build: {
         files: {
           "build/jquery.echoforms.min.js": ["build/jquery.echoforms.js"]
         }
@@ -81,39 +135,6 @@ module.exports = function(grunt) {
         report: 'min'
         // The following is useful to see the gzipped size occasionally, but it's expensive
         // report: 'gzip',
-        // Generate source maps
-        // sourceMap: function(dest) {return dest + '.map';}
-      }
-    },
-
-    // Source compilation
-    browserify: {
-      compile: {
-        files: [
-          {
-            src: ["src/index.coffee"],
-            dest: "build/jquery.echoforms.js"
-          }
-        ],
-        options: {
-          transform: ['coffeeify'],
-          alias: ['src/extern/jquery.coffee:jquery', 'src/extern/browser.coffee:browser']
-        }
-      }
-    },
-
-    // Spec compilation
-    coffee: {
-      spec: {
-        files: [
-          {
-            expand: true,
-            cwd: 'spec/src/',
-            ext: '.js',
-            src: ['**/*.coffee'],
-            dest: 'spec/dist/'
-          }
-        ]
       }
     },
 
@@ -127,65 +148,30 @@ module.exports = function(grunt) {
       }
     },
 
-    less: {
-      dist: {
+    exorcise: {
+      build: {
         files: {
-          'build/jquery.echoforms.min.css': 'src/echoforms.less'
+          'build/jquery.echoforms.js.map': ['build/jquery.echoforms.js']
         },
         options: {
-          compress: true
+          base: require('path').resolve('..')
         }
       }
-    },
-
-    cssmin: {
-      dist: {
-        files: {
-          'dist/jquery.echoforms.min.css': ['dist/jquery.echoforms.min.css']
-        }
-      },
-      options: {
-        banner: "<%= meta.banner %>"
-      }
-    },
-
-    jasmine: {
-      spec: {
-        src: [
-          'dist/jquery.echoforms-full.min.js'
-        ],
-        options: {
-          styles: 'dist/jquery.echoforms-full.min.css',
-          vendor: [
-            'http://ajax.googleapis.com/ajax/libs/jquery/2.0.3/jquery.min.js',
-            'node_modules/jasmine-jquery/lib/jasmine-jquery.js'
-          ],
-          specs: 'spec/dist/features/**/*.js',
-          helpers: 'spec/dist/helpers/**/*.js',
-          template: 'spec/SpecRunner.tmpl'
-        }
-      }
-    },
-
-    clean: {
-      dist: ['dist/*', 'build/*'],
-      spec: ['spec/dist/**/*']
     }
   });
 
+  grunt.loadNpmTasks('grunt-browserify');
   grunt.loadNpmTasks("grunt-contrib-clean");
   grunt.loadNpmTasks("grunt-contrib-concat");
   grunt.loadNpmTasks("grunt-contrib-copy");
-  grunt.loadNpmTasks("grunt-contrib-jshint");
-  grunt.loadNpmTasks("grunt-contrib-uglify");
-  grunt.loadNpmTasks("grunt-contrib-coffee");
-  grunt.loadNpmTasks("grunt-contrib-watch");
-  grunt.loadNpmTasks("grunt-contrib-less");
-  grunt.loadNpmTasks('grunt-contrib-cssmin');
-  grunt.loadNpmTasks('grunt-browserify');
   grunt.loadNpmTasks('grunt-contrib-jasmine');
+  grunt.loadNpmTasks("grunt-contrib-less");
+  grunt.loadNpmTasks("grunt-contrib-uglify");
+  grunt.loadNpmTasks("grunt-contrib-watch");
+  grunt.loadNpmTasks('grunt-exorcise');
 
-  grunt.registerTask("default", ["clean", "copy", "browserify", "jshint", "uglify", "less", "cssmin", "concat"]);
-  grunt.registerTask("spec", ["default", "coffee:spec", "jasmine", "clean:spec"]);
+  grunt.registerTask("dist", ["clean", "copy", "browserify:build", "exorcise", "uglify", "less", "concat"]);
+  grunt.registerTask("spec", ["dist", "browserify:spec", "jasmine", "clean:spec"]);
 
+  grunt.registerTask("default", ["dist"]);
 };
