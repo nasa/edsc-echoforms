@@ -1,9 +1,14 @@
-# Earthdata Search Components: ECHO Forms
+<h1>Earthdata Search Components:<br>ECHO Forms</h1>
+
+[![Build Status](https://travis-ci.org/nasa/edsc-echoforms.svg?branch=master)](https://travis-ci.org/nasa/edsc-echoforms)
 
 A jQuery plugin implementing the
 [ECHO Forms](https://earthdata.nasa.gov/files/ECHO_Forms_Specification_0.pdf)
 specification. For a basic usage example and a testbed for changes,
 see demo/index.html
+
+The ECHO Forms plugin was developed as a component of
+[Earthdata Search](https://github.com/nasa/earthdata-search).
 
 ## Installation and Use
 
@@ -120,6 +125,16 @@ To watch for filesystem changes and rebuild automatically:
 To run the tests:
 
     $ grunt spec
+
+### Debugging
+
+The full-packaged and minified scripts are the canonical copies of the plugin,
+however during development it can be useful to use scripts with sourcemaps,
+which the packaged copies do not provide. To use the debugging version or
+test with other versions, edit `demo/index.html`. Inside of the `<head>`
+element, there are sections containing scripts for debug and packaged versions
+of both the full and basic plugins. By default it runs the full packaged
+version. Comment / uncomment the scripts you would like to use for testing.
 
 ### Obtaining and compiling wgxpath from source
 
