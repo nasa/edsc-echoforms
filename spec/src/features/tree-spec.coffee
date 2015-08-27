@@ -55,29 +55,40 @@ describe '"tree" control', ->
     template.form(dom, model: model, attributes: attrs)
     expect($('.jstree-clicked').parent().attr('node_value')).toBe("/GLAH01/Data_1HZ_VAL/Engineering/d_T_detID_VAL");
 
-  it "will render irrelevant nodes properly and not allow them to be selected", ->
-    model = """
-      <prov:treeReference type="tree">
-        <prov:data_layer></prov:data_layer>
-      </prov:treeReference>
-    """
-    children = """
-      <item value="irrelevantNode" relevant="false()"/>
-      <item value="relevantNode" relevant="true()"/>
-    """
+  describe "'irrelevant' nodes", ->
+    beforeEach ->
+      model = """
+        <prov:treeReference type="tree">
+          <prov:data_layer></prov:data_layer>
+        </prov:treeReference>
+      """
+      children = """
+        <item value="irrelevantNode" relevant="false()"/>
+        <item value="relevantNode" relevant="true()"/>
+      """
+      @form = template.form(dom, model: model, attributes: attrs, children: children)
 
-    form = template.form(dom, model: model, attributes: attrs, children: children)
-    $(":jstree li[node_value = '/irrelevantNode'] > a ").each ->
-      $(this).click()
-    $(":jstree li[node_value = '/relevantNode'] > a ").each ->
-      $(this).click()
-    expect($('.jstree-clicked').parent().attr('node_value')).not.toMatch("irrelevantNode");
-    expect($('.jstree-clicked').parent().attr('node_value')).toMatch("relevantNode");
-    expect(form.echoforms('serialize')).not.toMatch(/irrelevantNode/)
-    expect(form.echoforms('serialize')).toMatch(/relevantNode/)
-    expect($(":jstree li[node_value = '/irrelevantNode'] span.echoforms-help ").text()).toMatch("[not available]")
-    expect($(":jstree li[node_value = '/irrelevantNode'] i.jstree-icon")).toHaveClass("jstree-disabled-icon")
-    expect($(":jstree li[node_value = '/irrelevantNode']")).toHaveAttr("item-relevant","false")
+    it "does not allow irrelevant nodes to be selected", ->
+      $(":jstree li[node_value = '/irrelevantNode'] > a ").each ->
+        $(this).click()
+      $(":jstree li[node_value = '/relevantNode'] > a ").each ->
+        $(this).click()
+      expect($('.jstree-clicked').parent().attr('node_value')).not.toMatch("irrelevantNode");
+      expect($('.jstree-clicked').parent().attr('node_value')).toMatch("relevantNode");
+      expect(@form.echoforms('serialize')).not.toMatch(/irrelevantNode/)
+      expect(@form.echoforms('serialize')).toMatch(/relevantNode/)
+
+    it "displays a '[not available]' message", ->
+      expect($(":jstree li[node_value = '/irrelevantNode'] span.echoforms-help ").text()).toMatch("[not available]")
+
+    it "removes the checkbox", ->
+      expect($(":jstree li[node_value = '/irrelevantNode'] i.jstree-icon")).not.toHaveClass("jstree-checkbox")
+
+    it "adds a check mark icon", ->
+      expect($(":jstree li[node_value = '/irrelevantNode'] i.jstree-icon")).toHaveClass("jstree-disabled-icon")
+
+    it "sets the item-relevant attribute to false", ->
+      expect($(":jstree li[node_value = '/irrelevantNode']")).toHaveAttr("item-relevant","false")
 
   it "excludes from output any preselected nodes which are not relevant", ->
     model = """
@@ -94,22 +105,38 @@ describe '"tree" control', ->
     expect($('.jstree-clicked').parent().attr('node_value')).not.toMatch("irrelevantNode");
     expect(form.echoforms('serialize')).not.toMatch(/irrelevantNode/)
 
-  it "automatically selects required nodes and renders them properly", ->
-    model = """
-      <prov:treeReference type="tree">
-        <prov:data_layer></prov:data_layer>
-      </prov:treeReference>
-    """
-    children = """
-      <item value="requiredNode" required="true()"/>
-    """
+  describe "'required' nodes", ->
+    beforeEach ->
+      model = """
+        <prov:treeReference type="tree">
+          <prov:data_layer></prov:data_layer>
+        </prov:treeReference>
+      """
+      children = """
+        <item value="requiredNode" required="true()"/>
+      """
+      @form = template.form(dom, model: model, attributes: attrs, children: children)
 
-    form = template.form(dom, model: model, attributes: attrs, children: children)
-    expect($('.jstree-clicked').parent().attr('node_value')).toMatch("requiredNode");
-    expect($(":jstree li[node_value = '/requiredNode'] span.echoforms-help ").text()).toMatch("[required]")
-    expect($(":jstree li[node_value = '/requiredNode'] i.jstree-icon")).toHaveClass("jstree-required-icon")
-    expect($(":jstree li[node_value = '/requiredNode']")).toHaveAttr("item-required","true")
-    expect(form.echoforms('serialize')).toMatch(/requiredNode/)
+    it "preselects required nodes", ->
+      expect($('.jstree-clicked').parent().attr('node_value')).toMatch("requiredNode");
+      expect(@form.echoforms('serialize')).toMatch(/requiredNode/)
+
+    it "includes required nodes in output even if they are not selected", ->
+      $(":jstree li[node_value = '/requiredNode'] > a ").click()
+      expect($('.jstree-clicked').parent().attr('node_value')).not.toMatch("requiredNode");
+      expect(@form.echoforms('serialize')).toMatch(/requiredNode/)
+
+    it "displays a '[required]' message", ->
+      expect($(":jstree li[node_value = '/requiredNode'] span.echoforms-help ").text()).toMatch("[required]")
+
+    it "removes the checkbox", ->
+      expect($(":jstree li[node_value = '/requiredNode'] i.jstree-icon")).not.toHaveClass("jstree-checkbox")
+
+    it "adds an 'X' icon", ->
+      expect($(":jstree li[node_value = '/requiredNode'] i.jstree-icon")).toHaveClass("jstree-required-icon")
+
+    it "sets the item-required attribute to true", ->
+      expect($(":jstree li[node_value = '/requiredNode']")).toHaveAttr("item-required","true")
 
   it "handles dynamicly required nodes", ->
     model = """
@@ -149,7 +176,7 @@ describe '"tree" control', ->
     $('.echoforms-element-text').val('bar').click()
     expect(form.echoforms('serialize')).not.toMatch(/dynamicNode/)
 
-  it "relevancy takes precedence over required", ->
+  it "removes from output any irrelevant but required nodes", ->
     model = """
       <prov:treeReference type="tree">
         <prov:data_layer></prov:data_layer>
@@ -200,7 +227,7 @@ describe '"tree" control', ->
         <prov:data_layer>Engineering</prov:data_layer>
       </prov:treeReference>
     """
-    it "should add the provided value to the model if no separator specified", ->
+    it "adds the provided value to the model if no separator specified", ->
       attrs = 'ref="prov:treeReference" valueElementName="data_layer" cascade="false"'
       form = template.form(dom, model: model, attributes: attrs)
       expect($('.jstree-clicked').size()).toEqual(1)
@@ -210,7 +237,7 @@ describe '"tree" control', ->
         $(this).click()
       expect($('.jstree-clicked').size()).toEqual(2)
       expect(form.echoforms('serialize')).toMatch(/>Data_40HZ_VAL</)
-    it "should generate and add a path to the model if a separator is specified", ->
+    it "generates and adds a path to the model if a separator is specified", ->
       attrs = 'ref="prov:treeReference" valueElementName="data_layer" separator="\/" cascade="false"'
       form = template.form(dom, model: model, attributes: attrs)
       expect($('.jstree-clicked').size()).toEqual(1)
@@ -227,7 +254,7 @@ describe '"tree" control', ->
         <prov:data_layer>/GLAH01/Data_1HZ_VAL/Engineering</prov:data_layer>
       </prov:treeReference>
     """
-    it "should select all child nodes of selected node when cascade = true", ->
+    it "selects all child nodes of selected node when cascade = true", ->
       attrs = 'ref="prov:treeReference" valueElementName="data_layer" separator="\/" cascade="true"'
       form = template.form(dom, model: model, attributes: attrs)
       $(':jstree').jstree('open_all')
@@ -236,7 +263,7 @@ describe '"tree" control', ->
         $(this).click()
       expect($('.jstree-clicked').size()).toEqual(5)
 
-    it "should select only selected node when cascade = false", ->
+    it "selects only selected node when cascade = false", ->
       attrs = 'ref="prov:treeReference" valueElementName="data_layer" separator="\/" cascade="false"'
       form = template.form(dom, model: model, attributes: attrs)
       $(':jstree').jstree('open_all')
@@ -282,6 +309,3 @@ describe '"tree" control', ->
       expect($($('.jstree-clicked')[1]).parent().attr('node_value')).toBe("/value_with_no_label");
       expect(form.echoforms('serialize')).toMatch(/value_with_label/)
       expect(form.echoforms('serialize')).toMatch(/value_with_no_label/)
-
-
-
