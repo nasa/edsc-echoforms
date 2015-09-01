@@ -37,7 +37,10 @@ class TreeItem #extends Base
     current_node.attr('item-required', @node_required())
     current_node.attr('item-relevant', @node_relevant())
     #remove any existing required/not available text and re add later
+    was_disabled = false
     help = current_node.find('span.echoforms-help')
+    if(tree_div.jstree('is_disabled', current_node).toString() == "true")
+      was_disabled = true
     help.find('.not-available-or-required-text').remove()
     if !@node_relevant()
       @addNotAvailableRequiredText(help, '[not available]')
@@ -53,6 +56,8 @@ class TreeItem #extends Base
       tree_div.jstree('enable_node', current_node)
       current_node.find('a').css('font-style', 'normal')
       current_node.find('a.jstree-anchor > i.jstree-icon').first().addClass('jstree-checkbox').removeClass('jstree-disabled-icon').removeClass('jstree-required-icon')
+      if(was_disabled)
+       tree_div.jstree('select_node', current_node)
 
   subtree_handle_relevant_or_required: ->
     @handle_relevant_or_required()

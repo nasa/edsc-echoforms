@@ -156,25 +156,35 @@ describe '"tree" control', ->
     $('.echoforms-element-text').val('bar').click()
     expect(form.echoforms('serialize')).not.toMatch(/dynamicNode/)
 
-  it "handles dynamicly relevant nodes", ->
-    model = """
-      <prov:treeReference type="tree">
-        <prov:data_layer></prov:data_layer>
-      </prov:treeReference>
-    """
-    children = """
-      <item value="dynamicNode" relevant="contains('relevant',//prov:reference)"/>
-    """
+  describe "dynamically relevant nodes", ->
+    beforeEach ->
+      model = """
+        <prov:treeReference type="tree">
+          <prov:data_layer></prov:data_layer>
+        </prov:treeReference>
+      """
+      children = """
+        <item value="dynamicNode" relevant="contains('relevant',//prov:reference)"/>
+      """
+      @form = template.form(dom, model: model, attributes: attrs, children: children)
 
-    form = template.form(dom, model: model, attributes: attrs, children: children)
-    $(":jstree li[node_value = '/dynamicNode'] > a ").click()
-    expect($('.jstree-clicked').parent().attr('node_value')).not.toMatch("dynamicNode");
-    expect(form.echoforms('serialize')).not.toMatch(/dynamicNode/)
-    $('.echoforms-element-text').val('relevant').click()
-    $(":jstree li[node_value = '/dynamicNode'] > a ").click()
-    expect(form.echoforms('serialize')).toMatch(/dynamicNode/)
-    $('.echoforms-element-text').val('bar').click()
-    expect(form.echoforms('serialize')).not.toMatch(/dynamicNode/)
+    it "allows selecting nodes when relevant and blocks when not relevant", ->
+      $(":jstree li[node_value = '/dynamicNode'] > a ").click()
+      expect($('.jstree-clicked').parent().attr('node_value')).not.toMatch("dynamicNode");
+      expect(@form.echoforms('serialize')).not.toMatch(/dynamicNode/)
+      $('.echoforms-element-text').val('relevant').click()
+      expect(@form.echoforms('serialize')).toMatch(/dynamicNode/)
+      expect($('.jstree-clicked').parent().attr('node_value')).toMatch("dynamicNode");
+      $('.echoforms-element-text').val('bar').click()
+      expect(@form.echoforms('serialize')).not.toMatch(/dynamicNode/)
+
+    it "automatically selects newly enabled nodes", ->
+      $(":jstree li[node_value = '/dynamicNode'] > a ").click()
+      expect($('.jstree-clicked').parent().attr('node_value')).not.toMatch("dynamicNode");
+      expect(@form.echoforms('serialize')).not.toMatch(/dynamicNode/)
+      $('.echoforms-element-text').val('relevant').click()
+      expect($('.jstree-clicked').parent().attr('node_value')).toMatch("dynamicNode");
+      expect(@form.echoforms('serialize')).toMatch(/dynamicNode/)
 
   it "removes from output any irrelevant but required nodes", ->
     model = """
