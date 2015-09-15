@@ -238,7 +238,7 @@ describe '"tree" control', ->
       </prov:treeReference>
     """
     it "adds the provided value to the model if no separator specified", ->
-      attrs = 'ref="prov:treeReference" valueElementName="data_layer" cascade="false"'
+      attrs = 'ref="prov:treeReference" valueElementName="data_layer" cascade="false" simplify_output="false"'
       form = template.form(dom, model: model, attributes: attrs)
       expect($('.jstree-clicked').size()).toEqual(1)
       expect(form.echoforms('serialize')).toMatch(/>Engineering</)
@@ -281,6 +281,179 @@ describe '"tree" control', ->
       $(":jstree li[node_value='/GLAH01/Data_1HZ_VAL'] > a ").each ->
         $(this).click()
       expect($('.jstree-clicked').size()).toEqual(2)
+
+  describe "simplify_output option", ->
+    model = """
+      <prov:treeReference type="tree">
+        <prov:data_layer></prov:data_layer>
+      </prov:treeReference>
+    """
+    ui = """
+          <tree id="tree_to_simplify" ref="prov:treeReference" valueElementName="data_layer" cascade="true">
+            <item value="top_node_1">
+              <item value="level_1_child_1">
+                <item value="level_2_child_1">
+                  <item value="level_3_child_1"></item>
+                  <item value="level_3_child_2"></item>
+                </item>
+                <item value="level_2_child_2">
+                  <item value="level_3_child_3"></item>
+                  <item value="level_3_child_4"></item>
+                </item>
+              </item>
+            </item>
+            <item value="top_node_2" />
+              <item value="level_1_child_2">
+                <item value="level_2_child_2">
+                  <item value="relevant_child" relevant="true"></item>
+                  <item value="irrelevant_child" relevant="false"></item>
+                </item>
+                <item value="level_2_child_2">
+                  <item value="required_child" required="true"></item>
+                  <item value="not_required_child" required="false"></item>
+                </item>
+            </item>
+          </tree>
+        """
+    it "includes all selected and implied nodes when set to false", ->
+      no_simplify_ui = ui.replace('cascade="true"', 'cascade="true" simplify_output="false"')
+      form = template.form(dom, ui: no_simplify_ui, model: model, attrs: attrs)
+      $(':jstree').jstree('open_all')
+
+      $(":jstree li[node_value='level_2_child_1'] > a ").click()
+      expect(form.echoforms('serialize')).not.toMatch(/>top_node_1</)
+      expect(form.echoforms('serialize')).not.toMatch(/>level_1_child_1</)
+      expect(form.echoforms('serialize')).toMatch(/>level_2_child_1</)
+      expect(form.echoforms('serialize')).toMatch(/>level_3_child_1</)
+      expect(form.echoforms('serialize')).toMatch(/>level_3_child_2</)
+      expect(form.echoforms('serialize')).not.toMatch(/>level_2_child_2</)
+
+    it "defaults to true", ->
+      form = template.form(dom, ui: ui, model: model)
+      $(':jstree').jstree('open_all')
+      $(":jstree li[node_value='level_2_child_1'] > a ").click()
+
+      it "when a parent node is selected", ->
+        it "includes only that node, and not parents or children in the form output", ->
+          expect(form.echoforms('serialize')).not.toMatch(/top_node_1/)
+          expect(form.echoforms('serialize')).not.toMatch(/level_1_child_1/)
+          expect(form.echoforms('serialize')).toMatch(/level_2_child_1/)
+          expect(form.echoforms('serialize')).not.toMatch(/level_3/)
+          expect(form.echoforms('serialize')).not.toMatch(/level_2_child_2/)
+
+    it "simplifies tree selections", ->
+      it "when an entire subtree is selected", ->
+        form = template.form(dom, ui:ui, model: model)
+        $(':jstree').jstree('open_all')
+        it "when a parent node is explicitely clicked", ->
+          $(":jstree li[node_value='level_2_child_1'] > a ").click()
+
+          it "includes the parent node in the form output", ->
+            expect(form.echoforms('serialize')).toMatch(/level_2_child_1/)
+
+          it "does not include any node above the parent node in form output", ->
+            expect(form.echoforms('serialize')).not.toMatch(/top_node_1/)
+            expect(form.echoforms('serialize')).not.toMatch(/level_1_child_1/)
+
+          it "omits leaf nodes under the parent node", ->
+            expect(form.echoforms('serialize')).not.toMatch(/level_3_/)
+            expect(form.echoforms('serialize')).not.toMatch(/level_2_child_2/)
+
+        it "when selecting all subtrees causes its ancestor nodes to be full subtrees", ->
+          $(":jstree li[node_value='level_2_child_2'] > a ").click()
+
+          it "includes the top node of the fully selected subtree in the form output", ->
+            expect(form.echoforms('serialize')).toMatch(/top_node_1/)
+
+          it "omits any intermediate ancestors from the form output", ->
+            expect(form.echoforms('serialize')).not.toMatch(/level_1_child/)
+
+      it "when only leaf nodes are selected", ->
+        form = template.form(dom, ui:ui, model: model)
+        $(':jstree').jstree('open_all')
+        $(":jstree li[node_value='level_3_child_1'] > a ").click()
+        $(":jstree li[node_value='level_3_child_3'] > a ").click()
+
+        it "includes the leaf nodes in the form output", ->
+          expect(form.echoforms('serialize')).toMatch(/level_3_child_1/)
+          expect(form.echoforms('serialize')).toMatch(/level_3_child_3/)
+
+        it "omits the parent nodes from the form output", ->
+          expect(form.echoforms('serialize')).not.toMatch(/level_1_child.*/)
+          expect(form.echoforms('serialize')).not.toMatch(/level_3_child.*/)
+
+
+    it "when a subtree contains required nodes", ->
+      form = template.form(dom, ui:ui, model: model)
+      $(':jstree').jstree('open_all')
+
+      it "includes the required node in the form output", ->
+        expect(form.echoforms('serialize')).toMatch(/required_child.*/)
+
+      it "does not include the parent node in the form output", ->
+        expect(form.echoforms('serialize')).not.toMatch(/level_2_child_2</)
+
+      it "when all non required siblings are selected", ->
+        $(":jstree li[node_value='not_required_child'] > a ").click()
+
+        it "includes the parent node in the form output", ->
+          expect(form.echoforms('serialize')).toMatch(/level_2_child_2</)
+
+        it "omits the required node from the form output", ->
+          expect(form.echoforms('serialize')).not.toMatch(/required_child/)
+
+    it "when a subtree contains irrelevant nodes", ->
+      it "when all relevant child nodes are selected", ->
+        form = template.form(dom, ui:ui, model: model)
+        $(':jstree').jstree('open_all')
+        #selecting all relevant children does not cause parent to be included in output
+        $(":jstree li[node_value='relevant_child'] > a ").click()
+
+        it "renders the parent node as clicked", ->
+          expect($(":jstree li[node_value='relevant_child'] > a")).toHaveClass("jstree-clicked")
+
+        it "omits the parent node from the form ouput", ->
+          expect(form.echoforms('serialize')).not.toMatch(/level_2_child_2/)
+
+        it "includes the selected child node in the form output", ->
+          expect(form.echoforms('serialize')).toMatch(/>relavant_child/)
+
+      it "when a parent node containing irrelevant nodes is clicked", ->
+        form = template.form(dom, ui:ui, model: model)
+        $(':jstree').jstree('open_all')
+        $(":jstree li[node_value='level_2_child_2'] > a ").click()
+
+        it "renders the parent node as clicked", ->
+          expect($(":jstree li[node_value='level_2_child_2'] > a")).toHaveClass("jstree-clicked")
+
+
+        it "omits the parent node from the form ouput", ->
+          expect(form.echoforms('serialize')).not.toMatch(/level_2_child_2/)
+
+        it "includes all relevant child nodes in the form output", ->
+          expect(form.echoforms('serialize')).toMatch(/>relavant_child/)
+
+      it "when a parent node containing irrelevant descendants is clicked", ->
+        form = template.form(dom, ui:ui, model: model)
+        $(':jstree').jstree('open_all')
+        $(":jstree li[node_value='level_1_child_2'] > a ").click()
+
+        it "renders the parent node as clicked", ->
+          expect($(":jstree li[node_value='level_1_child_2'] > a")).toHaveClass("jstree-clicked")
+
+        it "omits the parent node from the form ouput", ->
+          expect(form.echoforms('serialize')).not.toMatch(/level_1_child_2/)
+
+        it "includes all relevant descendant nodes in the form output", ->
+          it "includes leaf descendants", ->
+            expect(form.echoforms('serialize')).toMatch(/>relavant_child/)
+
+          it "includes any full subtrees", ->
+            expect(form.echoforms('serialize')).toMatch(/level_2_child_2/)
+
+          it "does not include leaf nodes under full subtrees", ->
+            expect(form.echoforms('serialize')).not.toMatch(/.*required_child/)
+
 
 
   describe "other test cases", ->
