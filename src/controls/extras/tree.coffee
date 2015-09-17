@@ -97,13 +97,11 @@ class Tree extends Typed
           .filter('li.jstree-leaf[item-required=true], li.jstree-leaf:has(a.jstree-clicked)') #select clicked or required <li>s
       full_parents = checked_required_nodes
           .filter('li:has(a.jstree-clicked + ul.jstree-children)') #select clicked <li>s which have children
-          #.not('a.jstree-clicked + ul > li') #remove <li>s with clicked parents
           .not('li:has(li[item-relevant=false])') #remove <li>s with irrelevant descendants
       checked_required_nodes = true_leaves.add(full_parents)
           .not('li.jstree-node > a.jstree-clicked + ul:not(:has(li[item-relevant=false])) > li') #remove any <li>s whose parent is selected AND who do not have any irrelevant cousins
 
     checked_required_nodes.map ->
-      console.log('in map loop: ' +  $(this).attr('node_value'))
       $(this).attr('node_value')
 
   inputAttrs: ->
