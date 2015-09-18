@@ -22,7 +22,6 @@ class Tree extends Typed
     @items = for item in ui.children('item')
       new TreeItem($(item), model, controlClasses, resolver, '', @separator, this)
     super(ui, model, controlClasses, resolver)
-   
 
   validate: ->
     super()
@@ -81,6 +80,11 @@ class Tree extends Typed
     #  if node.li_attr and node.li_attr.node_value and node.li_attr.relevant == 'true'
     #    node.li_attr.node_value
 
+    #TODO - we really should be using the 'correct' approach mentioned above and storing custoimized info (e.g.
+    #'required') in the jstree object rather than using jquery selectors.  Unfortunately, jstree removes hidden
+    #nodes from the DOM, so with the current approach we need to ensure that all nodes are expanded at all times
+    #which is fairly ugly.
+
     #Get all nodes which are required, explicitely checked, or implicitely checked (i.e. all children are checked)
     #Explicitly checked or imlicitely checked (i.e. all descendants checked, required, or irrelevant)
     checked = @inputs().find('a.jstree-clicked').parent('[node_value][item-relevant=true][item-required=false]')
@@ -131,7 +135,9 @@ class Tree extends Typed
         three_state: @cascade
       plugins: [ "checkbox" ]
     @tree_root = root
-    console.log "Completed building Tree control in " + (new Date().getTime() - start)/1000 + " seconds"
+    #prevent closing of tree nodes as they need to stay open in order to be eligible for inclusion in output
+    root.find('i.jstree-ocl').on 'click', (e, data) ->
+      e.stopPropagation()
 
     result
 
