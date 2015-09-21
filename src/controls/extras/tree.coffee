@@ -18,10 +18,10 @@ class Tree extends Typed
     @separator = ui.attr('separator')
     @cascade = if ui.attr('cascade')? then ui.attr('cascade') == "true" else true
     @valueElementName = ui.attr('valueElementName') || 'value'
+    @simplify_output = if ui.attr('simplify_output')? then ui.attr('simplify_output') == "true" else true
     @items = for item in ui.children('item')
       new TreeItem($(item), model, controlClasses, resolver, '', @separator, this)
     super(ui, model, controlClasses, resolver)
-   
 
   validate: ->
     super()
@@ -79,16 +79,34 @@ class Tree extends Typed
     #@inputs().jstree("get_selected", "full").map (node) ->
     #  if node.li_attr and node.li_attr.node_value and node.li_attr.relevant == 'true'
     #    node.li_attr.node_value
-    checked_required_nodes = []
-    clicked = @inputs().find('a.jstree-clicked').parent().map ->
-      node = $(this)
-      if node.attr('node_value') and node.attr('item-relevant') == 'true' and node.attr('item-required') == 'false'
-        checked_required_nodes.push(node.attr('node_value'))
-    required = @inputs().find('li[item-required=true]').map ->
-      node = $(this)
-      if node.attr('node_value') and node.attr('item-relevant') == 'true'
-        checked_required_nodes.push(node.attr('node_value'))
-    checked_required_nodes
+
+    #TODO - we really should be using the 'correct' approach mentioned above and storing custoimized info (e.g.
+    #'required') in the jstree object rather than using jquery selectors.  Unfortunately, jstree removes hidden
+    #nodes from the DOM, so with the current approach we need to ensure that all nodes are expanded at all times
+    #which is fairly ugly.
+
+    #Get all nodes which are required, explicitely checked, or implicitely checked (i.e. all children are checked)
+    #Explicitly checked or imlicitely checked (i.e. all descendants checked, required, or irrelevant)
+    checked = @inputs().find('a.jstree-clicked').parent('[node_value][item-relevant=true][item-required=false]')
+    #Required nodes
+    required = @inputs().find('li[item-required=true][node_value][item-relevant= true]')
+    checked_required_nodes = checked.add(required)
+
+    if @simplify_output
+      #Filter values to include only
+      #    - 'full parent' nodes (parents whose descendants are all selected [and relevant])
+      #    - 'true leaf' nodes (leaves which do not descend from any 'full parent' nodes)
+      #Note that irrelevant descendants will cause a node not to be a 'full parent' even if it is rendered as a checked node.
+      true_leaves = checked_required_nodes
+          .filter('li.jstree-leaf[item-required=true], li.jstree-leaf:has(a.jstree-clicked)') #select clicked or required <li>s
+      full_parents = checked_required_nodes
+          .filter('li:has(a.jstree-clicked + ul.jstree-children)') #select clicked <li>s which have children
+          .not('li:has(li[item-relevant=false])') #remove <li>s with irrelevant descendants
+      checked_required_nodes = true_leaves.add(full_parents)
+          .not('li.jstree-node > a.jstree-clicked + ul:not(:has(li[item-relevant=false])) > li') #remove any <li>s whose parent is selected AND who do not have any irrelevant cousins
+
+    checked_required_nodes.map ->
+      $(this).attr('node_value')
 
   inputAttrs: ->
     $.extend(super(), separator: @separator, cascade: @cascade)
@@ -117,7 +135,9 @@ class Tree extends Typed
         three_state: @cascade
       plugins: [ "checkbox" ]
     @tree_root = root
-    console.log "Completed building Tree control in " + (new Date().getTime() - start)/1000 + " seconds"
+    #prevent closing of tree nodes as they need to stay open in order to be eligible for inclusion in output
+    root.find('i.jstree-ocl').on 'click', (e, data) ->
+      e.stopPropagation()
 
     result
 

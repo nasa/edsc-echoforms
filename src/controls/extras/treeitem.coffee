@@ -79,6 +79,7 @@ class TreeItem #extends Base
   buildElementsDom: ->
     el = $('<li>')
     el.attr(node_value: @value)
+    el.addClass('jstree-open')
     help = @buildHelpDom()
     data_jstree = {}
     model_vals = @tree.modelValues()
@@ -86,7 +87,7 @@ class TreeItem #extends Base
       data_jstree['selected'] = true
     unless @node_relevant()
       data_jstree['disabled'] = true
-      data_jstree['selected'] = false
+      data_jstree['selected'] = true #this will be filtered out at output generation, but will ensure the node is loaded.
       @addNotAvailableRequiredText(help, '[not available]')
     if @node_required()      
       data_jstree['selected'] = true
