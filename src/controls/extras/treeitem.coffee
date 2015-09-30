@@ -42,6 +42,8 @@ class TreeItem #extends Base
     if(tree_div.jstree('is_disabled', current_node).toString() == "true")
       was_disabled = true
     help.find('.not-available-or-required-text').remove()
+    #reset the node icon
+    current_node.find('a.jstree-anchor > i.jstree-icon').first().addClass('jstree-checkbox').removeClass('jstree-disabled-icon').removeClass('jstree-required-icon')
     if !@node_relevant()
       @addNotAvailableRequiredText(help, '[not available]')
       tree_div.jstree('disable_node', current_node)
