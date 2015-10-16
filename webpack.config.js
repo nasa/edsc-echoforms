@@ -1,4 +1,11 @@
-var webpack = require("webpack");
+var webpack = require("webpack"),
+    fs = require('fs'),
+    pkg = JSON.parse(fs.readFileSync('./package.json')),
+    license;
+
+license = fs.readFileSync('./LICENSE')
+  .toString()
+  .split(/\s+---\s+/, 1)[0];
 
 module.exports = {
   context: __dirname,
@@ -17,6 +24,7 @@ module.exports = {
       { test: /\.coffee$/, loader: "coffee" },
       { test: /\.(coffee\.md|litcoffee)$/, loader: "coffee?literate" },
       { test: /\.(gif|png)$/, loader: "url-loader?limit=100000" },
+      { test: /\.hbs$/, loader: "handlebars-loader" },
       { test: /\.jpg$/, loader: "file-loader" }
     ]
   },
@@ -29,6 +37,7 @@ module.exports = {
     extensions: ['', '.js', '.json', '.coffee']
   },
   plugins: [
+    new webpack.BannerPlugin(license),
     new webpack.ProvidePlugin({
       $: "jquery",
       jQuery: "jquery",
