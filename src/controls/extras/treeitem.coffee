@@ -42,6 +42,8 @@ class TreeItem #extends Base
     if(tree_div.jstree('is_disabled', current_node).toString() == "true")
       was_disabled = true
     help.find('.not-available-or-required-text').remove()
+    #reset the node icon
+    current_node.find('a.jstree-anchor > i.jstree-icon').first().addClass('jstree-checkbox').removeClass('jstree-disabled-icon').removeClass('jstree-required-icon')
     if !@node_relevant()
       @addNotAvailableRequiredText(help, '[not available]')
       tree_div.jstree('disable_node', current_node)
@@ -79,6 +81,7 @@ class TreeItem #extends Base
   buildElementsDom: ->
     el = $('<li>')
     el.attr(node_value: @value)
+    el.addClass('jstree-open')
     help = @buildHelpDom()
     data_jstree = {}
     model_vals = @tree.modelValues()
@@ -86,7 +89,7 @@ class TreeItem #extends Base
       data_jstree['selected'] = true
     unless @node_relevant()
       data_jstree['disabled'] = true
-      data_jstree['selected'] = false
+      data_jstree['selected'] = true #this will be filtered out at output generation, but will ensure the node is loaded.
       @addNotAvailableRequiredText(help, '[not available]')
     if @node_required()      
       data_jstree['selected'] = true
