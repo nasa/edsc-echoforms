@@ -62,8 +62,8 @@
     "wicked-good-xpath": "bilts/wicked-good-xpath"
   },
   "scripts": {
-    "prepublish": "webpack",
-    "test": "gulp spec",
-    "start": "webpack -w"
+    "prepublish": "./node_modules/.bin/webpack -p",
+    "start": "./node_modules/.bin/webpack -w",
+    "test": "./node_modules/.bin/karma start --single-run --browsers PhantomJS"
   }
 }

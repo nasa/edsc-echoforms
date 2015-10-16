@@ -1,5 +1,8 @@
 module.exports = function(config) {
-  var webpackConfig = require('./webpack.config.js');
+  var webpackConfig = require('./webpack.config.js'),
+      fs = require('fs'),
+      pkg = JSON.parse(fs.readFileSync('./package.json'));
+
   webpackConfig.externals.dom = 'window.dom';
 
   config.set({
@@ -71,6 +74,6 @@ module.exports = function(config) {
 
     // Continuous Integration mode
     // if true, Karma captures browsers, runs the tests and exits
-    singleRun: true
+    singleRun: false
   });
 };
