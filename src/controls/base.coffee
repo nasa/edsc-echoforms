@@ -19,6 +19,7 @@ class Base
   #           is only used by grouping controls
   #   resolver - A function used to resolve xpath namespaces, used by the `xpath` method.
   constructor: (@ui, @model, @controlClasses, @resolver) ->
+    ui = @ui
     # Read and store common attributes
     @refExpr      = ui.attr('ref')
     @id           = ui.attr('id') ? "echoforms-control-#{Base.echoformsControlUniqueId++}"

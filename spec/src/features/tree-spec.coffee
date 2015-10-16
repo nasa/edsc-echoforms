@@ -36,7 +36,7 @@ describe '"tree" control', ->
   """)
 
   it "displays as an html div element", ->
-    template.form(dom)
+    template.form($('#dom'))
     expect($(':jstree')).toBeMatchedBy('div')
 
   sharedBehaviorForControls(template, skip_input_specs: true)
@@ -52,7 +52,7 @@ describe '"tree" control', ->
         <prov:data_layer>/GLAH01/Data_1HZ_VAL/Engineering/d_T_detID_VAL</prov:data_layer>
       </prov:treeReference>
     """
-    template.form(dom, model: model, attributes: attrs)
+    template.form($('#dom'), model: model, attributes: attrs)
     expect($('.jstree-clicked').parent().attr('node_value')).toBe("/GLAH01/Data_1HZ_VAL/Engineering/d_T_detID_VAL");
 
   describe "'irrelevant' nodes", ->
@@ -66,7 +66,7 @@ describe '"tree" control', ->
         <item value="irrelevantNode" relevant="false()"/>
         <item value="relevantNode" relevant="true()"/>
       """
-      @form = template.form(dom, model: model, attributes: attrs, children: children)
+      @form = template.form($('#dom'), model: model, attributes: attrs, children: children)
 
     it "does not allow irrelevant nodes to be selected", ->
       $(":jstree li[node_value = '/irrelevantNode'] > a ").each ->
@@ -100,7 +100,7 @@ describe '"tree" control', ->
       <item value="irrelevantNode" relevant="false()"/>
     """
 
-    form = template.form(dom, model: model, attributes: attrs, children: children)
+    form = template.form($('#dom'), model: model, attributes: attrs, children: children)
     expect($('.jstree-clicked').parent().attr('node_value')).not.toMatch("/GLAH01/Data_1HZ_VAL/Engineering/d_T_detID_VAL");
     expect($('.jstree-clicked').parent().attr('node_value')).not.toMatch("irrelevantNode");
     expect(form.echoforms('serialize')).not.toMatch(/irrelevantNode/)
@@ -115,7 +115,7 @@ describe '"tree" control', ->
       children = """
         <item value="requiredNode" required="true()"/>
       """
-      @form = template.form(dom, model: model, attributes: attrs, children: children)
+      @form = template.form($('#dom'), model: model, attributes: attrs, children: children)
 
     it "preselects required nodes", ->
       expect($('.jstree-clicked').parent().attr('node_value')).toMatch("requiredNode");
@@ -148,7 +148,7 @@ describe '"tree" control', ->
       <item value="dynamicNode" required="contains('required',//prov:reference)"/>
     """
 
-    form = template.form(dom, model: model, attributes: attrs, children: children)
+    form = template.form($('#dom'), model: model, attributes: attrs, children: children)
     expect($('.jstree-clicked').parent().attr('node_value')).not.toMatch("dynamicNode");
     expect(form.echoforms('serialize')).not.toMatch(/dynamicNode/)
     $('.echoforms-element-text').val('required').click()
@@ -166,7 +166,7 @@ describe '"tree" control', ->
       children = """
         <item value="dynamicNode" relevant="contains('relevant',//prov:reference)"/>
       """
-      @form = template.form(dom, model: model, attributes: attrs, children: children)
+      @form = template.form($('#dom'), model: model, attributes: attrs, children: children)
 
     it "allows selecting nodes when relevant and blocks when not relevant", ->
       $(":jstree li[node_value = '/dynamicNode'] > a ").click()
@@ -196,12 +196,12 @@ describe '"tree" control', ->
       <item value="requiredIrrelevantNode" required="true()" relevant="false()"/>
     """
 
-    form = template.form(dom, model: model, attributes: attrs, children: children)
+    form = template.form($('#dom'), model: model, attributes: attrs, children: children)
     expect(form.echoforms('serialize')).not.toMatch(/requiredIrrelevantNode/)
 
   it "updates the model when selections change", ->
     model = "<prov:treeReference></prov:treeReference>"
-    template.form(dom, model: model, attributes: attrs)
+    template.form($('#dom'), model: model, attributes: attrs)
     $(':jstree').jstree('open_all')
     $(":jstree li[node_value='/GLAH01/Data_40HZ_VAL'] > a ").each ->
       $(this).click()
@@ -209,7 +209,7 @@ describe '"tree" control', ->
 
   it "includes nodes in output which are selected but hidden", ->
     model = "<prov:treeReference></prov:treeReference>"
-    form = template.form(dom, model: model, attributes: attrs)
+    form = template.form($('#dom'), model: model, attributes: attrs)
     $(':jstree').jstree('open_all')
     $(":jstree li[node_value='/GLAH01/Data_1HZ_VAL/Engineering/d_T_detID_VAL_2'] > a ").each ->
       $(this).click()
@@ -226,7 +226,7 @@ describe '"tree" control', ->
             <item value="value_with_no_label"/>
           </tree>
         """
-      template.form(dom, model: model, attributes: attrs, ui: ui)
+      template.form($('#dom'), model: model, attributes: attrs, ui: ui)
       expect($(':jstree li[node_value="/value_with_label"]').text()).toEqual('a label')
       expect($(':jstree li[node_value="/value_with_empty_label"]').text()).toEqual('value_with_empty_label')
       expect($(':jstree li[node_value="/value_with_no_label"]').text()).toEqual('value_with_no_label')
@@ -239,7 +239,7 @@ describe '"tree" control', ->
     """
     it "adds the provided value to the model if no separator specified", ->
       attrs = 'ref="prov:treeReference" valueElementName="data_layer" cascade="false"'
-      form = template.form(dom, model: model, attributes: attrs)
+      form = template.form($('#dom'), model: model, attributes: attrs)
       expect($('.jstree-clicked').size()).toEqual(1)
       expect(form.echoforms('serialize')).toMatch(/>Engineering</)
       $(':jstree').jstree('open_all')
@@ -249,7 +249,7 @@ describe '"tree" control', ->
       expect(form.echoforms('serialize')).toMatch(/>Data_40HZ_VAL</)
     it "generates and adds a path to the model if a separator is specified", ->
       attrs = 'ref="prov:treeReference" valueElementName="data_layer" separator="\/" cascade="false"'
-      form = template.form(dom, model: model, attributes: attrs)
+      form = template.form($('#dom'), model: model, attributes: attrs)
       expect($('.jstree-clicked').size()).toEqual(1)
       expect(form.echoforms('serialize')).toMatch(/>\/GLAH01\/Data_1HZ_VAL\/Engineering\/d_T_detID_VAL</)
       $(':jstree').jstree('open_all')
@@ -266,7 +266,7 @@ describe '"tree" control', ->
     """
     it "selects all child nodes of selected node when cascade = true", ->
       attrs = 'ref="prov:treeReference" valueElementName="data_layer" separator="\/" cascade="true"'
-      form = template.form(dom, model: model, attributes: attrs)
+      form = template.form($('#dom'), model: model, attributes: attrs)
       $(':jstree').jstree('open_all')
       expect($('.jstree-clicked').size()).toEqual(3)
       $(":jstree li[node_value='/GLAH01/Data_1HZ_VAL'] > a ").each ->
@@ -275,7 +275,7 @@ describe '"tree" control', ->
 
     it "selects only selected node when cascade = false", ->
       attrs = 'ref="prov:treeReference" valueElementName="data_layer" separator="\/" cascade="false"'
-      form = template.form(dom, model: model, attributes: attrs)
+      form = template.form($('#dom'), model: model, attributes: attrs)
       $(':jstree').jstree('open_all')
       expect($('.jstree-clicked').size()).toEqual(1)
       $(":jstree li[node_value='/GLAH01/Data_1HZ_VAL'] > a ").each ->
@@ -291,7 +291,7 @@ describe '"tree" control', ->
         </prov:treeReference2>
       """
     it "handles multiple identical trees", ->
-      #this is necessary to make sure multiple identical forms in the same DOM will not have id collisions
+      #this is necessary to make sure multiple identical forms in the same $('#DOM') will not have id collisions
       attrs = 'valueElementName="data_layer" separator="\/"'
       ui = """
           <tree id="duplicate_test" #{attrs} ref='prov:treeReference'>
@@ -305,7 +305,7 @@ describe '"tree" control', ->
             <item value="value_with_no_label"/>
           </tree>
         """
-      form = template.form(dom, model: model, attributes: attrs, ui: ui)
+      form = template.form($('#dom'), model: model, attributes: attrs, ui: ui)
       expect($(':jstree').size()).toEqual(3)
       expect($(':jstree').filter ->
         /duplicate_test/.test(this.id)

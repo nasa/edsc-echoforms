@@ -43,8 +43,8 @@ module.exports = function(grunt) {
       },
       options: {
         debug: true,
-        transform: ['coffeeify', 'uglifyify'],
-        alias: ['src/extern/jquery.coffee:jquery', 'src/extern/browser.coffee:browser']
+        //transform: ['coffeeify']//, 'uglifyify']//,
+        //alias: ['src/extern/jquery.coffee:jquery', 'src/extern/browser.coffee:browser']
       }
     },
 
@@ -171,7 +171,8 @@ module.exports = function(grunt) {
   grunt.loadNpmTasks('grunt-exorcise');
 
   grunt.registerTask("dist", ["clean", "copy", "browserify:build", "exorcise", "uglify", "less", "concat"]);
-  grunt.registerTask("spec", ["dist", "browserify:spec", "jasmine", "clean:spec"]);
+  //grunt.registerTask("spec", ["dist", "browserify:spec", "jasmine", "clean:spec"]);
+  grunt.registerTask("spec", ["browserify:spec", "jasmine"]);
 
   grunt.registerTask("default", ["dist"]);
 };

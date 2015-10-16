@@ -1,4 +1,4 @@
-{window} = require('browser')
+window = require('window')
 
 wgxpathInstalled = false
 

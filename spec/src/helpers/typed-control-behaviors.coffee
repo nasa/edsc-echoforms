@@ -4,7 +4,7 @@ window.sharedBehaviorForTypedControls = (template) ->
 
   describe 'with type="xs:double"', ->
     beforeEach ->
-      template.form(dom, attributes: 'type="xs:double"')
+      template.form($('#dom'), attributes: 'type="xs:double"')
 
     it "accepts a blank value", ->
       setValue('')
@@ -32,7 +32,7 @@ window.sharedBehaviorForTypedControls = (template) ->
 
   describe 'with type="xs:long"', ->
     beforeEach ->
-      template.form(dom, attributes: 'type="xs:long"')
+      template.form($('#dom'), attributes: 'type="xs:long"')
 
     it "accepts a blank value", ->
       setValue('')
@@ -62,7 +62,7 @@ window.sharedBehaviorForTypedControls = (template) ->
 
   describe 'with type="xs:int"', ->
     beforeEach ->
-      template.form(dom, attributes: 'type="xs:int"')
+      template.form($('#dom'), attributes: 'type="xs:int"')
 
     it "accepts a blank value", ->
       setValue('')
@@ -93,7 +93,7 @@ window.sharedBehaviorForTypedControls = (template) ->
 
   describe 'with type="xs:short"', ->
     beforeEach ->
-      template.form(dom, attributes: 'type="xs:short"')
+      template.form($('#dom'), attributes: 'type="xs:short"')
 
     it "accepts a blank value", ->
       setValue('')
@@ -123,7 +123,7 @@ window.sharedBehaviorForTypedControls = (template) ->
 
   describe 'with type="xs:dateTime"', ->
     beforeEach ->
-      template.form(dom, attributes: 'type="xs:dateTime"')
+      template.form($('#dom'), attributes: 'type="xs:dateTime"')
 
     it "shows placeholder text when possible", ->
       if $('#control :input').is('input')

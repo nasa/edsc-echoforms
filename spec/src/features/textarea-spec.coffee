@@ -21,7 +21,7 @@ describe '"textarea" control', ->
   """)
 
   it "displays as an html textarea element", ->
-    template.form(dom)
+    template.form($('#dom'))
     expect($('#control :input')).toBeMatchedBy('textarea')
 
   sharedBehaviorForControls(template)
