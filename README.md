@@ -20,32 +20,29 @@ useful rendering extensions.
 
 ### Installing the full version
 
-Copy the following files to a folder served by your site:
+Copy the full javascript package and optionally its source map to a folder
+hosted on your site:
 
-    dist/32px.png
-    dist/40px.png
-    dist/throbber.gif
     dist/jquery.echoforms-full.min.js
-    dist/jquery.echoforms-full.min.css
+    dist/jquery.echoforms-full.min.js.map
 
-And then include jQuery, the Javascript, and the CSS on a page, for instance:
+And then include jQuery and the Javascript on a page, for instance:
 
     <script src="http://ajax.googleapis.com/ajax/libs/jquery/2.0.3/jquery.min.js"></script>
     <script src="edsc-echoforms/jquery.echoforms-full.min.js"></script>
-    <link rel="stylesheet" href="edsc-echoforms/jquery.echoforms-full.min.css">
 
 ### Installing the lightweight version
 
-Copy the following files to a folder served by your site:
+Copy the basic javascript package and optionally its source map to a folder
+hosted on your site:
 
-    dist/jquery.echoforms.min.js
-    dist/jquery.echoforms.min.css
+    dist/jquery.echoforms-basic.min.js
+    dist/jquery.echoforms-basic.min.js.map
 
-And then include jQuery, the Javascript, and the CSS on a page, for instance:
+And then include jQuery and the Javascript on a page, for instance:
 
     <script src="http://ajax.googleapis.com/ajax/libs/jquery/2.0.3/jquery.min.js"></script>
     <script src="edsc-echoforms/jquery.echoforms.min.js"></script>
-    <link rel="stylesheet" href="edsc-echoforms/jquery.echoforms.min.css">
 
 ### Basic Use
 
@@ -116,25 +113,23 @@ make sure ./node_modules/.bin and /usr/local/bin are in your path.
 
 To compile:
 
-    $ grunt
+    $ npm install
 
 To watch for filesystem changes and rebuild automatically:
 
-    $ grunt watch
+    $ npm start
 
 To run the tests:
 
-    $ grunt spec
+    $ npm test
+
+Before committing changes, be sure to run `npm install` to build the latest minified source.
 
 ### Debugging
 
-The full-packaged and minified scripts are the canonical copies of the plugin,
-however during development it can be useful to use scripts with sourcemaps,
-which the packaged copies do not provide. To use the debugging version or
-test with other versions, edit `demo/index.html`. Inside of the `<head>`
-element, there are sections containing scripts for debug and packaged versions
-of both the full and basic plugins. By default it runs the full packaged
-version. Comment / uncomment the scripts you would like to use for testing.
+An example page useful for debugging is located at `demo/index.html`. Opening
+this page in the browser will also load source maps, allowing you to trace
+any errors back to their original code.
 
 ### Obtaining and compiling wgxpath from source
 

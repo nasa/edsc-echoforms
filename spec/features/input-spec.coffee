@@ -21,7 +21,7 @@ describe '"input" control', ->
   """)
 
   it "displays as an html text input element", ->
-    template.form(dom)
+    template.form($('#dom'))
     expect($('#control :input')).toBeMatchedBy('input[type=text]')
 
   sharedBehaviorForControls(template)
@@ -29,33 +29,33 @@ describe '"input" control', ->
 
   describe 'with type="xs:boolean"', ->
     it "displays a checkbox instead of a text input", ->
-      template.form(dom, attributes: 'type="xs:boolean"')
+      template.form($('#dom'), attributes: 'type="xs:boolean"')
       expect($('#control :checkbox')).toExist()
       expect($('#control :checkbox')).not.toBeChecked()
 
     it "loads boolean true values from the model", ->
-      template.form(dom,
+      template.form($('#dom'),
         attributes: 'type="xs:boolean" ref="prov:boolean"'
         model: '<prov:boolean>true</prov:boolean>'
         )
       expect($('#control :checkbox')).toBeChecked()
 
     it "loads boolean false values from the model", ->
-      template.form(dom,
+      template.form($('#dom'),
         attributes: 'type="xs:boolean" ref="prov:boolean"'
         model: '<prov:boolean>false</prov:boolean>'
         )
       expect($('#control :checkbox')).not.toBeChecked()
 
     it "copes with non-boolean values in the model", ->
-      template.form(dom,
+      template.form($('#dom'),
         attributes: 'type="xs:boolean" ref="prov:boolean"'
         model: '<prov:boolean>asdf</prov:boolean>'
         )
       expect($('#control :checkbox')).not.toBeChecked()
 
     it "updates its checkbox's checked state when the model updates", ->
-      template.form(dom, attributes: 'type="xs:boolean" ref="prov:reference"')
+      template.form($('#dom'), attributes: 'type="xs:boolean" ref="prov:reference"')
       expect($('#control :checkbox')).not.toBeChecked()
       $('#reference :input').val('true').change()
       expect($('#control :checkbox')).toBeChecked()
@@ -63,7 +63,7 @@ describe '"input" control', ->
       expect($('#control :checkbox')).not.toBeChecked()
 
     it "updates the model based on its checked state", ->
-      template.form(dom, attributes: 'type="xs:boolean" ref="prov:reference"')
+      template.form($('#dom'), attributes: 'type="xs:boolean" ref="prov:reference"')
       checkbox = $('#control :input')
 
       expect($('#reference :input').val()).toBe('')

@@ -21,7 +21,7 @@ describe '"secret" control', ->
   """)
 
   it "displays as an html password input element", ->
-    template.form(dom)
+    template.form($('#dom'))
     expect($('#control :input')).toBeMatchedBy('input[type=password]')
 
   sharedBehaviorForControls(template)

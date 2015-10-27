@@ -36,7 +36,7 @@ describe '"tree" control', ->
   """)
 
   it "displays as an html div element", ->
-    template.form(dom)
+    template.form($('#dom'))
     expect($(':jstree')).toBeMatchedBy('div')
 
   sharedBehaviorForControls(template, skip_input_specs: true)
@@ -52,7 +52,7 @@ describe '"tree" control', ->
         <prov:data_layer>/GLAH01/Data_1HZ_VAL/Engineering/d_T_detID_VAL</prov:data_layer>
       </prov:treeReference>
     """
-    template.form(dom, model: model, attributes: attrs)
+    template.form($('#dom'), model: model, attributes: attrs)
     expect($('.jstree-clicked').parent().attr('node_value')).toBe("/GLAH01/Data_1HZ_VAL/Engineering/d_T_detID_VAL");
 
   describe "'irrelevant' nodes", ->
@@ -66,7 +66,7 @@ describe '"tree" control', ->
         <item value="irrelevantNode" relevant="false()"/>
         <item value="relevantNode" relevant="true()"/>
       """
-      @form = template.form(dom, model: model, attributes: attrs, children: children)
+      @form = template.form($('#dom'), model: model, attributes: attrs, children: children)
 
     it "does not allow irrelevant nodes to be selected", ->
       $(":jstree li[node_value = '/irrelevantNode'] > a ").each ->
@@ -98,7 +98,7 @@ describe '"tree" control', ->
       <item value="irrelevantNode" relevant="false()"/>
     """
 
-    form = template.form(dom, model: model, attributes: attrs, children: children)
+    form = template.form($('#dom'), model: model, attributes: attrs, children: children)
     expect(form.echoforms('serialize')).not.toMatch(/irrelevantNode/)
 
   describe "'required' nodes", ->
@@ -111,7 +111,7 @@ describe '"tree" control', ->
       children = """
         <item value="requiredNode" required="true()"/>
       """
-      @form = template.form(dom, model: model, attributes: attrs, children: children)
+      @form = template.form($('#dom'), model: model, attributes: attrs, children: children)
 
     it "preselects required nodes", ->
       expect($('.jstree-clicked').parent().attr('node_value')).toMatch("requiredNode");
@@ -144,7 +144,7 @@ describe '"tree" control', ->
       <item value="dynamicNode" required="contains('required',//prov:reference)"/>
     """
 
-    form = template.form(dom, model: model, attributes: attrs, children: children)
+    form = template.form($('#dom'), model: model, attributes: attrs, children: children)
     expect($('.jstree-clicked').parent().attr('node_value')).not.toMatch("dynamicNode");
     expect(form.echoforms('serialize')).not.toMatch(/dynamicNode/)
     $('.echoforms-element-text').val('required').click()
@@ -162,7 +162,7 @@ describe '"tree" control', ->
       children = """
         <item value="dynamicNode" relevant="contains('relevant',//prov:reference)"/>
       """
-      @form = template.form(dom, model: model, attributes: attrs, children: children)
+      @form = template.form($('#dom'), model: model, attributes: attrs, children: children)
 
     it "allows selecting nodes when relevant and blocks when not relevant", ->
       $(":jstree li[node_value = '/dynamicNode'] > a ").click()
@@ -188,12 +188,12 @@ describe '"tree" control', ->
       <item value="requiredIrrelevantNode" required="true()" relevant="false()"/>
     """
 
-    form = template.form(dom, model: model, attributes: attrs, children: children)
+    form = template.form($('#dom'), model: model, attributes: attrs, children: children)
     expect(form.echoforms('serialize')).not.toMatch(/requiredIrrelevantNode/)
 
   it "updates the model when selections change", ->
     model = "<prov:treeReference></prov:treeReference>"
-    template.form(dom, model: model, attributes: attrs)
+    template.form($('#dom'), model: model, attributes: attrs)
     $(':jstree').jstree('open_all')
     $(":jstree li[node_value='/GLAH01/Data_40HZ_VAL'] > a ").each ->
       $(this).click()
@@ -201,7 +201,7 @@ describe '"tree" control', ->
 
   it "does not allow nodes to be collapsed", ->
     model = "<prov:treeReference></prov:treeReference>"
-    form = template.form(dom, model: model, attributes: attrs)
+    form = template.form($('#dom'), model: model, attributes: attrs)
     $(':jstree').jstree('open_all')
     $(":jstree li[node_value='/GLAH01/Data_1HZ_VAL/Engineering/d_T_detID_VAL_2'] > a ").click()
     $(":jstree li[node_value='/GLAH01/Data_1HZ_VAL/Engineering/d_T_detID_VAL_2'] > i.jstree-ocl ").click()
@@ -218,7 +218,7 @@ describe '"tree" control', ->
             <item value="value_with_no_label"/>
           </tree>
         """
-      template.form(dom, model: model, attributes: attrs, ui: ui)
+      template.form($('#dom'), model: model, attributes: attrs, ui: ui)
       expect($(':jstree li[node_value="/value_with_label"]').text()).toEqual('a label')
       expect($(':jstree li[node_value="/value_with_empty_label"]').text()).toEqual('value_with_empty_label')
       expect($(':jstree li[node_value="/value_with_no_label"]').text()).toEqual('value_with_no_label')
@@ -231,7 +231,7 @@ describe '"tree" control', ->
     """
     it "adds the provided value to the model if no separator specified", ->
       attrs = 'ref="prov:treeReference" valueElementName="data_layer" cascade="false" simplify_output="false"'
-      form = template.form(dom, model: model, attributes: attrs)
+      form = template.form($('#dom'), model: model, attributes: attrs)
       expect($('.jstree-clicked').size()).toEqual(1)
       expect(form.echoforms('serialize')).toMatch(/>Engineering</)
       $(':jstree').jstree('open_all')
@@ -241,7 +241,7 @@ describe '"tree" control', ->
       expect(form.echoforms('serialize')).toMatch(/>Data_40HZ_VAL</)
     it "generates and adds a path to the model if a separator is specified", ->
       attrs = 'ref="prov:treeReference" valueElementName="data_layer" separator="\/" cascade="false"'
-      form = template.form(dom, model: model, attributes: attrs)
+      form = template.form($('#dom'), model: model, attributes: attrs)
       expect($('.jstree-clicked').size()).toEqual(1)
       expect(form.echoforms('serialize')).toMatch(/>\/GLAH01\/Data_1HZ_VAL\/Engineering\/d_T_detID_VAL</)
       $(':jstree').jstree('open_all')
@@ -258,7 +258,7 @@ describe '"tree" control', ->
     """
     it "selects all child nodes of selected node when cascade = true", ->
       attrs = 'ref="prov:treeReference" valueElementName="data_layer" separator="\/" cascade="true"'
-      form = template.form(dom, model: model, attributes: attrs)
+      form = template.form($('#dom'), model: model, attributes: attrs)
       $(':jstree').jstree('open_all')
       expect($('.jstree-clicked').size()).toEqual(3)
       $(":jstree li[node_value='/GLAH01/Data_1HZ_VAL'] > a ").each ->
@@ -267,7 +267,7 @@ describe '"tree" control', ->
 
     it "selects only selected node when cascade = false", ->
       attrs = 'ref="prov:treeReference" valueElementName="data_layer" separator="\/" cascade="false"'
-      form = template.form(dom, model: model, attributes: attrs)
+      form = template.form($('#dom'), model: model, attributes: attrs)
       $(':jstree').jstree('open_all')
       expect($('.jstree-clicked').size()).toEqual(1)
       $(":jstree li[node_value='/GLAH01/Data_1HZ_VAL'] > a ").each ->
@@ -310,7 +310,7 @@ describe '"tree" control', ->
         """
     it "includes all selected and implied nodes when set to false", ->
       no_simplify_ui = ui.replace('cascade="true"', 'cascade="true" simplify_output="false"')
-      form = template.form(dom, ui: no_simplify_ui, model: model, attrs: attrs)
+      form = template.form($('#dom'), ui: no_simplify_ui, model: model, attrs: attrs)
       $(':jstree').jstree('open_all')
 
       $(":jstree li[node_value='level_2_child_1'] > a ").click()
@@ -323,7 +323,7 @@ describe '"tree" control', ->
 
     describe "defaults to true", ->
       beforeEach ->
-        @form = template.form(dom, ui: ui, model: model)
+        @form = template.form($('#dom'), ui: ui, model: model)
         $(':jstree').jstree('open_all')
         $(":jstree li[node_value='level_2_child_1'] > a ").click()
 
@@ -338,7 +338,7 @@ describe '"tree" control', ->
     describe "simplifies tree selections", ->
       describe "when an entire subtree is selected", ->
         beforeEach ->
-          @form = template.form(dom, ui:ui, model: model)
+          @form = template.form($('#dom'), ui:ui, model: model)
           $(':jstree').jstree('open_all')
           $(":jstree li[node_value='level_2_child_1'] > a ").click()
 
@@ -367,7 +367,7 @@ describe '"tree" control', ->
 
       describe "when only leaf nodes are selected", ->
         beforeEach ->
-          @form = template.form(dom, ui:ui, model: model)
+          @form = template.form($('#dom'), ui:ui, model: model)
           $(':jstree').jstree('open_all')
           $(":jstree li[node_value='level_3_child_1'] > a ").click()
           $(":jstree li[node_value='level_3_child_3'] > a ").click()
@@ -383,7 +383,7 @@ describe '"tree" control', ->
 
     describe "when a subtree contains required nodes", ->
       beforeEach ->
-        @form = template.form(dom, ui:ui, model: model)
+        @form = template.form($('#dom'), ui:ui, model: model)
         $(':jstree').jstree('open_all')
 
       it "includes the required node in the form output", ->
@@ -405,7 +405,7 @@ describe '"tree" control', ->
     describe "when a subtree contains irrelevant nodes", ->
       describe "when all relevant child nodes are selected", ->
         beforeEach ->
-          @form = template.form(dom, ui:ui, model: model)
+          @form = template.form($('#dom'), ui:ui, model: model)
           $(':jstree').jstree('open_all')
           $(":jstree li[node_value='relevant_child'] > a ").click()
 
@@ -420,7 +420,7 @@ describe '"tree" control', ->
 
       describe "when a parent node containing irrelevant nodes is clicked", ->
         beforeEach ->
-          @form = template.form(dom, ui:ui, model: model)
+          @form = template.form($('#dom'), ui:ui, model: model)
           $(':jstree').jstree('open_all')
           $(":jstree li[node_value='level_2_child_3'] > a ").click()
 
@@ -435,7 +435,7 @@ describe '"tree" control', ->
 
       describe "when a parent node containing irrelevant descendants is clicked", ->
         beforeEach ->
-          @form = template.form(dom, ui:ui, model: model)
+          @form = template.form($('#dom'), ui:ui, model: model)
           $(':jstree').jstree('open_all')
           $(":jstree li[node_value='level_1_child_2'] > a ").click()
 
@@ -463,7 +463,7 @@ describe '"tree" control', ->
               <prov:data_layer>top_node_2</prov:data_layer>
             </prov:treeReference>
           """
-          @form = template.form(dom, ui:ui, model: model)
+          @form = template.form($('#dom'), ui:ui, model: model)
 
           #$(":jstree li[node_value='top_node_2'] > i.jstree-ocl").click()
 
@@ -497,7 +497,7 @@ describe '"tree" control', ->
               <item value="value_with_no_label"/>
             </tree>
           """
-        @form = template.form(dom, model: model, attributes: attrs, ui: ui)
+        @form = template.form($('#dom'), model: model, attributes: attrs, ui: ui)
 
       it "should include 2 trees with the duplicate id in the DOM", ->
         expect($(':jstree').filter ->
