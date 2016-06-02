@@ -28,6 +28,16 @@ class EchoForm
       @doc = doc = $(util.parseXML(form))
 
       @model = model = doc.find('form > model > instance')
+
+      prepopulate = @options.prepopulate
+      if prepopulate
+        expressions = doc.find('form > model > extension[name="pre:prepopulate"] expression')
+        for expression in expressions
+          source = expression.getAttribute('source')
+          if prepopulate.hasOwnProperty(source)
+            ref = expression.getAttribute('ref')
+            $(util.execXPath(model.children(), ref, resolver)).text(prepopulate[source])
+
       @ui = ui = doc.find('form > ui')
 
       @control = new FormControl(ui, model, controlClasses, resolver)

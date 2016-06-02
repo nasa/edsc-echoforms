@@ -38,7 +38,7 @@
         var model = "#demo-echoforms-model";
 
         function loadForm() {
-          $(root).echoforms({form: $(source).val()});
+          $(root).echoforms({form: $(source).val(), prepopulate: {PREPOP: "I am prepopulated"}});
           displayModel();
         }
 
@@ -72,6 +72,8 @@
         &lt;instance&gt;
           &lt;prov:options xmlns:prov=&quot;http://www.example.com/orderoptions&quot;&gt;
             &lt;prov:reference&gt;123456&lt;/prov:reference&gt;
+            &lt;prov:prepopulated&gt;I am default&lt;/prov:prepopulated&gt;
+            &lt;prov:prepopulatedDefault&gt;I am default&lt;/prov:prepopulatedDefault&gt;
             &lt;prov:boolreference&gt;true&lt;/prov:boolreference&gt;
             &lt;prov:selectReference&gt;
               &lt;prov:selectValue&gt;123456&lt;/prov:selectValue&gt;
@@ -85,10 +87,18 @@
             &lt;/prov:SUBSET_DATA_LAYERS&gt;
           &lt;/prov:options&gt;
         &lt;/instance&gt;
+        &lt;extension name=&quot;pre:prepopulate&quot; xmlns:pre=&quot;http://echo.nasa.gov/v9/echoforms/prepopulate&quot;&gt;
+          &lt;pre:expressions&gt;
+             &lt;pre:expression ref=&quot;prov:prepopulated&quot; source=&quot;PREPOP&quot; /&gt;
+             &lt;pre:expression ref=&quot;prov:prepopulatedDefault&quot; source=&quot;PREPOP_DEFAULT&quot; /&gt;
+          &lt;/pre:expressions&gt;
+        &lt;/extension&gt;
       &lt;/model&gt;
       &lt;ui&gt;
         &lt;input id=&quot;reference&quot; label=&quot;Reference value&quot; ref=&quot;prov:reference&quot; type=&quot;xs:string&quot;/&gt;
         &lt;input id=&quot;childReference&quot; label=&quot;Reference value&quot; ref=&quot;prov:parentReference/prov:childReference&quot; type=&quot;xs:string&quot;/&gt;
+        &lt;input id=&quot;prepopulated&quot; label=&quot;Prepopulated&quot; ref=&quot;prov:prepopulated&quot; type=&quot;xs:string&quot;/&gt;
+        &lt;input id=&quot;prepopulateddefault&quot; label=&quot;Prepopulated Default&quot; ref=&quot;prov:prepopulatedDefault &quot; type=&quot;xs:string&quot;/&gt;
         &lt;group id=&quot;group&quot; label=&quot;Group&quot; ref=&quot;prov:parentReference&quot; attrs=&quot;attrs&quot;&gt;
           &lt;help&gt;Helpful text&lt;/help&gt;
           &lt;input label=&quot;Child input&quot; ref=&quot;prov:childReference&quot; type=&quot;xs:string&quot;/&gt;
