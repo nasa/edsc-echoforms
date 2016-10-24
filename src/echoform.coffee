@@ -31,7 +31,7 @@ class EchoForm
 
       prepopulate = @options.prepopulate
       if prepopulate
-        expressions = doc.find('form > model > extension[name="pre:prepopulate"] expression')
+        expressions = doc.find('form > model > extension[name="pre:prepopulate"] pre\\:expression')
         for expression in expressions
           source = expression.getAttribute('source')
           if prepopulate.hasOwnProperty(source)
