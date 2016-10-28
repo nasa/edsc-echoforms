@@ -52,8 +52,12 @@ class Grouping extends Base
 
   validate: ->
     super()
+    prune = true
     for control in @controls
+      relevant = !control.relevantExpr? || !!control.xpath(control.relevantExpr)
+      prune = false if !relevant && control.relevant()
       control.validate()
+    @ref()[0].removeAttribute('pruned') unless prune
 
   addedToDom: ->
     super()
