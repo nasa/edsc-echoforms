@@ -48,6 +48,14 @@ class EchoForm
       @control = new FormControl(ui, model, controlClasses, resolver)
       @root.append(@control.element())
       @control.addedToDom()
+      timer = false
+      $('.jstree').on 'keyup', '#band-search', ->
+        clearTimeout(timer) if timer
+        timer = setTimeout (->
+          text = $('#band-search').val()
+          $('.jstree').jstree(true).search(text)), 250
+      $('.jstree').prepend("<input id='band-search'></input>")
+      $('.jstree').jstree('close_all')
     catch exception
       util.error(exception)
       throw exception
