@@ -110,11 +110,11 @@ class Base
         @el.toggleClass('echoforms-irrelevant', !isRelevant)
         @el.toggle(isRelevant)
         ref = @ref()
-#        unless @skipValidation
-        if isRelevant
-          ref[0].removeAttribute('pruned')
-        else
-          ref[0].setAttribute('pruned', 'true')
+        unless @skipValidation
+          if isRelevant
+            ref[0].removeAttribute('pruned')
+          else
+            ref[0].setAttribute('pruned', 'true')
     else
       !@el.hasClass('echoforms-irrelevant')
 
