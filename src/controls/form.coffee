@@ -2,8 +2,8 @@ Grouping = require './grouping.coffee'
 util = require '../util.coffee'
 
 class Form extends Grouping
-  constructor: (ui, model, controlClasses, resolver) ->
-    super(ui, model, controlClasses, resolver)
+  constructor: (ui, model, controlClasses, resolver, skipValidation) ->
+    super(ui, model, controlClasses, resolver, skipValidation)
     @el.bind 'echoforms:modelchange', =>
       @loadFromModel()
       @validate()
