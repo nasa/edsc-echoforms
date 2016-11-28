@@ -19,6 +19,7 @@ class EchoForm
     try
       @options = $.extend({}, defaults, options)
       @form = form = @options['form']
+      @skipValidation = skipValidation = @options['skipValidation']
       @controlClasses = controlClasses = @options['controls'].concat(defaultControls)
 
       unless form?
@@ -45,7 +46,7 @@ class EchoForm
 
       @ui = ui = doc.find('form > ui')
 
-      @control = new FormControl(ui, model, controlClasses, resolver)
+      @control = new FormControl(ui, model, controlClasses, resolver, skipValidation)
       @root.append(@control.element())
       @control.addedToDom()
 
