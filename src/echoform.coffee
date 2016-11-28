@@ -49,12 +49,12 @@ class EchoForm
       @root.append(@control.element())
       @control.addedToDom()
       timer = false
-      $('.jstree').on 'keyup', '#band-search', ->
+      $('.jstree').on 'keyup', '#band-filter', ->
         clearTimeout(timer) if timer
         timer = setTimeout (->
-          text = $('#band-search').val()
+          text = $('#band-filter').val()
           $('.jstree').jstree(true).search(text)), 250
-      $('.jstree').prepend("<input id='band-search'></input>")
+      $('.jstree').prepend("<input id='band-filter' placeholder='Filter bands here'></input>")
       $('.jstree').jstree('close_all')
     catch exception
       util.error(exception)
