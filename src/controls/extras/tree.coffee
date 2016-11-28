@@ -112,14 +112,9 @@ class Tree extends Typed
     $.extend(super(), separator: @separator, cascade: @cascade)
 
   buildElementsDom: ->
-    console.log "--------- tree buildElementsDom"
     start = new Date().getTime()
     result = super()
     root = result.children('div')
-
-#    searchInput = document.createElement("div")
-#    root[0].appendChild(searchInput)
-
     root.addClass('jstree')
     root.append('<ul>')
     ul = root.children('ul')
@@ -138,11 +133,10 @@ class Tree extends Typed
       checkbox:
         keep_selected_style: false
         three_state: @cascade
+      search:
+        fuzzy: false
       plugins: [ "checkbox", "search" ]
     @tree_root = root
-    #prevent closing of tree nodes as they need to stay open in order to be eligible for inclusion in output
-#    root.find('i.jstree-ocl').on 'click', (e, data) ->
-#      e.stopPropagation()
 
     result
 
