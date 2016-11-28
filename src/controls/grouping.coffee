@@ -3,10 +3,10 @@ Base = require './base.coffee'
 util = require '../util.coffee'
 
 class Grouping extends Base
-  constructor: (ui, model, controlClasses, resolver) ->
+  constructor: (ui, model, controlClasses, resolver, skipValidation) ->
     # Grouping controls ignore the 'required' attribute
     ui.removeAttr('required')
-    super(ui, model, controlClasses, resolver)
+    super(ui, model, controlClasses, resolver, skipValidation)
 
   inputs: () -> $()
 
@@ -37,7 +37,7 @@ class Grouping extends Base
       continue if child.nodeName == 'help' || child.nodeName == 'constraints'
       for ControlClass in @controlClasses
         if $(child).is(ControlClass.selector)
-          control = new ControlClass($(child), childModel, @controlClasses, @resolver)
+          control = new ControlClass($(child), childModel, @controlClasses, @resolver, @skipValidation)
           controls.push(control)
           children = children.add(control.el)
           break
@@ -52,12 +52,8 @@ class Grouping extends Base
 
   validate: ->
     super()
-    prune = true
     for control in @controls
-      relevant = !control.relevantExpr? || !!control.xpath(control.relevantExpr)
-      prune = false if !relevant && control.relevant()
       control.validate()
-    @ref()[0].removeAttribute('pruned') unless prune
 
   addedToDom: ->
     super()
