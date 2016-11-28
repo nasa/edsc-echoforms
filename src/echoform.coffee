@@ -48,13 +48,22 @@ class EchoForm
       @control = new FormControl(ui, model, controlClasses, resolver)
       @root.append(@control.element())
       @control.addedToDom()
+
       timer = false
-      $('.jstree').on 'keyup', '#band-filter', ->
+      $('.jstree').on 'keyup', '#bands-filter', ->
         clearTimeout(timer) if timer
         timer = setTimeout (->
-          text = $('#band-filter').val()
-          $('.jstree').jstree(true).search(text)), 250
-      $('.jstree').prepend("<input id='band-filter' placeholder='Filter bands here'></input>")
+          text = $('#bands-filter').val()
+          $('.jstree').jstree(true).search(text) if text.length > 1), 250
+
+      totalCount = $('.jstree').jstree(true).get_json('#', flat: true).length
+      $('.jstree').on 'click', '.jstree-node', (e)->
+        checkedCount = $('.jstree').jstree(true).get_selected().length
+        $('#bands-count').text("#{checkedCount}/#{totalCount} bands selected")
+
+      checkedCount = $('.jstree').jstree(true).get_selected().length
+      $('.jstree').prepend("<div id='bands-count'>#{checkedCount}/#{totalCount} bands selected</div>")
+      $('.jstree').prepend("<input id='bands-filter' placeholder='Filter bands here'></input>")
       $('.jstree').jstree('close_all')
     catch exception
       util.error(exception)
