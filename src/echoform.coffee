@@ -26,17 +26,11 @@ class EchoForm
 
       @resolver = resolver = util.buildXPathResolverFn(form)
       @doc = doc = $(util.parseXML(form))
-
       @model = model = doc.find('form > model > instance')
 
       prepopulate = @options.prepopulate
       if prepopulate
-        expressionsFirefox = doc.find('form > model > extension[name="pre:prepopulate"] pre\\:expression')
-        expressionsAllOthers = doc.find('form > model > extension[name="pre:prepopulate"] expression')
-        if expressionsFirefox.length > expressionsAllOthers.length
-          expressions = expressionsFirefox;
-        else
-          expressions = expressionsAllOthers;
+        expressions = doc.find("pre\\:expression, expression")
         for expression in expressions
           source = expression.getAttribute('source')
           if prepopulate.hasOwnProperty(source)
