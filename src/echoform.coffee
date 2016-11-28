@@ -57,12 +57,12 @@ class EchoForm
           text = $('#bands-filter').val()
           $('.jstree').jstree(true).search(text) if text.length > 1), 250
 
-      totalCount = $('.jstree').jstree(true).get_json('#', flat: true).length
+      totalCount = $('.jstree').jstree(true).get_json?('#', flat: true).length
       $('.jstree').on 'click', '.jstree-node', (e)->
         checkedCount = $('.jstree').jstree(true).get_selected().length
         $('#bands-count').text("#{checkedCount}/#{totalCount} bands selected")
 
-      checkedCount = $('.jstree').jstree(true).get_selected().length
+      checkedCount = $('.jstree').jstree(true).get_selected?().length
       $('.jstree').prepend("<div id='bands-count'>#{checkedCount}/#{totalCount} bands selected</div>")
       $('.jstree').prepend("<input id='bands-filter' placeholder='Filter bands here'></input>")
       $('.jstree').jstree('close_all')
