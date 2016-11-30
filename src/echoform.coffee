@@ -50,22 +50,29 @@ class EchoForm
       @root.append(@control.element())
       @control.addedToDom()
 
+      # There will be more than one trees if there are more than one processors
+      visibleTree = $('#' + jstree.id) for jstree in $('.jstree') when $('#' + jstree.id).is(':visible')
+
+      # Band filtering
       timer = false
-      $('.jstree').on 'keyup', '#bands-filter', ->
+      visibleTree.on 'keyup', '#bands-filter', ->
         clearTimeout(timer) if timer
         timer = setTimeout (->
           text = $('#bands-filter').val()
-          $('.jstree').jstree(true).search(text) if text.length > 1), 250
+          visibleTree.jstree('search', text) if text.length > 1), 250
 
-      totalCount = $('.jstree').jstree(true).get_json?('#', flat: true).length
-      $('.jstree').on 'click', '.jstree-node', (e)->
-        checkedCount = $('.jstree').jstree(true).get_selected().length
-        $('#bands-count').text("#{checkedCount}/#{totalCount} bands selected")
+      # Selected band counter
+      totalCount = visibleTree.jstree('get_json', '#', flat: true).length
+      visibleTree.on 'click', '.jstree-node', (e)->
+        checkedCount = visibleTree.jstree('get_selected').length
+        $('#bands-count').html("<div id='bands-count'><span id='selected-bands-count'>#{checkedCount} of #{totalCount}</span> bands selected</div>")
+      checkedCount = visibleTree.jstree('get_selected').length
+      visibleTree.prepend("<div id='bands-count'><span id='selected-bands-count'>#{checkedCount} of #{totalCount}</span> bands selected</div>")
+      visibleTree.prepend("<input id='bands-filter' placeholder='Filter bands here'></input>")
 
-      checkedCount = $('.jstree').jstree(true).get_selected?().length
-      $('.jstree').prepend("<div id='bands-count'>#{checkedCount}/#{totalCount} bands selected</div>")
-      $('.jstree').prepend("<input id='bands-filter' placeholder='Filter bands here'></input>")
-      $('.jstree').jstree('close_all')
+      # Expand the first level bands
+      rootBandId = visibleTree.find('li').first().attr('id')
+      visibleTree.jstree('close_all').jstree('open_node', rootBandId)
     catch exception
       util.error(exception)
       throw exception
