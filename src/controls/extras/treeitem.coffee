@@ -89,7 +89,6 @@ class TreeItem #extends Base
       data_jstree['selected'] = true
     unless @node_relevant()
       data_jstree['disabled'] = true
-#      data_jstree['selected'] = false
       data_jstree['selected'] = true #this will be filtered out at output generation, but will ensure the node is loaded.
       @addNotAvailableRequiredText(help, '[not available]')
     if @node_required()
