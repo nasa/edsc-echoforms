@@ -65,14 +65,14 @@ window.sharedBehaviorForControls = (template, options={}) ->
         $('#control :input').val('').change()
         expect('#control').toHaveError('Required field')
 
-  describe '"reaodnly" attribute', ->
-    it "contains an xpath which causes the control to become readonly", ->
-      template.form($('#dom'), attributes: 'readonly="prov:reference=\'readonly\'"')
-      expect('#control').not.toBeReadonly()
-      $('#reference :input').val('readonly').change()
-      expect('#control').toBeReadonly()
-      $('#reference :input').val('').change()
-      expect('#control').not.toBeReadonly()
+    describe '"reaodnly" attribute', ->
+      it "contains an xpath which causes the control to become readonly", ->
+        template.form($('#dom'), attributes: 'readonly="prov:reference=\'readonly\'"')
+        expect('#control').not.toBeReadonly()
+        $('#reference :input').val('readonly').change()
+        expect('#control').toBeReadonly()
+        $('#reference :input').val('').change()
+        expect('#control').not.toBeReadonly()
 
   describe '"pattern" constriants', ->
     constraints =     """

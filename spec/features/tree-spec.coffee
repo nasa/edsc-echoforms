@@ -53,6 +53,7 @@ describe '"tree" control', ->
       </prov:treeReference>
     """
     template.form($('#dom'), model: model, attributes: attrs)
+    $(':jstree').jstree('open_all')
     expect($('.jstree-clicked').parent().attr('node_value')).toBe("/GLAH01/Data_1HZ_VAL/Engineering/d_T_detID_VAL");
 
   describe "'irrelevant' nodes", ->
@@ -232,6 +233,7 @@ describe '"tree" control', ->
     it "adds the provided value to the model if no separator specified", ->
       attrs = 'ref="prov:treeReference" valueElementName="data_layer" cascade="false" simplify_output="false"'
       form = template.form($('#dom'), model: model, attributes: attrs)
+      $(':jstree').jstree('open_all')
       expect($('.jstree-clicked').size()).toEqual(1)
       expect(form.echoforms('serialize')).toMatch(/>Engineering</)
       $(':jstree').jstree('open_all')
@@ -242,6 +244,7 @@ describe '"tree" control', ->
     it "generates and adds a path to the model if a separator is specified", ->
       attrs = 'ref="prov:treeReference" valueElementName="data_layer" separator="\/" cascade="false"'
       form = template.form($('#dom'), model: model, attributes: attrs)
+      $(':jstree').jstree('open_all')
       expect($('.jstree-clicked').size()).toEqual(1)
       expect(form.echoforms('serialize')).toMatch(/>\/GLAH01\/Data_1HZ_VAL\/Engineering\/d_T_detID_VAL</)
       $(':jstree').jstree('open_all')

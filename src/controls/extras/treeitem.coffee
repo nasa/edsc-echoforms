@@ -91,7 +91,7 @@ class TreeItem #extends Base
       data_jstree['disabled'] = true
       data_jstree['selected'] = true #this will be filtered out at output generation, but will ensure the node is loaded.
       @addNotAvailableRequiredText(help, '[not available]')
-    if @node_required()      
+    if @node_required()
       data_jstree['selected'] = true
       @addNotAvailableRequiredText(help, '[required]')
     el.attr('item-relevant': @node_relevant())
