@@ -72,41 +72,74 @@ class Tree extends Typed
     @el.find('div.jstree')
 
   inputValue: ->
-    #The commented out section is the 'correct' way to do this, but we need to be able to
-    #  get tree selections before the tree is fully loaded into the DOM, in order to ensure
-    #  'required' nodes are automatically selected and 'irrelevant' nodes are unselected,
-    #  so we will use this  hack
-    #@inputs().jstree("get_selected", "full").map (node) ->
-    #  if node.li_attr and node.li_attr.node_value and node.li_attr.relevant == 'true'
-    #    node.li_attr.node_value
-
-    #TODO - we really should be using the 'correct' approach mentioned above and storing custoimized info (e.g.
-    #'required') in the jstree object rather than using jquery selectors.  Unfortunately, jstree removes hidden
-    #nodes from the DOM, so with the current approach we need to ensure that all nodes are expanded at all times
-    #which is fairly ugly.
-
     #Get all nodes which are required, explicitely checked, or implicitely checked (i.e. all children are checked)
     #Explicitly checked or imlicitely checked (i.e. all descendants checked, required, or irrelevant)
-    checked = @inputs().find('a.jstree-clicked').parent('[node_value][item-relevant=true][item-required=false]')
-    #Required nodes
-    required = @inputs().find('li[item-required=true][node_value][item-relevant= true]')
-    checked_required_nodes = checked.add(required)
+    all_nodes = @inputs().jstree('get_json', '#', {flat: true}).map (node) =>
+      @inputs().jstree('get_node', node.id)
+
+    checked = all_nodes.filter (node) ->
+      node.state.selected && node.li_attr.node_value?.length > 0 && node.li_attr['item-relevant'] == 'true'
+
+    required = all_nodes.filter (node) ->
+      node.li_attr['item-relevant'] == 'true' && node.li_attr['item-required'] == 'true' && node.li_attr.node_value?.length > 0 && node.children.length == 0
+
+    checked_required_nodes = @_removeDupNodes([checked..., required...])
 
     if @simplify_output
       #Filter values to include only
       #    - 'full parent' nodes (parents whose descendants are all selected [and relevant])
       #    - 'true leaf' nodes (leaves which do not descend from any 'full parent' nodes)
       #Note that irrelevant descendants will cause a node not to be a 'full parent' even if it is rendered as a checked node.
-      true_leaves = checked_required_nodes
-          .filter('li.jstree-leaf[item-required=true], li.jstree-leaf:has(a.jstree-clicked)') #select clicked or required <li>s
-      full_parents = checked_required_nodes
-          .filter('li:has(a.jstree-clicked + ul.jstree-children)') #select clicked <li>s which have children
-          .not('li:has(li[item-relevant=false])') #remove <li>s with irrelevant descendants
-      checked_required_nodes = true_leaves.add(full_parents)
-          .not('li.jstree-node > a.jstree-clicked + ul:not(:has(li[item-relevant=false])) > li') #remove any <li>s whose parent is selected AND who do not have any irrelevant cousins
 
-    checked_required_nodes.map ->
-      $(this).attr('node_value')
+      #select clicked or required <li>s
+      true_leaves = checked_required_nodes.filter (node) ->
+        node.children.length == 0 && node.state.selected || node.li_attr['item-required'] == 'true'
+
+      #select clicked <li>s which have children
+      #remove <li>s with irrelevant descendants
+      full_parents = checked_required_nodes.filter (node) =>
+        checked_children = node.children.filter (child_id) =>
+          child = @inputs().jstree('get_node', child_id)
+          selected_and_relevant = child.state.selected && child.li_attr['item-relevant'] == 'true'
+          has_irrelevant_descendants = @_hasIrrelevantDescendants(child)
+          selected_and_relevant && !has_irrelevant_descendants
+        node.children.length > 0 && checked_children.length == node.children.length
+
+      #remove any <li>s whose parent is selected AND who do not have any irrelevant cousins
+      checked_required_nodes = [true_leaves..., full_parents...].filter (node) =>
+        parent = @inputs().jstree('get_node', node.parent)
+        return true if parent.id == '#'
+        return true unless parent.state.selected
+        for sibling_id in parent.children when sibling_id != node.id
+          sibling = @inputs().jstree('get_node', sibling_id)
+          if sibling.state.selected
+            if sibling.li_attr['item-relevant'] == 'true'
+              return @_hasIrrelevantDescendants(sibling)
+            else
+              return true
+          else
+            return true
+        false
+
+    checked_required_nodes = @_removeDupNodes(checked_required_nodes)
+    checked_required_nodes.map (node)->
+      node.li_attr.node_value
+
+  _hasIrrelevantDescendants: (node) ->
+    for child_id in node.children
+      child = @inputs().jstree('get_node', child_id)
+      if child.children.length == 0
+        if child.li_attr['item-relevant'] == 'false'
+          return true
+      else
+        return @_hasIrrelevantDescendants(child)
+    return false
+
+  _removeDupNodes: (arr) ->
+    results = {}
+    results[arr[key].id] = arr[key] for key in [0...arr.length]
+    value for key, value of results
+
 
   inputAttrs: ->
     $.extend(super(), separator: @separator, cascade: @cascade)
@@ -129,6 +162,8 @@ class Tree extends Typed
         if i < (items.length - 1) and (new Date().getTime() - start > 40)
           console.log ("Tree construction yielding to browser to avoid unresponsive script")
           setTimeout(arguments.callee, 0)
+
+    timer = false
     root.jstree
       checkbox:
         keep_selected_style: false
@@ -136,6 +171,23 @@ class Tree extends Typed
       search:
         fuzzy: false
       plugins: [ "checkbox", "search" ]
+    .on 'ready.jstree', ->
+      rootBandId = root.find('li').first().attr('id')
+      root.jstree('close_all').jstree('open_node', rootBandId)
+
+      totalCount = root.jstree('get_json', '#', flat: true).length
+      checkedCount = root.jstree('get_checked').length
+      root.prepend("<div id='bands-count'><span id='selected-bands-count'>#{checkedCount} of #{totalCount}</span> bands selected</div>")
+      root.prepend("<input id='bands-filter' placeholder='Filter bands here'></input>")
+    .on 'changed.jstree', ->
+      totalCount = root.jstree('get_json', '#', flat: true).length
+      checkedCount = root.jstree('get_checked').length
+      $('#bands-count').html("<div id='bands-count'><span id='selected-bands-count'>#{checkedCount} of #{totalCount}</span> bands selected</div>")
+    .on 'keyup', '#bands-filter', ->
+      clearTimeout(timer) if timer
+      timer = setTimeout (->
+        text = $('#bands-filter').val()
+        root.jstree('search', text) if text.length > 1), 250
     @tree_root = root
 
     result

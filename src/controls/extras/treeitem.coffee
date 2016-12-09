@@ -49,17 +49,46 @@ class TreeItem #extends Base
       tree_div.jstree('disable_node', current_node)
       current_node.find('a').css('font-style', 'italic')
       current_node.find('a.jstree-anchor > i.jstree-icon').first().addClass('jstree-disabled-icon').removeClass('jstree-checkbox')
+
+      all_nodes = tree_div.jstree('get_json', '#', {flat: true}).map (node) =>
+        tree_div.jstree('get_node', node.id)
+      current_node_obj = all_nodes.filter((node) -> node.id == current_node.attr('id')).pop()
+      if current_node_obj.li_attr['conditionally-relevant'] == 'true'
+        current_node_obj.li_attr['item-relevant'] = 'false'
+        current_node_obj.state.selected = false
+        current_node_obj.state.disabled = true
     else if @node_required()
       @addNotAvailableRequiredText(help, '[required]')
       tree_div.jstree('enable_node', current_node)
       current_node.find('a').css('font-style', 'italic')
       current_node.find('a.jstree-anchor > i.jstree-checkbox').addClass('jstree-required-icon').removeClass('jstree-checkbox')
+      # set item-required to 'true' in li_attr
+      all_nodes = tree_div.jstree('get_json', '#', {flat: true}).map (node) =>
+        tree_div.jstree('get_node', node.id)
+      current_node_obj = all_nodes.filter((node) -> node.id == current_node.attr('id')).pop()
+      if current_node_obj.li_attr['item-required'] == 'false'
+        current_node_obj.li_attr['conditionally-required'] = 'true'
+        current_node_obj.li_attr['item-required'] = 'true'
+        current_node_obj.state.disabled = false
+        current_node_obj.state.selected = true
     else
       tree_div.jstree('enable_node', current_node)
       current_node.find('a').css('font-style', 'normal')
+
+      all_nodes = tree_div.jstree('get_json', '#', {flat: true}).map (node) =>
+        tree_div.jstree('get_node', node.id)
+      current_node_obj = all_nodes.filter((node) -> node.id == current_node.attr('id')).pop()
+      if current_node_obj?.li_attr['conditionally-required'] == 'true'
+        current_node_obj.li_attr['item-required'] = 'false'
+        current_node_obj.state.selected = false
+
       current_node.find('a.jstree-anchor > i.jstree-icon').first().addClass('jstree-checkbox').removeClass('jstree-disabled-icon').removeClass('jstree-required-icon')
       if(was_disabled)
-       tree_div.jstree('select_node', current_node)
+        tree_div.jstree('select_node', current_node)
+        current_node_obj.li_attr['item-relevant'] = 'true'
+        current_node_obj.li_attr['conditionally-relevant'] = 'true'
+        current_node_obj.state.selected = true
+        current_node_obj.state.disabled = false
 
   subtree_handle_relevant_or_required: ->
     @handle_relevant_or_required()
@@ -95,7 +124,7 @@ class TreeItem #extends Base
       data_jstree['selected'] = true
       @addNotAvailableRequiredText(help, '[required]')
     el.attr('item-relevant': @node_relevant())
-    el.attr('item-required': @node_relevant())
+    el.attr('item-required': @node_required())
     el.attr('data-jstree' : JSON.stringify(data_jstree)) if Object.keys(data_jstree).length > 0
     el.text(@label)
     el.append(help)
