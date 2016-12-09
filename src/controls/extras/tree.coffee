@@ -83,7 +83,7 @@ class Tree extends Typed
     required = all_nodes.filter (node) ->
       node.li_attr['item-relevant'] == 'true' && node.li_attr['item-required'] == 'true' && node.li_attr.node_value?.length > 0 && node.children.length == 0
 
-    checked_required_nodes = @_uniqueizeNodes([checked..., required...])
+    checked_required_nodes = @_removeDupNodes([checked..., required...])
 
     if @simplify_output
       #Filter values to include only
@@ -121,7 +121,7 @@ class Tree extends Typed
             return true
         false
 
-    checked_required_nodes = @_uniqueizeNodes(checked_required_nodes)
+    checked_required_nodes = @_removeDupNodes(checked_required_nodes)
     checked_required_nodes.map (node)->
       node.li_attr.node_value
 
@@ -135,7 +135,7 @@ class Tree extends Typed
         return @_hasIrrelevantDescendants(child)
     return false
 
-  _uniqueizeNodes: (arr) ->
+  _removeDupNodes: (arr) ->
     results = {}
     results[arr[key].id] = arr[key] for key in [0...arr.length]
     value for key, value of results
