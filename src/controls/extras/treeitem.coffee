@@ -21,6 +21,7 @@ class TreeItem #extends Base
     @tree = tree
     @items = for item in ui.children('item')
       new TreeItem($(item), model, controlClasses, resolver, @value, @separator, tree)
+    @start = new Date()
 
   xpath: (xpath) ->
     util.execXPath(@model, xpath, @resolver)
@@ -53,7 +54,7 @@ class TreeItem #extends Base
       all_nodes = tree_div.jstree('get_json', '#', {flat: true}).map (node) =>
         tree_div.jstree('get_node', node.id)
       current_node_obj = all_nodes.filter((node) -> node.id == current_node.attr('id')).pop()
-      if current_node_obj.li_attr['conditionally-relevant'] == 'true'
+      if current_node_obj?.li_attr['conditionally-relevant'] == 'true'
         current_node_obj.li_attr['item-relevant'] = 'false'
         current_node_obj.state.selected = false
         current_node_obj.state.disabled = true
@@ -94,6 +95,8 @@ class TreeItem #extends Base
     @handle_relevant_or_required()
     for item in @items
       item.subtree_handle_relevant_or_required()
+      if new Date().getTime() - @start > 40
+        postMessage("script-timeout-message","*");
 
   buildHelpDom: ->
     result = $('<span>', class: 'echoforms-help')
