@@ -94,7 +94,8 @@ class TreeItem #extends Base
   subtree_handle_relevant_or_required: ->
     @handle_relevant_or_required()
     for item in @items
-      item.subtree_handle_relevant_or_required()
+      timer = setTimeout (=> item.subtree_handle_relevant_or_required()), 0
+      clearTimeout timer
       postMessage("script-timeout-message","*")  if new Date().getTime() - @start > 40
 
   buildHelpDom: ->
