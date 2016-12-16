@@ -92,11 +92,11 @@ class TreeItem #extends Base
         current_node_obj.state.disabled = false
 
   subtree_handle_relevant_or_required: ->
-    @handle_relevant_or_required()
-    for item in @items
-      item.subtree_handle_relevant_or_required()
-      if new Date().getTime() - @start > 40
-        postMessage("script-timeout-message","*");
+    setTimeout (=>
+      @handle_relevant_or_required()
+      for item in @items
+        item.subtree_handle_relevant_or_required()
+    ), 0
 
   buildHelpDom: ->
     result = $('<span>', class: 'echoforms-help')
