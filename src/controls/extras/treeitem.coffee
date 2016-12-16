@@ -53,7 +53,7 @@ class TreeItem #extends Base
 
       all_nodes = tree_div.jstree('get_json', '#', {flat: true}).map (node) =>
         tree_div.jstree('get_node', node.id)
-      current_node_obj = all_nodes.filter((node) -> node.id == current_node.attr('id')).pop()
+      current_node_obj = all_nodes.filter((node) -> node.id == current_node.attr('id')).pop() if current_node
       if current_node_obj?.li_attr['conditionally-relevant'] == 'true'
         current_node_obj.li_attr['item-relevant'] = 'false'
         current_node_obj.state.selected = false
@@ -66,8 +66,8 @@ class TreeItem #extends Base
       # set item-required to 'true' in li_attr
       all_nodes = tree_div.jstree('get_json', '#', {flat: true}).map (node) =>
         tree_div.jstree('get_node', node.id)
-      current_node_obj = all_nodes.filter((node) -> node.id == current_node.attr('id')).pop()
-      if current_node_obj.li_attr['item-required'] == 'false'
+      current_node_obj = all_nodes.filter((node) -> node.id == current_node.attr('id')).pop()  if current_node
+      if current_node_obj?.li_attr['item-required'] == 'false'
         current_node_obj.li_attr['conditionally-required'] = 'true'
         current_node_obj.li_attr['item-required'] = 'true'
         current_node_obj.state.disabled = false
@@ -78,7 +78,7 @@ class TreeItem #extends Base
 
       all_nodes = tree_div.jstree('get_json', '#', {flat: true}).map (node) =>
         tree_div.jstree('get_node', node.id)
-      current_node_obj = all_nodes.filter((node) -> node.id == current_node.attr('id')).pop()
+      current_node_obj = all_nodes.filter((node) -> node.id == current_node.attr('id')).pop()  if current_node
       if current_node_obj?.li_attr['conditionally-required'] == 'true'
         current_node_obj.li_attr['item-required'] = 'false'
         current_node_obj.state.selected = false
@@ -92,11 +92,10 @@ class TreeItem #extends Base
         current_node_obj.state.disabled = false
 
   subtree_handle_relevant_or_required: ->
-    setTimeout (=>
-      @handle_relevant_or_required()
-      for item in @items
-        item.subtree_handle_relevant_or_required()
-    ), 0
+    @handle_relevant_or_required()
+    for item in @items
+      item.subtree_handle_relevant_or_required()
+      postMessage("script-timeout-message","*")  if new Date().getTime() - @start > 40
 
   buildHelpDom: ->
     result = $('<span>', class: 'echoforms-help')
