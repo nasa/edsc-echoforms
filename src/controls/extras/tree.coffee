@@ -177,6 +177,7 @@ class Tree extends Typed
 
       totalCount = root.jstree('get_json', '#', flat: true).length
       checkedCount = root.jstree('get_checked').length
+      root.prepend('<i class="jstree-spinner fa fa-spinner fa-spin fa-fw" style="display: none"></i>')
       root.prepend("<div id='bands-count'><span id='selected-bands-count'>#{checkedCount} of #{totalCount}</span> bands selected</div>")
       root.prepend("<input id='bands-filter' placeholder='Filter bands here'></input>")
     .on 'changed.jstree', ->
@@ -188,6 +189,11 @@ class Tree extends Typed
       timer = setTimeout (->
         text = $('#bands-filter').val()
         root.jstree('search', text) if text.length > 1), 250
+    .on 'before_open.jstree', ->
+      $('.jstree-spinner').show()
+    .on 'after_open.jstree', ->
+      $('.jstree-spinner').hide()
+
     @tree_root = root
 
     result
