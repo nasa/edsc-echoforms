@@ -18,7 +18,7 @@ class Base
   #   controlClasses - A list of classes to use when constructing child controls.  This
   #           is only used by grouping controls
   #   resolver - A function used to resolve xpath namespaces, used by the `xpath` method.
-  constructor: (@ui, @model, @controlClasses, @resolver, @skipValidation) ->
+  constructor: (@ui, @model, @controlClasses, @resolver) ->
     ui = @ui
     # Read and store common attributes
     @refExpr      = ui.attr('ref')
@@ -110,11 +110,10 @@ class Base
         @el.toggleClass('echoforms-irrelevant', !isRelevant)
         @el.toggle(isRelevant)
         ref = @ref()
-        unless @skipValidation
-          if isRelevant
-            ref[0].removeAttribute('pruned')
-          else
-            ref[0].setAttribute('pruned', 'true')
+        if isRelevant
+          ref[0].removeAttribute('pruned')
+        else
+          ref[0].setAttribute('pruned', 'true')
     else
       !@el.hasClass('echoforms-irrelevant')
 
