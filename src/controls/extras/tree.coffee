@@ -25,8 +25,14 @@ class Tree extends Typed
 
   validate: ->
     super()
+    allTreeItems = @tree_root.jstree('get_json', '#', {flat: true}).map ((node) => @tree_root.jstree('get_node', node.id))
+      .reduce((hash, obj) -> # Grab a little performance gain by looking a tree item up from a hash using its id in @handle_relevant_or_required.
+        hash[obj.id] = obj
+        hash
+      , {})
+
     for item in @items
-      item.subtree_handle_relevant_or_required()
+      item.subtree_handle_relevant_or_required(allTreeItems)
     #propagate relevancy/required rules in the ui to the model
     @saveToModel() if @el?
 
