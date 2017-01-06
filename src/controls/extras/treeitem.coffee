@@ -32,7 +32,7 @@ class TreeItem #extends Base
   node_relevant: ->
     !@relevantExpr? || !!@xpath(@relevantExpr)
 
-  handle_relevant_or_required: ->
+  handle_relevant_or_required: (allTreeItems) ->
     tree_div = @tree.tree_root
     current_node = tree_div.find("[node_value = '" + @value + "']")
     current_node.attr('item-required', @node_required())
@@ -45,15 +45,14 @@ class TreeItem #extends Base
     help.find('.not-available-or-required-text').remove()
     #reset the node icon
     current_node.find('a.jstree-anchor > i.jstree-icon').first().addClass('jstree-checkbox').removeClass('jstree-disabled-icon').removeClass('jstree-required-icon')
+    current_node_obj = allTreeItems[current_node.attr('id')] if current_node
+
     if !@node_relevant()
       @addNotAvailableRequiredText(help, '[not available]')
       tree_div.jstree('disable_node', current_node)
       current_node.find('a').css('font-style', 'italic')
       current_node.find('a.jstree-anchor > i.jstree-icon').first().addClass('jstree-disabled-icon').removeClass('jstree-checkbox')
 
-      all_nodes = tree_div.jstree('get_json', '#', {flat: true}).map (node) =>
-        tree_div.jstree('get_node', node.id)
-      current_node_obj = all_nodes.filter((node) -> node.id == current_node.attr('id')).pop() if current_node
       if current_node_obj?.li_attr['conditionally-relevant'] == 'true'
         current_node_obj.li_attr['item-relevant'] = 'false'
         current_node_obj.state.selected = false
@@ -64,9 +63,7 @@ class TreeItem #extends Base
       current_node.find('a').css('font-style', 'italic')
       current_node.find('a.jstree-anchor > i.jstree-checkbox').addClass('jstree-required-icon').removeClass('jstree-checkbox')
       # set item-required to 'true' in li_attr
-      all_nodes = tree_div.jstree('get_json', '#', {flat: true}).map (node) =>
-        tree_div.jstree('get_node', node.id)
-      current_node_obj = all_nodes.filter((node) -> node.id == current_node.attr('id')).pop()  if current_node
+
       if current_node_obj?.li_attr['item-required'] == 'false'
         current_node_obj.li_attr['conditionally-required'] = 'true'
         current_node_obj.li_attr['item-required'] = 'true'
@@ -76,9 +73,6 @@ class TreeItem #extends Base
       tree_div.jstree('enable_node', current_node)
       current_node.find('a').css('font-style', 'normal')
 
-      all_nodes = tree_div.jstree('get_json', '#', {flat: true}).map (node) =>
-        tree_div.jstree('get_node', node.id)
-      current_node_obj = all_nodes.filter((node) -> node.id == current_node.attr('id')).pop()  if current_node
       if current_node_obj?.li_attr['conditionally-required'] == 'true'
         current_node_obj.li_attr['item-required'] = 'false'
         current_node_obj.state.selected = false
@@ -91,12 +85,10 @@ class TreeItem #extends Base
         current_node_obj.state.selected = true
         current_node_obj.state.disabled = false
 
-  subtree_handle_relevant_or_required: ->
-    @handle_relevant_or_required()
+  subtree_handle_relevant_or_required: (allTreeItems) ->
+    @handle_relevant_or_required(allTreeItems)
     for item in @items
-      timer = setTimeout (=> item.subtree_handle_relevant_or_required()), 0
-      clearTimeout timer
-      postMessage("script-timeout-message","*")  if new Date().getTime() - @start > 40
+      item.subtree_handle_relevant_or_required(allTreeItems)
 
   buildHelpDom: ->
     result = $('<span>', class: 'echoforms-help')
