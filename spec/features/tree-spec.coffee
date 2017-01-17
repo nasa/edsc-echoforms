@@ -118,9 +118,9 @@ describe '"tree" control', ->
       expect($('.jstree-clicked').parent().attr('node_value')).toMatch("requiredNode");
       expect(@form.echoforms('serialize')).toMatch(/requiredNode/)
 
-    it "includes required nodes in output even if they are not selected", ->
+    it "auto-selects required nodes in output even if they are not selected manually", ->
       $(":jstree li[node_value = '/requiredNode'] > a ").click()
-      expect($('.jstree-clicked').parent().attr('node_value')).not.toMatch("requiredNode");
+      expect($('.jstree-clicked').parent().attr('node_value')).toMatch("requiredNode");
       expect(@form.echoforms('serialize')).toMatch(/requiredNode/)
 
     it "displays a '[required]' message", ->

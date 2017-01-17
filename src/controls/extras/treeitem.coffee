@@ -60,6 +60,7 @@ class TreeItem #extends Base
     else if @node_required()
       @addNotAvailableRequiredText(help, '[required]')
       tree_div.jstree('enable_node', current_node)
+      tree_div.jstree('check_node', current_node)
       current_node.find('a').css('font-style', 'italic')
       current_node.find('a.jstree-anchor > i.jstree-checkbox').addClass('jstree-required-icon').removeClass('jstree-checkbox')
       # set item-required to 'true' in li_attr
