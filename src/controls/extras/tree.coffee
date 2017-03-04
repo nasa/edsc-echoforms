@@ -170,6 +170,9 @@ class Tree extends Typed
           setTimeout(arguments.callee, 0)
 
     timer = false
+    bandsCountId = "bands-count-" + $('.bands-count').length
+    bandsFilterId = "bands-filter-" + $('.bands-filter').length
+    selectedBandsId = "selected-bands-count-" + $('.selected-bands-count').length
     root.jstree
       checkbox:
         keep_selected_style: false
@@ -184,16 +187,17 @@ class Tree extends Typed
       totalCount = root.jstree('get_json', '#', flat: true).length
       checkedCount = root.jstree('get_checked').length
       root.prepend('<i class="jstree-spinner fa fa-spinner fa-spin fa-fw" style="display: none"></i>')
-      root.prepend("<div id='bands-count'><span id='selected-bands-count'>#{checkedCount} of #{totalCount}</span> bands selected</div>")
-      root.prepend("<input id='bands-filter' placeholder='Filter bands here'></input>")
+      root.prepend("<div id='#{bandsCountId}' class='bands-count'><span id='#{selectedBandsId}' class='selected-bands-count'>#{checkedCount} of #{totalCount}</span> bands selected</div>")
+      root.prepend("<input id='#{bandsFilterId}' class='bands-filter' placeholder='Filter bands here'></input>")
     .on 'changed.jstree', ->
       totalCount = root.jstree('get_json', '#', flat: true).length
       checkedCount = root.jstree('get_checked').length
-      $('#bands-count').html("<div id='bands-count'><span id='selected-bands-count'>#{checkedCount} of #{totalCount}</span> bands selected</div>")
-    .on 'keyup', '#bands-filter', ->
+
+      $('#' + bandsCountId).html("<div id='#{bandsCountId}' class='bands-count'><span id='#{selectedBandsId}' class='selected-bands-count'>#{checkedCount} of #{totalCount}</span> bands selected</div>")
+    .on 'keyup', '#' + bandsFilterId, ->
       clearTimeout(timer) if timer
       timer = setTimeout (->
-        text = $('#bands-filter').val()
+        text = $('#' + bandsFilterId).val()
         root.jstree('search', text) if text.length > 1), 250
     .on 'before_open.jstree', ->
       $('.jstree-spinner').show()
