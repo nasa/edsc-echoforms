@@ -198,7 +198,7 @@ class Tree extends Typed
     .on 'keyup', '#' + $(this).attr('id') + "-bands-filter", ->
       clearTimeout(timer) if timer
       timer = setTimeout (->
-        text = $('#' + bandsFilterId).val()
+        text = $('#' + $(this).attr('id') + "-bands-filter").val()
         root.jstree('search', text) if text.length > 1), 250
     .on 'before_open.jstree', ->
       $('.jstree-spinner').show()
