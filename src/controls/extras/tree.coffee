@@ -170,9 +170,7 @@ class Tree extends Typed
           setTimeout(arguments.callee, 0)
 
     timer = false
-    bandsCountId = "bands-count-" + $('.bands-count').length
-    bandsFilterId = "bands-filter-" + $('.bands-filter').length
-    selectedBandsId = "selected-bands-count-" + $('.selected-bands-count').length
+    
     root.jstree
       checkbox:
         keep_selected_style: false
@@ -183,7 +181,9 @@ class Tree extends Typed
     .on 'ready.jstree', ->
       rootBandId = root.find('li').first().attr('id')
       root.jstree('close_all').jstree('open_node', rootBandId)
-
+      bandsCountId = $(this).attr('id') + "-bands-count"
+      bandsFilterId = $(this).attr('id') + "-bands-filter" 
+      selectedBandsId = $(this).attr('id') + "-selected-bands-count"
       totalCount = root.jstree('get_json', '#', flat: true).length
       checkedCount = root.jstree('get_checked').length
       root.prepend('<i class="jstree-spinner fa fa-spinner fa-spin fa-fw" style="display: none"></i>')
@@ -192,9 +192,10 @@ class Tree extends Typed
     .on 'changed.jstree', ->
       totalCount = root.jstree('get_json', '#', flat: true).length
       checkedCount = root.jstree('get_checked').length
-
+      bandsCountId =  $(this).attr('id') + "-bands-count"
+      selectedBandsId = $(this).attr('id') + "-selected-bands-count" 
       $('#' + bandsCountId).html("<div id='#{bandsCountId}' class='bands-count'><span id='#{selectedBandsId}' class='selected-bands-count'>#{checkedCount} of #{totalCount}</span> bands selected</div>")
-    .on 'keyup', '#' + bandsFilterId, ->
+    .on 'keyup', '#' + $(this).attr('id') + "-bands-filter", ->
       clearTimeout(timer) if timer
       timer = setTimeout (->
         text = $('#' + bandsFilterId).val()
