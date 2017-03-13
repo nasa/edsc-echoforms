@@ -170,6 +170,7 @@ class Tree extends Typed
           setTimeout(arguments.callee, 0)
 
     timer = false
+    
     root.jstree
       checkbox:
         keep_selected_style: false
@@ -180,20 +181,24 @@ class Tree extends Typed
     .on 'ready.jstree', ->
       rootBandId = root.find('li').first().attr('id')
       root.jstree('close_all').jstree('open_node', rootBandId)
-
+      bandsCountId = $(this).attr('id') + "-bands-count"
+      bandsFilterId = $(this).attr('id') + "-bands-filter" 
+      selectedBandsId = $(this).attr('id') + "-selected-bands-count"
       totalCount = root.jstree('get_json', '#', flat: true).length
       checkedCount = root.jstree('get_checked').length
       root.prepend('<i class="jstree-spinner fa fa-spinner fa-spin fa-fw" style="display: none"></i>')
-      root.prepend("<div id='bands-count'><span id='selected-bands-count'>#{checkedCount} of #{totalCount}</span> bands selected</div>")
-      root.prepend("<input id='bands-filter' placeholder='Filter bands here'></input>")
+      root.prepend("<div id='#{bandsCountId}' class='bands-count'><span id='#{selectedBandsId}' class='selected-bands-count'>#{checkedCount} of #{totalCount}</span> bands selected</div>")
+      root.prepend("<input id='#{bandsFilterId}' class='bands-filter' placeholder='Filter bands here'></input>")
     .on 'changed.jstree', ->
       totalCount = root.jstree('get_json', '#', flat: true).length
       checkedCount = root.jstree('get_checked').length
-      $('#bands-count').html("<div id='bands-count'><span id='selected-bands-count'>#{checkedCount} of #{totalCount}</span> bands selected</div>")
-    .on 'keyup', '#bands-filter', ->
+      bandsCountId =  $(this).attr('id') + "-bands-count"
+      selectedBandsId = $(this).attr('id') + "-selected-bands-count" 
+      $('#' + bandsCountId).html("<div id='#{bandsCountId}' class='bands-count'><span id='#{selectedBandsId}' class='selected-bands-count'>#{checkedCount} of #{totalCount}</span> bands selected</div>")
+    .on 'keyup', '#' + $(this).attr('id') + "-bands-filter", ->
       clearTimeout(timer) if timer
       timer = setTimeout (->
-        text = $('#bands-filter').val()
+        text = $('#' + $(this).attr('id') + "-bands-filter").val()
         root.jstree('search', text) if text.length > 1), 250
     .on 'before_open.jstree', ->
       $('.jstree-spinner').show()
