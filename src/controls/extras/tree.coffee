@@ -178,24 +178,19 @@ class Tree extends Typed
       search:
         fuzzy: false
       plugins: [ "checkbox", "search" ]
-    .on 'ready.jstree', ->
+    .on 'ready.jstree', =>
       rootBandId = root.find('li').first().attr('id')
       root.jstree('close_all').jstree('open_node', rootBandId)
       bandsCountId = $(this).attr('id') + "-bands-count"
       bandsFilterId = $(this).attr('id') + "-bands-filter"
       selectedBandsId = $(this).attr('id') + "-selected-bands-count"
 
-      totalLeafs = (arr1 or arr1 = []).push node for node in root.jstree('get_json', '#', flat: true) when root.jstree('is_leaf', node)
-      checkedLeafs = (arr2 or arr2 = []).push node for node in root.jstree('get_checked') when root.jstree('is_leaf', node) and !root.jstree('is_disabled', node)
-      checkedLeafs = 0 unless checkedLeafs?
-
+      [checkedLeafs, totalLeafs] = @_updateTreeStats(root)
       root.prepend('<i class="jstree-spinner fa fa-spinner fa-spin fa-fw" style="display: none"></i>')
       root.prepend("<div id='#{bandsCountId}' class='bands-count'><span id='#{selectedBandsId}' class='selected-bands-count'>#{checkedLeafs} of #{totalLeafs}</span> bands selected</div>")
       root.prepend("<input id='#{bandsFilterId}' class='bands-filter' placeholder='Filter bands here'></input>")
-    .on 'changed.jstree', ->
-      totalLeafs = (arr1 or arr1 = []).push node for node in root.jstree('get_json', '#', flat: true) when root.jstree('is_leaf', node)
-      checkedLeafs = (arr2 or arr2 = []).push node for node in root.jstree('get_checked') when root.jstree('is_leaf', node) and !root.jstree('is_disabled', node)
-      checkedLeafs = 0 unless checkedLeafs?
+    .on 'changed.jstree', =>
+      [checkedLeafs, totalLeafs] = @_updateTreeStats(root)
 
       bandsCountId =  $(this).attr('id') + "-bands-count"
       selectedBandsId = $(this).attr('id') + "-selected-bands-count"
@@ -213,5 +208,16 @@ class Tree extends Typed
     @tree_root = root
 
     result
+
+  _updateTreeStats: (root)->
+    totalLeafs = 0
+    checkedLeafs = 0
+    for node in root.jstree('get_json', '#', flat: true)
+      root.jstree('check_node', node) if node.li_attr?['item-required'] == 'true'
+      if root.jstree('is_leaf', node)
+        totalLeafs += 1
+        if !root.jstree('is_disabled', node) && root.jstree('is_checked', node)
+          checkedLeafs += 1
+    [checkedLeafs, totalLeafs]
 
 module.exports = Tree
