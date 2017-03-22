@@ -150,9 +150,6 @@ class Tree extends Typed
   inputAttrs: ->
     $.extend(super(), separator: @separator, cascade: @cascade)
 
-  _getLeafStats: ->
-
-
   buildElementsDom: ->
     start = new Date().getTime()
     result = super()
