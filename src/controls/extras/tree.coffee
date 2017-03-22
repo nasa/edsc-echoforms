@@ -150,6 +150,9 @@ class Tree extends Typed
   inputAttrs: ->
     $.extend(super(), separator: @separator, cascade: @cascade)
 
+  _getLeafStats: ->
+
+
   buildElementsDom: ->
     start = new Date().getTime()
     result = super()
@@ -170,7 +173,7 @@ class Tree extends Typed
           setTimeout(arguments.callee, 0)
 
     timer = false
-    
+
     root.jstree
       checkbox:
         keep_selected_style: false
@@ -182,19 +185,24 @@ class Tree extends Typed
       rootBandId = root.find('li').first().attr('id')
       root.jstree('close_all').jstree('open_node', rootBandId)
       bandsCountId = $(this).attr('id') + "-bands-count"
-      bandsFilterId = $(this).attr('id') + "-bands-filter" 
+      bandsFilterId = $(this).attr('id') + "-bands-filter"
       selectedBandsId = $(this).attr('id') + "-selected-bands-count"
-      totalCount = root.jstree('get_json', '#', flat: true).length
-      checkedCount = root.jstree('get_checked').length
+
+      totalLeafs = (arr1 or arr1 = []).push node for node in root.jstree('get_json', '#', flat: true) when root.jstree('is_leaf', node)
+      checkedLeafs = (arr2 or arr2 = []).push node for node in root.jstree('get_checked') when root.jstree('is_leaf', node) and !root.jstree('is_disabled', node)
+      checkedLeafs = 0 unless checkedLeafs?
+
       root.prepend('<i class="jstree-spinner fa fa-spinner fa-spin fa-fw" style="display: none"></i>')
-      root.prepend("<div id='#{bandsCountId}' class='bands-count'><span id='#{selectedBandsId}' class='selected-bands-count'>#{checkedCount} of #{totalCount}</span> bands selected</div>")
+      root.prepend("<div id='#{bandsCountId}' class='bands-count'><span id='#{selectedBandsId}' class='selected-bands-count'>#{checkedLeafs} of #{totalLeafs}</span> bands selected</div>")
       root.prepend("<input id='#{bandsFilterId}' class='bands-filter' placeholder='Filter bands here'></input>")
     .on 'changed.jstree', ->
-      totalCount = root.jstree('get_json', '#', flat: true).length
-      checkedCount = root.jstree('get_checked').length
+      totalLeafs = (arr1 or arr1 = []).push node for node in root.jstree('get_json', '#', flat: true) when root.jstree('is_leaf', node)
+      checkedLeafs = (arr2 or arr2 = []).push node for node in root.jstree('get_checked') when root.jstree('is_leaf', node) and !root.jstree('is_disabled', node)
+      checkedLeafs = 0 unless checkedLeafs?
+
       bandsCountId =  $(this).attr('id') + "-bands-count"
-      selectedBandsId = $(this).attr('id') + "-selected-bands-count" 
-      $('#' + bandsCountId).html("<div id='#{bandsCountId}' class='bands-count'><span id='#{selectedBandsId}' class='selected-bands-count'>#{checkedCount} of #{totalCount}</span> bands selected</div>")
+      selectedBandsId = $(this).attr('id') + "-selected-bands-count"
+      $('#' + bandsCountId).html("<div id='#{bandsCountId}' class='bands-count'><span id='#{selectedBandsId}' class='selected-bands-count'>#{checkedLeafs} of #{totalLeafs}</span> bands selected</div>")
     .on 'keyup', '#' + $(this).attr('id') + "-bands-filter", ->
       clearTimeout(timer) if timer
       timer = setTimeout (->
