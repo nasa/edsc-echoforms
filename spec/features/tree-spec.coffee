@@ -330,13 +330,15 @@ describe '"tree" control', ->
         $(':jstree').jstree('open_all')
         $(":jstree li[node_value='level_2_child_1'] > a ").click()
 
-      describe "when a parent node is selected", ->
-        it "includes only that node, and not parents or children in the form output", ->
-          expect(@form.echoforms('serialize')).not.toMatch(/top_node_1/)
-          expect(@form.echoforms('serialize')).not.toMatch(/level_1_child_1/)
-          expect(@form.echoforms('serialize')).toMatch(/level_2_child_1/)
-          expect(@form.echoforms('serialize')).not.toMatch(/level_3/)
-          expect(@form.echoforms('serialize')).not.toMatch(/level_2_child_2/)
+      # EDSC-1478: Some form filtering of 'false' relevancy has been removed as it was 
+      # incorrectly building the request - suppressing test as well
+      # describe "when a parent node is selected", ->
+      #  it "includes only that node, and not parents or children in the form output", ->
+      #    expect(@form.echoforms('serialize')).not.toMatch(/top_node_1/)
+      #    expect(@form.echoforms('serialize')).not.toMatch(/level_1_child_1/)
+      #    expect(@form.echoforms('serialize')).toMatch(/level_2_child_1/)
+      #    expect(@form.echoforms('serialize')).not.toMatch(/level_3/)
+      #    expect(@form.echoforms('serialize')).not.toMatch(/level_2_child_2/)
 
     describe "simplifies tree selections", ->
       describe "when an entire subtree is selected", ->
@@ -354,9 +356,11 @@ describe '"tree" control', ->
             expect(@form.echoforms('serialize')).not.toMatch(/top_node_1/)
             expect(@form.echoforms('serialize')).not.toMatch(/level_1_child_1/)
 
-          it "omits leaf nodes under the parent node", ->
-            expect(@form.echoforms('serialize')).not.toMatch(/level_3_/)
-            expect(@form.echoforms('serialize')).not.toMatch(/level_2_child_2/)
+          # EDSC-1478: Some form filtering of 'false' relevancy has been removed as it was 
+          # incorrectly building the request - suppressing test as well
+          #it "omits leaf nodes under the parent node", ->
+          #  expect(@form.echoforms('serialize')).not.toMatch(/level_3_/)
+          #  expect(@form.echoforms('serialize')).not.toMatch(/level_2_child_2/)
 
         describe "when selecting all subtrees causes its ancestor nodes to be full subtrees", ->
           beforeEach ->
@@ -379,9 +383,11 @@ describe '"tree" control', ->
           expect(@form.echoforms('serialize')).toMatch(/level_3_child_1/)
           expect(@form.echoforms('serialize')).toMatch(/level_3_child_3/)
 
-        it "omits the parent nodes from the form output", ->
-          expect(@form.echoforms('serialize')).not.toMatch(/level_1_child.*/)
-          expect(@form.echoforms('serialize')).not.toMatch(/level_2_child.*/)
+        # EDSC-1478: Some form filtering of 'false' relevancy has been removed as it was 
+        # incorrectly building the request - suppressing test as well
+        #it "omits the parent nodes from the form output", ->
+        #  expect(@form.echoforms('serialize')).not.toMatch(/level_1_child.*/)
+        #  expect(@form.echoforms('serialize')).not.toMatch(/level_2_child.*/)
 
 
     describe "when a subtree contains required nodes", ->
@@ -455,8 +461,10 @@ describe '"tree" control', ->
           it "includes any full subtrees", ->
             expect(@form.echoforms('serialize')).toMatch(/level_2_child_4/)
 
-          it "does not include leaf nodes under full subtrees", ->
-            expect(@form.echoforms('serialize')).not.toMatch(/.*required_child/)
+          # EDSC-1478: Some form filtering of 'false' relevancy has been removed as it was 
+          # incorrectly building the request - suppressing test as well
+          #it "does not include leaf nodes under full subtrees", ->
+          #  expect(@form.echoforms('serialize')).not.toMatch(/.*required_child/)
 
       describe "when default values are specified in the model", ->
         beforeEach ->
