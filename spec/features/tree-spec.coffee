@@ -407,9 +407,11 @@ describe '"tree" control', ->
 
         it "includes the parent node in the form output", ->
           expect(@form.echoforms('serialize')).toMatch(/level_2_child_4</)
-
-        it "omits the required node from the form output", ->
-          expect(@form.echoforms('serialize')).not.toMatch(/required_child/)
+        
+        # EDSC-1478: Some form filtering of 'false' relevancy has been removed as it was 
+        # incorrectly building the request - suppressing test as well
+        #it "omits the required node from the form output", ->
+        #  expect(@form.echoforms('serialize')).not.toMatch(/required_child/)
 
     describe "when a subtree contains irrelevant nodes", ->
       describe "when all relevant child nodes are selected", ->
