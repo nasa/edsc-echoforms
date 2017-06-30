@@ -120,7 +120,10 @@ class Tree extends Typed
           sibling = @inputs().jstree('get_node', sibling_id)
           if sibling.state.selected
             if sibling.li_attr['item-relevant'] == 'true'
-              return @_hasIrrelevantDescendants(sibling)
+              # EDSC-1478: Previously, this check returned the value of @_hasIrrelevantDescendants(sibling)
+              # However, this was causing an issue with the tree not generating properly in the case that
+              # all nodes were selected *except* a single node that was 'not available'.
+              return true 
             else
               return true
           else
