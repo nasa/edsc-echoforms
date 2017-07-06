@@ -120,7 +120,10 @@ class Tree extends Typed
           sibling = @inputs().jstree('get_node', sibling_id)
           if sibling.state.selected
             if sibling.li_attr['item-relevant'] == 'true'
-              return @_hasIrrelevantDescendants(sibling)
+              if @_hasIrrelevantDescendants(sibling)
+                return true
+              else
+                continue
             else
               return true
           else
