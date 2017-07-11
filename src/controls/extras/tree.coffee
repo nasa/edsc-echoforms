@@ -84,10 +84,10 @@ class Tree extends Typed
       @inputs().jstree('get_node', node.id)
 
     checked = all_nodes.filter (node) ->
-      node.state.selected && node.li_attr.node_value?.length > 0 && node.li_attr['item-relevant'] == 'true'
+      node.state.selected && node.li_attr.node_value?.length > 0 && !node.state.disabled
 
     required = all_nodes.filter (node) ->
-      node.li_attr['item-relevant'] == 'true' && node.li_attr['item-required'] == 'true' && node.li_attr.node_value?.length > 0 && node.children.length == 0
+      !node.state.disabled && node.li_attr['item-required'] == 'true' && node.li_attr.node_value?.length > 0 && node.children.length == 0
 
     checked_required_nodes = @_removeDupNodes([checked..., required...])
 
@@ -119,7 +119,7 @@ class Tree extends Typed
         for sibling_id in parent.children when sibling_id != node.id
           sibling = @inputs().jstree('get_node', sibling_id)
           if sibling.state.selected
-            if sibling.li_attr['item-relevant'] == 'true'
+            if !sibling.state.disabled
               if @_hasIrrelevantDescendants(sibling)
                 return true
               else
@@ -138,7 +138,7 @@ class Tree extends Typed
     for child_id in node.children
       child = @inputs().jstree('get_node', child_id)
       if child.children.length == 0
-        if child.li_attr['item-relevant'] == 'false'
+        if child.state.disabled
           return true
       else
         return @_hasIrrelevantDescendants(child)
