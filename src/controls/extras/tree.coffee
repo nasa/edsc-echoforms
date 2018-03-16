@@ -182,6 +182,7 @@ class Tree extends Typed
         fuzzy: false
       plugins: [ "checkbox", "search" ]
     .on 'ready.jstree', =>
+      $("#" + $(this).attr('id') + "-element").jstree("check_all")
       rootBandId = root.find('li').first().attr('id')
       root.jstree('close_all').jstree('open_node', rootBandId)
       bandsCountId = $(this).attr('id') + "-bands-count"
@@ -192,7 +193,7 @@ class Tree extends Typed
       root.prepend('<i class="jstree-spinner fa fa-spinner fa-spin fa-fw" style="display: none"></i>')
       root.prepend("<div id='#{bandsCountId}' class='bands-count'><span id='#{selectedBandsId}' class='selected-bands-count'>#{checkedLeafs} of #{totalLeafs}</span> bands selected</div>")
       root.prepend("<input id='#{bandsFilterId}' class='bands-filter' placeholder='Filter bands here'></input>")
-      $("#" + $(this).attr('id') + "-element").jstree("check_all")
+      
     .on 'changed.jstree', =>
       [checkedLeafs, totalLeafs] = @_updateTreeStats(root)
       bandsCountId =  $(this).attr('id') + "-bands-count"
