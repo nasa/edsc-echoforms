@@ -183,6 +183,7 @@ class Tree extends Typed
       plugins: [ "checkbox", "search" ]
     .on 'ready.jstree', =>
       rootBandId = root.find('li').first().attr('id')
+      root.jstree('select_node', rootBandId);
       root.jstree('close_all').jstree('open_node', rootBandId)
       bandsCountId = $(this).attr('id') + "-bands-count"
       bandsFilterId = $(this).attr('id') + "-bands-filter"
