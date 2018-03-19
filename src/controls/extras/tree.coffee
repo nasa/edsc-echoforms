@@ -184,6 +184,9 @@ class Tree extends Typed
     .on 'ready.jstree', =>
       rootBandId = root.find('li').first().attr('id')
       root.jstree('select_node', rootBandId);
+      data_jstree = {}
+      data_jstree['selected'] = true
+      root.find('li').first().attr('data-jstree' : JSON.stringify(data_jstree))
       root.jstree('close_all').jstree('open_node', rootBandId)
       bandsCountId = $(this).attr('id') + "-bands-count"
       bandsFilterId = $(this).attr('id') + "-bands-filter"
