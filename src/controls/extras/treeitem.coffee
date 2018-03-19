@@ -109,6 +109,9 @@ class TreeItem #extends Base
     el.addClass('jstree-open')
     help = @buildHelpDom()
     data_jstree = {}
+    model_vals = @tree.modelValues()
+    if model_vals.length > 0 and @value in model_vals
+      el.addClass('jstree-clicked')
     unless @node_relevant()
       data_jstree['disabled'] = true
       data_jstree['selected'] = true #this will be filtered out at output generation, but will ensure the node is loaded.
@@ -124,16 +127,17 @@ class TreeItem #extends Base
     childlist = $('<ul>')
     i = 0
     items = @items
-    do () ->
-      start = new Date().getTime()
-      for j in [i..items.length - 1] by 1
-        item = items[j]
-        break unless item?
-        node = item.buildElementsDom()
-        node.appendTo(childlist)
-        if i < (items.length - 1) and (new Date().getTime() - start > 40)
-          console.log ("TreeItem construction yielding to browser to avoid unresponsive script")
-          postMessage("script-timeout-message","*");
+    if @items.length > 0
+      do () ->
+        start = new Date().getTime()
+        for j in [i..items.length - 1] by 1
+          item = items[j]
+          break unless item?
+          node = item.buildElementsDom()
+          node.appendTo(childlist)
+          if i < (items.length - 1) and (new Date().getTime() - start > 40)
+            console.log ("TreeItem construction yielding to browser to avoid unresponsive script")
+            postMessage("script-timeout-message","*");
     childlist.appendTo(el) if @items.length > 0
     el
 
