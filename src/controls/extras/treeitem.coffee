@@ -111,7 +111,7 @@ class TreeItem #extends Base
     data_jstree = {}
     model_vals = @tree.modelValues()
     if model_vals.length > 0 and @value in model_vals
-      el.addClass('jstree-clicked')
+      data_jstree['opened'] = true
     unless @node_relevant()
       data_jstree['disabled'] = true
       data_jstree['selected'] = true #this will be filtered out at output generation, but will ensure the node is loaded.
@@ -119,6 +119,7 @@ class TreeItem #extends Base
     if @node_required()
       data_jstree['selected'] = true
       @addNotAvailableRequiredText(help, '[required]')
+
     el.attr('item-relevant': @node_relevant())
     el.attr('item-required': @node_required())
     el.attr('data-jstree' : JSON.stringify(data_jstree)) if Object.keys(data_jstree).length > 0
