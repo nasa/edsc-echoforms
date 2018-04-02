@@ -165,7 +165,6 @@ class Base
     @el.children('.echoforms-errors').empty().append(errors)
 
   buildDom: (classes=null)->
-    console.log("BuildDom")
     @buildControlDom()
       .append(@buildLabelDom())
       .append(@buildElementsDom())
