@@ -194,9 +194,9 @@ class Tree extends Typed
       root.prepend('<i class="jstree-spinner fa fa-spinner fa-spin fa-fw" style="display: none"></i>')
       root.prepend("<div id='#{bandsCountId}' class='bands-count'><span id='#{selectedBandsId}' class='selected-bands-count'>#{checkedLeafs} of #{totalLeafs}</span> bands selected</div>")
       root.prepend("<input id='#{bandsFilterId}' class='bands-filter' placeholder='Filter bands here'></input>")
-      
     .on 'changed.jstree', =>
       [checkedLeafs, totalLeafs] = @_updateTreeStats(root)
+
       bandsCountId =  $(this).attr('id') + "-bands-count"
       selectedBandsId = $(this).attr('id') + "-selected-bands-count"
       $('#' + bandsCountId).html("<div id='#{bandsCountId}' class='bands-count'><span id='#{selectedBandsId}' class='selected-bands-count'>#{checkedLeafs} of #{totalLeafs}</span> bands selected</div>")
