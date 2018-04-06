@@ -234,8 +234,7 @@ describe '"tree" control', ->
     it "adds the provided value to the model if no separator specified", ->
       attrs = 'ref="prov:treeReference" valueElementName="data_layer" cascade="false" simplify_output="false"'
       form = template.form($('#dom'), model: model, attributes: attrs)
-      $(':jstree').jstree('open_all')
-      $(":jstree li[node_value='Engineering'] > a ").each ->
+      $(".preselect > a").each ->
         $(this).click()
       expect($('.jstree-clicked').size()).toEqual(1)
       
@@ -249,7 +248,7 @@ describe '"tree" control', ->
       attrs = 'ref="prov:treeReference" valueElementName="data_layer" separator="\/" cascade="false"'
       form = template.form($('#dom'), model: model, attributes: attrs)
       $(':jstree').jstree('open_all')
-      $(":jstree li[node_value='/GLAH01\/Data_1HZ_VAL\/Engineering\/d_T_detID_VAL'] > a ").each ->
+      $(".preselect > a").each ->
         $(this).click()
       expect($('.jstree-clicked').size()).toEqual(1)
       expect(form.echoforms('serialize')).toMatch(/>\/GLAH01\/Data_1HZ_VAL\/Engineering\/d_T_detID_VAL</)
@@ -476,8 +475,10 @@ describe '"tree" control', ->
             </prov:treeReference>
           """
           @form = template.form($('#dom'), ui:ui, model: model)
-          $(":jstree li[node_value='top_node_1'] > a ").each ->
+
+          $(".preselect > a").each ->
             $(this).click()
+
           #$(":jstree li[node_value='top_node_2'] > i.jstree-ocl").click()
 
         it "includes specified full subtrees in the form output", ->
