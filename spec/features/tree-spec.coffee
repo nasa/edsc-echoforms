@@ -53,6 +53,7 @@ describe '"tree" control', ->
       </prov:treeReference>
     """
     template.form($('#dom'), model: model, attributes: attrs)
+    $(':jstree').trigger('ready.jstree')
     $(':jstree').jstree('open_all')
     expect($('.jstree-clicked').parent().attr('node_value')).toBe("/GLAH01/Data_1HZ_VAL/Engineering/d_T_detID_VAL");
 
@@ -233,8 +234,10 @@ describe '"tree" control', ->
     it "adds the provided value to the model if no separator specified", ->
       attrs = 'ref="prov:treeReference" valueElementName="data_layer" cascade="false" simplify_output="false"'
       form = template.form($('#dom'), model: model, attributes: attrs)
-      $(':jstree').jstree('open_all')
+      $(".preselect > a").each ->
+        $(this).click()
       expect($('.jstree-clicked').size()).toEqual(1)
+      
       expect(form.echoforms('serialize')).toMatch(/>Engineering</)
       $(':jstree').jstree('open_all')
       $(":jstree li[node_value='Data_40HZ_VAL'] > a ").each ->
@@ -245,8 +248,11 @@ describe '"tree" control', ->
       attrs = 'ref="prov:treeReference" valueElementName="data_layer" separator="\/" cascade="false"'
       form = template.form($('#dom'), model: model, attributes: attrs)
       $(':jstree').jstree('open_all')
+      $(".preselect > a").each ->
+        $(this).click()
       expect($('.jstree-clicked').size()).toEqual(1)
       expect(form.echoforms('serialize')).toMatch(/>\/GLAH01\/Data_1HZ_VAL\/Engineering\/d_T_detID_VAL</)
+      $(':jstree').trigger('ready.jstree')
       $(':jstree').jstree('open_all')
       $(":jstree li[node_value='/GLAH01/Data_40HZ_VAL'] > a ").each ->
         $(this).click()
@@ -262,6 +268,7 @@ describe '"tree" control', ->
     it "selects all child nodes of selected node when cascade = true", ->
       attrs = 'ref="prov:treeReference" valueElementName="data_layer" separator="\/" cascade="true"'
       form = template.form($('#dom'), model: model, attributes: attrs)
+      $(':jstree').trigger('ready.jstree')
       $(':jstree').jstree('open_all')
       expect($('.jstree-clicked').size()).toEqual(3)
       $(":jstree li[node_value='/GLAH01/Data_1HZ_VAL'] > a ").each ->
@@ -271,6 +278,7 @@ describe '"tree" control', ->
     it "selects only selected node when cascade = false", ->
       attrs = 'ref="prov:treeReference" valueElementName="data_layer" separator="\/" cascade="false"'
       form = template.form($('#dom'), model: model, attributes: attrs)
+      $(':jstree').trigger('ready.jstree')
       $(':jstree').jstree('open_all')
       expect($('.jstree-clicked').size()).toEqual(1)
       $(":jstree li[node_value='/GLAH01/Data_1HZ_VAL'] > a ").each ->
@@ -467,6 +475,9 @@ describe '"tree" control', ->
             </prov:treeReference>
           """
           @form = template.form($('#dom'), ui:ui, model: model)
+
+          $(".preselect > a").each ->
+            $(this).click()
 
           #$(":jstree li[node_value='top_node_2'] > i.jstree-ocl").click()
 

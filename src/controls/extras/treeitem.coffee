@@ -111,7 +111,7 @@ class TreeItem #extends Base
     data_jstree = {}
     model_vals = @tree.modelValues()
     if model_vals.length > 0 and @value in model_vals
-      data_jstree['selected'] = true
+      el.addClass('preselect')
     unless @node_relevant()
       data_jstree['disabled'] = true
       data_jstree['selected'] = true #this will be filtered out at output generation, but will ensure the node is loaded.
