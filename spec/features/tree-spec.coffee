@@ -292,7 +292,7 @@ describe '"tree" control', ->
       </prov:treeReference>
     """
     ui = """
-          <tree id="tree_to_simplify" ref="prov:treeReference" valueElementName="data_layer" cascade="true">
+          <tree id="tree_to_simplify" ref="prov:treeReference" valueElementName="data_layer" cascade="true" simplify_output="true">
             <item value="top_node_1">
               <item value="level_1_child_1">
                 <item value="level_2_child_1">
@@ -320,7 +320,7 @@ describe '"tree" control', ->
           </tree>
         """
     it "includes all selected and implied nodes when set to false", ->
-      no_simplify_ui = ui.replace('cascade="true"', 'cascade="true" simplify_output="false"')
+      no_simplify_ui = ui.replace('simplify_output="true"', 'simplify_output="false"')
       form = template.form($('#dom'), ui: no_simplify_ui, model: model, attrs: attrs)
       $(':jstree').jstree('open_all')
 
