@@ -18,7 +18,7 @@ class Tree extends Typed
     @separator = ui.attr('separator')
     @cascade = if ui.attr('cascade')? then ui.attr('cascade') == "true" else true
     @valueElementName = ui.attr('valueElementName') || 'value'
-    @simplify_output = if ui.attr('simplify_output')? then ui.attr('simplify_output') == "true" else true
+    @simplify_output = if ui.attr('simplify_output')? then ui.attr('simplify_output') == "true" else false
     @items = for item in ui.children('item')
       new TreeItem($(item), model, controlClasses, resolver, '', @separator, this)
     super(ui, model, controlClasses, resolver)
@@ -182,9 +182,7 @@ class Tree extends Typed
         fuzzy: false
       plugins: [ "checkbox", "search" ]
     .on 'ready.jstree', =>
-      $('li .preselect').each ->
-        root.jstree('select_node', $(this).attr('id'))
-      rootBandId = root.find('li').first().attr('id')  
+      rootBandId = root.find('li').first().attr('id')
       root.jstree('close_all').jstree('open_node', rootBandId)
       bandsCountId = $(this).attr('id') + "-bands-count"
       bandsFilterId = $(this).attr('id') + "-bands-filter"
