@@ -72,7 +72,7 @@ or otherwise greatly impact the size of the distributed code. Existing clients
 do this in order to draw map controls for some forms.
 
 The "full" version of the plugin contains a few such controls, which can
-be found under the src/controls/extras folder.
+be found under the `src/controls/extras` folder.
 
 Here is a simple example:
 
@@ -109,7 +109,7 @@ Then set up your npm repo list with the latest files:
     $ cd /path/to/plugin/source/
     $ npm install
 
-make sure ./node_modules/.bin and /usr/local/bin are in your path.
+make sure `./node_modules/.bin` and `/usr/local/bin` are in your path.
 
 To compile:
 
@@ -146,7 +146,7 @@ then compile
 
 #### Debugging wgxpath changes
 
-To disable minifying in wgxpath to make debugging easier, make the following changes to compile.sh:
+To disable minifying in wgxpath to make debugging easier, make the following changes to `compile.sh`:
 
 Remove following two lines:
 
