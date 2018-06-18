@@ -234,23 +234,23 @@ describe '"tree" control', ->
       attrs = 'ref="prov:treeReference" valueElementName="data_layer" cascade="false" simplify_output="false"'
       form = template.form($('#dom'), model: model, attributes: attrs)
       $(':jstree').jstree('open_all')
-      expect($('.jstree-clicked').size()).toEqual(1)
+      expect($('.jstree-clicked').length).toEqual(1)
       expect(form.echoforms('serialize')).toMatch(/>Engineering</)
       $(':jstree').jstree('open_all')
       $(":jstree li[node_value='Data_40HZ_VAL'] > a ").each ->
         $(this).click()
-      expect($('.jstree-clicked').size()).toEqual(2)
+      expect($('.jstree-clicked').length).toEqual(2)
       expect(form.echoforms('serialize')).toMatch(/>Data_40HZ_VAL</)
     it "generates and adds a path to the model if a separator is specified", ->
       attrs = 'ref="prov:treeReference" valueElementName="data_layer" separator="\/" cascade="false"'
       form = template.form($('#dom'), model: model, attributes: attrs)
       $(':jstree').jstree('open_all')
-      expect($('.jstree-clicked').size()).toEqual(1)
+      expect($('.jstree-clicked').length).toEqual(1)
       expect(form.echoforms('serialize')).toMatch(/>\/GLAH01\/Data_1HZ_VAL\/Engineering\/d_T_detID_VAL</)
       $(':jstree').jstree('open_all')
       $(":jstree li[node_value='/GLAH01/Data_40HZ_VAL'] > a ").each ->
         $(this).click()
-      expect($('.jstree-clicked').size()).toEqual(2)
+      expect($('.jstree-clicked').length).toEqual(2)
       expect(form.echoforms('serialize')).toMatch(/>\/GLAH01\/Data_40HZ_VAL</)
 
   describe "'cascade' option", ->
@@ -263,19 +263,19 @@ describe '"tree" control', ->
       attrs = 'ref="prov:treeReference" valueElementName="data_layer" separator="\/" cascade="true"'
       form = template.form($('#dom'), model: model, attributes: attrs)
       $(':jstree').jstree('open_all')
-      expect($('.jstree-clicked').size()).toEqual(3)
+      expect($('.jstree-clicked').length).toEqual(3)
       $(":jstree li[node_value='/GLAH01/Data_1HZ_VAL'] > a ").each ->
         $(this).click()
-      expect($('.jstree-clicked').size()).toEqual(5)
+      expect($('.jstree-clicked').length).toEqual(5)
 
     it "selects only selected node when cascade = false", ->
       attrs = 'ref="prov:treeReference" valueElementName="data_layer" separator="\/" cascade="false"'
       form = template.form($('#dom'), model: model, attributes: attrs)
       $(':jstree').jstree('open_all')
-      expect($('.jstree-clicked').size()).toEqual(1)
+      expect($('.jstree-clicked').length).toEqual(1)
       $(":jstree li[node_value='/GLAH01/Data_1HZ_VAL'] > a ").each ->
         $(this).click()
-      expect($('.jstree-clicked').size()).toEqual(2)
+      expect($('.jstree-clicked').length).toEqual(2)
 
   describe "simplify_output option", ->
     model = """
@@ -505,7 +505,7 @@ describe '"tree" control', ->
       it "should include 2 trees with the duplicate id in the DOM", ->
         expect($(':jstree').filter ->
           /duplicate_test/.test(this.id)
-        .size()).toEqual(2)
+        .length).toEqual(2)
 
       describe "when once node in each duplicate tree is clicked", ->
         beforeEach ->
@@ -515,7 +515,7 @@ describe '"tree" control', ->
             $(this).click()
 
         it "should include both selected nodes in the form output", ->
-          expect($('.jstree-clicked').size()).toEqual(2)
+          expect($('.jstree-clicked').length).toEqual(2)
           expect($($('.jstree-clicked')[0]).parent().attr('node_value')).toBe("/value_with_label");
           expect($($('.jstree-clicked')[1]).parent().attr('node_value')).toBe("/value_with_no_label");
           expect(@form.echoforms('serialize')).toMatch(/value_with_label/)
