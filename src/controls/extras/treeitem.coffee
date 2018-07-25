@@ -135,7 +135,7 @@ class TreeItem #extends Base
         node = item.buildElementsDom()
         node.appendTo(childlist)
         if i < (items.length - 1) and (new Date().getTime() - start > 40)
-          console.log ("TreeItem construction yielding to browser to avoid unresponsive script")
+          # console.log ("TreeItem construction yielding to browser to avoid unresponsive script")
           postMessage("script-timeout-message","*");
     childlist.appendTo(el) if @items.length > 0
     el
