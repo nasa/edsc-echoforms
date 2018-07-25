@@ -19,6 +19,7 @@ class Tree extends Typed
     @cascade = if ui.attr('cascade')? then ui.attr('cascade') == "true" else true
     @valueElementName = ui.attr('valueElementName') || 'value'
     @simplify_output = if ui.attr('simplify_output')? then ui.attr('simplify_output') == "true" else true
+
     @items = for item in ui.children('item')
       new TreeItem($(item), model, controlClasses, resolver, '', @separator, this)
     super(ui, model, controlClasses, resolver)
@@ -53,7 +54,8 @@ class Tree extends Typed
     if @valueElementName? and @refExpr?
       root = @ref().empty()
       tagname = @valueElementTagName(root)
-      for value in @inputValue()
+      
+      for value in @inputValue(@simplify_output)
         element = document.createElementNS(root[0].namespaceURI, tagname)
         node = $(element).text(value)
         root.append(node)
@@ -77,7 +79,7 @@ class Tree extends Typed
   inputs: () ->
     @el.find('div.jstree')
 
-  inputValue: ->
+  inputValue: (simplify_output = false) ->
     #Get all nodes which are required, explicitely checked, or implicitely checked (i.e. all children are checked)
     #Explicitly checked or imlicitely checked (i.e. all descendants checked, required, or irrelevant)
     all_nodes = @inputs().jstree('get_json', '#', {flat: true}).map (node) =>
@@ -91,7 +93,7 @@ class Tree extends Typed
 
     checked_required_nodes = @_removeDupNodes([checked..., required...])
 
-    if @simplify_output
+    if simplify_output
       #Filter values to include only
       #    - 'full parent' nodes (parents whose descendants are all selected [and relevant])
       #    - 'true leaf' nodes (leaves which do not descend from any 'full parent' nodes)
@@ -99,7 +101,7 @@ class Tree extends Typed
 
       #select clicked or required <li>s
       true_leaves = checked_required_nodes.filter (node) ->
-        node.children.length == 0 && node.state.selected || node.li_attr['item-required'] == 'true'
+        node.children.length == 0 && (node.state.selected || node.li_attr['item-required'] == 'true')
 
       #select clicked <li>s which have children
       #remove <li>s with irrelevant descendants
@@ -112,11 +114,20 @@ class Tree extends Typed
         node.children.length > 0 && checked_children.length == node.children.length
 
       #remove any <li>s whose parent is selected AND who do not have any irrelevant cousins
+      processedNodes = []
+
       checked_required_nodes = [true_leaves..., full_parents...].filter (node) =>
         parent = @inputs().jstree('get_node', node.parent)
         return true if parent.id == '#'
         return true unless parent.state.selected
+
         for sibling_id in parent.children when sibling_id != node.id
+          # If this node has already beenprocessed, move on
+          continue if sibling_id in processedNodes
+
+          # Indicate that this node has already been processsed
+          processedNodes.push(sibling_id)
+
           sibling = @inputs().jstree('get_node', sibling_id)
           if sibling.state.selected
             if !sibling.state.disabled
@@ -131,6 +142,7 @@ class Tree extends Typed
         false
 
     checked_required_nodes = @_removeDupNodes(checked_required_nodes)
+
     checked_required_nodes.map (node)->
       node.li_attr.node_value
 
@@ -148,7 +160,6 @@ class Tree extends Typed
     results = {}
     results[arr[key].id] = arr[key] for key in [0...arr.length]
     value for key, value of results
-
 
   inputAttrs: ->
     $.extend(super(), separator: @separator, cascade: @cascade)
@@ -169,7 +180,7 @@ class Tree extends Typed
         node = item.buildElementsDom()
         node.appendTo(ul)
         if i < (items.length - 1) and (new Date().getTime() - start > 40)
-          console.log ("Tree construction yielding to browser to avoid unresponsive script")
+          # console.log ("Tree construction yielding to browser to avoid unresponsive script")
           setTimeout(arguments.callee, 0)
 
     timer = false

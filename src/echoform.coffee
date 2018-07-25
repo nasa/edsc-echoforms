@@ -17,6 +17,9 @@ class EchoForm
 
   constructor: (@root, options) ->
     try
+      console.log '-- [ Form Construction Started ]'
+      t0 = performance.now();
+
       @options = $.extend({}, defaults, options)
       @form = form = @options['form']
       @controlClasses = controlClasses = @options['controls'].concat(defaultControls)
@@ -48,6 +51,10 @@ class EchoForm
       @control = new FormControl(ui, model, controlClasses, resolver)
       @root.append(@control.element())
       @control.addedToDom()
+
+      console.log '-- [ Form Construction Complete ]'
+
+      console.log("-- [ Construction of `" + this.constructor.name + "` took " + parseFloat((performance.now() - t0) / 1000).toFixed(2) + " seconds ]")
 
     catch exception
       util.error(exception)
