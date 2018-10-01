@@ -18,14 +18,17 @@ class Tree extends Typed
     @separator = ui.attr('separator')
     @cascade = if ui.attr('cascade')? then ui.attr('cascade') == "true" else true
     @valueElementName = ui.attr('valueElementName') || 'value'
-    @simplify_output = if ui.attr('simplify_output')? then ui.attr('simplify_output') == "true" else true
+    @simplifyOutput = if ui.attr('simplifyOutput')? then ui.attr('simplifyOutput') == "true" else true
+    @maxParameters = ui.attr('maxParameters')
 
     @items = for item in ui.children('item')
       new TreeItem($(item), model, controlClasses, resolver, '', @separator, this)
     super(ui, model, controlClasses, resolver)
 
   validate: ->
-    super()
+    # super() unless there is already a validation error visible, from maxParameters being enforced
+    super() unless @el.find('.echoforms-error').length > 0
+
     allTreeItems = @tree_root.jstree('get_json', '#', {flat: true}).map ((node) => @tree_root.jstree('get_node', node.id))
       .reduce((hash, obj) -> # Grab a little performance gain by looking a tree item up from a hash using its id in @handle_relevant_or_required.
         hash[obj.id] = obj
@@ -54,8 +57,8 @@ class Tree extends Typed
     if @valueElementName? and @refExpr?
       root = @ref().empty()
       tagname = @valueElementTagName(root)
-      
-      for value in @inputValue(@simplify_output)
+
+      for value in @inputValue(@simplifyOutput)
         element = document.createElementNS(root[0].namespaceURI, tagname)
         node = $(element).text(value)
         root.append(node)
@@ -79,7 +82,7 @@ class Tree extends Typed
   inputs: () ->
     @el.find('div.jstree')
 
-  inputValue: (simplify_output = false) ->
+  inputValue: (simplifyOutput = false) ->
     #Get all nodes which are required, explicitely checked, or implicitely checked (i.e. all children are checked)
     #Explicitly checked or imlicitely checked (i.e. all descendants checked, required, or irrelevant)
     all_nodes = @inputs().jstree('get_json', '#', {flat: true}).map (node) =>
@@ -93,7 +96,7 @@ class Tree extends Typed
 
     checked_required_nodes = @_removeDupNodes([checked..., required...])
 
-    if simplify_output
+    if simplifyOutput
       #Filter values to include only
       #    - 'full parent' nodes (parents whose descendants are all selected [and relevant])
       #    - 'true leaf' nodes (leaves which do not descend from any 'full parent' nodes)
@@ -185,13 +188,28 @@ class Tree extends Typed
 
     timer = false
 
+    self = this
     root.jstree
       checkbox:
         keep_selected_style: false
         three_state: @cascade
       search:
         fuzzy: false
-      plugins: [ "checkbox", "search" ]
+      'conditionalselect': (curNode) ->
+        self.setErrors([])
+        if !self.simplifyOutput && self.maxParameters? && curNode.state.selected == false
+          # add the current node id to list of children ids
+          # so if a leaf node is selected it will work correctly
+          children_ids = curNode.children_d
+          children_ids.push curNode.id
+
+          # if number of currently checked nodes + pendingLeafs are less than maxParameters
+          result = this.get_bottom_checked().length + self._pendingLeafs(root, children_ids) <= self.maxParameters
+          self.setErrors(["No more than #{self.maxParameters} parameters can be selected."]) unless result
+          result
+        else
+          true
+      plugins: [ "checkbox", "search", "conditionalselect" ]
     .on 'ready.jstree', =>
       rootBandId = root.find('li').first().attr('id')
       root.jstree('close_all').jstree('open_node', rootBandId)
@@ -223,7 +241,7 @@ class Tree extends Typed
 
     result
 
-  _updateTreeStats: (root)->
+  _updateTreeStats: (root) ->
     totalLeafs = 0
     checkedLeafs = 0
     for node in root.jstree('get_json', '#', flat: true)
@@ -233,5 +251,14 @@ class Tree extends Typed
         if !root.jstree('is_disabled', node) && root.jstree('is_checked', node)
           checkedLeafs += 1
     [checkedLeafs, totalLeafs]
+
+  _pendingLeafs: (root, children_ids) ->
+    pendingLeafs = 0
+    for node in root.jstree('get_json', '#', flat: true)
+      root.jstree('check_node', node) if node.li_attr?['item-required'] == 'true'
+      if root.jstree('is_leaf', node)
+        pendingLeafs += 1 if children_ids.indexOf(node.id) != -1
+
+    pendingLeafs
 
 module.exports = Tree
