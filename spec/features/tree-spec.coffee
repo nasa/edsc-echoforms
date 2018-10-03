@@ -604,7 +604,7 @@ describe '"tree" control', ->
           expect(form.echoforms('serialize')).not.toMatch(/>level_3_child_8</)
 
           expect($('.bands-count').text()).toMatch('0 of 8 bands selected')
-        , 100)
+        , 500)
 
     describe "when simplifyOutput is true", ->
       simplifyUi = ui.replace('simplifyOutput="false"', 'simplifyOutput="true"')
@@ -634,7 +634,7 @@ describe '"tree" control', ->
           expect(form.echoforms('serialize')).not.toMatch(/>level_3_child.*</)
 
           expect($('.bands-count').text()).toMatch('8 of 8 bands selected')
-        , 100)
+        , 500)
 
   describe "other test cases", ->
     model = """
