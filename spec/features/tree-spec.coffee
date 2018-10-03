@@ -482,34 +482,46 @@ describe '"tree" control', ->
         <prov:data_layer></prov:data_layer>
       </prov:treeReference>
     """
+    defaultAllModel = """
+      <prov:treeReference type="tree">
+        <prov:data_layer>/top_node_1/level_1_child_1/level_2_child_1/level_3_child_1</prov:data_layer>
+        <prov:data_layer>/top_node_1/level_1_child_1/level_2_child_1/level_3_child_2</prov:data_layer>
+        <prov:data_layer>/top_node_1/level_1_child_1/level_2_child_2/level_3_child_3</prov:data_layer>
+        <prov:data_layer>/top_node_1/level_1_child_1/level_2_child_2/level_3_child_4</prov:data_layer>
+        <prov:data_layer>/top_node_2/level_1_child_2/level_2_child_3/level_3_child_5</prov:data_layer>
+        <prov:data_layer>/top_node_2/level_1_child_2/level_2_child_3/level_3_child_6</prov:data_layer>
+        <prov:data_layer>/top_node_2/level_1_child_2/level_2_child_4/level_3_child_7</prov:data_layer>
+        <prov:data_layer>/top_node_2/level_1_child_2/level_2_child_4/level_3_child_8</prov:data_layer>
+      </prov:treeReference>
+    """
     ui = """
-          <tree id="max_params_tree" ref="prov:treeReference" valueElementName="data_layer" cascade="true" maxParameters="4" simplifyOutput="false">
-            <item value="top_node_1">
-              <item value="level_1_child_1">
-                <item value="level_2_child_1">
-                  <item value="level_3_child_1"></item>
-                  <item value="level_3_child_2"></item>
-                </item>
-                <item value="level_2_child_2">
-                  <item value="level_3_child_3"></item>
-                  <item value="level_3_child_4"></item>
-                </item>
-              </item>
+      <tree id="max_params_tree" ref="prov:treeReference" valueElementName="data_layer" cascade="true" maxParameters="4" simplifyOutput="false">
+        <item value="top_node_1">
+          <item value="level_1_child_1">
+            <item value="level_2_child_1">
+              <item value="level_3_child_1"></item>
+              <item value="level_3_child_2"></item>
             </item>
-            <item value="top_node_2">
-              <item value="level_1_child_2">
-                <item value="level_2_child_3">
-                  <item value="level_3_child_5"></item>
-                  <item value="level_3_child_6"></item>
-                </item>
-                <item value="level_2_child_4">
-                  <item value="level_3_child_7"></item>
-                  <item value="level_3_child_8"></item>
-                </item>
-              </item>
+            <item value="level_2_child_2">
+              <item value="level_3_child_3"></item>
+              <item value="level_3_child_4"></item>
             </item>
-          </tree>
-        """
+          </item>
+        </item>
+        <item value="top_node_2">
+          <item value="level_1_child_2">
+            <item value="level_2_child_3">
+              <item value="level_3_child_5"></item>
+              <item value="level_3_child_6"></item>
+            </item>
+            <item value="level_2_child_4">
+              <item value="level_3_child_7"></item>
+              <item value="level_3_child_8"></item>
+            </item>
+          </item>
+        </item>
+      </tree>
+    """
     describe "when simplifyOutput is false", ->
       it "limits the number of parameters when the max is already met", ->
         form = template.form($('#dom'), ui: ui, model: model, attrs: attrs)
@@ -566,9 +578,34 @@ describe '"tree" control', ->
 
         expect($(".echoforms-error").text()).toMatch("No more than 4 parameters can be selected.")
 
+      it "does not select any parameters by default if the default is more than maxParameters", ->
+        form = template.form($('#dom'), ui: ui, model: defaultAllModel, attrs: attrs)
+        $(':jstree').jstree('open_all')
+        $(':jstree').trigger('ready.jstree')
+
+        expect(form.echoforms('serialize')).not.toMatch(/>top_node_1</)
+        expect(form.echoforms('serialize')).not.toMatch(/>level_1_child_1</)
+        expect(form.echoforms('serialize')).not.toMatch(/>level_2_child_1</)
+        expect(form.echoforms('serialize')).not.toMatch(/>level_2_child_2</)
+        expect(form.echoforms('serialize')).not.toMatch(/>level_3_child_1</)
+        expect(form.echoforms('serialize')).not.toMatch(/>level_3_child_2</)
+        expect(form.echoforms('serialize')).not.toMatch(/>level_3_child_3</)
+        expect(form.echoforms('serialize')).not.toMatch(/>level_3_child_4</)
+
+        expect(form.echoforms('serialize')).not.toMatch(/>top_node_2</)
+        expect(form.echoforms('serialize')).not.toMatch(/>level_1_child_2</)
+        expect(form.echoforms('serialize')).not.toMatch(/>level_2_child_3</)
+        expect(form.echoforms('serialize')).not.toMatch(/>level_2_child_4</)
+        expect(form.echoforms('serialize')).not.toMatch(/>level_3_child_5</)
+        expect(form.echoforms('serialize')).not.toMatch(/>level_3_child_6</)
+        expect(form.echoforms('serialize')).not.toMatch(/>level_3_child_7</)
+        expect(form.echoforms('serialize')).not.toMatch(/>level_3_child_8</)
+
+        expect($('.bands-count').text()).toMatch('0 of 8 bands selected')
+
     describe "when simplifyOutput is true", ->
+      simplifyUi = ui.replace('simplifyOutput="false"', 'simplifyOutput="true"')
       it "ignores the maxParameters value", ->
-        simplifyUi = ui.replace('simplifyOutput="false"', 'simplifyOutput="true"')
         form = template.form($('#dom'), ui: simplifyUi, model: model, attrs: attrs)
         $(':jstree').jstree('open_all')
 
@@ -579,6 +616,19 @@ describe '"tree" control', ->
         expect(form.echoforms('serialize')).not.toMatch(/>level_1_child.*</)
         expect(form.echoforms('serialize')).not.toMatch(/>level_2_child.*</)
         expect(form.echoforms('serialize')).not.toMatch(/>level_3_child.*</)
+
+      xit "ignores the maxParameters value for default values", ->
+        form = template.form($('#dom'), ui: simplifyUi, model: defaultAllModel)
+        $(':jstree').jstree('open_all')
+        $(':jstree').trigger('ready.jstree')
+
+        expect(form.echoforms('serialize')).toMatch(/>top_node_1</)
+        expect(form.echoforms('serialize')).toMatch(/>top_node_2</)
+        expect(form.echoforms('serialize')).not.toMatch(/>level_1_child.*</)
+        expect(form.echoforms('serialize')).not.toMatch(/>level_2_child.*</)
+        expect(form.echoforms('serialize')).not.toMatch(/>level_3_child.*</)
+
+        expect($('.bands-count').text()).toMatch('8 of 8 bands selected')
 
   describe "other test cases", ->
     model = """

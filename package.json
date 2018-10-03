@@ -47,13 +47,12 @@
     "jquery": "3.3.1",
     "jstree": "^3.3.5",
     "karma": "^3.0.0",
+    "karma-chrome-launcher": "^2.2.0",
     "karma-cli": "0.1.0",
     "karma-jasmine": "0.3.6",
-    "karma-phantomjs-launcher": "1.0.4",
     "karma-webpack": "3.0.0",
     "less": "2.5.1",
     "less-loader": "2.2.0",
-    "phantomjs-prebuilt": "^2.1.16",
     "script-loader": "0.6.1",
     "simple-slider": "loopj/jquery-simple-slider#fa64f59",
     "style-loader": "0.12.3",
@@ -65,6 +64,6 @@
   "scripts": {
     "prepublish": "./node_modules/.bin/webpack -p",
     "start": "./node_modules/.bin/webpack -w",
-    "test": "./node_modules/.bin/karma start --single-run --browsers PhantomJS"
+    "test": "./node_modules/.bin/karma start --single-run --browsers ChromeHeadlessNoSandbox"
   }
 }

@@ -211,6 +211,10 @@ class Tree extends Typed
           true
       plugins: [ "checkbox", "search", "conditionalselect" ]
     .on 'ready.jstree', =>
+      if !@simplifyOutput && @maxParameters?
+        [checkedLeafs, totalLeafs] = @_updateTreeStats(root)
+        root.jstree('uncheck_all') if checkedLeafs > @maxParameters?
+
       rootBandId = root.find('li').first().attr('id')
       root.jstree('close_all').jstree('open_node', rootBandId)
       bandsCountId = $(this).attr('id') + "-bands-count"
