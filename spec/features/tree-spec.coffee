@@ -583,25 +583,28 @@ describe '"tree" control', ->
         $(':jstree').jstree('open_all')
         $(':jstree').trigger('ready.jstree')
 
-        expect(form.echoforms('serialize')).not.toMatch(/>top_node_1</)
-        expect(form.echoforms('serialize')).not.toMatch(/>level_1_child_1</)
-        expect(form.echoforms('serialize')).not.toMatch(/>level_2_child_1</)
-        expect(form.echoforms('serialize')).not.toMatch(/>level_2_child_2</)
-        expect(form.echoforms('serialize')).not.toMatch(/>level_3_child_1</)
-        expect(form.echoforms('serialize')).not.toMatch(/>level_3_child_2</)
-        expect(form.echoforms('serialize')).not.toMatch(/>level_3_child_3</)
-        expect(form.echoforms('serialize')).not.toMatch(/>level_3_child_4</)
+        # make sure the page is ready
+        setTimeout(->
+          expect(form.echoforms('serialize')).not.toMatch(/>top_node_1</)
+          expect(form.echoforms('serialize')).not.toMatch(/>level_1_child_1</)
+          expect(form.echoforms('serialize')).not.toMatch(/>level_2_child_1</)
+          expect(form.echoforms('serialize')).not.toMatch(/>level_2_child_2</)
+          expect(form.echoforms('serialize')).not.toMatch(/>level_3_child_1</)
+          expect(form.echoforms('serialize')).not.toMatch(/>level_3_child_2</)
+          expect(form.echoforms('serialize')).not.toMatch(/>level_3_child_3</)
+          expect(form.echoforms('serialize')).not.toMatch(/>level_3_child_4</)
 
-        expect(form.echoforms('serialize')).not.toMatch(/>top_node_2</)
-        expect(form.echoforms('serialize')).not.toMatch(/>level_1_child_2</)
-        expect(form.echoforms('serialize')).not.toMatch(/>level_2_child_3</)
-        expect(form.echoforms('serialize')).not.toMatch(/>level_2_child_4</)
-        expect(form.echoforms('serialize')).not.toMatch(/>level_3_child_5</)
-        expect(form.echoforms('serialize')).not.toMatch(/>level_3_child_6</)
-        expect(form.echoforms('serialize')).not.toMatch(/>level_3_child_7</)
-        expect(form.echoforms('serialize')).not.toMatch(/>level_3_child_8</)
+          expect(form.echoforms('serialize')).not.toMatch(/>top_node_2</)
+          expect(form.echoforms('serialize')).not.toMatch(/>level_1_child_2</)
+          expect(form.echoforms('serialize')).not.toMatch(/>level_2_child_3</)
+          expect(form.echoforms('serialize')).not.toMatch(/>level_2_child_4</)
+          expect(form.echoforms('serialize')).not.toMatch(/>level_3_child_5</)
+          expect(form.echoforms('serialize')).not.toMatch(/>level_3_child_6</)
+          expect(form.echoforms('serialize')).not.toMatch(/>level_3_child_7</)
+          expect(form.echoforms('serialize')).not.toMatch(/>level_3_child_8</)
 
-        expect($('.bands-count').text()).toMatch('0 of 8 bands selected')
+          expect($('.bands-count').text()).toMatch('0 of 8 bands selected')
+        , 100)
 
     describe "when simplifyOutput is true", ->
       simplifyUi = ui.replace('simplifyOutput="false"', 'simplifyOutput="true"')
@@ -617,18 +620,21 @@ describe '"tree" control', ->
         expect(form.echoforms('serialize')).not.toMatch(/>level_2_child.*</)
         expect(form.echoforms('serialize')).not.toMatch(/>level_3_child.*</)
 
-      xit "ignores the maxParameters value for default values", ->
+      it "ignores the maxParameters value for default values", ->
         form = template.form($('#dom'), ui: simplifyUi, model: defaultAllModel)
         $(':jstree').jstree('open_all')
         $(':jstree').trigger('ready.jstree')
 
-        expect(form.echoforms('serialize')).toMatch(/>top_node_1</)
-        expect(form.echoforms('serialize')).toMatch(/>top_node_2</)
-        expect(form.echoforms('serialize')).not.toMatch(/>level_1_child.*</)
-        expect(form.echoforms('serialize')).not.toMatch(/>level_2_child.*</)
-        expect(form.echoforms('serialize')).not.toMatch(/>level_3_child.*</)
+        # make sure the page is ready
+        setTimeout(->
+          expect(form.echoforms('serialize')).toMatch(/>top_node_1</)
+          expect(form.echoforms('serialize')).toMatch(/>top_node_2</)
+          expect(form.echoforms('serialize')).not.toMatch(/>level_1_child.*</)
+          expect(form.echoforms('serialize')).not.toMatch(/>level_2_child.*</)
+          expect(form.echoforms('serialize')).not.toMatch(/>level_3_child.*</)
 
-        expect($('.bands-count').text()).toMatch('8 of 8 bands selected')
+          expect($('.bands-count').text()).toMatch('8 of 8 bands selected')
+        , 100)
 
   describe "other test cases", ->
     model = """
