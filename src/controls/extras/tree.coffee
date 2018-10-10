@@ -1,4 +1,5 @@
 $ = require 'jquery'
+constraints = require '../../constraints/index.coffee'
 Typed = require '../typed.coffee'
 TreeItem = require './treeitem.coffee'
 Base = require '../base.coffee'
@@ -25,9 +26,14 @@ class Tree extends Typed
       new TreeItem($(item), model, controlClasses, resolver, '', @separator, this)
     super(ui, model, controlClasses, resolver)
 
+  loadConstraints: ->
+    super()
+
+    if @simplifyOutput == false
+      @constraints.push(new constraints.TreeMaxParameters(@maxParameters, "No more than #{@maxParameters} parameters can be selected."))
+
   validate: ->
-    # super() unless there is already a validation error visible, from maxParameters being enforced
-    super() unless @el.find('.echoforms-error').length > 0
+    super()
 
     allTreeItems = @tree_root.jstree('get_json', '#', {flat: true}).map ((node) => @tree_root.jstree('get_node', node.id))
       .reduce((hash, obj) -> # Grab a little performance gain by looking a tree item up from a hash using its id in @handle_relevant_or_required.
@@ -49,7 +55,9 @@ class Tree extends Typed
 
   refValue: ->
     if @valueElementName? and @refExpr?
-      $(child).text() for child in @ref().children()
+      [checkedLeafs, totalLeafs] = @_updateTreeStats(@tree_root)
+      checkedLeafs
+      # $(child).text() for child in @ref().children()
     else
       super()
 
@@ -188,33 +196,14 @@ class Tree extends Typed
 
     timer = false
 
-    self = this
     root.jstree
       checkbox:
         keep_selected_style: false
         three_state: @cascade
       search:
         fuzzy: false
-      'conditionalselect': (curNode) ->
-        self.setErrors([])
-        if !self.simplifyOutput && self.maxParameters? && curNode.state.selected == false
-          # add the current node id to list of children ids
-          # so if a leaf node is selected it will work correctly
-          children_ids = curNode.children_d
-          children_ids.push curNode.id
-
-          # if number of currently checked nodes + pendingLeafs are less than maxParameters
-          result = this.get_bottom_checked().length + self._pendingLeafs(root, children_ids) <= self.maxParameters
-          self.setErrors(["No more than #{self.maxParameters} parameters can be selected."]) unless result
-          result
-        else
-          true
-      plugins: [ "checkbox", "search", "conditionalselect" ]
+      plugins: [ "checkbox", "search" ]
     .on 'ready.jstree', =>
-      if !@simplifyOutput && @maxParameters?
-        [checkedLeafs, totalLeafs] = @_updateTreeStats(root)
-        root.jstree('uncheck_all') if checkedLeafs > @maxParameters?
-
       rootBandId = root.find('li').first().attr('id')
       root.jstree('close_all').jstree('open_node', rootBandId)
       bandsCountId = $(this).attr('id') + "-bands-count"
@@ -255,14 +244,5 @@ class Tree extends Typed
         if !root.jstree('is_disabled', node) && root.jstree('is_checked', node)
           checkedLeafs += 1
     [checkedLeafs, totalLeafs]
-
-  _pendingLeafs: (root, children_ids) ->
-    pendingLeafs = 0
-    for node in root.jstree('get_json', '#', flat: true)
-      root.jstree('check_node', node) if node.li_attr?['item-required'] == 'true'
-      if root.jstree('is_leaf', node)
-        pendingLeafs += 1 if children_ids.indexOf(node.id) != -1
-
-    pendingLeafs
 
 module.exports = Tree

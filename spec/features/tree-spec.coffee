@@ -523,87 +523,22 @@ describe '"tree" control', ->
       </tree>
     """
     describe "when simplifyOutput is false", ->
-      it "limits the number of parameters when the max is already met", ->
+      it "displays an error if the selected parameters exceeds maxParameters", ->
         form = template.form($('#dom'), ui: ui, model: model, attrs: attrs)
         $(':jstree').jstree('open_all')
 
         $(":jstree li[node_value='top_node_1'] > a ").click()
         $(":jstree li[node_value='top_node_2'] > a ").click()
-        expect(form.echoforms('serialize')).toMatch(/>top_node_1</)
-        expect(form.echoforms('serialize')).toMatch(/>level_1_child_1</)
-        expect(form.echoforms('serialize')).toMatch(/>level_2_child_1</)
-        expect(form.echoforms('serialize')).toMatch(/>level_2_child_2</)
-        expect(form.echoforms('serialize')).toMatch(/>level_3_child_1</)
-        expect(form.echoforms('serialize')).toMatch(/>level_3_child_2</)
-        expect(form.echoforms('serialize')).toMatch(/>level_3_child_3</)
-        expect(form.echoforms('serialize')).toMatch(/>level_3_child_4</)
-
-        expect(form.echoforms('serialize')).not.toMatch(/>top_node_2</)
-        expect(form.echoforms('serialize')).not.toMatch(/>level_1_child_2</)
-        expect(form.echoforms('serialize')).not.toMatch(/>level_2_child_3</)
-        expect(form.echoforms('serialize')).not.toMatch(/>level_2_child_4</)
-        expect(form.echoforms('serialize')).not.toMatch(/>level_3_child_5</)
-        expect(form.echoforms('serialize')).not.toMatch(/>level_3_child_6</)
-        expect(form.echoforms('serialize')).not.toMatch(/>level_3_child_7</)
-        expect(form.echoforms('serialize')).not.toMatch(/>level_3_child_8</)
 
         expect($(".echoforms-error").text()).toMatch("No more than 4 parameters can be selected.")
 
-      it "limits the number of parameters when the new selection will take parameters over the limit", ->
-        form = template.form($('#dom'), ui: ui, model: model, attrs: attrs)
-        $(':jstree').jstree('open_all')
-
-        # select 3 leaf nodes, then select a top parent, which would result in 6 total
-        $(":jstree li[node_value='level_3_child_1'] > a ").click()
-        $(":jstree li[node_value='level_3_child_2'] > a ").click()
-        $(":jstree li[node_value='level_3_child_8'] > a ").click()
-        $(":jstree li[node_value='top_node_2'] > a ").click()
-        expect(form.echoforms('serialize')).not.toMatch(/>top_node_1</)
-        expect(form.echoforms('serialize')).not.toMatch(/>level_1_child_1</)
-        expect(form.echoforms('serialize')).toMatch(/>level_2_child_1</)
-        expect(form.echoforms('serialize')).not.toMatch(/>level_2_child_2</)
-        expect(form.echoforms('serialize')).toMatch(/>level_3_child_1</)
-        expect(form.echoforms('serialize')).toMatch(/>level_3_child_2</)
-        expect(form.echoforms('serialize')).not.toMatch(/>level_3_child_3</)
-        expect(form.echoforms('serialize')).not.toMatch(/>level_3_child_4</)
-
-        expect(form.echoforms('serialize')).not.toMatch(/>top_node_2</)
-        expect(form.echoforms('serialize')).not.toMatch(/>level_1_child_2</)
-        expect(form.echoforms('serialize')).not.toMatch(/>level_2_child_3</)
-        expect(form.echoforms('serialize')).not.toMatch(/>level_2_child_4</)
-        expect(form.echoforms('serialize')).not.toMatch(/>level_3_child_5</)
-        expect(form.echoforms('serialize')).not.toMatch(/>level_3_child_6</)
-        expect(form.echoforms('serialize')).not.toMatch(/>level_3_child_7</)
-        expect(form.echoforms('serialize')).toMatch(/>level_3_child_8</)
-
-        expect($(".echoforms-error").text()).toMatch("No more than 4 parameters can be selected.")
-
-      it "does not select any parameters by default if the default is more than maxParameters", ->
+      it "displays an error if the default parameters exceed maxParameters", ->
         form = template.form($('#dom'), ui: ui, model: defaultAllModel, attrs: attrs)
         $(':jstree').jstree('open_all')
         $(':jstree').trigger('ready.jstree')
 
-        # make sure the page is ready
         setTimeout(->
-          expect(form.echoforms('serialize')).not.toMatch(/>top_node_1</)
-          expect(form.echoforms('serialize')).not.toMatch(/>level_1_child_1</)
-          expect(form.echoforms('serialize')).not.toMatch(/>level_2_child_1</)
-          expect(form.echoforms('serialize')).not.toMatch(/>level_2_child_2</)
-          expect(form.echoforms('serialize')).not.toMatch(/>level_3_child_1</)
-          expect(form.echoforms('serialize')).not.toMatch(/>level_3_child_2</)
-          expect(form.echoforms('serialize')).not.toMatch(/>level_3_child_3</)
-          expect(form.echoforms('serialize')).not.toMatch(/>level_3_child_4</)
-
-          expect(form.echoforms('serialize')).not.toMatch(/>top_node_2</)
-          expect(form.echoforms('serialize')).not.toMatch(/>level_1_child_2</)
-          expect(form.echoforms('serialize')).not.toMatch(/>level_2_child_3</)
-          expect(form.echoforms('serialize')).not.toMatch(/>level_2_child_4</)
-          expect(form.echoforms('serialize')).not.toMatch(/>level_3_child_5</)
-          expect(form.echoforms('serialize')).not.toMatch(/>level_3_child_6</)
-          expect(form.echoforms('serialize')).not.toMatch(/>level_3_child_7</)
-          expect(form.echoforms('serialize')).not.toMatch(/>level_3_child_8</)
-
-          expect($('.bands-count').text()).toMatch('0 of 8 bands selected')
+          expect($(".echoforms-error").text()).toMatch("No more than 4 parameters can be selected.")
         , 500)
 
     describe "when simplifyOutput is true", ->
