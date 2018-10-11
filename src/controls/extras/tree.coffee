@@ -57,7 +57,6 @@ class Tree extends Typed
     if @valueElementName? and @refExpr?
       [checkedLeafs, totalLeafs] = @_updateTreeStats(@tree_root)
       checkedLeafs
-      # $(child).text() for child in @ref().children()
     else
       super()
 
