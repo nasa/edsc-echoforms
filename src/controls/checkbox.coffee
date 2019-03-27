@@ -7,7 +7,7 @@ class Checkbox extends Input
   inputElementType: 'checkbox'
 
   inputValue:() ->
-    @inputs()[0].checked.toString()
+    if @inputs()[0].checked then true else ''
 
   loadFromModel: ->
     super()
