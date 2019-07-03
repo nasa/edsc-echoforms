@@ -1,7 +1,8 @@
-require('../node_modules/jstree/dist/themes/default/style.min.css');
-require("./echoforms.less");
-require('script-loader!../node_modules/wicked-good-xpath/dist/wgxpath.install.js');
-require('script-loader!../node_modules/simple-slider/js/simple-slider.min.js');
-require('script-loader!../node_modules/jstree/dist/jstree.min.js');
-require("./index.coffee");
-require("./extras.js");
+import '../node_modules/jstree/dist/themes/default/style.min.css';
+import '../node_modules/ion-rangeslider/css/ion.rangeSlider.css';
+import './echoforms.less';
+import 'wicked-good-xpath';
+import 'jstree';
+import 'ion-rangeslider'
+import './index.coffee';
+import './extras.js';

@@ -140,12 +140,13 @@
 .jstree-disabled-icon {
   background-position: -36px -68px;
 }
-.slider {
+
+.irs {
   float:left;
   width: 30em;
   margin-right:1em !important; // Override style set on element by rangeslider to give more space to output
 
-  > .dragger {
+  .irs-handle {
     background: #8DCA09;
     background: -webkit-linear-gradient(top, #8DCA09, #72A307);
     background: -moz-linear-gradient(top, #8DCA09, #72A307);
@@ -163,26 +164,26 @@
     width: 16px;
     height: 16px;
 
+    > i, i:first-child {
+      background: inherit;
+    }
+
     &:hover {
       background: -webkit-linear-gradient(top, #8DCA09, #8DCA09);
+
+      > i, i:first-child {
+        background: inherit;
+      }
     }
   }
 
-  > .track {
-    background: #ccc;
-    background: -webkit-linear-gradient(top, #bbb, #ddd);
-    background: -moz-linear-gradient(top, #bbb, #ddd);
-    background: linear-gradient(top, #bbb, #ddd);
+  .irs-handle.state_hover {
+    > i, i:first-child {
+      background: inherit;
+    }
+  }
 
-    -webkit-box-shadow: inset 0 2px 4px rgba(0,0,0,0.1);
-    -moz-box-shadow: inset 0 2px 4px rgba(0,0,0,0.1);
-    box-shadow: inset 0 2px 4px rgba(0,0,0,0.1);
-
-    -webkit-border-radius: 8px;
-    -moz-border-radius: 8px;
-    border-radius: 8px;
-
-    border: 1px solid #aaa;
-    height: 4px;
+  > .irs-bar {
+    background-color: inherit;
   }
 }
