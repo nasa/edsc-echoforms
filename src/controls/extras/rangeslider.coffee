@@ -14,13 +14,9 @@ class RangeSlider extends Range
 
     $('<div/>').addClass('slider-output').insertAfter(input)
 
-    input.bind 'slider:ready slider:changed', (e, data) ->
-      $(this).nextAll('.slider-output').html(input.val())
-
-    input.simpleSlider
-      snap: true
-      range: [@start, @end]
+    input.ionRangeSlider
       step: @step
-      classPrefix: 'echoforms'
+      min: @start
+      max: @end
 
 module.exports = RangeSlider
