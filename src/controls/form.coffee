@@ -21,6 +21,9 @@ class Form extends Grouping
     model.find('*[pruned=true]').remove() if !options.prune? || options.prune == true
     model.find('*:hasNoValue').remove() if !options.prune? || options.prune == true
     #new XMLSerializer().serializeToString(model[0])
-    util.printDOMToString(model[0])
+    serialized = util.printDOMToString(model[0])
+
+    # Strip out whitespace between elements, and at the beginning and end
+    serialized.replace(/>\s+</g, '><').replace(/^\s+|\s+$/g, '')
 
 module.exports = Form
