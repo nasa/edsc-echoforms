@@ -36,11 +36,7 @@ describe 'jQuery plugin', ->
     it "returns the model's serialized XML string", ->
       template.form($('#dom'))
       $('#reference :input').val('some value').change()
-      expect($('#dom').echoforms('serialize')).toMatchXml """
-        <prov:options xmlns:prov="http://www.example.com/orderoptions">
-          <prov:reference>some value</prov:reference>
-        </prov:options>
-      """
+      expect($('#dom').echoforms('serialize')).toMatchXml '<prov:options xmlns:prov="http://www.example.com/orderoptions"><prov:reference>some value</prov:reference></prov:options>'
 
     it "prunes irrelevant values from the serialized XML", ->
       template.form($('#dom'), attributes: 'relevant="false()"')
