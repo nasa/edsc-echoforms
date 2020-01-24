@@ -34,13 +34,11 @@ class Tree extends Typed
 
   validate: ->
     super()
-
     allTreeItems = @tree_root.jstree('get_json', '#', {flat: true}).map ((node) => @tree_root.jstree('get_node', node.id))
       .reduce((hash, obj) -> # Grab a little performance gain by looking a tree item up from a hash using its id in @handle_relevant_or_required.
         hash[obj.id] = obj
         hash
       , {})
-
     for item in @items
       item.subtree_handle_relevant_or_required(allTreeItems)
     #propagate relevancy/required rules in the ui to the model
@@ -86,23 +84,24 @@ class Tree extends Typed
     else
       []
 
+  @currentInputs = null
   inputs: () ->
-    @el.find('div.jstree')
+    if !@currentInputs?
+      @currentInputs = @el.find('div.jstree')
+    @currentInputs
 
   inputValue: (simplifyOutput = false) ->
+    currentInputs = @inputs()
+    flattened_inputs = currentInputs.jstree('get_json', '#', { flat: true })
     #Get all nodes which are required, explicitely checked, or implicitely checked (i.e. all children are checked)
     #Explicitly checked or imlicitely checked (i.e. all descendants checked, required, or irrelevant)
-    all_nodes = @inputs().jstree('get_json', '#', {flat: true}).map (node) =>
+    all_nodes = flattened_inputs.map (node) =>
       @inputs().jstree('get_node', node.id)
-
     checked = all_nodes.filter (node) ->
       node.state.selected && node.li_attr.node_value?.length > 0 && !node.state.disabled
-
     required = all_nodes.filter (node) ->
       !node.state.disabled && node.li_attr['item-required'] == 'true' && node.li_attr.node_value?.length > 0 && node.children.length == 0
-
     checked_required_nodes = @_removeDupNodes([checked..., required...])
-
     if simplifyOutput
       #Filter values to include only
       #    - 'full parent' nodes (parents whose descendants are all selected [and relevant])
@@ -194,7 +193,7 @@ class Tree extends Typed
           setTimeout(arguments.callee, 0)
 
     timer = false
-
+    thisjQuery = $(this)
     root.jstree
       checkbox:
         keep_selected_style: false
@@ -205,9 +204,9 @@ class Tree extends Typed
     .on 'ready.jstree', =>
       rootBandId = root.find('li').first().attr('id')
       root.jstree('close_all').jstree('open_node', rootBandId)
-      bandsCountId = $(this).attr('id') + "-bands-count"
-      bandsFilterId = $(this).attr('id') + "-bands-filter"
-      selectedBandsId = $(this).attr('id') + "-selected-bands-count"
+      bandsCountId = thisjQuery.attr('id') + "-bands-count"
+      bandsFilterId = thisjQuery.attr('id') + "-bands-filter"
+      selectedBandsId = thisjQuery.attr('id') + "-selected-bands-count"
 
       [checkedLeafs, totalLeafs] = @_updateTreeStats(root)
       root.prepend('<i class="jstree-spinner fa fa-spinner fa-spin fa-fw" style="display: none"></i>')
@@ -216,13 +215,13 @@ class Tree extends Typed
     .on 'changed.jstree', =>
       [checkedLeafs, totalLeafs] = @_updateTreeStats(root)
 
-      bandsCountId =  $(this).attr('id') + "-bands-count"
-      selectedBandsId = $(this).attr('id') + "-selected-bands-count"
+      bandsCountId =  thisjQuery.attr('id') + "-bands-count"
+      selectedBandsId = thisjQuery.attr('id') + "-selected-bands-count"
       $('#' + bandsCountId).html("<div id='#{bandsCountId}' class='bands-count'><span id='#{selectedBandsId}' class='selected-bands-count'>#{checkedLeafs} of #{totalLeafs}</span> bands selected</div>")
-    .on 'keyup', '#' + $(this).attr('id') + "-bands-filter", ->
+    .on 'keyup', '#' + thisjQuery.attr('id') + "-bands-filter", ->
       clearTimeout(timer) if timer
       timer = setTimeout (->
-        text = $('#' + $(this).attr('id') + "-bands-filter").val()
+        text = $('#' + thisjQuery.attr('id') + "-bands-filter").val()
         root.jstree('search', text) if text.length > 1), 250
     .on 'before_open.jstree', ->
       $('.jstree-spinner').show()
