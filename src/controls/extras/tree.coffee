@@ -91,8 +91,7 @@ class Tree extends Typed
     @currentInputs
 
   inputValue: (simplifyOutput = false) ->
-    currentInputs = @inputs()
-    flattened_inputs = currentInputs.jstree('get_json', '#', { flat: true })
+    flattened_inputs = @inputs().jstree('get_json', '#', { flat: true })
     #Get all nodes which are required, explicitely checked, or implicitely checked (i.e. all children are checked)
     #Explicitly checked or imlicitely checked (i.e. all descendants checked, required, or irrelevant)
     all_nodes = flattened_inputs.map (node) =>
@@ -123,20 +122,12 @@ class Tree extends Typed
         node.children.length > 0 && checked_children.length == node.children.length
 
       #remove any <li>s whose parent is selected AND who do not have any irrelevant cousins
-      processedNodes = []
-
       checked_required_nodes = [true_leaves..., full_parents...].filter (node) =>
         parent = @inputs().jstree('get_node', node.parent)
         return true if parent.id == '#'
         return true unless parent.state.selected
 
         for sibling_id in parent.children when sibling_id != node.id
-          # If this node has already beenprocessed, move on
-          continue if sibling_id in processedNodes
-
-          # Indicate that this node has already been processsed
-          processedNodes.push(sibling_id)
-
           sibling = @inputs().jstree('get_node', sibling_id)
           if sibling.state.selected
             if !sibling.state.disabled
