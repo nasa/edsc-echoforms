@@ -5,13 +5,28 @@
   "main": "src/index.js",
   "scripts": {
     "test": "jest",
+    "silent-test": "jest --silent",
+    "test:watch": "jest --watchAll",
     "start": "webpack-dev-server --mode development"
   },
   "repository": {
     "type": "git",
     "url": "git+https://github.com/nasa/edsc-echoforms.git"
   },
-  "author": "",
+  "maintainers": [
+    {
+      "name": "Ryan Abbott",
+      "email": "ryan@element84.com"
+    },
+    {
+      "name": "Matthew Crouch",
+      "email": "matthew@element84.com"
+    },
+    {
+      "name": "Trevor Lang",
+      "email": "trevor@element84.com"
+    }
+  ],
   "license": "SEE LICENSE IN LICENSE",
   "bugs": {
     "url": "https://github.com/nasa/edsc-echoforms/issues"
@@ -36,18 +51,23 @@
     "eslint": "^5.8.0",
     "eslint-config-airbnb": "^17.1.0",
     "eslint-loader": "^2.1.1",
-    "eslint-plugin-cypress": "^2.8.1",
     "eslint-plugin-import": "^2.14.0",
     "eslint-plugin-jsx-a11y": "^6.1.2",
     "eslint-plugin-react": "^7.12.4",
+    "eslint-plugin-react-hooks": "^2.3.0",
+    "fast-xml-parser": "^3.16.0",
     "html-webpack-plugin": "^3.2.0",
     "jest": "^25.1.0",
     "prop-types": "^15.7.2",
+    "raw-loader": "^4.0.0",
     "react": "^16.12.0",
+    "react-bootstrap": "^1.0.0-beta.16",
     "react-dom": "^16.12.0",
     "style-loader": "^1.1.3",
     "webpack": "^4.41.5",
     "webpack-cli": "^3.3.10",
-    "webpack-dev-server": "^3.10.3"
+    "webpack-dev-server": "^3.10.3",
+    "xmldom": "^0.2.1",
+    "xpath": "0.0.27"
   }
 }

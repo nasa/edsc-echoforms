@@ -6,12 +6,13 @@ module.exports = {
   },
   coveragePathIgnorePatterns: [
     'package.json',
-    'package-lock.json'
-  ],
-  setupFiles: [
-    '<rootDir>/test-env.js'
+    'package-lock.json',
+    'mocks.js'
   ],
   testPathIgnorePatterns: [
     'mocks.js'
+  ],
+  watchPathIgnorePatterns: [
+    'node_modules'
   ]
 }
