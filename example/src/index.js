@@ -1,10 +1,47 @@
-import React from 'react'
+import React, { useState } from 'react'
 import { render } from 'react-dom'
 
-import EDSCEchoforms from '../../src/index'
+import { EDSCEchoform } from '../../src/index'
 
-const App = () => (
-  <EDSCEchoforms text="testing react echoforms" />
-)
+import form1 from './form1.xml'
+
+import './styles.css'
+
+const App = () => {
+  const [form, setForm] = useState(form1)
+  const [serializedModel, setSerializedModel] = useState('')
+
+  const onTextAreaChange = (e) => {
+    setForm(e.target.value)
+  }
+
+  const onFormModelUpdated = (value) => {
+    setSerializedModel(value)
+  }
+
+  return (
+    <>
+      <h1>
+        ECHO Forms React Plugin Demo
+      </h1>
+      <h2>ECHO Forms XML</h2>
+      <p>Enter ECHO Forms XML in the box below to see it rendered</p>
+      <textarea
+        id="demo-echoforms-xml"
+        value={form}
+        onChange={onTextAreaChange}
+      />
+      <h2>Generated Interface</h2>
+      <EDSCEchoform
+        form={form}
+        onFormModelUpdated={onFormModelUpdated}
+      />
+      <h2>Serialized Model</h2>
+      <pre id="demo-echoforms-model">
+        {serializedModel}
+      </pre>
+    </>
+  )
+}
 
 render(<App />, document.getElementById('root'))

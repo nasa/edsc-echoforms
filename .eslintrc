@@ -3,8 +3,7 @@
   "env": {
     "browser": true,
     "node": true,
-    "jest": true,
-    "cypress/globals": true
+    "jest": true
   },
   "parser": "babel-eslint",
   "parserOptions": {
@@ -14,7 +13,7 @@
   },
   "plugins": [
     "react",
-    "cypress"
+    "react-hooks"
   ],
   "rules": {
     # Setting a max line-length
@@ -74,7 +73,11 @@
     ],
 
     # Allowing cyclic dependancies
-    "import/no-cycle": "off"
+    "import/no-cycle": "off",
+
+    # React hooks rules
+    "react-hooks/rules-of-hooks": "error",
+    "react-hooks/exhaustive-deps": "warn"
   },
 
   "overrides": [
@@ -99,8 +102,7 @@
   # Use AirBnb settings as a base
   "extends": [
     "airbnb",
-    "plugin:react/recommended",
-    "plugin:cypress/recommended"
+    "plugin:react/recommended"
   ],
 
   # Define version settings

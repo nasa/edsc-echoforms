@@ -1,0 +1,1 @@
+export const checkboxXml = '<form><model><instance><prov:options><prov:boolreference>true</prov:boolreference></prov:options</instance></model><ui><input id="boolinput" label="Bool input" a="a" ref="prov:boolreference" type="xs:boolean"><help>Helpful text</help></input></ui></form>'
