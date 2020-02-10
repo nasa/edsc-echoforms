@@ -5,3 +5,4 @@ tmp
 /node_modules
 /build
 /spec/build
+/coverage

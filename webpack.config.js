@@ -18,6 +18,10 @@ module.exports = {
       {
         test: /\.css$/,
         use: ['style-loader', 'css-loader']
+      },
+      {
+        test: /\.xml$/,
+        use: ['raw-loader']
       }
     ]
   },
@@ -25,6 +29,7 @@ module.exports = {
   resolve: {
     extensions: ['.js', '.jsx']
   },
+  devtool: 'source-map',
   devServer: {
     port: 3002
   }
