@@ -2,6 +2,10 @@ import React from 'react'
 import PropTypes from 'prop-types'
 
 import { Checkbox } from '../Checkbox/Checkbox'
+import { TextField } from '../TextField/TextField'
+import { checkRelevant } from '../../util/checkRelevant'
+import { getNodeValue } from '../../util/getNodeValue'
+import { getAttribute } from '../../util/getAttribute'
 
 export const FormElement = ({
   element,
@@ -12,29 +16,60 @@ export const FormElement = ({
 
   if (!attributes) return null
 
-  const modelRef = attributes.getNamedItem('ref')
-  const label = attributes.getNamedItem('label')
-  let value
+  let relevant = true
+  const relevantAttribute = getAttribute(attributes, 'relevant')
+  if (relevantAttribute) {
+    relevant = checkRelevant(relevantAttribute, model)
+  }
+  if (!relevant) return null
 
-  const elements = model.getElementsByTagName(modelRef.nodeValue)
-  if (elements.length > 0) {
-    const valueNode = elements[0]
-    if (valueNode) {
-      value = valueNode.childNodes[0].data
-    }
+  let readOnly = false
+  const readOnlyAttribute = getAttribute(attributes, 'readonly')
+  if (readOnlyAttribute) {
+    readOnly = checkRelevant(readOnlyAttribute, model)
+  }
+
+  let required = false
+  const requiredAttribute = getAttribute(attributes, 'required')
+  if (requiredAttribute) {
+    required = checkRelevant(requiredAttribute, model)
+  }
+
+  const modelRef = getAttribute(attributes, 'ref')
+  const label = getAttribute(attributes, 'label')
+  const id = getAttribute(attributes, 'id')
+
+  let value
+  if (modelRef) {
+    value = getNodeValue(modelRef, model)
+  } else {
+    value = getAttribute(attributes, 'value')
   }
 
   if (tagName === 'input') {
-    const typeAttribute = attributes.getNamedItem('type') || {}
+    const type = getAttribute(attributes, 'type') || ''
 
-    const { nodeValue: type = '' } = typeAttribute
-
+    if (type.includes('string') || type === '') {
+      return (
+        <TextField
+          id={id}
+          label={label}
+          modelRef={modelRef}
+          readOnly={readOnly}
+          required={required}
+          value={value}
+          onUpdateModel={onUpdateModel}
+        />
+      )
+    }
     if (type.includes('boolean')) {
       return (
         <Checkbox
-          label={label.nodeValue}
-          modelRef={modelRef.nodeValue}
           checked={value}
+          label={label}
+          modelRef={modelRef}
+          readOnly={readOnly}
+          required={required}
           onUpdateModel={onUpdateModel}
         />
       )
@@ -45,6 +80,10 @@ export const FormElement = ({
         {type}
         {' '}
         other input field
+        {', '}
+        {id}
+        {', '}
+        {label}
       </p>
     )
   }

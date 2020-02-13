@@ -3,21 +3,21 @@ import Enzyme, { shallow } from 'enzyme'
 import Adapter from 'enzyme-adapter-react-16'
 import { Form } from 'react-bootstrap'
 
-import { Checkbox } from '../Checkbox'
+import { TextField } from '../TextField'
 
 Enzyme.configure({ adapter: new Adapter() })
 
 function setup() {
   const props = {
-    checked: 'true',
     label: 'Test Field',
     modelRef: 'testfield',
     readOnly: false,
     required: false,
+    value: 'test value',
     onUpdateModel: jest.fn()
   }
 
-  const enzymeWrapper = shallow(<Checkbox {...props} />)
+  const enzymeWrapper = shallow(<TextField {...props} />)
 
   return {
     enzymeWrapper,
@@ -25,21 +25,21 @@ function setup() {
   }
 }
 
-describe('Checkbox component', () => {
+describe('TextField component', () => {
   test('renders a Form.Check component', () => {
     const { enzymeWrapper } = setup()
 
-    expect(enzymeWrapper.find(Form.Check).length).toBe(1)
+    expect(enzymeWrapper.find(Form.Control).length).toBe(1)
   })
 
   test('onChange calls onUpdateModel', () => {
     const { enzymeWrapper, props } = setup()
 
-    const checkbox = enzymeWrapper.find(Form.Check)
+    const TextField = enzymeWrapper.find(Form.Control)
 
-    checkbox.props().onChange({ target: { checked: false } })
+    TextField.props().onChange({ target: { value: 'new test value' } })
 
     expect(props.onUpdateModel).toHaveBeenCalledTimes(1)
-    expect(props.onUpdateModel).toHaveBeenCalledWith('testfield', false)
+    expect(props.onUpdateModel).toHaveBeenCalledWith('testfield', 'new test value')
   })
 })
