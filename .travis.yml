@@ -14,6 +14,3 @@ script:
   - npm install
   - npm run silent-test
   - npm run cypress:run
-branches:
-  only: # Only build master. All pull requests also get built
-    - master
