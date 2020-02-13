@@ -6,3 +6,5 @@ tmp
 /build
 /spec/build
 /coverage
+cypress/screenshots
+cypress/videos
