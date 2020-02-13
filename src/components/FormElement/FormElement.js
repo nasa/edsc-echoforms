@@ -6,6 +6,7 @@ import { TextField } from '../TextField/TextField'
 import { checkRelevant } from '../../util/checkRelevant'
 import { getNodeValue } from '../../util/getNodeValue'
 import { getAttribute } from '../../util/getAttribute'
+import { TextArea } from '../TextArea/TextArea'
 
 export const FormElement = ({
   element,
@@ -85,6 +86,19 @@ export const FormElement = ({
         {', '}
         {label}
       </p>
+    )
+  }
+  if (tagName === 'textarea') {
+    return (
+      <TextArea
+        id={id}
+        label={label}
+        modelRef={modelRef}
+        readOnly={readOnly}
+        required={required}
+        value={value}
+        onUpdateModel={onUpdateModel}
+      />
     )
   }
 
