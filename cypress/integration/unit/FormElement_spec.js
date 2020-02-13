@@ -8,9 +8,11 @@ import { FormElement } from '../../../src/components/FormElement/FormElement'
 import { parseXml } from '../../../src/util/parseXml'
 import { Checkbox } from '../../../src/components/Checkbox/Checkbox'
 import { TextField } from '../../../src/components/TextField/TextField'
+import { TextArea } from '../../../src/components/TextArea/TextArea'
 import {
   checkboxXml,
   textfieldXml,
+  textareaXml,
   notRelevantXml,
   readOnlyXml
 } from '../../mocks/FormElement'
@@ -75,6 +77,31 @@ describe('FormElement component', () => {
     expect(textfield.props()).to.have.property('modelRef', 'prov:textreference')
     expect(textfield.props()).to.have.property('readOnly', false)
     expect(textfield.props()).to.have.property('required', false)
+  })
+
+  it('renders a TextArea component', () => {
+    const doc = parseXml(textareaXml)
+    const uiResult = document.evaluate('//*[local-name()="ui"]', doc)
+    const ui = uiResult.iterateNext()
+    const modelResult = document.evaluate('//*[local-name()="instance"]/*', doc)
+    const model = modelResult.iterateNext()
+
+    const onUpdateModelSpy = cy.spy().as('onUpdateModel')
+
+    const component = shallow(<FormElement
+      element={ui.children[0]}
+      model={model}
+      onUpdateModel={onUpdateModelSpy}
+    />)
+
+    const textarea = component.find(TextArea)
+
+    expect(textarea).to.have.lengthOf(1)
+    expect(textarea.props()).to.have.property('value', 'test value')
+    expect(textarea.props()).to.have.property('label', 'Textarea input')
+    expect(textarea.props()).to.have.property('modelRef', 'prov:textreference')
+    expect(textarea.props()).to.have.property('readOnly', false)
+    expect(textarea.props()).to.have.property('required', false)
   })
 
   it('does not render a field that is not relevant', () => {
