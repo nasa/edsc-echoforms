@@ -1,7 +1,6 @@
 import React from 'react'
 import Enzyme, { shallow } from 'enzyme'
 import Adapter from 'enzyme-adapter-react-16'
-import { Form } from 'react-bootstrap'
 
 import { TextArea } from '../TextArea'
 
@@ -29,13 +28,13 @@ describe('TextArea component', () => {
   test('renders a Form.Check component', () => {
     const { enzymeWrapper } = setup()
 
-    expect(enzymeWrapper.find(Form.Control).length).toBe(1)
+    expect(enzymeWrapper.find('textarea').length).toBe(1)
   })
 
   test('onChange calls onUpdateModel', () => {
     const { enzymeWrapper, props } = setup()
 
-    const TextArea = enzymeWrapper.find(Form.Control)
+    const TextArea = enzymeWrapper.find('textarea')
 
     TextArea.props().onChange({ target: { value: 'new test value' } })
 

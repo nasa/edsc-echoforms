@@ -1,7 +1,6 @@
 import React from 'react'
 import Enzyme, { shallow } from 'enzyme'
 import Adapter from 'enzyme-adapter-react-16'
-import { Form } from 'react-bootstrap'
 
 import { Checkbox } from '../Checkbox'
 
@@ -29,13 +28,13 @@ describe('Checkbox component', () => {
   test('renders a Form.Check component', () => {
     const { enzymeWrapper } = setup()
 
-    expect(enzymeWrapper.find(Form.Check).length).toBe(1)
+    expect(enzymeWrapper.find('input').length).toBe(1)
   })
 
   test('onChange calls onUpdateModel', () => {
     const { enzymeWrapper, props } = setup()
 
-    const checkbox = enzymeWrapper.find(Form.Check)
+    const checkbox = enzymeWrapper.find('input')
 
     checkbox.props().onChange({ target: { checked: false } })
 
