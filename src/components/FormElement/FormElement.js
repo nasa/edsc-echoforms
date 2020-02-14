@@ -3,12 +3,12 @@ import PropTypes from 'prop-types'
 
 import { Checkbox } from '../Checkbox/Checkbox'
 import { TextField } from '../TextField/TextField'
-import { checkRelevant } from '../../util/checkRelevant'
 import { getNodeValue } from '../../util/getNodeValue'
 import { getAttribute } from '../../util/getAttribute'
 import { TextArea } from '../TextArea/TextArea'
 
 export const FormElement = ({
+  addBootstrapClasses,
   element,
   model,
   onUpdateModel
@@ -20,20 +20,20 @@ export const FormElement = ({
   let relevant = true
   const relevantAttribute = getAttribute(attributes, 'relevant')
   if (relevantAttribute) {
-    relevant = checkRelevant(relevantAttribute, model)
+    relevant = getNodeValue(relevantAttribute, model)
   }
   if (!relevant) return null
 
   let readOnly = false
   const readOnlyAttribute = getAttribute(attributes, 'readonly')
   if (readOnlyAttribute) {
-    readOnly = checkRelevant(readOnlyAttribute, model)
+    readOnly = getNodeValue(readOnlyAttribute, model)
   }
 
   let required = false
   const requiredAttribute = getAttribute(attributes, 'required')
   if (requiredAttribute) {
-    required = checkRelevant(requiredAttribute, model)
+    required = getNodeValue(requiredAttribute, model)
   }
 
   const modelRef = getAttribute(attributes, 'ref')
@@ -53,6 +53,7 @@ export const FormElement = ({
     if (type.includes('string') || type === '') {
       return (
         <TextField
+          addBootstrapClasses={addBootstrapClasses}
           id={id}
           label={label}
           modelRef={modelRef}
@@ -66,7 +67,9 @@ export const FormElement = ({
     if (type.includes('boolean')) {
       return (
         <Checkbox
+          addBootstrapClasses={addBootstrapClasses}
           checked={value}
+          id={id}
           label={label}
           modelRef={modelRef}
           readOnly={readOnly}
@@ -91,6 +94,7 @@ export const FormElement = ({
   if (tagName === 'textarea') {
     return (
       <TextArea
+        addBootstrapClasses={addBootstrapClasses}
         id={id}
         label={label}
         modelRef={modelRef}
@@ -107,7 +111,12 @@ export const FormElement = ({
   )
 }
 
+FormElement.defaultProps = {
+  addBootstrapClasses: false
+}
+
 FormElement.propTypes = {
+  addBootstrapClasses: PropTypes.bool,
   element: PropTypes.shape({}).isRequired,
   model: PropTypes.shape({}).isRequired,
   onUpdateModel: PropTypes.func.isRequired

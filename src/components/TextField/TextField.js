@@ -1,8 +1,8 @@
 import React from 'react'
 import PropTypes from 'prop-types'
-import { Form, Row, Col } from 'react-bootstrap'
 
 export const TextField = ({
+  addBootstrapClasses,
   id,
   label,
   modelRef,
@@ -15,30 +15,32 @@ export const TextField = ({
   }
 
   return (
-    <Form.Group as={Row}>
-      <Form.Label column sm={2}>
+    <div className={addBootstrapClasses ? 'form-group row' : ''}>
+      <label className={addBootstrapClasses ? 'form-label col-form-label col-sm-2' : ''}>
         {label}
-      </Form.Label>
-      <Col sm={10}>
-        <Form.Control
-          as="input"
+      </label>
+      <div className={addBootstrapClasses ? 'col-sm-10' : ''}>
+        <input
+          className={addBootstrapClasses ? 'form-control' : ''}
           id={id}
           name={label}
           readOnly={readOnly}
           value={value}
           onChange={onChange}
         />
-      </Col>
-    </Form.Group>
+      </div>
+    </div>
   )
 }
 
 TextField.defaultProps = {
+  addBootstrapClasses: false,
   id: '',
   value: ''
 }
 
 TextField.propTypes = {
+  addBootstrapClasses: PropTypes.bool,
   id: PropTypes.string,
   label: PropTypes.string.isRequired,
   modelRef: PropTypes.string.isRequired,
