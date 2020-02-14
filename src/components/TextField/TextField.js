@@ -7,6 +7,7 @@ export const TextField = ({
   label,
   modelRef,
   readOnly,
+  type,
   value,
   onUpdateModel
 }) => {
@@ -25,6 +26,7 @@ export const TextField = ({
           id={id}
           name={label}
           readOnly={readOnly}
+          type={type}
           value={value}
           onChange={onChange}
         />
@@ -36,6 +38,7 @@ export const TextField = ({
 TextField.defaultProps = {
   addBootstrapClasses: false,
   id: '',
+  type: null,
   value: ''
 }
 
@@ -46,6 +49,7 @@ TextField.propTypes = {
   modelRef: PropTypes.string.isRequired,
   readOnly: PropTypes.bool.isRequired,
   required: PropTypes.bool.isRequired,
+  type: PropTypes.string,
   value: PropTypes.string,
   onUpdateModel: PropTypes.func.isRequired
 }
