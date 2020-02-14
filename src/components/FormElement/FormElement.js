@@ -6,6 +6,7 @@ import { TextField } from '../TextField/TextField'
 import { getNodeValue } from '../../util/getNodeValue'
 import { getAttribute } from '../../util/getAttribute'
 import { TextArea } from '../TextArea/TextArea'
+import { Output } from '../Output/Output'
 
 export const FormElement = ({
   addBootstrapClasses,
@@ -117,6 +118,20 @@ export const FormElement = ({
         type="password"
         value={value}
         onUpdateModel={onUpdateModel}
+      />
+    )
+  }
+  if (tagName === 'output') {
+    const type = getAttribute(attributes, 'type') || ''
+
+    return (
+      <Output
+        addBootstrapClasses={addBootstrapClasses}
+        id={id}
+        label={label}
+        required={required}
+        type={type}
+        value={value}
       />
     )
   }
