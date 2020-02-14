@@ -105,6 +105,21 @@ export const FormElement = ({
       />
     )
   }
+  if (tagName === 'secret') {
+    return (
+      <TextField
+        addBootstrapClasses={addBootstrapClasses}
+        id={id}
+        label={label}
+        modelRef={modelRef}
+        readOnly={readOnly}
+        required={required}
+        type="password"
+        value={value}
+        onUpdateModel={onUpdateModel}
+      />
+    )
+  }
 
   return (
     <p>{tagName}</p>
