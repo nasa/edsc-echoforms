@@ -5,6 +5,7 @@ import { EDSCEchoform } from '../../src/index'
 
 import form1 from './form1.xml'
 
+import 'bootstrap/dist/css/bootstrap.min.css'
 import './styles.css'
 
 const App = () => {
@@ -33,6 +34,7 @@ const App = () => {
       />
       <h2>Generated Interface</h2>
       <EDSCEchoform
+        addBootstrapClasses
         form={form}
         onFormModelUpdated={onFormModelUpdated}
       />

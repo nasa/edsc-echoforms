@@ -1,9 +1,10 @@
 import React from 'react'
 import PropTypes from 'prop-types'
-import { Form, Col, Row } from 'react-bootstrap'
 
 export const Checkbox = ({
+  addBootstrapClasses,
   checked,
+  id,
   label,
   modelRef,
   readOnly,
@@ -14,25 +15,42 @@ export const Checkbox = ({
   }
 
   return (
-    <Form.Group controlId={label} as={Row}>
-      <Col sm={2} />
-      <Col sm={10}>
-        <Form.Check
-          checked={checked === 'true'}
-          label={label}
-          name={label}
-          readOnly={readOnly}
-          type="checkbox"
-          onChange={onChange}
-        />
-      </Col>
-    </Form.Group>
+    <div className={addBootstrapClasses ? 'form-group row' : ''}>
+      <div className={addBootstrapClasses ? 'col-sm-2' : ''} />
+      <div className={addBootstrapClasses ? 'col-sm-10' : ''}>
+        <div className={addBootstrapClasses ? 'form-check' : ''}>
+          <input
+            className={addBootstrapClasses ? 'form-check-input' : ''}
+            checked={checked === 'true'}
+            id={id}
+            name={label}
+            readOnly={readOnly}
+            type="checkbox"
+            onChange={onChange}
+          />
+          <label
+            className={addBootstrapClasses ? 'form-check-label' : ''}
+            htmlFor={id}
+          >
+            {label}
+          </label>
+        </div>
+      </div>
+    </div>
   )
 }
 
+Checkbox.defaultProps = {
+  addBootstrapClasses: false,
+  id: '',
+  label: ''
+}
+
 Checkbox.propTypes = {
+  addBootstrapClasses: PropTypes.bool,
   checked: PropTypes.string.isRequired,
-  label: PropTypes.string.isRequired,
+  id: PropTypes.string,
+  label: PropTypes.string,
   modelRef: PropTypes.string.isRequired,
   readOnly: PropTypes.bool.isRequired,
   required: PropTypes.bool.isRequired,
