@@ -25,10 +25,11 @@ function setup() {
 }
 
 describe('Checkbox component', () => {
-  test('renders a Form.Check component', () => {
+  test('renders a input field', () => {
     const { enzymeWrapper } = setup()
 
     expect(enzymeWrapper.find('input').length).toBe(1)
+    expect(enzymeWrapper.find('input').props().type).toEqual('checkbox')
   })
 
   test('onChange calls onUpdateModel', () => {

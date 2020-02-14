@@ -6,14 +6,15 @@ import { TextField } from '../TextField'
 
 Enzyme.configure({ adapter: new Adapter() })
 
-function setup() {
+function setup(overrideProps) {
   const props = {
     label: 'Test Field',
     modelRef: 'testfield',
     readOnly: false,
     required: false,
     value: 'test value',
-    onUpdateModel: jest.fn()
+    onUpdateModel: jest.fn(),
+    ...overrideProps
   }
 
   const enzymeWrapper = shallow(<TextField {...props} />)
@@ -25,10 +26,17 @@ function setup() {
 }
 
 describe('TextField component', () => {
-  test('renders a Form.Check component', () => {
+  test('renders a input field', () => {
     const { enzymeWrapper } = setup()
 
     expect(enzymeWrapper.find('input').length).toBe(1)
+  })
+
+  test('renders a password field when the type is password', () => {
+    const { enzymeWrapper } = setup({ type: 'password' })
+
+    expect(enzymeWrapper.find('input').length).toBe(1)
+    expect(enzymeWrapper.find('input').props().type).toEqual('password')
   })
 
   test('onChange calls onUpdateModel', () => {
