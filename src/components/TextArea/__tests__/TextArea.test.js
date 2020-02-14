@@ -25,7 +25,7 @@ function setup() {
 }
 
 describe('TextArea component', () => {
-  test('renders a Form.Check component', () => {
+  test('renders a textarea field', () => {
     const { enzymeWrapper } = setup()
 
     expect(enzymeWrapper.find('textarea').length).toBe(1)

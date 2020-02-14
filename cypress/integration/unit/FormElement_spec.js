@@ -11,10 +11,11 @@ import { TextField } from '../../../src/components/TextField/TextField'
 import { TextArea } from '../../../src/components/TextArea/TextArea'
 import {
   checkboxXml,
-  textfieldXml,
-  textareaXml,
   notRelevantXml,
-  readOnlyXml
+  readOnlyXml,
+  secretXml,
+  textareaXml,
+  textfieldXml
 } from '../../mocks/FormElement'
 
 window.ReactDOM = ReactDOM
@@ -77,6 +78,32 @@ describe('FormElement component', () => {
     expect(textfield.props()).to.have.property('modelRef', 'prov:textreference')
     expect(textfield.props()).to.have.property('readOnly', false)
     expect(textfield.props()).to.have.property('required', false)
+  })
+
+  it('renders a secret TextField component', () => {
+    const doc = parseXml(secretXml)
+    const uiResult = document.evaluate('//*[local-name()="ui"]', doc)
+    const ui = uiResult.iterateNext()
+    const modelResult = document.evaluate('//*[local-name()="instance"]/*', doc)
+    const model = modelResult.iterateNext()
+
+    const onUpdateModelSpy = cy.spy().as('onUpdateModel')
+
+    const component = shallow(<FormElement
+      element={ui.children[0]}
+      model={model}
+      onUpdateModel={onUpdateModelSpy}
+    />)
+
+    const textfield = component.find(TextField)
+
+    expect(textfield).to.have.lengthOf(1)
+    expect(textfield.props()).to.have.property('value', 'test value')
+    expect(textfield.props()).to.have.property('label', 'Secret')
+    expect(textfield.props()).to.have.property('modelRef', 'prov:textreference')
+    expect(textfield.props()).to.have.property('readOnly', false)
+    expect(textfield.props()).to.have.property('required', false)
+    expect(textfield.props()).to.have.property('type', 'password')
   })
 
   it('renders a TextArea component', () => {
