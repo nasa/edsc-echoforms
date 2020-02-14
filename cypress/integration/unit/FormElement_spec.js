@@ -9,13 +9,16 @@ import { parseXml } from '../../../src/util/parseXml'
 import { Checkbox } from '../../../src/components/Checkbox/Checkbox'
 import { TextField } from '../../../src/components/TextField/TextField'
 import { TextArea } from '../../../src/components/TextArea/TextArea'
+import { Output } from '../../../src/components/Output/Output'
 import {
   checkboxXml,
   notRelevantXml,
+  outputXml,
   readOnlyXml,
   secretXml,
   textareaXml,
-  textfieldXml
+  textfieldXml,
+  urlOutputXml
 } from '../../mocks/FormElement'
 
 window.ReactDOM = ReactDOM
@@ -129,6 +132,52 @@ describe('FormElement component', () => {
     expect(textarea.props()).to.have.property('modelRef', 'prov:textreference')
     expect(textarea.props()).to.have.property('readOnly', false)
     expect(textarea.props()).to.have.property('required', false)
+  })
+
+  it('renders an Output component', () => {
+    const doc = parseXml(outputXml)
+    const uiResult = document.evaluate('//*[local-name()="ui"]', doc)
+    const ui = uiResult.iterateNext()
+    const modelResult = document.evaluate('//*[local-name()="instance"]/*', doc)
+    const model = modelResult.iterateNext()
+
+    const onUpdateModelSpy = cy.spy().as('onUpdateModel')
+
+    const component = shallow(<FormElement
+      element={ui.children[0]}
+      model={model}
+      onUpdateModel={onUpdateModelSpy}
+    />)
+
+    const output = component.find(Output)
+
+    expect(output).to.have.lengthOf(1)
+    expect(output.props()).to.have.property('value', 'test value')
+    expect(output.props()).to.have.property('label', 'Output')
+    expect(output.props()).to.have.property('required', false)
+  })
+
+  it('renders an URL Output component', () => {
+    const doc = parseXml(urlOutputXml)
+    const uiResult = document.evaluate('//*[local-name()="ui"]', doc)
+    const ui = uiResult.iterateNext()
+    const modelResult = document.evaluate('//*[local-name()="instance"]/*', doc)
+    const model = modelResult.iterateNext()
+
+    const onUpdateModelSpy = cy.spy().as('onUpdateModel')
+
+    const component = shallow(<FormElement
+      element={ui.children[0]}
+      model={model}
+      onUpdateModel={onUpdateModelSpy}
+    />)
+
+    const output = component.find(Output)
+
+    expect(output).to.have.lengthOf(1)
+    expect(output.props()).to.have.property('value', 'test value')
+    expect(output.props()).to.have.property('label', 'URL Output')
+    expect(output.props()).to.have.property('required', false)
   })
 
   it('does not render a field that is not relevant', () => {
