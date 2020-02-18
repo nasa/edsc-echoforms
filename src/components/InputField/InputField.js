@@ -2,17 +2,18 @@ import React from 'react'
 import PropTypes from 'prop-types'
 import { ElementWrapper } from '../ElementWrapper/ElementWrapper'
 
-export const Checkbox = ({
+export const InputField = ({
   addBootstrapClasses,
-  checked,
   id,
   label,
   modelRef,
   readOnly,
+  type,
+  value,
   onUpdateModel
 }) => {
   const onChange = (e) => {
-    onUpdateModel(modelRef, e.target.checked)
+    onUpdateModel(modelRef, e.target.value)
   }
 
   return (
@@ -20,40 +21,34 @@ export const Checkbox = ({
       addBootstrapClasses={addBootstrapClasses}
       label={label}
     >
-      <>
-        <input
-          className={addBootstrapClasses ? 'form-check-input' : ''}
-          checked={checked === 'true'}
-          id={id}
-          name={label}
-          readOnly={readOnly}
-          type="checkbox"
-          onChange={onChange}
-        />
-        <label
-          className={addBootstrapClasses ? 'form-check-label' : ''}
-          htmlFor={id}
-        >
-          {label}
-        </label>
-      </>
+      <input
+        className={addBootstrapClasses ? 'form-control' : ''}
+        id={id}
+        name={label}
+        readOnly={readOnly}
+        type={type}
+        value={value}
+        onChange={onChange}
+      />
     </ElementWrapper>
   )
 }
 
-Checkbox.defaultProps = {
+InputField.defaultProps = {
   addBootstrapClasses: false,
   id: '',
-  label: ''
+  type: null,
+  value: ''
 }
 
-Checkbox.propTypes = {
+InputField.propTypes = {
   addBootstrapClasses: PropTypes.bool,
-  checked: PropTypes.string.isRequired,
   id: PropTypes.string,
-  label: PropTypes.string,
+  label: PropTypes.string.isRequired,
   modelRef: PropTypes.string.isRequired,
   readOnly: PropTypes.bool.isRequired,
   required: PropTypes.bool.isRequired,
+  type: PropTypes.string,
+  value: PropTypes.string,
   onUpdateModel: PropTypes.func.isRequired
 }
