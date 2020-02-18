@@ -1,6 +1,6 @@
-import { getNodeValue } from '../../../src/util/getNodeValue'
-import { parseXml } from '../../../src/util/parseXml'
-import { textfieldXml } from '../../mocks/FormElement'
+import { getNodeValue } from '../../../../src/util/getNodeValue'
+import { parseXml } from '../../../../src/util/parseXml'
+import { textfieldXml } from '../../../mocks/FormElement'
 
 describe('getNodeValue', () => {
   it('returns the value from the model', () => {

@@ -16,5 +16,10 @@ module.exports = {
     '@babel/plugin-proposal-object-rest-spread',
     '@babel/plugin-proposal-class-properties',
     '@babel/plugin-transform-runtime'
-  ]
+  ],
+  env: {
+    test: {
+      plugins: ['istanbul']
+    }
+  }
 }

@@ -12,5 +12,4 @@ cache:
     - ~/.cache
 script:
   - npm install
-  - npm run silent-test
   - npm run cypress:run

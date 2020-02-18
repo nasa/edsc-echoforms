@@ -2,7 +2,7 @@ import React from 'react'
 import PropTypes from 'prop-types'
 import { InputField } from '../InputField/InputField'
 
-export const TextField = ({
+export const SecretField = ({
   addBootstrapClasses,
   id,
   label,
@@ -19,18 +19,19 @@ export const TextField = ({
     modelRef={modelRef}
     readOnly={readOnly}
     required={required}
+    type="password"
     value={value}
     onUpdateModel={onUpdateModel}
   />
 )
 
-TextField.defaultProps = {
+SecretField.defaultProps = {
   addBootstrapClasses: false,
   id: '',
   value: ''
 }
 
-TextField.propTypes = {
+SecretField.propTypes = {
   addBootstrapClasses: PropTypes.bool,
   id: PropTypes.string,
   label: PropTypes.string.isRequired,

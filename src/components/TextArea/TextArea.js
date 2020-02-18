@@ -1,5 +1,6 @@
 import React from 'react'
 import PropTypes from 'prop-types'
+import { ElementWrapper } from '../ElementWrapper/ElementWrapper'
 
 export const TextArea = ({
   addBootstrapClasses,
@@ -15,21 +16,19 @@ export const TextArea = ({
   }
 
   return (
-    <div className={addBootstrapClasses ? 'form-group row' : ''}>
-      <label className={addBootstrapClasses ? 'form-label col-form-label col-sm-2' : ''}>
-        {label}
-      </label>
-      <div className={addBootstrapClasses ? 'col-sm-10' : ''}>
-        <textarea
-          className={addBootstrapClasses ? 'form-control' : ''}
-          id={id}
-          name={label}
-          readOnly={readOnly}
-          value={value}
-          onChange={onChange}
-        />
-      </div>
-    </div>
+    <ElementWrapper
+      addBootstrapClasses={addBootstrapClasses}
+      label={label}
+    >
+      <textarea
+        className={addBootstrapClasses ? 'form-control' : ''}
+        id={id}
+        name={label}
+        readOnly={readOnly}
+        value={value}
+        onChange={onChange}
+      />
+    </ElementWrapper>
   )
 }
 
