@@ -1,9 +1,9 @@
 import React from 'react'
 import PropTypes from 'prop-types'
 
-import { Checkbox } from '../Checkbox/Checkbox'
 import { getAttribute } from '../../util/getAttribute'
 import { getNodeValue } from '../../util/getNodeValue'
+import { Checkbox } from '../Checkbox/Checkbox'
 import { Output } from '../Output/Output'
 import { SecretField } from '../SecretField/SecretField'
 import { TextArea } from '../TextArea/TextArea'
@@ -50,9 +50,9 @@ export const FormElement = ({
   }
 
   if (tagName === 'input') {
-    const type = getAttribute(attributes, 'type') || ''
+    const type = getAttribute(attributes, 'type')
 
-    if (type.includes('string') || type === '') {
+    if (type == null || type.includes('string')) {
       return (
         <TextField
           addBootstrapClasses={addBootstrapClasses}
@@ -122,7 +122,7 @@ export const FormElement = ({
     )
   }
   if (tagName === 'output') {
-    const type = getAttribute(attributes, 'type') || ''
+    const type = getAttribute(attributes, 'type')
 
     return (
       <Output
