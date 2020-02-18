@@ -5,12 +5,6 @@ import { configure, shallow } from 'enzyme'
 
 import { Output } from '../../../../src/components/Output/Output'
 
-// // HACK: chai-enzyme does not play nice with chai-jquery, so remove the
-// // problem-causing assertions that collide with chai-jquery
-// 'visible hidden selected checked enabled disabled'.split(' ').forEach((selector) => {
-//   Object.defineProperty(chai.Assertion.prototype, selector, { get: () => {} })
-// })
-
 chai.use(chaiEnzyme())
 configure({ adapter: new Adapter() })
 
