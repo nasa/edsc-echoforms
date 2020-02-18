@@ -1,6 +1,6 @@
-import { getAttribute } from '../../../src/util/getAttribute'
-import { parseXml } from '../../../src/util/parseXml'
-import { textfieldXml } from '../../mocks/FormElement'
+import { getAttribute } from '../../../../src/util/getAttribute'
+import { parseXml } from '../../../../src/util/parseXml'
+import { textfieldXml } from '../../../mocks/FormElement'
 
 describe('getAttribute', () => {
   it('returns the attribute value', () => {

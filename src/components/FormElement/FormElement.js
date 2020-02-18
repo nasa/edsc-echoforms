@@ -2,11 +2,12 @@ import React from 'react'
 import PropTypes from 'prop-types'
 
 import { Checkbox } from '../Checkbox/Checkbox'
-import { TextField } from '../TextField/TextField'
-import { getNodeValue } from '../../util/getNodeValue'
 import { getAttribute } from '../../util/getAttribute'
-import { TextArea } from '../TextArea/TextArea'
+import { getNodeValue } from '../../util/getNodeValue'
 import { Output } from '../Output/Output'
+import { SecretField } from '../SecretField/SecretField'
+import { TextArea } from '../TextArea/TextArea'
+import { TextField } from '../TextField/TextField'
 
 export const FormElement = ({
   addBootstrapClasses,
@@ -108,14 +109,13 @@ export const FormElement = ({
   }
   if (tagName === 'secret') {
     return (
-      <TextField
+      <SecretField
         addBootstrapClasses={addBootstrapClasses}
         id={id}
         label={label}
         modelRef={modelRef}
         readOnly={readOnly}
         required={required}
-        type="password"
         value={value}
         onUpdateModel={onUpdateModel}
       />

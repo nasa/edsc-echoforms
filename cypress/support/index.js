@@ -18,6 +18,7 @@ import './commands'
 
 // Alternatively you can use CommonJS syntax:
 // require('./commands')
+import '@cypress/code-coverage/support'
 
 import 'cypress-react-unit-test'
 
@@ -26,4 +27,10 @@ import 'cypress-react-unit-test'
 Cypress.on('window:load', (win) => {
   // eslint-disable-next-line no-param-reassign
   win.ReactDOM = window.ReactDOM
+})
+
+// HACK: chai-enzyme does not play nice with chai-jquery, so remove the
+// problem-causing assertions that collide with chai-jquery
+'visible hidden selected checked enabled disabled'.split(' ').forEach((selector) => {
+  Object.defineProperty(chai.Assertion.prototype, selector, { get: () => {} })
 })
