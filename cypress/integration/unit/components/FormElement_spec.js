@@ -4,12 +4,13 @@ import Adapter from 'enzyme-adapter-react-16'
 import chaiEnzyme from 'chai-enzyme'
 import { configure, shallow } from 'enzyme'
 
-import { FormElement } from '../../../src/components/FormElement/FormElement'
-import { parseXml } from '../../../src/util/parseXml'
-import { Checkbox } from '../../../src/components/Checkbox/Checkbox'
-import { TextField } from '../../../src/components/TextField/TextField'
-import { TextArea } from '../../../src/components/TextArea/TextArea'
-import { Output } from '../../../src/components/Output/Output'
+import { Checkbox } from '../../../../src/components/Checkbox/Checkbox'
+import { FormElement } from '../../../../src/components/FormElement/FormElement'
+import { Output } from '../../../../src/components/Output/Output'
+import { parseXml } from '../../../../src/util/parseXml'
+import { SecretField } from '../../../../src/components/SecretField/SecretField'
+import { TextArea } from '../../../../src/components/TextArea/TextArea'
+import { TextField } from '../../../../src/components/TextField/TextField'
 import {
   checkboxXml,
   notRelevantXml,
@@ -19,15 +20,9 @@ import {
   textareaXml,
   textfieldXml,
   urlOutputXml
-} from '../../mocks/FormElement'
+} from '../../../mocks/FormElement'
 
 window.ReactDOM = ReactDOM
-
-// HACK: chai-enzyme does not play nice with chai-jquery, so remove the
-// problem-causing assertions that collide with chai-jquery
-'visible hidden selected checked enabled disabled'.split(' ').forEach((selector) => {
-  Object.defineProperty(chai.Assertion.prototype, selector, { get: () => {} })
-})
 
 chai.use(chaiEnzyme())
 configure({ adapter: new Adapter() })
@@ -98,15 +93,14 @@ describe('FormElement component', () => {
       onUpdateModel={onUpdateModelSpy}
     />)
 
-    const textfield = component.find(TextField)
+    const secretfield = component.find(SecretField)
 
-    expect(textfield).to.have.lengthOf(1)
-    expect(textfield.props()).to.have.property('value', 'test value')
-    expect(textfield.props()).to.have.property('label', 'Secret')
-    expect(textfield.props()).to.have.property('modelRef', 'prov:textreference')
-    expect(textfield.props()).to.have.property('readOnly', false)
-    expect(textfield.props()).to.have.property('required', false)
-    expect(textfield.props()).to.have.property('type', 'password')
+    expect(secretfield).to.have.lengthOf(1)
+    expect(secretfield.props()).to.have.property('value', 'test value')
+    expect(secretfield.props()).to.have.property('label', 'Secret')
+    expect(secretfield.props()).to.have.property('modelRef', 'prov:textreference')
+    expect(secretfield.props()).to.have.property('readOnly', false)
+    expect(secretfield.props()).to.have.property('required', false)
   })
 
   it('renders a TextArea component', () => {

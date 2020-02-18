@@ -1,5 +1,6 @@
 import React from 'react'
 import PropTypes from 'prop-types'
+import { ElementWrapper } from '../ElementWrapper/ElementWrapper'
 
 export const Output = ({
   addBootstrapClasses,
@@ -8,23 +9,21 @@ export const Output = ({
   type,
   value
 }) => (
-  <div className={addBootstrapClasses ? 'form-group row' : ''}>
-    <label className={addBootstrapClasses ? 'form-label col-form-label col-sm-2' : ''}>
-      {label}
-    </label>
-    <div className={addBootstrapClasses ? 'col-sm-10' : ''}>
-      {
-        type.includes('anyURI') && (
-          <a id={id} href={value}>{value}</a>
-        )
-      }
-      {
-        !type.includes('anyURI') && (
-          <p id={id}>{value}</p>
-        )
-      }
-    </div>
-  </div>
+  <ElementWrapper
+    addBootstrapClasses={addBootstrapClasses}
+    label={label}
+  >
+    {
+      type.includes('anyURI') && (
+        <a id={id} href={value}>{value}</a>
+      )
+    }
+    {
+      !type.includes('anyURI') && (
+        <p id={id}>{value}</p>
+      )
+    }
+  </ElementWrapper>
 )
 
 Output.defaultProps = {
