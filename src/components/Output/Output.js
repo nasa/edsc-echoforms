@@ -14,12 +14,12 @@ export const Output = ({
     label={label}
   >
     {
-      type.includes('anyURI') && (
+      type && type.includes('anyURI') && (
         <a id={id} href={value}>{value}</a>
       )
     }
     {
-      !type.includes('anyURI') && (
+      (!type || !type.includes('anyURI')) && (
         <p id={id}>{value}</p>
       )
     }
