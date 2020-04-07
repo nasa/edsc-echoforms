@@ -43,14 +43,7 @@ describe('EDSCEchoform component', () => {
   })
 
   it('updates the model and calls onFormModelUpdated when onUpdateModel is called', () => {
-    const doc = parseXml(textfieldXml)
-    const uiResult = document.evaluate('//*[local-name()="ui"]', doc)
-    const ui = uiResult.iterateNext()
-    const modelResult = document.evaluate('//*[local-name()="instance"]/*', doc)
-    const model = modelResult.iterateNext()
-
     const onFormModelUpdatedSpy = cy.spy().as('onFormModelUpdated')
-    const stateSpy = cy.spy(React, 'useState')
 
     const component = mount(<EDSCEchoform
       form={textfieldXml}

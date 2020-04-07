@@ -27,9 +27,19 @@ export const getNodeValue = (ref, model) => {
     case XPathResult.BOOLEAN_TYPE:
       value = result.booleanValue
       break
-    default:
-      value = result.iterateNext().textContent
+    default: {
+      const next = result.iterateNext()
+      const { children = [] } = next
+
+      // If children is empty get the text content of the node
+      if (children.length === 0) {
+        value = next.textContent
+      } else {
+        // If children has values then we need to get the text content of the children
+        value = Array.from(children).map(child => child.textContent)
+      }
       break
+    }
   }
 
   return value
