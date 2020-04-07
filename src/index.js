@@ -32,7 +32,20 @@ export const EDSCEchoform = ({
 
     const result = document.evaluate(`//${modelRef}`, newModel, document.createNSResolver(newModel), XPathResult.ANY_TYPE, null)
     const value = result.iterateNext()
-    value.textContent = newValue
+
+    if (Array.isArray(newValue)) {
+      const values = newValue.map((v) => {
+        const { namespaceURI, prefix } = model
+        const { value: vValue, valueElementName } = v
+        const element = document.createElementNS(namespaceURI, `${prefix}:${valueElementName}`)
+        element.textContent = vValue
+
+        return element.outerHTML
+      })
+      value.innerHTML = values.join()
+    } else {
+      value.textContent = newValue
+    }
 
     onFormModelUpdated(newModel.outerHTML)
     setModel(newModel)

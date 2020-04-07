@@ -31,7 +31,6 @@ describe('TextArea component', () => {
   it('renders a textarea element', () => {
     const { enzymeWrapper } = setup()
 
-
     expect(enzymeWrapper.find('textarea').length).to.eq(1)
     expect(enzymeWrapper.find('textarea').props()).to.have.property('value', 'test value')
     expect(enzymeWrapper.find('textarea').props()).to.have.property('name', 'Test Field')
