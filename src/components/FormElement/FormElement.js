@@ -9,6 +9,7 @@ import { SecretField } from '../SecretField/SecretField'
 import { TextArea } from '../TextArea/TextArea'
 import { TextField } from '../TextField/TextField'
 import { Select } from '../Select/Select'
+import { DateTime } from '../DateTime/DateTime'
 
 export const FormElement = ({
   addBootstrapClasses,
@@ -81,6 +82,20 @@ export const FormElement = ({
           modelRef={modelRef}
           readOnly={readOnly}
           required={required}
+          onUpdateModel={onUpdateModel}
+        />
+      )
+    }
+    if (type.includes('datetime')) {
+      return (
+        <DateTime
+          addBootstrapClasses={addBootstrapClasses}
+          id={id}
+          label={label}
+          modelRef={modelRef}
+          readOnly={readOnly}
+          required={required}
+          value={value}
           onUpdateModel={onUpdateModel}
         />
       )
