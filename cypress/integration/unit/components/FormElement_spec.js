@@ -9,14 +9,17 @@ import { FormElement } from '../../../../src/components/FormElement/FormElement'
 import { Output } from '../../../../src/components/Output/Output'
 import { parseXml } from '../../../../src/util/parseXml'
 import { SecretField } from '../../../../src/components/SecretField/SecretField'
+import { Select } from '../../../../src/components/Select/Select'
 import { TextArea } from '../../../../src/components/TextArea/TextArea'
 import { TextField } from '../../../../src/components/TextField/TextField'
 import {
   checkboxXml,
+  multiSelectXml,
   notRelevantXml,
   outputXml,
   readOnlyXml,
   secretXml,
+  selectXml,
   textareaXml,
   textfieldXml,
   urlOutputXml
@@ -27,13 +30,19 @@ window.ReactDOM = ReactDOM
 chai.use(chaiEnzyme())
 configure({ adapter: new Adapter() })
 
+function readXml(file) {
+  const doc = parseXml(file)
+  const uiResult = document.evaluate('//*[local-name()="ui"]', doc)
+  const ui = uiResult.iterateNext()
+  const modelResult = document.evaluate('//*[local-name()="instance"]/*', doc)
+  const model = modelResult.iterateNext()
+
+  return { model, ui }
+}
+
 describe('FormElement component', () => {
   it('renders a Checkbox component', () => {
-    const doc = parseXml(checkboxXml)
-    const uiResult = document.evaluate('//*[local-name()="ui"]', doc)
-    const ui = uiResult.iterateNext()
-    const modelResult = document.evaluate('//*[local-name()="instance"]/*', doc)
-    const model = modelResult.iterateNext()
+    const { model, ui } = readXml(checkboxXml)
 
     const onUpdateModelSpy = cy.spy().as('onUpdateModel')
 
@@ -54,11 +63,7 @@ describe('FormElement component', () => {
   })
 
   it('renders a TextField component', () => {
-    const doc = parseXml(textfieldXml)
-    const uiResult = document.evaluate('//*[local-name()="ui"]', doc)
-    const ui = uiResult.iterateNext()
-    const modelResult = document.evaluate('//*[local-name()="instance"]/*', doc)
-    const model = modelResult.iterateNext()
+    const { model, ui } = readXml(textfieldXml)
 
     const onUpdateModelSpy = cy.spy().as('onUpdateModel')
 
@@ -79,11 +84,7 @@ describe('FormElement component', () => {
   })
 
   it('renders a secret TextField component', () => {
-    const doc = parseXml(secretXml)
-    const uiResult = document.evaluate('//*[local-name()="ui"]', doc)
-    const ui = uiResult.iterateNext()
-    const modelResult = document.evaluate('//*[local-name()="instance"]/*', doc)
-    const model = modelResult.iterateNext()
+    const { model, ui } = readXml(secretXml)
 
     const onUpdateModelSpy = cy.spy().as('onUpdateModel')
 
@@ -104,11 +105,7 @@ describe('FormElement component', () => {
   })
 
   it('renders a TextArea component', () => {
-    const doc = parseXml(textareaXml)
-    const uiResult = document.evaluate('//*[local-name()="ui"]', doc)
-    const ui = uiResult.iterateNext()
-    const modelResult = document.evaluate('//*[local-name()="instance"]/*', doc)
-    const model = modelResult.iterateNext()
+    const { model, ui } = readXml(textareaXml)
 
     const onUpdateModelSpy = cy.spy().as('onUpdateModel')
 
@@ -128,12 +125,54 @@ describe('FormElement component', () => {
     expect(textarea.props()).to.have.property('required', false)
   })
 
+  it('renders a Select component', () => {
+    const { model, ui } = readXml(selectXml)
+
+    const onUpdateModelSpy = cy.spy().as('onUpdateModel')
+
+    const component = shallow(<FormElement
+      element={ui.children[0]}
+      model={model}
+      onUpdateModel={onUpdateModelSpy}
+    />)
+
+    const select = component.find(Select)
+
+    expect(select).to.have.lengthOf(1)
+    expect(select.props().value).to.eql(['value 1', 'value 2'])
+    expect(select.props()).to.have.property('label', 'Select input')
+    expect(select.props()).to.have.property('modelRef', 'prov:selectreference')
+    expect(select.props()).to.have.property('multiple', false)
+    expect(select.props()).to.have.property('readOnly', false)
+    expect(select.props()).to.have.property('required', false)
+    expect(select.props()).to.have.property('valueElementName', 'value')
+  })
+
+  it('renders a multi-Select component', () => {
+    const { model, ui } = readXml(multiSelectXml)
+
+    const onUpdateModelSpy = cy.spy().as('onUpdateModel')
+
+    const component = shallow(<FormElement
+      element={ui.children[0]}
+      model={model}
+      onUpdateModel={onUpdateModelSpy}
+    />)
+
+    const select = component.find(Select)
+
+    expect(select).to.have.lengthOf(1)
+    expect(select.props().value).to.eql(['value 1', 'value 2'])
+    expect(select.props()).to.have.property('label', 'Select input')
+    expect(select.props()).to.have.property('modelRef', 'prov:selectreference')
+    expect(select.props()).to.have.property('multiple', true)
+    expect(select.props()).to.have.property('readOnly', false)
+    expect(select.props()).to.have.property('required', false)
+    expect(select.props()).to.have.property('valueElementName', 'value')
+  })
+
   it('renders an Output component', () => {
-    const doc = parseXml(outputXml)
-    const uiResult = document.evaluate('//*[local-name()="ui"]', doc)
-    const ui = uiResult.iterateNext()
-    const modelResult = document.evaluate('//*[local-name()="instance"]/*', doc)
-    const model = modelResult.iterateNext()
+    const { model, ui } = readXml(outputXml)
 
     const onUpdateModelSpy = cy.spy().as('onUpdateModel')
 
@@ -152,11 +191,7 @@ describe('FormElement component', () => {
   })
 
   it('renders an URL Output component', () => {
-    const doc = parseXml(urlOutputXml)
-    const uiResult = document.evaluate('//*[local-name()="ui"]', doc)
-    const ui = uiResult.iterateNext()
-    const modelResult = document.evaluate('//*[local-name()="instance"]/*', doc)
-    const model = modelResult.iterateNext()
+    const { model, ui } = readXml(urlOutputXml)
 
     const onUpdateModelSpy = cy.spy().as('onUpdateModel')
 
@@ -175,11 +210,7 @@ describe('FormElement component', () => {
   })
 
   it('does not render a field that is not relevant', () => {
-    const doc = parseXml(notRelevantXml)
-    const uiResult = document.evaluate('//*[local-name()="ui"]', doc)
-    const ui = uiResult.iterateNext()
-    const modelResult = document.evaluate('//*[local-name()="instance"]/*', doc)
-    const model = modelResult.iterateNext()
+    const { model, ui } = readXml(notRelevantXml)
 
     const onUpdateModelSpy = cy.spy().as('onUpdateModel')
 
@@ -193,11 +224,7 @@ describe('FormElement component', () => {
   })
 
   it('renders a readonly field as readonly', () => {
-    const doc = parseXml(readOnlyXml)
-    const uiResult = document.evaluate('//*[local-name()="ui"]', doc)
-    const ui = uiResult.iterateNext()
-    const modelResult = document.evaluate('//*[local-name()="instance"]/*', doc)
-    const model = modelResult.iterateNext()
+    const { model, ui } = readXml(readOnlyXml)
 
     const onUpdateModelSpy = cy.spy().as('onUpdateModel')
 

@@ -10,6 +10,10 @@ cache:
   directories:
     # we also need to cache folder with Cypress binary
     - ~/.cache
+branches:
+  only:
+    - master
+    - EDSC-2569
 script:
   - npm install
   - npm run cypress:run
