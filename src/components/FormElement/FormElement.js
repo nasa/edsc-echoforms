@@ -8,6 +8,7 @@ import { Output } from '../Output/Output'
 import { SecretField } from '../SecretField/SecretField'
 import { TextArea } from '../TextArea/TextArea'
 import { TextField } from '../TextField/TextField'
+import { Select } from '../Select/Select'
 
 export const FormElement = ({
   addBootstrapClasses,
@@ -15,7 +16,11 @@ export const FormElement = ({
   model,
   onUpdateModel
 }) => {
-  const { attributes, tagName } = element
+  const {
+    attributes,
+    children,
+    tagName
+  } = element
 
   if (!attributes) return null
 
@@ -121,6 +126,27 @@ export const FormElement = ({
       />
     )
   }
+  if (tagName === 'select') {
+    const multiple = getAttribute(attributes, 'multiple')
+    const valueElementName = getAttribute(attributes, 'valueElementName')
+
+    return (
+      <Select
+        addBootstrapClasses={addBootstrapClasses}
+        id={id}
+        label={label}
+        modelRef={modelRef}
+        multiple={multiple === 'true'}
+        readOnly={readOnly}
+        required={required}
+        value={Array.from(value)}
+        valueElementName={valueElementName}
+        onUpdateModel={onUpdateModel}
+      >
+        {children}
+      </Select>
+    )
+  }
   if (tagName === 'output') {
     const type = getAttribute(attributes, 'type')
 
@@ -147,7 +173,11 @@ FormElement.defaultProps = {
 
 FormElement.propTypes = {
   addBootstrapClasses: PropTypes.bool,
-  element: PropTypes.shape({}).isRequired,
+  element: PropTypes.shape({
+    attributes: PropTypes.shape({}),
+    children: PropTypes.shape({}),
+    tagName: PropTypes.string
+  }).isRequired,
   model: PropTypes.shape({}).isRequired,
   onUpdateModel: PropTypes.func.isRequired
 }
