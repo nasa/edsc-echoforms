@@ -14,6 +14,7 @@ import { TextArea } from '../../../../src/components/TextArea/TextArea'
 import { TextField } from '../../../../src/components/TextField/TextField'
 import {
   checkboxXml,
+  datetimeXml,
   multiSelectXml,
   notRelevantXml,
   outputXml,
@@ -24,6 +25,7 @@ import {
   textfieldXml,
   urlOutputXml
 } from '../../../mocks/FormElement'
+import { DateTime } from '../../../../src/components/DateTime/DateTime'
 
 window.ReactDOM = ReactDOM
 
@@ -169,6 +171,27 @@ describe('FormElement component', () => {
     expect(select.props()).to.have.property('readOnly', false)
     expect(select.props()).to.have.property('required', false)
     expect(select.props()).to.have.property('valueElementName', 'value')
+  })
+
+  it('renders a DateTime component', () => {
+    const { model, ui } = readXml(datetimeXml)
+
+    const onUpdateModelSpy = cy.spy().as('onUpdateModel')
+
+    const component = shallow(<FormElement
+      element={ui.children[0]}
+      model={model}
+      onUpdateModel={onUpdateModelSpy}
+    />)
+
+    const datetime = component.find(DateTime)
+
+    expect(datetime).to.have.lengthOf(1)
+    expect(datetime.props()).to.have.property('value', '2020-01-01T00:00:00')
+    expect(datetime.props()).to.have.property('label', 'DateTime input')
+    expect(datetime.props()).to.have.property('modelRef', 'prov:datetimereference')
+    expect(datetime.props()).to.have.property('readOnly', false)
+    expect(datetime.props()).to.have.property('required', false)
   })
 
   it('renders an Output component', () => {

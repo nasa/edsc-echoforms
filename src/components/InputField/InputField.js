@@ -7,6 +7,7 @@ export const InputField = ({
   id,
   label,
   modelRef,
+  placeholder,
   readOnly,
   type,
   value,
@@ -25,6 +26,7 @@ export const InputField = ({
         className={addBootstrapClasses ? 'form-control' : ''}
         id={id}
         name={label}
+        placeholder={placeholder}
         readOnly={readOnly}
         type={type}
         value={value}
@@ -37,6 +39,7 @@ export const InputField = ({
 InputField.defaultProps = {
   addBootstrapClasses: false,
   id: '',
+  placeholder: '',
   type: null,
   value: ''
 }
@@ -46,6 +49,7 @@ InputField.propTypes = {
   id: PropTypes.string,
   label: PropTypes.string.isRequired,
   modelRef: PropTypes.string.isRequired,
+  placeholder: PropTypes.string,
   readOnly: PropTypes.bool.isRequired,
   required: PropTypes.bool.isRequired,
   type: PropTypes.string,
