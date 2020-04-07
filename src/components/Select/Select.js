@@ -34,7 +34,7 @@ export const Select = ({
       label={label}
     >
       <select
-        className={addBootstrapClasses ? 'form-check-input' : ''}
+        className={addBootstrapClasses ? 'form-control' : ''}
         id={id}
         name={label}
         multiple={multiple}
