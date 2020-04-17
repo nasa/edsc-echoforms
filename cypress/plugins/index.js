@@ -12,6 +12,8 @@
 // This function is called when a project is opened or re-opened (e.g. due to
 // the project's config changing)
 
+const webpackPreprocessor = require('@cypress/webpack-preprocessor')
+
 /**
  * @type {Cypress.PluginConfig}
  */
@@ -21,4 +23,10 @@ module.exports = (on, config) => {
 
   on('task', require('@cypress/code-coverage/task'))
   on('file:preprocessor', require('@cypress/code-coverage/use-babelrc'))
+
+  const options = {
+    webpackOptions: require('../../webpack.config'),
+    watchOptions: {}
+  }
+  on('file:preprocessor', webpackPreprocessor(options))
 }

@@ -53,18 +53,22 @@ export const EDSCEchoform = ({
 
   return (
     <form>
-      {
-        ui.childElementCount > 0 && Array.from(ui.children).map((element, i) => (
-          <FormElement
-            // eslint-disable-next-line react/no-array-index-key
-            key={`fix-this-later-${i}`}
-            addBootstrapClasses={addBootstrapClasses}
-            element={element}
-            model={model}
-            onUpdateModel={onUpdateModel}
-          />
-        ))
-      }
+      <div className={addBootstrapClasses ? 'card' : ''}>
+        <div className={addBootstrapClasses ? 'card-body' : ''}>
+          {
+            ui.childElementCount > 0 && Array.from(ui.children).map((element, i) => (
+              <FormElement
+                // eslint-disable-next-line react/no-array-index-key
+                key={`fix-this-later-${i}`}
+                addBootstrapClasses={addBootstrapClasses}
+                element={element}
+                model={model}
+                onUpdateModel={onUpdateModel}
+              />
+            ))
+          }
+        </div>
+      </div>
     </form>
   )
 }

@@ -18,7 +18,7 @@
   </model>
   <ui>
     <input id="reference" label="Reference value" ref="prov:reference" type="xs:string"/>
-    <input id="childReference" label="Reference value" ref="prov:parentReference/prov:childReference" type="xs:string"/>
+    <input id="childReference" label="Child Reference value" ref="prov:parentReference/prov:childReference" type="xs:string"/>
     <group id="group" label="Group" ref="prov:parentReference" attrs="attrs">
       <help>Helpful text</help>
       <input label="Child input" ref="prov:childReference" type="xs:string"/>

@@ -11,6 +11,7 @@ export const Output = ({
 }) => (
   <ElementWrapper
     addBootstrapClasses={addBootstrapClasses}
+    htmlFor={id}
     label={label}
   >
     {

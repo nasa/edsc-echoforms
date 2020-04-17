@@ -4,10 +4,11 @@ import PropTypes from 'prop-types'
 export const ElementWrapper = ({
   addBootstrapClasses,
   children,
-  label
+  label,
+  htmlFor
 }) => (
   <div className={addBootstrapClasses ? 'form-group row' : ''}>
-    <label className={addBootstrapClasses ? 'form-label col-form-label col-sm-2' : ''}>
+    <label htmlFor={htmlFor} className={addBootstrapClasses ? 'form-label col-form-label col-sm-2' : ''}>
       {label}
     </label>
     <div className={addBootstrapClasses ? 'col-sm-10' : ''}>
@@ -19,11 +20,13 @@ export const ElementWrapper = ({
 ElementWrapper.defaultProps = {
   addBootstrapClasses: false,
   children: null,
-  label: null
+  label: null,
+  htmlFor: ''
 }
 
 ElementWrapper.propTypes = {
   addBootstrapClasses: PropTypes.bool,
   children: PropTypes.node,
-  label: PropTypes.string
+  label: PropTypes.string,
+  htmlFor: PropTypes.string
 }
