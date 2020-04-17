@@ -31,6 +31,7 @@ export const Select = ({
   return (
     <ElementWrapper
       addBootstrapClasses={addBootstrapClasses}
+      htmlFor={id}
       label={label}
     >
       <select

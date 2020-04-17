@@ -15,6 +15,7 @@ import { TextField } from '../../../../src/components/TextField/TextField'
 import {
   checkboxXml,
   datetimeXml,
+  groupXml,
   multiSelectXml,
   notRelevantXml,
   outputXml,
@@ -26,6 +27,7 @@ import {
   urlOutputXml
 } from '../../../mocks/FormElement'
 import { DateTime } from '../../../../src/components/DateTime/DateTime'
+import { Group } from '../../../../src/components/Group/Group'
 
 window.ReactDOM = ReactDOM
 
@@ -260,5 +262,50 @@ describe('FormElement component', () => {
     const textfield = component.find(TextField)
     expect(textfield).to.have.lengthOf(1)
     expect(textfield.props()).to.have.property('readOnly', true)
+  })
+
+  it('renders a Group component', () => {
+    const { model, ui } = readXml(groupXml)
+
+    const onUpdateModelSpy = cy.spy().as('onUpdateModel')
+
+    const component = shallow(<FormElement
+      element={ui.children[0]}
+      model={model}
+      onUpdateModel={onUpdateModelSpy}
+    />)
+
+    const group = component.find(Group)
+
+    expect(group).to.have.lengthOf(1)
+    expect(group.props()).to.have.property('id', 'group')
+    expect(group.props()).to.have.property('label', 'Group')
+    expect(group.props()).to.have.property('modelRef', 'prov:groupreference')
+    expect(group.props()).to.have.property('readOnly', false)
+    expect(group.props()).to.have.property('required', false)
+  })
+
+  it('handles parent props', () => {
+    const { model, ui } = readXml(textfieldXml)
+
+    const onUpdateModelSpy = cy.spy().as('onUpdateModel')
+
+    const component = shallow(<FormElement
+      element={ui.children[0]}
+      model={model}
+      parentModelRef="prov:groupreference"
+      parentReadOnly
+      parentRequired
+      onUpdateModel={onUpdateModelSpy}
+    />)
+
+    const textfield = component.find(TextField)
+
+    expect(textfield).to.have.lengthOf(1)
+    expect(textfield.props()).to.have.property('value', 'test value')
+    expect(textfield.props()).to.have.property('label', 'Text input')
+    expect(textfield.props()).to.have.property('modelRef', 'prov:groupreference/prov:textreference')
+    expect(textfield.props()).to.have.property('readOnly', true)
+    expect(textfield.props()).to.have.property('required', true)
   })
 })

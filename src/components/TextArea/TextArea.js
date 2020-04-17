@@ -18,6 +18,7 @@ export const TextArea = ({
   return (
     <ElementWrapper
       addBootstrapClasses={addBootstrapClasses}
+      htmlFor={id}
       label={label}
     >
       <textarea
