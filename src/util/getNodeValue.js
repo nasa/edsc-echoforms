@@ -4,6 +4,10 @@
  * @param {Object} model XML model
  */
 export const getNodeValue = (ref, model) => {
+  if (ref === 'true' || ref === 'false') {
+    return ref === 'true'
+  }
+
   let modelRef = `//${ref}`
 
   if (ref.startsWith('//')) modelRef = ref

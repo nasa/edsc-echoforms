@@ -10,10 +10,14 @@ import { TextArea } from '../TextArea/TextArea'
 import { TextField } from '../TextField/TextField'
 import { Select } from '../Select/Select'
 import { DateTime } from '../DateTime/DateTime'
+import { Group } from '../Group/Group'
 
 export const FormElement = ({
   addBootstrapClasses,
   element,
+  parentModelRef,
+  parentReadOnly,
+  parentRequired,
   model,
   onUpdateModel
 }) => {
@@ -33,18 +37,33 @@ export const FormElement = ({
   if (!relevant) return null
 
   let readOnly = false
-  const readOnlyAttribute = getAttribute(attributes, 'readonly')
-  if (readOnlyAttribute) {
-    readOnly = getNodeValue(readOnlyAttribute, model)
+  if (parentReadOnly) {
+    readOnly = parentReadOnly
+  } else {
+    const readOnlyAttribute = getAttribute(attributes, 'readonly')
+    if (readOnlyAttribute) {
+      readOnly = getNodeValue(readOnlyAttribute, model)
+    }
   }
 
   let required = false
-  const requiredAttribute = getAttribute(attributes, 'required')
-  if (requiredAttribute) {
-    required = getNodeValue(requiredAttribute, model)
+  if (parentRequired) {
+    required = parentRequired
+  } else {
+    const requiredAttribute = getAttribute(attributes, 'required')
+    if (requiredAttribute) {
+      required = getNodeValue(requiredAttribute, model)
+    }
   }
 
-  const modelRef = getAttribute(attributes, 'ref')
+  // Prepend the parentModelRef with a trailing `/`
+  const modelRef = [
+    parentModelRef,
+    getAttribute(attributes, 'ref')
+  ]
+    .filter(Boolean)
+    .join('/')
+
   const label = getAttribute(attributes, 'label')
   const id = getAttribute(attributes, 'id')
 
@@ -176,6 +195,22 @@ export const FormElement = ({
       />
     )
   }
+  if (tagName === 'group') {
+    return (
+      <Group
+        addBootstrapClasses={addBootstrapClasses}
+        id={id}
+        label={label}
+        model={model}
+        modelRef={modelRef}
+        readOnly={readOnly}
+        required={required}
+        onUpdateModel={onUpdateModel}
+      >
+        {children}
+      </Group>
+    )
+  }
 
   return (
     <p>{tagName}</p>
@@ -183,7 +218,10 @@ export const FormElement = ({
 }
 
 FormElement.defaultProps = {
-  addBootstrapClasses: false
+  addBootstrapClasses: false,
+  parentModelRef: undefined,
+  parentReadOnly: undefined,
+  parentRequired: undefined
 }
 
 FormElement.propTypes = {
@@ -194,5 +232,8 @@ FormElement.propTypes = {
     tagName: PropTypes.string
   }).isRequired,
   model: PropTypes.shape({}).isRequired,
+  parentModelRef: PropTypes.string,
+  parentReadOnly: PropTypes.bool,
+  parentRequired: PropTypes.bool,
   onUpdateModel: PropTypes.func.isRequired
 }

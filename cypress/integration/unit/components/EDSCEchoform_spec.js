@@ -55,6 +55,6 @@ describe('EDSCEchoform component', () => {
     expect(formElement).to.have.lengthOf(1)
 
     formElement.props().onUpdateModel('prov:textreference', 'new value')
-    expect(onFormModelUpdatedSpy.getCall(1).args[0]).to.eq('<prov:options xmlns:prov="http://www.example.com/orderoptions"><prov:textreference>new value</prov:textreference></prov:options>')
+    expect(onFormModelUpdatedSpy.getCall(1).args[0]).to.eq('<prov:options xmlns:prov="http://www.example.com/orderoptions"><prov:groupreference><prov:textreference>new value</prov:textreference></prov:groupreference></prov:options>')
   })
 })
