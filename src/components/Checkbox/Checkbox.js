@@ -18,6 +18,7 @@ export const Checkbox = ({
   return (
     <ElementWrapper
       addBootstrapClasses={addBootstrapClasses}
+      htmlFor={id}
       label={label}
     >
       <>

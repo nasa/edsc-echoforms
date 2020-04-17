@@ -1,6 +1,6 @@
 export const checkboxXml = '<form><model><instance><prov:options xmlns:prov="http://www.example.com/orderoptions"><prov:boolreference>true</prov:boolreference></prov:options></instance></model><ui><input id="boolinput" label="Bool input" a="a" ref="prov:boolreference" type="xs:boolean"><help>Helpful text</help></input></ui></form>'
 
-export const textfieldXml = '<form><model><instance><prov:options xmlns:prov="http://www.example.com/orderoptions"><prov:textreference>test value</prov:textreference></prov:options></instance></model><ui><input id="textinput" label="Text input" a="a" ref="prov:textreference" type="xs:string"><help>Helpful text</help></input></ui></form>'
+export const textfieldXml = '<form><model><instance><prov:options xmlns:prov="http://www.example.com/orderoptions"><prov:groupreference><prov:textreference>test value</prov:textreference></prov:groupreference></prov:options></instance></model><ui><input id="textinput" label="Text input" a="a" ref="prov:textreference" type="xs:string"><help>Helpful text</help></input></ui></form>'
 
 export const secretXml = '<form><model><instance><prov:options xmlns:prov="http://www.example.com/orderoptions"><prov:textreference>test value</prov:textreference></prov:options></instance></model><ui><secret id="secret" label="Secret" a="a" ref="prov:textreference"></secret></ui></form>'
 
@@ -19,3 +19,5 @@ export const selectXml = '<form><model><instance><prov:options xmlns:prov="http:
 export const multiSelectXml = '<form><model><instance><prov:options xmlns:prov="http://www.example.com/orderoptions"><prov:selectreference><prov:value>value 1</prov:value><prov:value>value 2</prov:value></prov:selectreference></prov:options></instance></model><ui><select multiple="true" id="selectinput" label="Select input" a="a" ref="prov:selectreference" valueElementName="value"><help>Helpful text</help></select></ui></form>'
 
 export const datetimeXml = '<form><model><instance><prov:options xmlns:prov="http://www.example.com/orderoptions"><prov:datetimereference>2020-01-01T00:00:00</prov:datetimereference></prov:options></instance></model><ui><input id="datetimeinput" label="DateTime input" a="a" ref="prov:datetimereference" type="xs:datetime"><help>Helpful text</help></input></ui></form>'
+
+export const groupXml = '<form><model><instance><prov:options xmlns:prov="http://www.example.com/orderoptions"><prov:groupreference><prov:textreference>test value</prov:textreference></prov:groupreference></prov:options></instance></model><ui><group id="group" label="Group" ref="prov:groupreference"><input id="textinput" label="Text input" a="a" ref="prov:textreference" type="xs:string"><help>Helpful text</help></input></group></ui></form>'
