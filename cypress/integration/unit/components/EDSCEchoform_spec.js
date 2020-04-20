@@ -6,8 +6,8 @@ import { configure, mount } from 'enzyme'
 
 import { EDSCEchoform } from '../../../../src'
 import { parseXml } from '../../../../src/util/parseXml'
-import { readOnlyXml, textfieldXml } from '../../../mocks/FormElement'
-import { FormElement } from '../../../../src/components/FormElement/FormElement'
+import { readOnlyXml } from '../../../mocks/FormElement'
+import { FormBody } from '../../../../src/components/FormBody/FormBody'
 
 window.ReactDOM = ReactDOM
 
@@ -15,7 +15,7 @@ chai.use(chaiEnzyme())
 configure({ adapter: new Adapter() })
 
 describe('EDSCEchoform component', () => {
-  it('renders a FormElement component for each element in the echoform', () => {
+  it('renders a FormBody component', () => {
     const doc = parseXml(readOnlyXml)
     const uiResult = document.evaluate('//*[local-name()="ui"]', doc)
     const ui = uiResult.iterateNext()
@@ -29,32 +29,10 @@ describe('EDSCEchoform component', () => {
       onFormModelUpdated={onFormModelUpdatedSpy}
     />)
 
-    const formElement = component.find(FormElement)
+    const formBody = component.find(FormBody)
 
-    expect(formElement).to.have.lengthOf(2)
-
-    expect(formElement.first().props()).to.have.property('addBootstrapClasses', false)
-    expect(formElement.first().props().element.outerHTML).to.eq(ui.children[0].outerHTML)
-    expect(formElement.first().props().model.outerHTML).to.eq(model.outerHTML)
-
-    expect(formElement.last().props()).to.have.property('addBootstrapClasses', false)
-    expect(formElement.last().props().element.outerHTML).to.eq(ui.children[1].outerHTML)
-    expect(formElement.last().props().model.outerHTML).to.eq(model.outerHTML)
-  })
-
-  it('updates the model and calls onFormModelUpdated when onUpdateModel is called', () => {
-    const onFormModelUpdatedSpy = cy.spy().as('onFormModelUpdated')
-
-    const component = mount(<EDSCEchoform
-      form={textfieldXml}
-      onFormModelUpdated={onFormModelUpdatedSpy}
-    />)
-
-    const formElement = component.find(FormElement)
-
-    expect(formElement).to.have.lengthOf(1)
-
-    formElement.props().onUpdateModel('prov:textreference', 'new value')
-    expect(onFormModelUpdatedSpy.getCall(1).args[0]).to.eq('<prov:options xmlns:prov="http://www.example.com/orderoptions"><prov:groupreference><prov:textreference>new value</prov:textreference></prov:groupreference></prov:options>')
+    expect(formBody).to.have.lengthOf(1)
+    expect(formBody.first().props().ui.outerHTML).to.eql(ui.outerHTML)
+    expect(formBody.first().props().model.outerHTML).to.eql(model.outerHTML)
   })
 })

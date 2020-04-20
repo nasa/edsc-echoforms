@@ -1,9 +1,10 @@
 import React from 'react'
 import Adapter from 'enzyme-adapter-react-16'
 import chaiEnzyme from 'chai-enzyme'
-import { configure, shallow } from 'enzyme'
+import { configure, mount } from 'enzyme'
 
 import { InputField } from '../../../../src/components/InputField/InputField'
+import { EchoFormsContext } from '../../../../src/util/EchoFormsContext'
 
 chai.use(chaiEnzyme())
 configure({ adapter: new Adapter() })
@@ -17,15 +18,20 @@ function setup(overrideProps) {
     readOnly: false,
     required: false,
     value: 'test value',
-    onUpdateModel: cy.spy().as('onUpdateModel'),
     ...overrideProps
   }
 
-  const enzymeWrapper = shallow(<InputField {...props} />)
+  const onUpdateModel = cy.spy().as('onUpdateModel')
+  const enzymeWrapper = mount(
+    <EchoFormsContext.Provider value={{ onUpdateModel }}>
+      <InputField {...props} />
+    </EchoFormsContext.Provider>
+  )
 
   return {
     enzymeWrapper,
-    props
+    props,
+    onUpdateModel
   }
 }
 
@@ -56,14 +62,14 @@ describe('InputField component', () => {
   })
 
   it('onChange calls onUpdateModel', () => {
-    const { enzymeWrapper, props } = setup()
+    const { enzymeWrapper, onUpdateModel } = setup()
 
     const input = enzymeWrapper.find('input')
 
     input.props().onChange({ target: { value: 'New Value' } })
 
-    expect(props.onUpdateModel.calledOnce).to.eq(true)
-    expect(props.onUpdateModel.getCall(0).args[0]).to.eq('testfield')
-    expect(props.onUpdateModel.getCall(0).args[1]).to.eq('New Value')
+    expect(onUpdateModel.calledOnce).to.eq(true)
+    expect(onUpdateModel.getCall(0).args[0]).to.eq('testfield')
+    expect(onUpdateModel.getCall(0).args[1]).to.eq('New Value')
   })
 })

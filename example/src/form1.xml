@@ -21,7 +21,7 @@
     <input id="childReference" label="Child Reference value" ref="prov:parentReference/prov:childReference" type="xs:string"/>
     <group id="group" label="Group" ref="prov:parentReference" attrs="attrs">
       <help>Helpful text</help>
-      <input label="Child input" ref="prov:childReference" type="xs:string"/>
+      <input id="grouped-child" label="Child input" ref="prov:childReference" type="xs:string"/>
     </group>
     <input id="input" label="Input" a="a" ref="prov:reference">
       <help>Helpful text</help>

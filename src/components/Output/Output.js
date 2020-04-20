@@ -3,14 +3,12 @@ import PropTypes from 'prop-types'
 import { ElementWrapper } from '../ElementWrapper/ElementWrapper'
 
 export const Output = ({
-  addBootstrapClasses,
   id,
   label,
   type,
   value
 }) => (
   <ElementWrapper
-    addBootstrapClasses={addBootstrapClasses}
     htmlFor={id}
     label={label}
   >
@@ -28,14 +26,12 @@ export const Output = ({
 )
 
 Output.defaultProps = {
-  addBootstrapClasses: false,
   id: '',
   type: '',
   value: ''
 }
 
 Output.propTypes = {
-  addBootstrapClasses: PropTypes.bool,
   id: PropTypes.string,
   label: PropTypes.string.isRequired,
   required: PropTypes.bool.isRequired,
