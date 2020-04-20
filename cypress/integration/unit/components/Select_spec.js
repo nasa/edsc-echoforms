@@ -1,9 +1,10 @@
 import React from 'react'
 import Adapter from 'enzyme-adapter-react-16'
 import chaiEnzyme from 'chai-enzyme'
-import { configure, shallow } from 'enzyme'
+import { configure, mount } from 'enzyme'
 
 import { Select } from '../../../../src/components/Select/Select'
+import { EchoFormsContext } from '../../../../src/util/EchoFormsContext'
 
 chai.use(chaiEnzyme())
 configure({ adapter: new Adapter() })
@@ -25,7 +26,6 @@ function setup(overrideProps) {
     required: false,
     value: ['test value'],
     valueElementName: 'value',
-    onUpdateModel: cy.spy().as('onUpdateModel'),
     ...overrideProps
   }
 
@@ -34,15 +34,20 @@ function setup(overrideProps) {
     createItem('test label 2', 'test value 2')
   ]
 
-  const enzymeWrapper = shallow(
-    <Select {...props}>
-      {children}
-    </Select>
+
+  const onUpdateModel = cy.spy().as('onUpdateModel')
+  const enzymeWrapper = mount(
+    <EchoFormsContext.Provider value={{ onUpdateModel }}>
+      <Select {...props}>
+        {children}
+      </Select>
+    </EchoFormsContext.Provider>
   )
 
   return {
     enzymeWrapper,
-    props
+    props,
+    onUpdateModel
   }
 }
 
@@ -86,15 +91,15 @@ describe('Select component', () => {
   })
 
   it('onChange calls onUpdateModel', () => {
-    const { enzymeWrapper, props } = setup()
+    const { enzymeWrapper, onUpdateModel } = setup()
 
     const Select = enzymeWrapper.find('select')
 
     Select.props().onChange({ target: { selectedOptions: [{ value: 'New Value' }] } })
 
-    expect(props.onUpdateModel.calledOnce).to.eq(true)
-    expect(props.onUpdateModel.getCall(0).args[0]).to.eq('testfield')
-    expect(props.onUpdateModel.getCall(0).args[1]).to.eql([{
+    expect(onUpdateModel.calledOnce).to.eq(true)
+    expect(onUpdateModel.getCall(0).args[0]).to.eq('testfield')
+    expect(onUpdateModel.getCall(0).args[1]).to.eql([{
       value: 'New Value',
       valueElementName: 'value'
     }])

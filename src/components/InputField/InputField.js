@@ -1,30 +1,31 @@
-import React from 'react'
+import React, { useContext } from 'react'
 import PropTypes from 'prop-types'
 import { ElementWrapper } from '../ElementWrapper/ElementWrapper'
+import { useClasses } from '../../util/useClasses'
+import { EchoFormsContext } from '../../util/EchoFormsContext'
 
 export const InputField = ({
-  addBootstrapClasses,
   id,
   label,
   modelRef,
   placeholder,
   readOnly,
   type,
-  value,
-  onUpdateModel
+  value
 }) => {
+  const { onUpdateModel } = useContext(EchoFormsContext)
+
   const onChange = (e) => {
     onUpdateModel(modelRef, e.target.value)
   }
 
   return (
     <ElementWrapper
-      addBootstrapClasses={addBootstrapClasses}
       htmlFor={id}
       label={label}
     >
       <input
-        className={addBootstrapClasses ? 'form-control' : ''}
+        className={useClasses('input', 'form-control')}
         id={id}
         name={label}
         placeholder={placeholder}
@@ -38,7 +39,6 @@ export const InputField = ({
 }
 
 InputField.defaultProps = {
-  addBootstrapClasses: false,
   id: '',
   placeholder: '',
   type: null,
@@ -46,7 +46,6 @@ InputField.defaultProps = {
 }
 
 InputField.propTypes = {
-  addBootstrapClasses: PropTypes.bool,
   id: PropTypes.string,
   label: PropTypes.string.isRequired,
   modelRef: PropTypes.string.isRequired,
@@ -54,6 +53,5 @@ InputField.propTypes = {
   readOnly: PropTypes.bool.isRequired,
   required: PropTypes.bool.isRequired,
   type: PropTypes.string,
-  value: PropTypes.string,
-  onUpdateModel: PropTypes.func.isRequired
+  value: PropTypes.string
 }
