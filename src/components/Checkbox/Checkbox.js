@@ -1,29 +1,30 @@
-import React from 'react'
+import React, { useContext } from 'react'
 import PropTypes from 'prop-types'
 import { ElementWrapper } from '../ElementWrapper/ElementWrapper'
+import { useClasses } from '../../util/useClasses'
+import { EchoFormsContext } from '../../util/EchoFormsContext'
 
 export const Checkbox = ({
-  addBootstrapClasses,
   checked,
   id,
   label,
   modelRef,
-  readOnly,
-  onUpdateModel
+  readOnly
 }) => {
+  const { onUpdateModel } = useContext(EchoFormsContext)
+
   const onChange = (e) => {
     onUpdateModel(modelRef, e.target.checked)
   }
 
   return (
     <ElementWrapper
-      addBootstrapClasses={addBootstrapClasses}
       htmlFor={id}
       label={label}
     >
       <>
         <input
-          className={addBootstrapClasses ? 'form-check-input' : ''}
+          className={useClasses('checkbox__input', 'form-check-input')}
           checked={checked === 'true'}
           id={id}
           name={label}
@@ -32,7 +33,7 @@ export const Checkbox = ({
           onChange={onChange}
         />
         <label
-          className={addBootstrapClasses ? 'form-check-label' : ''}
+          className={useClasses('checkbox__label', 'form-check-label')}
           htmlFor={id}
         >
           {label}
@@ -43,18 +44,15 @@ export const Checkbox = ({
 }
 
 Checkbox.defaultProps = {
-  addBootstrapClasses: false,
   id: '',
   label: ''
 }
 
 Checkbox.propTypes = {
-  addBootstrapClasses: PropTypes.bool,
   checked: PropTypes.string.isRequired,
   id: PropTypes.string,
   label: PropTypes.string,
   modelRef: PropTypes.string.isRequired,
   readOnly: PropTypes.bool.isRequired,
-  required: PropTypes.bool.isRequired,
-  onUpdateModel: PropTypes.func.isRequired
+  required: PropTypes.bool.isRequired
 }

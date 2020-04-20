@@ -4,6 +4,7 @@
  * @param {Object} model XML model
  */
 export const getNodeValue = (ref, model) => {
+  // If the node value is 'true' or 'false', we don't need to run xpath
   if (ref === 'true' || ref === 'false') {
     return ref === 'true'
   }

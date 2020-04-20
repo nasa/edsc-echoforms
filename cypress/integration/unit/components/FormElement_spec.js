@@ -282,7 +282,6 @@ describe('FormElement component', () => {
     expect(group.props()).to.have.property('label', 'Group')
     expect(group.props()).to.have.property('modelRef', 'prov:groupreference')
     expect(group.props()).to.have.property('readOnly', false)
-    expect(group.props()).to.have.property('required', false)
   })
 
   it('handles parent props', () => {
@@ -295,7 +294,6 @@ describe('FormElement component', () => {
       model={model}
       parentModelRef="prov:groupreference"
       parentReadOnly
-      parentRequired
       onUpdateModel={onUpdateModelSpy}
     />)
 
@@ -306,6 +304,5 @@ describe('FormElement component', () => {
     expect(textfield.props()).to.have.property('label', 'Text input')
     expect(textfield.props()).to.have.property('modelRef', 'prov:groupreference/prov:textreference')
     expect(textfield.props()).to.have.property('readOnly', true)
-    expect(textfield.props()).to.have.property('required', true)
   })
 })

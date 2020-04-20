@@ -62,12 +62,11 @@ describe('Group component', () => {
     const { enzymeWrapper } = setup()
 
     expect(enzymeWrapper.find('div.group').props().id).to.eq('testgroup')
-    expect(enzymeWrapper.find('.group--header').text()).to.eq('Test Group')
+    expect(enzymeWrapper.find('.group__header').text()).to.eq('Test Group')
 
     expect(enzymeWrapper.find(FormElement).length).to.eq(1)
     expect(enzymeWrapper.find(FormElement).props().parentModelRef).to.eq('testgroup')
     expect(enzymeWrapper.find(FormElement).props().parentReadOnly).to.eq(undefined)
-    expect(enzymeWrapper.find(FormElement).props().parentRequired).to.eq(undefined)
 
     expect(enzymeWrapper.find(FormElement).props().element.attributes.id.value).to.eq('testfield')
     expect(enzymeWrapper.find(FormElement).props().element.attributes.label.value).to.eq('test label 1')
@@ -75,13 +74,11 @@ describe('Group component', () => {
     expect(enzymeWrapper.find(FormElement).props().element.attributes.value.value).to.eq('test value 1')
   })
 
-  it('renders a FormElement component and passes on readonly and required props', () => {
+  it('renders a FormElement component and passes on readonly prop', () => {
     const { enzymeWrapper } = setup({
-      readOnly: true,
-      required: false
+      readOnly: true
     })
 
     expect(enzymeWrapper.find(FormElement).props().parentReadOnly).to.eq(true)
-    expect(enzymeWrapper.find(FormElement).props().parentRequired).to.eq(false)
   })
 })
