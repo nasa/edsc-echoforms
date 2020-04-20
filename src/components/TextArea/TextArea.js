@@ -1,28 +1,29 @@
-import React from 'react'
+import React, { useContext } from 'react'
 import PropTypes from 'prop-types'
 import { ElementWrapper } from '../ElementWrapper/ElementWrapper'
+import { useClasses } from '../../util/useClasses'
+import { EchoFormsContext } from '../../util/EchoFormsContext'
 
 export const TextArea = ({
-  addBootstrapClasses,
   id,
   label,
   modelRef,
   readOnly,
-  value,
-  onUpdateModel
+  value
 }) => {
+  const { onUpdateModel } = useContext(EchoFormsContext)
+
   const onChange = (e) => {
     onUpdateModel(modelRef, e.target.value)
   }
 
   return (
     <ElementWrapper
-      addBootstrapClasses={addBootstrapClasses}
       htmlFor={id}
       label={label}
     >
       <textarea
-        className={addBootstrapClasses ? 'form-control' : ''}
+        className={useClasses('textarea__input', 'form-control')}
         id={id}
         name={label}
         readOnly={readOnly}
@@ -34,18 +35,15 @@ export const TextArea = ({
 }
 
 TextArea.defaultProps = {
-  addBootstrapClasses: false,
   id: '',
   value: ''
 }
 
 TextArea.propTypes = {
-  addBootstrapClasses: PropTypes.bool,
   id: PropTypes.string,
   label: PropTypes.string.isRequired,
   modelRef: PropTypes.string.isRequired,
   readOnly: PropTypes.bool.isRequired,
   required: PropTypes.bool.isRequired,
-  value: PropTypes.string,
-  onUpdateModel: PropTypes.func.isRequired
+  value: PropTypes.string
 }

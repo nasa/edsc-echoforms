@@ -2,42 +2,35 @@ import React from 'react'
 import PropTypes from 'prop-types'
 
 import { FormElement } from '../FormElement/FormElement'
+import { useClasses } from '../../util/useClasses'
 
-import './Group.scss'
+import './Group.css'
 
 export const Group = ({
-  addBootstrapClasses,
   children,
   id,
   label,
   model,
   modelRef,
-  readOnly,
-  required,
-  onUpdateModel
+  readOnly
 }) => (
   <div
     id={id}
-    // className="group--wrapper"
-    className={addBootstrapClasses ? 'card group' : 'group'}
+    className={useClasses('group', 'card')}
   >
-    {/* <h1 className="group--label">{label}</h1> */}
-    <div className={addBootstrapClasses ? 'card-header group--header' : 'group--header'}>
+    <div className={useClasses('group__header', 'card-header')}>
       {label}
     </div>
-    <div className={addBootstrapClasses ? 'card-body' : ''}>
+    <div className={useClasses('group__body', 'card-body')}>
       {
         children && Array.from(children).map((element, index) => (
           <FormElement
             // eslint-disable-next-line react/no-array-index-key
             key={`fix-this-later-${index}`}
-            addBootstrapClasses={addBootstrapClasses}
             element={element}
             model={model}
             parentModelRef={modelRef}
             parentReadOnly={readOnly}
-            parentRequired={required}
-            onUpdateModel={onUpdateModel}
           />
         ))
       }
@@ -46,22 +39,17 @@ export const Group = ({
 )
 
 Group.defaultProps = {
-  addBootstrapClasses: false,
   children: null,
   id: '',
   modelRef: undefined,
-  readOnly: undefined,
-  required: undefined
+  readOnly: undefined
 }
 
 Group.propTypes = {
-  addBootstrapClasses: PropTypes.bool,
   children: PropTypes.shape({}),
   id: PropTypes.string,
   label: PropTypes.string.isRequired,
   model: PropTypes.shape({}).isRequired,
   modelRef: PropTypes.string,
-  readOnly: PropTypes.bool,
-  required: PropTypes.bool,
-  onUpdateModel: PropTypes.func.isRequired
+  readOnly: PropTypes.bool
 }

@@ -1,10 +1,11 @@
-import React from 'react'
+import React, { useContext } from 'react'
 import PropTypes from 'prop-types'
 import { ElementWrapper } from '../ElementWrapper/ElementWrapper'
 import { getAttribute } from '../../util/getAttribute'
+import { useClasses } from '../../util/useClasses'
+import { EchoFormsContext } from '../../util/EchoFormsContext'
 
 export const Select = ({
-  addBootstrapClasses,
   children,
   id,
   label,
@@ -12,9 +13,10 @@ export const Select = ({
   multiple,
   readOnly,
   value,
-  valueElementName,
-  onUpdateModel
+  valueElementName
 }) => {
+  const { onUpdateModel } = useContext(EchoFormsContext)
+
   const onChange = (e) => {
     // Map e.target.selectedOptions to an array of objects with the value and valueElementName
     const { selectedOptions } = e.target
@@ -30,12 +32,11 @@ export const Select = ({
 
   return (
     <ElementWrapper
-      addBootstrapClasses={addBootstrapClasses}
       htmlFor={id}
       label={label}
     >
       <select
-        className={addBootstrapClasses ? 'form-control' : ''}
+        className={useClasses('select__input', 'form-control')}
         id={id}
         name={label}
         multiple={multiple}
@@ -70,7 +71,6 @@ export const Select = ({
 }
 
 Select.defaultProps = {
-  addBootstrapClasses: false,
   children: null,
   id: '',
   label: '',
@@ -80,7 +80,6 @@ Select.defaultProps = {
 }
 
 Select.propTypes = {
-  addBootstrapClasses: PropTypes.bool,
   children: PropTypes.shape({}),
   id: PropTypes.string,
   label: PropTypes.string,
@@ -89,6 +88,5 @@ Select.propTypes = {
   readOnly: PropTypes.bool.isRequired,
   required: PropTypes.bool.isRequired,
   value: PropTypes.arrayOf(PropTypes.string),
-  valueElementName: PropTypes.string,
-  onUpdateModel: PropTypes.func.isRequired
+  valueElementName: PropTypes.string
 }

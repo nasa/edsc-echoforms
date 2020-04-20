@@ -13,13 +13,10 @@ import { DateTime } from '../DateTime/DateTime'
 import { Group } from '../Group/Group'
 
 export const FormElement = ({
-  addBootstrapClasses,
   element,
   parentModelRef,
   parentReadOnly,
-  parentRequired,
-  model,
-  onUpdateModel
+  model
 }) => {
   const {
     attributes,
@@ -37,6 +34,8 @@ export const FormElement = ({
   if (!relevant) return null
 
   let readOnly = false
+  // The readonly attribute can be inherited from a group element.
+  // If a parentReadOnly prop is passed it, use that value
   if (parentReadOnly) {
     readOnly = parentReadOnly
   } else {
@@ -47,13 +46,9 @@ export const FormElement = ({
   }
 
   let required = false
-  if (parentRequired) {
-    required = parentRequired
-  } else {
-    const requiredAttribute = getAttribute(attributes, 'required')
-    if (requiredAttribute) {
-      required = getNodeValue(requiredAttribute, model)
-    }
+  const requiredAttribute = getAttribute(attributes, 'required')
+  if (requiredAttribute) {
+    required = getNodeValue(requiredAttribute, model)
   }
 
   // Prepend the parentModelRef with a trailing `/`
@@ -80,42 +75,36 @@ export const FormElement = ({
     if (type == null || type.includes('string')) {
       return (
         <TextField
-          addBootstrapClasses={addBootstrapClasses}
           id={id}
           label={label}
           modelRef={modelRef}
           readOnly={readOnly}
           required={required}
           value={value}
-          onUpdateModel={onUpdateModel}
         />
       )
     }
     if (type.includes('boolean')) {
       return (
         <Checkbox
-          addBootstrapClasses={addBootstrapClasses}
           checked={value}
           id={id}
           label={label}
           modelRef={modelRef}
           readOnly={readOnly}
           required={required}
-          onUpdateModel={onUpdateModel}
         />
       )
     }
     if (type.includes('datetime')) {
       return (
         <DateTime
-          addBootstrapClasses={addBootstrapClasses}
           id={id}
           label={label}
           modelRef={modelRef}
           readOnly={readOnly}
           required={required}
           value={value}
-          onUpdateModel={onUpdateModel}
         />
       )
     }
@@ -135,28 +124,24 @@ export const FormElement = ({
   if (tagName === 'textarea') {
     return (
       <TextArea
-        addBootstrapClasses={addBootstrapClasses}
         id={id}
         label={label}
         modelRef={modelRef}
         readOnly={readOnly}
         required={required}
         value={value}
-        onUpdateModel={onUpdateModel}
       />
     )
   }
   if (tagName === 'secret') {
     return (
       <SecretField
-        addBootstrapClasses={addBootstrapClasses}
         id={id}
         label={label}
         modelRef={modelRef}
         readOnly={readOnly}
         required={required}
         value={value}
-        onUpdateModel={onUpdateModel}
       />
     )
   }
@@ -166,7 +151,6 @@ export const FormElement = ({
 
     return (
       <Select
-        addBootstrapClasses={addBootstrapClasses}
         id={id}
         label={label}
         modelRef={modelRef}
@@ -175,7 +159,6 @@ export const FormElement = ({
         required={required}
         value={Array.from(value)}
         valueElementName={valueElementName}
-        onUpdateModel={onUpdateModel}
       >
         {children}
       </Select>
@@ -186,7 +169,6 @@ export const FormElement = ({
 
     return (
       <Output
-        addBootstrapClasses={addBootstrapClasses}
         id={id}
         label={label}
         required={required}
@@ -198,14 +180,11 @@ export const FormElement = ({
   if (tagName === 'group') {
     return (
       <Group
-        addBootstrapClasses={addBootstrapClasses}
         id={id}
         label={label}
         model={model}
         modelRef={modelRef}
         readOnly={readOnly}
-        required={required}
-        onUpdateModel={onUpdateModel}
       >
         {children}
       </Group>
@@ -218,14 +197,11 @@ export const FormElement = ({
 }
 
 FormElement.defaultProps = {
-  addBootstrapClasses: false,
   parentModelRef: undefined,
-  parentReadOnly: undefined,
-  parentRequired: undefined
+  parentReadOnly: undefined
 }
 
 FormElement.propTypes = {
-  addBootstrapClasses: PropTypes.bool,
   element: PropTypes.shape({
     attributes: PropTypes.shape({}),
     children: PropTypes.shape({}),
@@ -233,7 +209,5 @@ FormElement.propTypes = {
   }).isRequired,
   model: PropTypes.shape({}).isRequired,
   parentModelRef: PropTypes.string,
-  parentReadOnly: PropTypes.bool,
-  parentRequired: PropTypes.bool,
-  onUpdateModel: PropTypes.func.isRequired
+  parentReadOnly: PropTypes.bool
 }
