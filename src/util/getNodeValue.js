@@ -1,25 +1,26 @@
+import { buildXPathResolverFn } from './buildXPathResolverFn'
+
 /**
  * Returns the field value from the XML model based on the ref xpath
  * @param {String} ref model ref xpath
  * @param {Object} model XML model
  */
-export const getNodeValue = (ref, model, doc) => {
+export const getNodeValue = (ref, model) => {
   // If the node value is 'true' or 'false', we don't need to run xpath
   if (ref === 'true' || ref === 'false') {
     return ref === 'true'
   }
-  if (ref === 'true()' || ref === 'false()') {
-    return ref === 'true()'
+
+  let modelRef = ref
+
+  if (ref.charAt(0) === '[') {
+    modelRef = `self::*${ref}`
   }
 
-  let modelRef = `//${ref}`
-
-  if (ref.startsWith('//')) modelRef = ref
-
-  const result = doc.evaluate(
+  const result = model.ownerDocument.evaluate(
     modelRef,
     model,
-    document.createNSResolver(model),
+    buildXPathResolverFn(model.ownerDocument),
     XPathResult.ANY_TYPE,
     null
   )
