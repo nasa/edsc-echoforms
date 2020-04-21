@@ -4,8 +4,8 @@
  * @param {String} modelRef XPath reference to model value
  * @param {String|Array} newValue New value to be inserted into model
  */
-export const updateModel = (model, modelRef, newValue) => {
-  const result = document.evaluate(`//${modelRef}`, model, document.createNSResolver(model), XPathResult.ANY_TYPE, null)
+export const updateModel = (model, modelRef, newValue, doc) => {
+  const result = doc.evaluate(`//${modelRef}`, model, doc.createNSResolver(model), XPathResult.ANY_TYPE, null)
   const value = result.iterateNext()
 
   if (Array.isArray(newValue)) {

@@ -14,13 +14,15 @@ export const EDSCEchoform = ({
 }) => {
   const [model, setModel] = useState({})
   const [ui, setUi] = useState({})
+  const [doc, setDoc] = useState({})
 
   useEffect(() => {
     const doc = parseXml(form.replace(/>\s+</g, '><').replace(/^\s+|\s+$/g, ''))
-    const modelResult = document.evaluate('//*[local-name()="instance"]/*', doc, buildXPathResolverFn(form), XPathResult.ANY_TYPE, null)
+    setDoc(doc)
+    const modelResult = doc.evaluate('//*[local-name()="instance"]/*', doc, buildXPathResolverFn(form), XPathResult.ANY_TYPE, null)
     const initialModel = modelResult.iterateNext()
 
-    const uiResult = document.evaluate('//*[local-name()="ui"]', doc, buildXPathResolverFn(form), XPathResult.ANY_TYPE, null)
+    const uiResult = doc.evaluate('//*[local-name()="ui"]', doc, buildXPathResolverFn(form), XPathResult.ANY_TYPE, null)
     const ui = uiResult.iterateNext()
 
     setModel(initialModel)
@@ -30,14 +32,14 @@ export const EDSCEchoform = ({
   }, [form])
 
   const onUpdateModel = (modelRef, newValue) => {
-    const updatedModel = updateModel(model, modelRef, newValue)
+    const updatedModel = updateModel(model, modelRef, newValue, doc)
 
     onFormModelUpdated(updatedModel.outerHTML)
     setModel(updatedModel)
   }
 
   return (
-    <EchoFormsContext.Provider value={{ addBootstrapClasses, onUpdateModel }}>
+    <EchoFormsContext.Provider value={{ addBootstrapClasses, doc, onUpdateModel }}>
       <form>
         <FormBody
           ui={ui}
