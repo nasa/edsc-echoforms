@@ -1,5 +1,5 @@
 import { useContext } from 'react'
-import { EchoFormsContext } from './EchoFormsContext'
+import { EchoFormsContext } from '../context/EchoFormsContext'
 
 /**
  * Combines given default CSS classes and Bootstrap classes if the EchoFormsContext has addBootstrapClasses enabled
@@ -10,7 +10,7 @@ export const useClasses = (defaultClasses, bootstrapClasses) => {
   const { addBootstrapClasses } = useContext(EchoFormsContext)
 
   if (addBootstrapClasses) {
-    return [bootstrapClasses, defaultClasses].join(' ')
+    return [bootstrapClasses, defaultClasses].filter(Boolean).join(' ')
   }
 
   return defaultClasses
