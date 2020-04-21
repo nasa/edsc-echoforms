@@ -1,15 +1,15 @@
 import { getNodeValue } from '../../../../src/util/getNodeValue'
 import { parseXml } from '../../../../src/util/parseXml'
-import { textfieldXml, selectXml } from '../../../mocks/FormElement'
+import { selectXml, textareaXml } from '../../../mocks/FormElement'
 
 describe('getNodeValue', () => {
   it('returns the value from the model', () => {
     const ref = 'prov:textreference'
-    const doc = parseXml(textfieldXml)
+    const doc = parseXml(textareaXml)
     const modelResult = document.evaluate('//*[local-name()="instance"]/*', doc)
     const model = modelResult.iterateNext()
 
-    expect(getNodeValue(ref, model, doc)).to.eq('test value')
+    expect(getNodeValue(ref, model)).to.eq('test value')
   })
 
   it('returns an array value from the model', () => {
