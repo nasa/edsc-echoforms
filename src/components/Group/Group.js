@@ -5,6 +5,7 @@ import { FormElement } from '../FormElement/FormElement'
 import { useClasses } from '../../hooks/useClasses'
 
 import './Group.css'
+import { getGroupModel } from '../../util/getGroupModel'
 
 export const Group = ({
   children,
@@ -13,30 +14,33 @@ export const Group = ({
   model,
   modelRef,
   readOnly
-}) => (
-  <div
-    id={id}
-    className={useClasses('group', 'card')}
-  >
-    <div className={useClasses('group__header', 'card-header')}>
-      {label}
+}) => {
+  const groupModel = getGroupModel(modelRef, model)
+
+  return (
+    <div
+      id={id}
+      className={useClasses('group', 'card')}
+    >
+      <div className={useClasses('group__header', 'card-header')}>
+        {label}
+      </div>
+      <div className={useClasses('group__body', 'card-body')}>
+        {
+          children && Array.from(children).map((element, index) => (
+            <FormElement
+              // eslint-disable-next-line react/no-array-index-key
+              key={`fix-this-later-${index}`}
+              element={element}
+              model={groupModel}
+              parentReadOnly={readOnly}
+            />
+          ))
+        }
+      </div>
     </div>
-    <div className={useClasses('group__body', 'card-body')}>
-      {
-        children && Array.from(children).map((element, index) => (
-          <FormElement
-            // eslint-disable-next-line react/no-array-index-key
-            key={`fix-this-later-${index}`}
-            element={element}
-            model={model}
-            parentModelRef={modelRef}
-            parentReadOnly={readOnly}
-          />
-        ))
-      }
-    </div>
-  </div>
-)
+  )
+}
 
 Group.defaultProps = {
   children: null,

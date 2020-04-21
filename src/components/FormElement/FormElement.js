@@ -1,4 +1,4 @@
-import React, { useContext } from 'react'
+import React from 'react'
 import PropTypes from 'prop-types'
 
 import { getAttribute } from '../../util/getAttribute'
@@ -12,16 +12,12 @@ import { Select } from '../Select/Select'
 import { DateTime } from '../DateTime/DateTime'
 import { Group } from '../Group/Group'
 import { Range } from '../Range/Range'
-import { EchoFormsContext } from '../../context/EchoFormsContext'
 
 export const FormElement = ({
   element,
-  parentModelRef,
   parentReadOnly,
   model
 }) => {
-  const { doc } = useContext(EchoFormsContext)
-
   const {
     attributes,
     children,
@@ -33,7 +29,7 @@ export const FormElement = ({
   let relevant = true
   const relevantAttribute = getAttribute(attributes, 'relevant')
   if (relevantAttribute) {
-    relevant = getNodeValue(relevantAttribute, model, doc)
+    relevant = getNodeValue(relevantAttribute, model)
   }
   if (!relevant) return null
 
@@ -45,30 +41,24 @@ export const FormElement = ({
   } else {
     const readOnlyAttribute = getAttribute(attributes, 'readonly')
     if (readOnlyAttribute) {
-      readOnly = getNodeValue(readOnlyAttribute, model, doc)
+      readOnly = getNodeValue(readOnlyAttribute, model)
     }
   }
 
   let required = false
   const requiredAttribute = getAttribute(attributes, 'required')
   if (requiredAttribute) {
-    required = getNodeValue(requiredAttribute, model, doc)
+    required = getNodeValue(requiredAttribute, model)
   }
 
-  // Prepend the parentModelRef with a trailing `/`
-  const modelRef = [
-    parentModelRef,
-    getAttribute(attributes, 'ref')
-  ]
-    .filter(Boolean)
-    .join('/')
+  const modelRef = getAttribute(attributes, 'ref')
 
   const label = getAttribute(attributes, 'label')
   const id = getAttribute(attributes, 'id')
 
   let value
   if (modelRef) {
-    value = getNodeValue(modelRef, model, doc)
+    value = getNodeValue(modelRef, model)
   } else {
     value = getAttribute(attributes, 'value')
   }
@@ -100,7 +90,7 @@ export const FormElement = ({
         />
       )
     }
-    if (type.includes('datetime')) {
+    if (type.toLowerCase().includes('datetime')) {
       return (
         <DateTime
           id={id}
@@ -220,7 +210,6 @@ export const FormElement = ({
 }
 
 FormElement.defaultProps = {
-  parentModelRef: undefined,
   parentReadOnly: undefined
 }
 
@@ -231,6 +220,5 @@ FormElement.propTypes = {
     tagName: PropTypes.string
   }).isRequired,
   model: PropTypes.shape({}).isRequired,
-  parentModelRef: PropTypes.string,
   parentReadOnly: PropTypes.bool
 }

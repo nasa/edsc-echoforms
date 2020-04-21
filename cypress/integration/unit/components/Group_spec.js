@@ -36,7 +36,7 @@ function setup(overrideProps) {
     id: 'testgroup',
     label: 'Test Group',
     model,
-    modelRef: 'testgroup',
+    modelRef: 'prov:groupreference',
     onUpdateModel: cy.spy().as('onUpdateModel'),
     ...overrideProps
   }
@@ -64,14 +64,16 @@ describe('Group component', () => {
     expect(enzymeWrapper.find('div.group').props().id).to.eq('testgroup')
     expect(enzymeWrapper.find('.group__header').text()).to.eq('Test Group')
 
-    expect(enzymeWrapper.find(FormElement).length).to.eq(1)
-    expect(enzymeWrapper.find(FormElement).props().parentModelRef).to.eq('testgroup')
-    expect(enzymeWrapper.find(FormElement).props().parentReadOnly).to.eq(undefined)
+    const formElement = enzymeWrapper.find(FormElement)
 
-    expect(enzymeWrapper.find(FormElement).props().element.attributes.id.value).to.eq('testfield')
-    expect(enzymeWrapper.find(FormElement).props().element.attributes.label.value).to.eq('test label 1')
-    expect(enzymeWrapper.find(FormElement).props().element.attributes.ref.value).to.eq('childref')
-    expect(enzymeWrapper.find(FormElement).props().element.attributes.value.value).to.eq('test value 1')
+    expect(formElement.length).to.eq(1)
+    expect(formElement.props().model.outerHTML).to.eq('<prov:groupreference xmlns:prov="http://www.example.com/orderoptions"><prov:textreference>test value</prov:textreference></prov:groupreference>')
+    expect(formElement.props().parentReadOnly).to.eq(undefined)
+
+    expect(formElement.props().element.attributes.id.value).to.eq('testfield')
+    expect(formElement.props().element.attributes.label.value).to.eq('test label 1')
+    expect(formElement.props().element.attributes.ref.value).to.eq('childref')
+    expect(formElement.props().element.attributes.value.value).to.eq('test value 1')
   })
 
   it('renders a FormElement component and passes on readonly prop', () => {

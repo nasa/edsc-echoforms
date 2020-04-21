@@ -272,7 +272,6 @@ describe('FormElement component', () => {
     const { enzymeWrapper } = setup(doc, {
       element: ui.children[0],
       model,
-      parentModelRef: 'prov:groupreference',
       parentReadOnly: true
     })
 
@@ -281,11 +280,11 @@ describe('FormElement component', () => {
     expect(textfield).to.have.lengthOf(1)
     expect(textfield.props()).to.have.property('value', 'test value')
     expect(textfield.props()).to.have.property('label', 'Text input')
-    expect(textfield.props()).to.have.property('modelRef', 'prov:groupreference/prov:textreference')
+    expect(textfield.props()).to.have.property('modelRef', 'prov:textreference')
     expect(textfield.props()).to.have.property('readOnly', true)
   })
 
-  it.only('renders a Range component', () => {
+  it('renders a Range component', () => {
     const { doc, model, ui } = readXml(rangeXml)
 
     const { enzymeWrapper } = setup(doc, {
