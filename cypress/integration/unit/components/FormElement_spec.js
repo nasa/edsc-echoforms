@@ -2,12 +2,16 @@ import React from 'react'
 import * as ReactDOM from 'react-dom'
 import Adapter from 'enzyme-adapter-react-16'
 import chaiEnzyme from 'chai-enzyme'
-import { configure, shallow } from 'enzyme'
+import { configure, mount } from 'enzyme'
 
+import { EchoFormsContext } from '../../../../src/context/EchoFormsContext'
 import { Checkbox } from '../../../../src/components/Checkbox/Checkbox'
+import { DateTime } from '../../../../src/components/DateTime/DateTime'
 import { FormElement } from '../../../../src/components/FormElement/FormElement'
+import { Group } from '../../../../src/components/Group/Group'
 import { Output } from '../../../../src/components/Output/Output'
 import { parseXml } from '../../../../src/util/parseXml'
+import { Range } from '../../../../src/components/Range/Range'
 import { SecretField } from '../../../../src/components/SecretField/SecretField'
 import { Select } from '../../../../src/components/Select/Select'
 import { TextArea } from '../../../../src/components/TextArea/TextArea'
@@ -19,6 +23,7 @@ import {
   multiSelectXml,
   notRelevantXml,
   outputXml,
+  rangeXml,
   readOnlyXml,
   secretXml,
   selectXml,
@@ -26,8 +31,6 @@ import {
   textfieldXml,
   urlOutputXml
 } from '../../../mocks/FormElement'
-import { DateTime } from '../../../../src/components/DateTime/DateTime'
-import { Group } from '../../../../src/components/Group/Group'
 
 window.ReactDOM = ReactDOM
 
@@ -41,22 +44,34 @@ function readXml(file) {
   const modelResult = document.evaluate('//*[local-name()="instance"]/*', doc)
   const model = modelResult.iterateNext()
 
-  return { model, ui }
+  return { doc, model, ui }
+}
+
+function setup(doc, props) {
+  const onUpdateModel = cy.spy().as('onUpdateModel')
+  const enzymeWrapper = mount(
+    <EchoFormsContext.Provider value={{ doc, onUpdateModel }}>
+      <FormElement {...props} />
+    </EchoFormsContext.Provider>
+  )
+
+  return {
+    enzymeWrapper,
+    props,
+    onUpdateModel
+  }
 }
 
 describe('FormElement component', () => {
   it('renders a Checkbox component', () => {
-    const { model, ui } = readXml(checkboxXml)
+    const { doc, model, ui } = readXml(checkboxXml)
 
-    const onUpdateModelSpy = cy.spy().as('onUpdateModel')
+    const { enzymeWrapper } = setup(doc, {
+      element: ui.children[0],
+      model
+    })
 
-    const component = shallow(<FormElement
-      element={ui.children[0]}
-      model={model}
-      onUpdateModel={onUpdateModelSpy}
-    />)
-
-    const checkbox = component.find(Checkbox)
+    const checkbox = enzymeWrapper.find(Checkbox)
 
     expect(checkbox).to.have.lengthOf(1)
     expect(checkbox.props()).to.have.property('checked', 'true')
@@ -67,17 +82,14 @@ describe('FormElement component', () => {
   })
 
   it('renders a TextField component', () => {
-    const { model, ui } = readXml(textfieldXml)
+    const { doc, model, ui } = readXml(textfieldXml)
 
-    const onUpdateModelSpy = cy.spy().as('onUpdateModel')
+    const { enzymeWrapper } = setup(doc, {
+      element: ui.children[0],
+      model
+    })
 
-    const component = shallow(<FormElement
-      element={ui.children[0]}
-      model={model}
-      onUpdateModel={onUpdateModelSpy}
-    />)
-
-    const textfield = component.find(TextField)
+    const textfield = enzymeWrapper.find(TextField)
 
     expect(textfield).to.have.lengthOf(1)
     expect(textfield.props()).to.have.property('value', 'test value')
@@ -88,17 +100,14 @@ describe('FormElement component', () => {
   })
 
   it('renders a secret TextField component', () => {
-    const { model, ui } = readXml(secretXml)
+    const { doc, model, ui } = readXml(secretXml)
 
-    const onUpdateModelSpy = cy.spy().as('onUpdateModel')
+    const { enzymeWrapper } = setup(doc, {
+      element: ui.children[0],
+      model
+    })
 
-    const component = shallow(<FormElement
-      element={ui.children[0]}
-      model={model}
-      onUpdateModel={onUpdateModelSpy}
-    />)
-
-    const secretfield = component.find(SecretField)
+    const secretfield = enzymeWrapper.find(SecretField)
 
     expect(secretfield).to.have.lengthOf(1)
     expect(secretfield.props()).to.have.property('value', 'test value')
@@ -109,17 +118,14 @@ describe('FormElement component', () => {
   })
 
   it('renders a TextArea component', () => {
-    const { model, ui } = readXml(textareaXml)
+    const { doc, model, ui } = readXml(textareaXml)
 
-    const onUpdateModelSpy = cy.spy().as('onUpdateModel')
+    const { enzymeWrapper } = setup(doc, {
+      element: ui.children[0],
+      model
+    })
 
-    const component = shallow(<FormElement
-      element={ui.children[0]}
-      model={model}
-      onUpdateModel={onUpdateModelSpy}
-    />)
-
-    const textarea = component.find(TextArea)
+    const textarea = enzymeWrapper.find(TextArea)
 
     expect(textarea).to.have.lengthOf(1)
     expect(textarea.props()).to.have.property('value', 'test value')
@@ -130,17 +136,14 @@ describe('FormElement component', () => {
   })
 
   it('renders a Select component', () => {
-    const { model, ui } = readXml(selectXml)
+    const { doc, model, ui } = readXml(selectXml)
 
-    const onUpdateModelSpy = cy.spy().as('onUpdateModel')
+    const { enzymeWrapper } = setup(doc, {
+      element: ui.children[0],
+      model
+    })
 
-    const component = shallow(<FormElement
-      element={ui.children[0]}
-      model={model}
-      onUpdateModel={onUpdateModelSpy}
-    />)
-
-    const select = component.find(Select)
+    const select = enzymeWrapper.find(Select)
 
     expect(select).to.have.lengthOf(1)
     expect(select.props().value).to.eql(['value 1', 'value 2'])
@@ -153,17 +156,14 @@ describe('FormElement component', () => {
   })
 
   it('renders a multi-Select component', () => {
-    const { model, ui } = readXml(multiSelectXml)
+    const { doc, model, ui } = readXml(multiSelectXml)
 
-    const onUpdateModelSpy = cy.spy().as('onUpdateModel')
+    const { enzymeWrapper } = setup(doc, {
+      element: ui.children[0],
+      model
+    })
 
-    const component = shallow(<FormElement
-      element={ui.children[0]}
-      model={model}
-      onUpdateModel={onUpdateModelSpy}
-    />)
-
-    const select = component.find(Select)
+    const select = enzymeWrapper.find(Select)
 
     expect(select).to.have.lengthOf(1)
     expect(select.props().value).to.eql(['value 1', 'value 2'])
@@ -176,17 +176,14 @@ describe('FormElement component', () => {
   })
 
   it('renders a DateTime component', () => {
-    const { model, ui } = readXml(datetimeXml)
+    const { doc, model, ui } = readXml(datetimeXml)
 
-    const onUpdateModelSpy = cy.spy().as('onUpdateModel')
+    const { enzymeWrapper } = setup(doc, {
+      element: ui.children[0],
+      model
+    })
 
-    const component = shallow(<FormElement
-      element={ui.children[0]}
-      model={model}
-      onUpdateModel={onUpdateModelSpy}
-    />)
-
-    const datetime = component.find(DateTime)
+    const datetime = enzymeWrapper.find(DateTime)
 
     expect(datetime).to.have.lengthOf(1)
     expect(datetime.props()).to.have.property('value', '2020-01-01T00:00:00')
@@ -197,17 +194,14 @@ describe('FormElement component', () => {
   })
 
   it('renders an Output component', () => {
-    const { model, ui } = readXml(outputXml)
+    const { doc, model, ui } = readXml(outputXml)
 
-    const onUpdateModelSpy = cy.spy().as('onUpdateModel')
+    const { enzymeWrapper } = setup(doc, {
+      element: ui.children[0],
+      model
+    })
 
-    const component = shallow(<FormElement
-      element={ui.children[0]}
-      model={model}
-      onUpdateModel={onUpdateModelSpy}
-    />)
-
-    const output = component.find(Output)
+    const output = enzymeWrapper.find(Output)
 
     expect(output).to.have.lengthOf(1)
     expect(output.props()).to.have.property('value', 'test value')
@@ -216,17 +210,14 @@ describe('FormElement component', () => {
   })
 
   it('renders an URL Output component', () => {
-    const { model, ui } = readXml(urlOutputXml)
+    const { doc, model, ui } = readXml(urlOutputXml)
 
-    const onUpdateModelSpy = cy.spy().as('onUpdateModel')
+    const { enzymeWrapper } = setup(doc, {
+      element: ui.children[0],
+      model
+    })
 
-    const component = shallow(<FormElement
-      element={ui.children[0]}
-      model={model}
-      onUpdateModel={onUpdateModelSpy}
-    />)
-
-    const output = component.find(Output)
+    const output = enzymeWrapper.find(Output)
 
     expect(output).to.have.lengthOf(1)
     expect(output.props()).to.have.property('value', 'test value')
@@ -235,47 +226,38 @@ describe('FormElement component', () => {
   })
 
   it('does not render a field that is not relevant', () => {
-    const { model, ui } = readXml(notRelevantXml)
+    const { doc, model, ui } = readXml(notRelevantXml)
 
-    const onUpdateModelSpy = cy.spy().as('onUpdateModel')
+    const { enzymeWrapper } = setup(doc, {
+      element: ui.children[1],
+      model
+    })
 
-    const component = shallow(<FormElement
-      element={ui.children[1]} // render the text field
-      model={model}
-      onUpdateModel={onUpdateModelSpy}
-    />)
-
-    expect(component.find(TextField)).to.have.lengthOf(0)
+    expect(enzymeWrapper.find(TextField)).to.have.lengthOf(0)
   })
 
   it('renders a readonly field as readonly', () => {
-    const { model, ui } = readXml(readOnlyXml)
+    const { doc, model, ui } = readXml(readOnlyXml)
 
-    const onUpdateModelSpy = cy.spy().as('onUpdateModel')
+    const { enzymeWrapper } = setup(doc, {
+      element: ui.children[1],
+      model
+    })
 
-    const component = shallow(<FormElement
-      element={ui.children[1]} // render the text field
-      model={model}
-      onUpdateModel={onUpdateModelSpy}
-    />)
-
-    const textfield = component.find(TextField)
+    const textfield = enzymeWrapper.find(TextField)
     expect(textfield).to.have.lengthOf(1)
     expect(textfield.props()).to.have.property('readOnly', true)
   })
 
   it('renders a Group component', () => {
-    const { model, ui } = readXml(groupXml)
+    const { doc, model, ui } = readXml(groupXml)
 
-    const onUpdateModelSpy = cy.spy().as('onUpdateModel')
+    const { enzymeWrapper } = setup(doc, {
+      element: ui.children[0],
+      model
+    })
 
-    const component = shallow(<FormElement
-      element={ui.children[0]}
-      model={model}
-      onUpdateModel={onUpdateModelSpy}
-    />)
-
-    const group = component.find(Group)
+    const group = enzymeWrapper.find(Group)
 
     expect(group).to.have.lengthOf(1)
     expect(group.props()).to.have.property('id', 'group')
@@ -285,24 +267,42 @@ describe('FormElement component', () => {
   })
 
   it('handles parent props', () => {
-    const { model, ui } = readXml(textfieldXml)
+    const { doc, model, ui } = readXml(textfieldXml)
 
-    const onUpdateModelSpy = cy.spy().as('onUpdateModel')
+    const { enzymeWrapper } = setup(doc, {
+      element: ui.children[0],
+      model,
+      parentModelRef: 'prov:groupreference',
+      parentReadOnly: true
+    })
 
-    const component = shallow(<FormElement
-      element={ui.children[0]}
-      model={model}
-      parentModelRef="prov:groupreference"
-      parentReadOnly
-      onUpdateModel={onUpdateModelSpy}
-    />)
-
-    const textfield = component.find(TextField)
+    const textfield = enzymeWrapper.find(TextField)
 
     expect(textfield).to.have.lengthOf(1)
     expect(textfield.props()).to.have.property('value', 'test value')
     expect(textfield.props()).to.have.property('label', 'Text input')
     expect(textfield.props()).to.have.property('modelRef', 'prov:groupreference/prov:textreference')
     expect(textfield.props()).to.have.property('readOnly', true)
+  })
+
+  it.only('renders a Range component', () => {
+    const { doc, model, ui } = readXml(rangeXml)
+
+    const { enzymeWrapper } = setup(doc, {
+      element: ui.children[0],
+      model
+    })
+
+    const range = enzymeWrapper.find(Range)
+
+    expect(range).to.have.lengthOf(1)
+    expect(range.props()).to.have.property('value', '5')
+    expect(range.props()).to.have.property('min', '1')
+    expect(range.props()).to.have.property('max', '10')
+    expect(range.props()).to.have.property('step', '1')
+    expect(range.props()).to.have.property('label', 'Range')
+    expect(range.props()).to.have.property('modelRef', 'prov:rangeReference')
+    expect(range.props()).to.have.property('readOnly', false)
+    expect(range.props()).to.have.property('required', false)
   })
 })

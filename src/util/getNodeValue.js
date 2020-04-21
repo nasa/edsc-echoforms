@@ -3,17 +3,20 @@
  * @param {String} ref model ref xpath
  * @param {Object} model XML model
  */
-export const getNodeValue = (ref, model) => {
+export const getNodeValue = (ref, model, doc) => {
   // If the node value is 'true' or 'false', we don't need to run xpath
   if (ref === 'true' || ref === 'false') {
     return ref === 'true'
+  }
+  if (ref === 'true()' || ref === 'false()') {
+    return ref === 'true()'
   }
 
   let modelRef = `//${ref}`
 
   if (ref.startsWith('//')) modelRef = ref
 
-  const result = document.evaluate(
+  const result = doc.evaluate(
     modelRef,
     model,
     document.createNSResolver(model),
