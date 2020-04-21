@@ -1,8 +1,8 @@
 import React, { useContext } from 'react'
 import PropTypes from 'prop-types'
 import { ElementWrapper } from '../ElementWrapper/ElementWrapper'
-import { useClasses } from '../../util/useClasses'
-import { EchoFormsContext } from '../../util/EchoFormsContext'
+import { useClasses } from '../../hooks/useClasses'
+import { EchoFormsContext } from '../../context/EchoFormsContext'
 
 export const InputField = ({
   id,
