@@ -1,4 +1,4 @@
-import React from 'react'
+import React, { useContext } from 'react'
 import PropTypes from 'prop-types'
 
 import { getAttribute } from '../../util/getAttribute'
@@ -11,6 +11,8 @@ import { TextField } from '../TextField/TextField'
 import { Select } from '../Select/Select'
 import { DateTime } from '../DateTime/DateTime'
 import { Group } from '../Group/Group'
+import { Range } from '../Range/Range'
+import { EchoFormsContext } from '../../context/EchoFormsContext'
 
 export const FormElement = ({
   element,
@@ -18,6 +20,8 @@ export const FormElement = ({
   parentReadOnly,
   model
 }) => {
+  const { doc } = useContext(EchoFormsContext)
+
   const {
     attributes,
     children,
@@ -29,7 +33,7 @@ export const FormElement = ({
   let relevant = true
   const relevantAttribute = getAttribute(attributes, 'relevant')
   if (relevantAttribute) {
-    relevant = getNodeValue(relevantAttribute, model)
+    relevant = getNodeValue(relevantAttribute, model, doc)
   }
   if (!relevant) return null
 
@@ -41,14 +45,14 @@ export const FormElement = ({
   } else {
     const readOnlyAttribute = getAttribute(attributes, 'readonly')
     if (readOnlyAttribute) {
-      readOnly = getNodeValue(readOnlyAttribute, model)
+      readOnly = getNodeValue(readOnlyAttribute, model, doc)
     }
   }
 
   let required = false
   const requiredAttribute = getAttribute(attributes, 'required')
   if (requiredAttribute) {
-    required = getNodeValue(requiredAttribute, model)
+    required = getNodeValue(requiredAttribute, model, doc)
   }
 
   // Prepend the parentModelRef with a trailing `/`
@@ -64,7 +68,7 @@ export const FormElement = ({
 
   let value
   if (modelRef) {
-    value = getNodeValue(modelRef, model)
+    value = getNodeValue(modelRef, model, doc)
   } else {
     value = getAttribute(attributes, 'value')
   }
@@ -162,6 +166,25 @@ export const FormElement = ({
       >
         {children}
       </Select>
+    )
+  }
+  if (tagName === 'range') {
+    const max = getAttribute(attributes, 'stop')
+    const min = getAttribute(attributes, 'start')
+    const step = getAttribute(attributes, 'step')
+
+    return (
+      <Range
+        id={id}
+        label={label}
+        max={max}
+        min={min}
+        modelRef={modelRef}
+        readOnly={readOnly}
+        required={required}
+        step={step}
+        value={value}
+      />
     )
   }
   if (tagName === 'output') {

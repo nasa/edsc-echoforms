@@ -1,5 +1,6 @@
 import React, { useState } from 'react'
 import { render } from 'react-dom'
+import format from 'xml-formatter'
 
 import { EDSCEchoform } from '../../src/index'
 
@@ -40,7 +41,13 @@ const App = () => {
       />
       <h2>Serialized Model</h2>
       <pre id="demo-echoforms-model">
-        {serializedModel}
+        {
+          serializedModel.length && (
+            format(serializedModel, {
+              indentation: '  '
+            })
+          )
+        }
       </pre>
     </>
   )
