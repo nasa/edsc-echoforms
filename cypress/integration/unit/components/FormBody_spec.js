@@ -8,6 +8,7 @@ import { FormBody } from '../../../../src/components/FormBody/FormBody'
 import { parseXml } from '../../../../src/util/parseXml'
 import { readOnlyXml } from '../../../mocks/FormElement'
 import { FormElement } from '../../../../src/components/FormElement/FormElement'
+import { EchoFormsContext } from '../../../../src/context/EchoFormsContext'
 
 window.ReactDOM = ReactDOM
 
@@ -22,10 +23,14 @@ describe('FormBody component', () => {
     const modelResult = document.evaluate('//*[local-name()="instance"]/*', doc)
     const model = modelResult.iterateNext()
 
-    const component = mount(<FormBody
-      model={model}
-      ui={ui}
-    />)
+    const component = mount(
+      <EchoFormsContext.Provider value={{ doc }}>
+        <FormBody
+          model={model}
+          ui={ui}
+        />
+      </EchoFormsContext.Provider>
+    )
 
     const formElement = component.find(FormElement)
 
