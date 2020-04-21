@@ -4,7 +4,7 @@ import chaiEnzyme from 'chai-enzyme'
 import { configure, mount } from 'enzyme'
 
 import { Select } from '../../../../src/components/Select/Select'
-import { EchoFormsContext } from '../../../../src/util/EchoFormsContext'
+import { EchoFormsContext } from '../../../../src/context/EchoFormsContext'
 
 chai.use(chaiEnzyme())
 configure({ adapter: new Adapter() })

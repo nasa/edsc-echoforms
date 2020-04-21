@@ -2,7 +2,7 @@ import React from 'react'
 import PropTypes from 'prop-types'
 
 import { FormElement } from '../FormElement/FormElement'
-import { useClasses } from '../../util/useClasses'
+import { useClasses } from '../../hooks/useClasses'
 
 import './Group.css'
 

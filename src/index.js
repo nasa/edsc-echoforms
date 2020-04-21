@@ -1,7 +1,7 @@
 import React, { useState, useEffect } from 'react'
 import PropTypes from 'prop-types'
 
-import { EchoFormsContext } from './util/EchoFormsContext'
+import { EchoFormsContext } from './context/EchoFormsContext'
 import { parseXml } from './util/parseXml'
 import { buildXPathResolverFn } from './util/buildXPathResolverFn'
 import { FormBody } from './components/FormBody/FormBody'

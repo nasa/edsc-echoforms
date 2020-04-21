@@ -1,7 +1,7 @@
 import React from 'react'
 import PropTypes from 'prop-types'
 
-import { useClasses } from '../../util/useClasses'
+import { useClasses } from '../../hooks/useClasses'
 import { FormElement } from '../FormElement/FormElement'
 
 export const FormBody = ({
