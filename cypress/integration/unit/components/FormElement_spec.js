@@ -2,9 +2,8 @@ import React from 'react'
 import * as ReactDOM from 'react-dom'
 import Adapter from 'enzyme-adapter-react-16'
 import chaiEnzyme from 'chai-enzyme'
-import { configure, mount } from 'enzyme'
+import { configure, shallow } from 'enzyme'
 
-import { EchoFormsContext } from '../../../../src/context/EchoFormsContext'
 import { Checkbox } from '../../../../src/components/Checkbox/Checkbox'
 import { DateTime } from '../../../../src/components/DateTime/DateTime'
 import { FormElement } from '../../../../src/components/FormElement/FormElement'
@@ -44,15 +43,13 @@ function readXml(file) {
   const modelResult = document.evaluate('//*[local-name()="instance"]/*', doc)
   const model = modelResult.iterateNext()
 
-  return { doc, model, ui }
+  return { model, ui }
 }
 
-function setup(doc, props) {
+function setup(props) {
   const onUpdateModel = cy.spy().as('onUpdateModel')
-  const enzymeWrapper = mount(
-    <EchoFormsContext.Provider value={{ doc, onUpdateModel }}>
-      <FormElement {...props} />
-    </EchoFormsContext.Provider>
+  const enzymeWrapper = shallow(
+    <FormElement {...props} />
   )
 
   return {
@@ -64,9 +61,9 @@ function setup(doc, props) {
 
 describe('FormElement component', () => {
   it('renders a Checkbox component', () => {
-    const { doc, model, ui } = readXml(checkboxXml)
+    const { model, ui } = readXml(checkboxXml)
 
-    const { enzymeWrapper } = setup(doc, {
+    const { enzymeWrapper } = setup({
       element: ui.children[0],
       model
     })
@@ -82,9 +79,9 @@ describe('FormElement component', () => {
   })
 
   it('renders a TextField component', () => {
-    const { doc, model, ui } = readXml(textfieldXml)
+    const { model, ui } = readXml(textfieldXml)
 
-    const { enzymeWrapper } = setup(doc, {
+    const { enzymeWrapper } = setup({
       element: ui.children[0],
       model
     })
@@ -100,9 +97,9 @@ describe('FormElement component', () => {
   })
 
   it('renders a secret TextField component', () => {
-    const { doc, model, ui } = readXml(secretXml)
+    const { model, ui } = readXml(secretXml)
 
-    const { enzymeWrapper } = setup(doc, {
+    const { enzymeWrapper } = setup({
       element: ui.children[0],
       model
     })
@@ -118,9 +115,9 @@ describe('FormElement component', () => {
   })
 
   it('renders a TextArea component', () => {
-    const { doc, model, ui } = readXml(textareaXml)
+    const { model, ui } = readXml(textareaXml)
 
-    const { enzymeWrapper } = setup(doc, {
+    const { enzymeWrapper } = setup({
       element: ui.children[0],
       model
     })
@@ -136,9 +133,9 @@ describe('FormElement component', () => {
   })
 
   it('renders a Select component', () => {
-    const { doc, model, ui } = readXml(selectXml)
+    const { model, ui } = readXml(selectXml)
 
-    const { enzymeWrapper } = setup(doc, {
+    const { enzymeWrapper } = setup({
       element: ui.children[0],
       model
     })
@@ -156,9 +153,9 @@ describe('FormElement component', () => {
   })
 
   it('renders a multi-Select component', () => {
-    const { doc, model, ui } = readXml(multiSelectXml)
+    const { model, ui } = readXml(multiSelectXml)
 
-    const { enzymeWrapper } = setup(doc, {
+    const { enzymeWrapper } = setup({
       element: ui.children[0],
       model
     })
@@ -176,9 +173,9 @@ describe('FormElement component', () => {
   })
 
   it('renders a DateTime component', () => {
-    const { doc, model, ui } = readXml(datetimeXml)
+    const { model, ui } = readXml(datetimeXml)
 
-    const { enzymeWrapper } = setup(doc, {
+    const { enzymeWrapper } = setup({
       element: ui.children[0],
       model
     })
@@ -194,9 +191,9 @@ describe('FormElement component', () => {
   })
 
   it('renders an Output component', () => {
-    const { doc, model, ui } = readXml(outputXml)
+    const { model, ui } = readXml(outputXml)
 
-    const { enzymeWrapper } = setup(doc, {
+    const { enzymeWrapper } = setup({
       element: ui.children[0],
       model
     })
@@ -210,9 +207,9 @@ describe('FormElement component', () => {
   })
 
   it('renders an URL Output component', () => {
-    const { doc, model, ui } = readXml(urlOutputXml)
+    const { model, ui } = readXml(urlOutputXml)
 
-    const { enzymeWrapper } = setup(doc, {
+    const { enzymeWrapper } = setup({
       element: ui.children[0],
       model
     })
@@ -226,9 +223,9 @@ describe('FormElement component', () => {
   })
 
   it('does not render a field that is not relevant', () => {
-    const { doc, model, ui } = readXml(notRelevantXml)
+    const { model, ui } = readXml(notRelevantXml)
 
-    const { enzymeWrapper } = setup(doc, {
+    const { enzymeWrapper } = setup({
       element: ui.children[1],
       model
     })
@@ -237,9 +234,9 @@ describe('FormElement component', () => {
   })
 
   it('renders a readonly field as readonly', () => {
-    const { doc, model, ui } = readXml(readOnlyXml)
+    const { model, ui } = readXml(readOnlyXml)
 
-    const { enzymeWrapper } = setup(doc, {
+    const { enzymeWrapper } = setup({
       element: ui.children[1],
       model
     })
@@ -250,9 +247,9 @@ describe('FormElement component', () => {
   })
 
   it('renders a Group component', () => {
-    const { doc, model, ui } = readXml(groupXml)
+    const { model, ui } = readXml(groupXml)
 
-    const { enzymeWrapper } = setup(doc, {
+    const { enzymeWrapper } = setup({
       element: ui.children[0],
       model
     })
@@ -267,9 +264,9 @@ describe('FormElement component', () => {
   })
 
   it('handles parent props', () => {
-    const { doc, model, ui } = readXml(textfieldXml)
+    const { model, ui } = readXml(textfieldXml)
 
-    const { enzymeWrapper } = setup(doc, {
+    const { enzymeWrapper } = setup({
       element: ui.children[0],
       model,
       parentReadOnly: true
@@ -285,9 +282,9 @@ describe('FormElement component', () => {
   })
 
   it('renders a Range component', () => {
-    const { doc, model, ui } = readXml(rangeXml)
+    const { model, ui } = readXml(rangeXml)
 
-    const { enzymeWrapper } = setup(doc, {
+    const { enzymeWrapper } = setup({
       element: ui.children[0],
       model
     })
