@@ -17,14 +17,21 @@ export const Group = ({
 }) => {
   const groupModel = getGroupModel(modelRef, model)
 
+  // react-hooks/rules-of-hooks - shouldn't call hooks inside of conditionals
+  const headerClasses = useClasses('group__header', 'card-header')
+
   return (
     <div
       id={id}
       className={useClasses('group', 'card')}
     >
-      <div className={useClasses('group__header', 'card-header')}>
-        {label}
-      </div>
+      {
+        label && (
+          <div className={headerClasses}>
+            {label}
+          </div>
+        )
+      }
       <div className={useClasses('group__body', 'card-body')}>
         {
           children && Array.from(children).map((element, index) => (

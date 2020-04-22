@@ -4,7 +4,7 @@ import format from 'xml-formatter'
 
 import { EDSCEchoform } from '../../src/index'
 
-import form1 from './form1.xml'
+import form1 from './icesat2.xml'
 
 import 'bootstrap/dist/css/bootstrap.min.css'
 import './styles.css'
