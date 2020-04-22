@@ -18,7 +18,7 @@ describe('getNodeValue', () => {
     const modelResult = document.evaluate('//*[local-name()="instance"]/*', doc)
     const model = modelResult.iterateNext()
 
-    expect(getNodeValue(ref, model, doc)).to.eql([
+    expect(getNodeValue(ref, model)).to.eql([
       'value 1',
       'value 2'
     ])
