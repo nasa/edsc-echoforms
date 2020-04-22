@@ -1,3 +1,5 @@
+import { buildXPathResolverFn } from './buildXPathResolverFn'
+
 /**
  * Updates an XML Model with a new value
  * @param {Object} model XML Model
@@ -6,7 +8,7 @@
  */
 export const updateModel = (model, modelRef, newValue) => {
   const doc = model.ownerDocument
-  const result = doc.evaluate(`//${modelRef}`, model, doc.createNSResolver(model), XPathResult.ANY_TYPE, null)
+  const result = doc.evaluate(`//${modelRef}`, model, buildXPathResolverFn(doc), XPathResult.ANY_TYPE, null)
   const value = result.iterateNext()
 
   if (Array.isArray(newValue)) {

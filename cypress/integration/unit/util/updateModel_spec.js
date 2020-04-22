@@ -8,7 +8,7 @@ describe('updateModel', () => {
     const modelResult = doc.evaluate('//*[local-name()="instance"]/*', doc)
     const model = modelResult.iterateNext()
 
-    expect(updateModel(model, 'prov:textreference', 'new value', doc).outerHTML).to.eq('<prov:options xmlns:prov="http://www.example.com/orderoptions"><prov:textreference>new value</prov:textreference></prov:options>')
+    expect(updateModel(model, 'prov:textreference', 'new value').outerHTML).to.eq('<prov:options xmlns:prov="http://www.example.com/orderoptions"><prov:textreference>new value</prov:textreference></prov:options>')
   })
 
   it('returns the updated model with an array value', () => {
@@ -28,8 +28,7 @@ describe('updateModel', () => {
           value: 'value2',
           valueElementName: 'value'
         }
-      ],
-      doc
+      ]
     ).outerHTML).to.eq('<prov:options xmlns:prov="http://www.example.com/orderoptions"><prov:selectreference><prov:value>value1</prov:value><prov:value>value2</prov:value></prov:selectreference></prov:options>')
   })
 })
