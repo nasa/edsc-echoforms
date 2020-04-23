@@ -9,14 +9,18 @@ export const Help = ({ elements }) => {
   return (
     elements && Array.from(elements)
       .filter(element => element.tagName === 'help')
-      .map(element => (
-        <small
-          key={`help-${element.id}`}
-          className={classes}
-        >
-          {element.textContent}
-        </small>
-      ))
+      .map((element) => {
+        const { textContent } = element
+
+        return (
+          <small
+            key={textContent}
+            className={classes}
+          >
+            {textContent}
+          </small>
+        )
+      })
   )
 }
 
