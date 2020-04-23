@@ -6,8 +6,10 @@ import { EchoFormsContext } from '../../context/EchoFormsContext'
 import { useClasses } from '../../hooks/useClasses'
 
 import './Range.css'
+import { Help } from '../Help/Help'
 
 export const Range = ({
+  children,
   id,
   label,
   max,
@@ -65,16 +67,19 @@ export const Range = ({
           {value}
         </span>
       </div>
+      <Help elements={children} />
     </ElementWrapper>
   )
 }
 
 Range.defaultProps = {
+  children: null,
   id: '',
   value: ''
 }
 
 Range.propTypes = {
+  children: PropTypes.shape({}),
   id: PropTypes.string,
   label: PropTypes.string.isRequired,
   max: PropTypes.string.isRequired,

@@ -5,18 +5,22 @@ import { configure, mount } from 'enzyme'
 
 import { Select } from '../../../../src/components/Select/Select'
 import { EchoFormsContext } from '../../../../src/context/EchoFormsContext'
+import { selectXml } from '../../../mocks/FormElement'
+import { parseXml } from '../../../../src/util/parseXml'
 
 chai.use(chaiEnzyme())
 configure({ adapter: new Adapter() })
 
-function createItem(label, value) {
-  const item = document.createElementNS('', 'item')
-  item.setAttribute('label', label)
-  item.setAttribute('value', value)
-  return item
+function readXml(file) {
+  const doc = parseXml(file)
+  const selectResult = document.evaluate('//*[local-name()="select"]', doc)
+  const select = selectResult.iterateNext()
+
+  return { select }
 }
 
 function setup(overrideProps) {
+  const { select } = readXml(selectXml)
   const props = {
     id: 'testfield',
     label: 'Test Field',
@@ -29,17 +33,11 @@ function setup(overrideProps) {
     ...overrideProps
   }
 
-  const children = [
-    createItem('test label 1', 'test value 1'),
-    createItem('test label 2', 'test value 2')
-  ]
-
-
   const onUpdateModel = cy.spy().as('onUpdateModel')
   const enzymeWrapper = mount(
     <EchoFormsContext.Provider value={{ onUpdateModel }}>
       <Select {...props}>
-        {children}
+        {select.children}
       </Select>
     </EchoFormsContext.Provider>
   )

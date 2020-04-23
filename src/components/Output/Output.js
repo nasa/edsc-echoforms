@@ -1,8 +1,10 @@
 import React from 'react'
 import PropTypes from 'prop-types'
 import { ElementWrapper } from '../ElementWrapper/ElementWrapper'
+import { Help } from '../Help/Help'
 
 export const Output = ({
+  children,
   id,
   label,
   type,
@@ -22,16 +24,19 @@ export const Output = ({
         <p id={id}>{value}</p>
       )
     }
+    <Help elements={children} />
   </ElementWrapper>
 )
 
 Output.defaultProps = {
+  children: null,
   id: '',
   type: '',
   value: ''
 }
 
 Output.propTypes = {
+  children: PropTypes.shape({}),
   id: PropTypes.string,
   label: PropTypes.string.isRequired,
   required: PropTypes.bool.isRequired,

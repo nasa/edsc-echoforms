@@ -4,11 +4,23 @@ import chaiEnzyme from 'chai-enzyme'
 import { configure, shallow } from 'enzyme'
 
 import { Output } from '../../../../src/components/Output/Output'
+import { Help } from '../../../../src/components/Help/Help'
+import { parseXml } from '../../../../src/util/parseXml'
+import { outputXml } from '../../../mocks/FormElement'
 
 chai.use(chaiEnzyme())
 configure({ adapter: new Adapter() })
 
+function readXml(file) {
+  const doc = parseXml(file)
+  const outputResult = document.evaluate('//*[local-name()="output"]', doc)
+  const output = outputResult.iterateNext()
+
+  return { output }
+}
+
 function setup(overrideProps) {
+  const { output } = readXml(outputXml)
   const props = {
     label: 'Test Field',
     modelRef: 'testfield',
@@ -16,7 +28,11 @@ function setup(overrideProps) {
     ...overrideProps
   }
 
-  const enzymeWrapper = shallow(<Output {...props} />)
+  const enzymeWrapper = shallow(
+    <Output {...props}>
+      {output.children}
+    </Output>
+  )
 
   return {
     enzymeWrapper,
@@ -30,6 +46,8 @@ describe('Output component', () => {
 
     expect(enzymeWrapper.find('p').length).to.eq(1)
     expect(enzymeWrapper.find('p').props()).to.have.property('children', 'test value')
+
+    expect(enzymeWrapper.find(Help).props().elements[0].outerHTML).to.eq('<help>Helpful text</help>')
   })
 
   it('renders an a element when the type is anyURI', () => {
