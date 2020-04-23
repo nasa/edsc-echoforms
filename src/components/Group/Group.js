@@ -3,9 +3,10 @@ import PropTypes from 'prop-types'
 
 import { FormElement } from '../FormElement/FormElement'
 import { useClasses } from '../../hooks/useClasses'
+import { getGroupModel } from '../../util/getGroupModel'
 
 import './Group.css'
-import { getGroupModel } from '../../util/getGroupModel'
+import { Help } from '../Help/Help'
 
 export const Group = ({
   children,
@@ -29,20 +30,23 @@ export const Group = ({
         label && (
           <div className={headerClasses}>
             {label}
+            <Help elements={children} />
           </div>
         )
       }
       <div className={useClasses('group__body', 'card-body')}>
         {
-          children && Array.from(children).map((element, index) => (
-            <FormElement
-              // eslint-disable-next-line react/no-array-index-key
-              key={`fix-this-later-${index}`}
-              element={element}
-              model={groupModel}
-              parentReadOnly={readOnly}
-            />
-          ))
+          children && Array.from(children)
+            .filter(element => element.tagName !== 'help')
+            .map((element, index) => (
+              <FormElement
+                // eslint-disable-next-line react/no-array-index-key
+                key={`fix-this-later-${index}`}
+                element={element}
+                model={groupModel}
+                parentReadOnly={readOnly}
+              />
+            ))
         }
       </div>
     </div>

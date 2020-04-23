@@ -3,6 +3,7 @@ import PropTypes from 'prop-types'
 import { InputField } from '../InputField/InputField'
 
 export const TextField = ({
+  children,
   id,
   label,
   modelRef,
@@ -17,15 +18,19 @@ export const TextField = ({
     readOnly={readOnly}
     required={required}
     value={value}
-  />
+  >
+    {children}
+  </InputField>
 )
 
 TextField.defaultProps = {
+  children: null,
   id: '',
   value: ''
 }
 
 TextField.propTypes = {
+  children: PropTypes.shape({}),
   id: PropTypes.string,
   label: PropTypes.string.isRequired,
   modelRef: PropTypes.string.isRequired,

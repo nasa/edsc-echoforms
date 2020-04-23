@@ -5,11 +5,23 @@ import { configure, mount } from 'enzyme'
 
 import { Checkbox } from '../../../../src/components/Checkbox/Checkbox'
 import { EchoFormsContext } from '../../../../src/context/EchoFormsContext'
+import { Help } from '../../../../src/components/Help/Help'
+import { parseXml } from '../../../../src/util/parseXml'
+import { checkboxXml } from '../../../mocks/FormElement'
 
 chai.use(chaiEnzyme())
 configure({ adapter: new Adapter() })
 
+function readXml(file) {
+  const doc = parseXml(file)
+  const inputResult = document.evaluate('//*[local-name()="input"]', doc)
+  const input = inputResult.iterateNext()
+
+  return { input }
+}
+
 function setup() {
+  const { input } = readXml(checkboxXml)
   const props = {
     checked: 'true',
     label: 'Test Field',
@@ -22,7 +34,9 @@ function setup() {
   const onUpdateModel = cy.spy().as('onUpdateModel')
   const enzymeWrapper = mount(
     <EchoFormsContext.Provider value={{ onUpdateModel }}>
-      <Checkbox {...props} />
+      <Checkbox {...props}>
+        {input.children}
+      </Checkbox>
     </EchoFormsContext.Provider>
   )
 
@@ -36,7 +50,6 @@ function setup() {
 describe('Checkbox component', () => {
   it('renders an input field', () => {
     const { enzymeWrapper } = setup()
-    console.log('enzymeWrapper', enzymeWrapper.debug())
 
     expect(enzymeWrapper.find('input').length).to.eq(1)
     expect(enzymeWrapper.find('input').props()).to.have.property('type', 'checkbox')
@@ -46,6 +59,8 @@ describe('Checkbox component', () => {
     expect(enzymeWrapper.find('input').props()).to.have.property('readOnly', false)
 
     expect(enzymeWrapper.find('label').first().props()).to.have.property('children', 'Test Field')
+
+    expect(enzymeWrapper.find(Help).props().elements[0].outerHTML).to.eq('<help>Helpful text</help>')
   })
 
   it('onChange calls onUpdateModel', () => {

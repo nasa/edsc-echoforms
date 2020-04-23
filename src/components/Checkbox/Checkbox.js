@@ -3,9 +3,11 @@ import PropTypes from 'prop-types'
 import { ElementWrapper } from '../ElementWrapper/ElementWrapper'
 import { useClasses } from '../../hooks/useClasses'
 import { EchoFormsContext } from '../../context/EchoFormsContext'
+import { Help } from '../Help/Help'
 
 export const Checkbox = ({
   checked,
+  children,
   id,
   label,
   modelRef,
@@ -38,18 +40,21 @@ export const Checkbox = ({
         >
           {label}
         </label>
+        <Help elements={children} />
       </>
     </ElementWrapper>
   )
 }
 
 Checkbox.defaultProps = {
+  children: null,
   id: '',
   label: ''
 }
 
 Checkbox.propTypes = {
   checked: PropTypes.string.isRequired,
+  children: PropTypes.shape({}),
   id: PropTypes.string,
   label: PropTypes.string,
   modelRef: PropTypes.string.isRequired,
