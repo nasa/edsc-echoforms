@@ -17,7 +17,7 @@ function readXml(file) {
   const rangeResult = document.evaluate('//*[local-name()="range"]', doc)
   const range = rangeResult.iterateNext()
 
-  return {range }
+  return { range }
 }
 
 function setup() {
