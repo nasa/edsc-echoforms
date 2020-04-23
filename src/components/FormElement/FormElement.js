@@ -12,6 +12,7 @@ import { Select } from '../Select/Select'
 import { DateTime } from '../DateTime/DateTime'
 import { Group } from '../Group/Group'
 import { Range } from '../Range/Range'
+import { Help } from '../Help/Help'
 
 export const FormElement = ({
   element,
@@ -75,7 +76,9 @@ export const FormElement = ({
           readOnly={readOnly}
           required={required}
           value={value}
-        />
+        >
+          {children}
+        </TextField>
       )
     }
     if (type.includes('boolean')) {
@@ -87,7 +90,9 @@ export const FormElement = ({
           modelRef={modelRef}
           readOnly={readOnly}
           required={required}
-        />
+        >
+          {children}
+        </Checkbox>
       )
     }
     if (type.toLowerCase().includes('datetime')) {
@@ -99,7 +104,9 @@ export const FormElement = ({
           readOnly={readOnly}
           required={required}
           value={value}
-        />
+        >
+          {children}
+        </DateTime>
       )
     }
 
@@ -124,7 +131,9 @@ export const FormElement = ({
         readOnly={readOnly}
         required={required}
         value={value}
-      />
+      >
+        {children}
+      </TextArea>
     )
   }
   if (tagName === 'secret') {
@@ -136,7 +145,9 @@ export const FormElement = ({
         readOnly={readOnly}
         required={required}
         value={value}
-      />
+      >
+        {children}
+      </SecretField>
     )
   }
   if (tagName === 'select') {
@@ -174,7 +185,9 @@ export const FormElement = ({
         required={required}
         step={step}
         value={value}
-      />
+      >
+        {children}
+      </Range>
     )
   }
   if (tagName === 'output') {
@@ -187,7 +200,9 @@ export const FormElement = ({
         required={required}
         type={type}
         value={value}
-      />
+      >
+        {children}
+      </Output>
     )
   }
   if (tagName === 'group') {

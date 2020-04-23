@@ -19,8 +19,8 @@ describe('getNodeValue', () => {
     const model = modelResult.iterateNext()
 
     expect(getNodeValue(ref, model)).to.eql([
-      'value 1',
-      'value 2'
+      'test value 1',
+      'test value 2'
     ])
   })
 })

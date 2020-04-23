@@ -5,11 +5,24 @@ import { configure, mount } from 'enzyme'
 
 import { TextArea } from '../../../../src/components/TextArea/TextArea'
 import { EchoFormsContext } from '../../../../src/context/EchoFormsContext'
+import { parseXml } from '../../../../src/util/parseXml'
+import { textareaXml } from '../../../mocks/FormElement'
+import { Help } from '../../../../src/components/Help/Help'
 
 chai.use(chaiEnzyme())
 configure({ adapter: new Adapter() })
 
+function readXml(file) {
+  const doc = parseXml(file)
+  const textareaResult = document.evaluate('//*[local-name()="textarea"]', doc)
+  const textarea = textareaResult.iterateNext()
+
+  return { textarea }
+}
+
 function setup() {
+  const { textarea } = readXml(textareaXml)
+
   const props = {
     label: 'Test Field',
     id: 'testfield',
@@ -22,7 +35,9 @@ function setup() {
   const onUpdateModel = cy.spy().as('onUpdateModel')
   const enzymeWrapper = mount(
     <EchoFormsContext.Provider value={{ onUpdateModel }}>
-      <TextArea {...props} />
+      <TextArea {...props}>
+        {textarea.children}
+      </TextArea>
     </EchoFormsContext.Provider>
   )
 
@@ -42,6 +57,8 @@ describe('TextArea component', () => {
     expect(enzymeWrapper.find('textarea').props()).to.have.property('name', 'Test Field')
     expect(enzymeWrapper.find('textarea').props()).to.have.property('id', 'testfield')
     expect(enzymeWrapper.find('textarea').props()).to.have.property('readOnly', false)
+
+    expect(enzymeWrapper.find(Help).props().elements[0].outerHTML).to.eq('<help>Helpful text</help>')
   })
 
   it('onChange calls onUpdateModel', () => {

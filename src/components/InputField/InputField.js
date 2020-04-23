@@ -3,8 +3,10 @@ import PropTypes from 'prop-types'
 import { ElementWrapper } from '../ElementWrapper/ElementWrapper'
 import { useClasses } from '../../hooks/useClasses'
 import { EchoFormsContext } from '../../context/EchoFormsContext'
+import { Help } from '../Help/Help'
 
 export const InputField = ({
+  children,
   id,
   label,
   modelRef,
@@ -34,11 +36,13 @@ export const InputField = ({
         value={value}
         onChange={onChange}
       />
+      <Help elements={children} />
     </ElementWrapper>
   )
 }
 
 InputField.defaultProps = {
+  children: null,
   id: '',
   placeholder: '',
   type: null,
@@ -46,6 +50,7 @@ InputField.defaultProps = {
 }
 
 InputField.propTypes = {
+  children: PropTypes.shape({}),
   id: PropTypes.string,
   label: PropTypes.string.isRequired,
   modelRef: PropTypes.string.isRequired,
