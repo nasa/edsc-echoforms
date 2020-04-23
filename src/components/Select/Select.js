@@ -4,6 +4,7 @@ import { ElementWrapper } from '../ElementWrapper/ElementWrapper'
 import { getAttribute } from '../../util/getAttribute'
 import { useClasses } from '../../hooks/useClasses'
 import { EchoFormsContext } from '../../context/EchoFormsContext'
+import { Help } from '../Help/Help'
 
 export const Select = ({
   children,
@@ -45,10 +46,11 @@ export const Select = ({
         onChange={onChange}
       >
         {
-          children && Array.from(children).map((child) => {
-            const { attributes, tagName } = child
+          children && Array.from(children)
+            .filter(element => element.tagName === 'item')
+            .map((element) => {
+              const { attributes } = element
 
-            if (tagName === 'item') {
               const optionLabel = getAttribute(attributes, 'label')
               const optionValue = getAttribute(attributes, 'value')
               return (
@@ -59,13 +61,10 @@ export const Select = ({
                   {optionLabel}
                 </option>
               )
-            }
-            // if (tagName === 'help')
-
-            return null
-          })
+            })
         }
       </select>
+      <Help elements={children} />
     </ElementWrapper>
   )
 }

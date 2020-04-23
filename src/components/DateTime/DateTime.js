@@ -3,6 +3,7 @@ import PropTypes from 'prop-types'
 import { InputField } from '../InputField/InputField'
 
 export const DateTime = ({
+  children,
   id,
   label,
   modelRef,
@@ -18,15 +19,19 @@ export const DateTime = ({
     readOnly={readOnly}
     required={required}
     value={value}
-  />
+  >
+    {children}
+  </InputField>
 )
 
 DateTime.defaultProps = {
+  children: null,
   id: '',
   value: ''
 }
 
 DateTime.propTypes = {
+  children: PropTypes.shape({}),
   id: PropTypes.string,
   label: PropTypes.string.isRequired,
   modelRef: PropTypes.string.isRequired,

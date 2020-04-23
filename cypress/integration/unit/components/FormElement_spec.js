@@ -143,7 +143,7 @@ describe('FormElement component', () => {
     const select = enzymeWrapper.find(Select)
 
     expect(select).to.have.lengthOf(1)
-    expect(select.props().value).to.eql(['value 1', 'value 2'])
+    expect(select.props().value).to.eql(['test value 1', 'test value 2'])
     expect(select.props()).to.have.property('label', 'Select input')
     expect(select.props()).to.have.property('modelRef', 'prov:selectreference')
     expect(select.props()).to.have.property('multiple', false)

@@ -3,8 +3,10 @@ import PropTypes from 'prop-types'
 import { ElementWrapper } from '../ElementWrapper/ElementWrapper'
 import { useClasses } from '../../hooks/useClasses'
 import { EchoFormsContext } from '../../context/EchoFormsContext'
+import { Help } from '../Help/Help'
 
 export const TextArea = ({
+  children,
   id,
   label,
   modelRef,
@@ -30,16 +32,19 @@ export const TextArea = ({
         value={value}
         onChange={onChange}
       />
+      <Help elements={children} />
     </ElementWrapper>
   )
 }
 
 TextArea.defaultProps = {
+  children: null,
   id: '',
   value: ''
 }
 
 TextArea.propTypes = {
+  children: PropTypes.shape({}),
   id: PropTypes.string,
   label: PropTypes.string.isRequired,
   modelRef: PropTypes.string.isRequired,
