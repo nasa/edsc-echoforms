@@ -12,7 +12,6 @@ import { Select } from '../Select/Select'
 import { DateTime } from '../DateTime/DateTime'
 import { Group } from '../Group/Group'
 import { Range } from '../Range/Range'
-import { Help } from '../Help/Help'
 
 export const FormElement = ({
   element,
