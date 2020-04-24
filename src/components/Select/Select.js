@@ -13,6 +13,7 @@ export const Select = ({
   modelRef,
   multiple,
   readOnly,
+  required,
   value,
   valueElementName
 }) => {
@@ -31,13 +32,20 @@ export const Select = ({
     onUpdateModel(modelRef, values)
   }
 
+  let isInvalid = false
+  let errorMessage
+  if (required && !value.length) {
+    isInvalid = true
+    errorMessage = 'Required field'
+  }
+
   return (
     <ElementWrapper
       htmlFor={id}
       label={label}
     >
       <select
-        className={useClasses('select__input', 'form-control')}
+        className={useClasses('select__input', 'form-control', isInvalid)}
         id={id}
         name={label}
         multiple={multiple}
@@ -64,6 +72,13 @@ export const Select = ({
             })
         }
       </select>
+      {
+        isInvalid && (
+          <div className="invalid-feedback">
+            {errorMessage}
+          </div>
+        )
+      }
       <Help elements={children} />
     </ElementWrapper>
   )

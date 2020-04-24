@@ -11,12 +11,20 @@ export const Checkbox = ({
   id,
   label,
   modelRef,
-  readOnly
+  readOnly,
+  required
 }) => {
   const { onUpdateModel } = useContext(EchoFormsContext)
 
   const onChange = (e) => {
     onUpdateModel(modelRef, e.target.checked)
+  }
+
+  let isInvalid = false
+  let errorMessage
+  if (required && !(checked === 'true' || checked === 'false')) {
+    isInvalid = true
+    errorMessage = 'Required field'
   }
 
   return (
@@ -26,7 +34,7 @@ export const Checkbox = ({
     >
       <>
         <input
-          className={useClasses('checkbox__input', 'form-check-input')}
+          className={useClasses('checkbox__input', 'form-check-input', isInvalid)}
           checked={checked === 'true'}
           id={id}
           name={label}
@@ -40,6 +48,13 @@ export const Checkbox = ({
         >
           {label}
         </label>
+        {
+          isInvalid && (
+            <div className="invalid-feedback">
+              {errorMessage}
+            </div>
+          )
+        }
         <Help elements={children} />
       </>
     </ElementWrapper>

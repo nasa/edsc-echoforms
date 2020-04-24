@@ -20,7 +20,7 @@ function readXml(file) {
   return { textarea }
 }
 
-function setup() {
+function setup(overrideProps) {
   const { textarea } = readXml(textareaXml)
 
   const props = {
@@ -29,7 +29,8 @@ function setup() {
     modelRef: 'testfield',
     readOnly: false,
     required: false,
-    value: 'test value'
+    value: 'test value',
+    ...overrideProps
   }
 
   const onUpdateModel = cy.spy().as('onUpdateModel')
@@ -71,5 +72,15 @@ describe('TextArea component', () => {
     expect(onUpdateModel.calledOnce).to.eq(true)
     expect(onUpdateModel.getCall(0).args[0]).to.eq('testfield')
     expect(onUpdateModel.getCall(0).args[1]).to.eq('New Value')
+  })
+
+  it('renders a required message', () => {
+    const { enzymeWrapper } = setup({
+      required: true,
+      value: ''
+    })
+
+    expect(enzymeWrapper.find('textarea').props().className).to.include('is-invalid')
+    expect(enzymeWrapper.find('div.invalid-feedback').text()).to.eq('Required field')
   })
 })
