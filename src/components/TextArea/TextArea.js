@@ -11,6 +11,7 @@ export const TextArea = ({
   label,
   modelRef,
   readOnly,
+  required,
   value
 }) => {
   const { onUpdateModel } = useContext(EchoFormsContext)
@@ -19,19 +20,33 @@ export const TextArea = ({
     onUpdateModel(modelRef, e.target.value)
   }
 
+  let isInvalid = false
+  let errorMessage
+  if (required && !value) {
+    isInvalid = true
+    errorMessage = 'Required field'
+  }
+
   return (
     <ElementWrapper
       htmlFor={id}
       label={label}
     >
       <textarea
-        className={useClasses('textarea__input', 'form-control')}
+        className={useClasses('textarea__input', 'form-control', isInvalid)}
         id={id}
         name={label}
         readOnly={readOnly}
         value={value}
         onChange={onChange}
       />
+      {
+        isInvalid && (
+          <div className="invalid-feedback">
+            {errorMessage}
+          </div>
+        )
+      }
       <Help elements={children} />
     </ElementWrapper>
   )

@@ -7,11 +7,13 @@ import { Help } from '../Help/Help'
 
 export const InputField = ({
   children,
+  error,
   id,
   label,
   modelRef,
   placeholder,
   readOnly,
+  required,
   type,
   value
 }) => {
@@ -21,13 +23,21 @@ export const InputField = ({
     onUpdateModel(modelRef, e.target.value)
   }
 
+  let isInvalid = false
+  let errorMessage = error
+  if (error != null) isInvalid = true
+  if (required && !value) {
+    isInvalid = true
+    errorMessage = 'Required field'
+  }
+
   return (
     <ElementWrapper
       htmlFor={id}
       label={label}
     >
       <input
-        className={useClasses('input', 'form-control')}
+        className={useClasses('input', 'form-control', isInvalid)}
         id={id}
         name={label}
         placeholder={placeholder}
@@ -36,6 +46,13 @@ export const InputField = ({
         value={value}
         onChange={onChange}
       />
+      {
+        isInvalid && (
+          <div className="invalid-feedback">
+            {errorMessage}
+          </div>
+        )
+      }
       <Help elements={children} />
     </ElementWrapper>
   )
@@ -43,6 +60,7 @@ export const InputField = ({
 
 InputField.defaultProps = {
   children: null,
+  error: null,
   id: '',
   placeholder: '',
   type: null,
@@ -51,6 +69,7 @@ InputField.defaultProps = {
 
 InputField.propTypes = {
   children: PropTypes.shape({}),
+  error: PropTypes.string,
   id: PropTypes.string,
   label: PropTypes.string.isRequired,
   modelRef: PropTypes.string.isRequired,
