@@ -20,7 +20,7 @@ function readXml(file) {
   return { input }
 }
 
-function setup() {
+function setup(overrideProps) {
   const { input } = readXml(checkboxXml)
   const props = {
     checked: 'true',
@@ -28,7 +28,8 @@ function setup() {
     id: 'testfield',
     modelRef: 'testfield',
     readOnly: false,
-    required: false
+    required: false,
+    ...overrideProps
   }
 
   const onUpdateModel = cy.spy().as('onUpdateModel')
@@ -73,5 +74,15 @@ describe('Checkbox component', () => {
     expect(onUpdateModel.calledOnce).to.eq(true)
     expect(onUpdateModel.getCall(0).args[0]).to.eq('testfield')
     expect(onUpdateModel.getCall(0).args[1]).to.eq(false)
+  })
+
+  it('renders a required message', () => {
+    const { enzymeWrapper } = setup({
+      checked: '',
+      required: true
+    })
+
+    expect(enzymeWrapper.find('input').props().className).to.include('is-invalid')
+    expect(enzymeWrapper.find('div.invalid-feedback').text()).to.eq('Required field')
   })
 })

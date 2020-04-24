@@ -25,7 +25,9 @@ export const Range = ({
   const [newValue, setNewValue] = useState('')
 
   useEffect(() => {
-    const newValue = Number((value - min) * 100 / (max - min))
+    let safeValue = value
+    if (!value) safeValue = min
+    const newValue = Number((safeValue - min) * 100 / (max - min))
     const newPosition = 25 - (newValue * 0.5)
     setPosition(newPosition)
     setNewValue(newValue)
@@ -35,12 +37,20 @@ export const Range = ({
     onUpdateModel(modelRef, e.target.value)
   }
 
+  let isInvalid = false
+  let errorMessage
+  if (required && !value) {
+    isInvalid = true
+    errorMessage = 'Required field'
+  }
+
+
   return (
     <ElementWrapper
       label={label}
     >
       <input
-        className={useClasses('range__input', 'form-control-range')}
+        className={useClasses('range__input', 'form-control-range', isInvalid)}
         id={id}
         max={max}
         min={min}
@@ -48,7 +58,7 @@ export const Range = ({
         readOnly={readOnly}
         step={step}
         type="range"
-        value={value}
+        value={value || min}
         onChange={onChange}
       />
       <div className="range__markers">
@@ -64,9 +74,16 @@ export const Range = ({
         style={{ left: `calc(${newValue}% + (${position}px))` }}
       >
         <span>
-          {value}
+          {value || min}
         </span>
       </div>
+      {
+        isInvalid && (
+          <div className="invalid-feedback">
+            {errorMessage}
+          </div>
+        )
+      }
       <Help elements={children} />
     </ElementWrapper>
   )
