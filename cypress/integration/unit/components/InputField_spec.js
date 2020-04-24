@@ -88,4 +88,23 @@ describe('InputField component', () => {
     expect(onUpdateModel.getCall(0).args[0]).to.eq('testfield')
     expect(onUpdateModel.getCall(0).args[1]).to.eq('New Value')
   })
+
+  it('renders a required message', () => {
+    const { enzymeWrapper } = setup({
+      value: '',
+      required: true
+    })
+
+    expect(enzymeWrapper.find('input').props().className).to.include('is-invalid')
+    expect(enzymeWrapper.find('div.invalid-feedback').text()).to.eq('Required field')
+  })
+
+  it('renders a provided error message', () => {
+    const { enzymeWrapper } = setup({
+      error: 'test error message'
+    })
+
+    expect(enzymeWrapper.find('input').props().className).to.include('is-invalid')
+    expect(enzymeWrapper.find('div.invalid-feedback').text()).to.eq('test error message')
+  })
 })

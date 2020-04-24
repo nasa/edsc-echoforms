@@ -20,7 +20,7 @@ function readXml(file) {
   return { range }
 }
 
-function setup() {
+function setup(overrideProps) {
   const { range } = readXml(rangeXml)
 
   const props = {
@@ -33,7 +33,7 @@ function setup() {
     required: false,
     step: '1',
     value: 5,
-    onUpdateModel: cy.spy().as('onUpdateModel')
+    ...overrideProps
   }
 
   const onUpdateModel = cy.spy().as('onUpdateModel')
@@ -84,5 +84,15 @@ describe('Range component', () => {
     expect(onUpdateModel.calledOnce).to.eq(true)
     expect(onUpdateModel.getCall(0).args[0]).to.eq('testfield')
     expect(onUpdateModel.getCall(0).args[1]).to.eq(4)
+  })
+
+  it('renders a required message', () => {
+    const { enzymeWrapper } = setup({
+      required: true,
+      value: undefined
+    })
+
+    expect(enzymeWrapper.find('input').props().className).to.include('is-invalid')
+    expect(enzymeWrapper.find('div.invalid-feedback').text()).to.eq('Required field')
   })
 })

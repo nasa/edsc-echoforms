@@ -39,7 +39,6 @@ Output.propTypes = {
   children: PropTypes.shape({}),
   id: PropTypes.string,
   label: PropTypes.string.isRequired,
-  required: PropTypes.bool.isRequired,
   type: PropTypes.string,
   value: PropTypes.string
 }

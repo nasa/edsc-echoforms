@@ -196,7 +196,6 @@ export const FormElement = ({
       <Output
         id={id}
         label={label}
-        required={required}
         type={type}
         value={value}
       >

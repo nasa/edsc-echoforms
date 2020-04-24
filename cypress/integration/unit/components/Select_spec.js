@@ -102,4 +102,14 @@ describe('Select component', () => {
       valueElementName: 'value'
     }])
   })
+
+  it('renders a required message', () => {
+    const { enzymeWrapper } = setup({
+      required: true,
+      value: []
+    })
+
+    expect(enzymeWrapper.find('select').props().className).to.include('is-invalid')
+    expect(enzymeWrapper.find('div.invalid-feedback').text()).to.eq('Required field')
+  })
 })

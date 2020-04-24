@@ -203,7 +203,6 @@ describe('FormElement component', () => {
     expect(output).to.have.lengthOf(1)
     expect(output.props()).to.have.property('value', 'test value')
     expect(output.props()).to.have.property('label', 'Output')
-    expect(output.props()).to.have.property('required', false)
   })
 
   it('renders an URL Output component', () => {
@@ -219,7 +218,6 @@ describe('FormElement component', () => {
     expect(output).to.have.lengthOf(1)
     expect(output.props()).to.have.property('value', 'test value')
     expect(output.props()).to.have.property('label', 'URL Output')
-    expect(output.props()).to.have.property('required', false)
   })
 
   it('does not render a field that is not relevant', () => {
