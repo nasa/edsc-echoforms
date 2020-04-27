@@ -59,11 +59,36 @@ describe('Select component', () => {
     expect(enzymeWrapper.find('select').props().id).to.eq('testfield')
     expect(enzymeWrapper.find('select').props().readOnly).to.eq(false)
     expect(enzymeWrapper.find('select').props().multiple).to.eq(false)
-    expect(enzymeWrapper.find('select').props().children[0].props).to.eql({
+    expect(enzymeWrapper.find('select').props().children[1][0].props).to.eql({
       value: 'test value 1',
       children: 'test label 1'
     })
-    expect(enzymeWrapper.find('select').props().children[1].props).to.eql({
+    expect(enzymeWrapper.find('select').props().children[1][1].props).to.eql({
+      value: 'test value 2',
+      children: 'test label 2'
+    })
+  })
+
+  it('renders a default select option when no value is available in a single select element', () => {
+    const { enzymeWrapper } = setup({
+      value: undefined
+    })
+    console.log('enzymeWrapper', enzymeWrapper.find('select').props().children[0].props)
+
+    expect(enzymeWrapper.find('select').length).to.eq(1)
+    expect(enzymeWrapper.find('select').props().value).to.eq(undefined)
+    expect(enzymeWrapper.find('select').props().name).to.eq('Test Field')
+    expect(enzymeWrapper.find('select').props().id).to.eq('testfield')
+    expect(enzymeWrapper.find('select').props().readOnly).to.eq(false)
+    expect(enzymeWrapper.find('select').props().multiple).to.eq(false)
+    expect(enzymeWrapper.find('select').props().children[0].props).to.eql({
+      children: 'Select a value'
+    })
+    expect(enzymeWrapper.find('select').props().children[1][0].props).to.eql({
+      value: 'test value 1',
+      children: 'test label 1'
+    })
+    expect(enzymeWrapper.find('select').props().children[1][1].props).to.eql({
       value: 'test value 2',
       children: 'test label 2'
     })
@@ -78,11 +103,11 @@ describe('Select component', () => {
     expect(enzymeWrapper.find('select').props().id).to.eq('testfield')
     expect(enzymeWrapper.find('select').props().readOnly).to.eq(false)
     expect(enzymeWrapper.find('select').props().multiple).to.eq(true)
-    expect(enzymeWrapper.find('select').props().children[0].props).to.eql({
+    expect(enzymeWrapper.find('select').props().children[1][0].props).to.eql({
       value: 'test value 1',
       children: 'test label 1'
     })
-    expect(enzymeWrapper.find('select').props().children[1].props).to.eql({
+    expect(enzymeWrapper.find('select').props().children[1][1].props).to.eql({
       value: 'test value 2',
       children: 'test label 2'
     })

@@ -15,7 +15,9 @@ export const updateModel = (model, modelRef, newValue) => {
     const values = newValue.map((v) => {
       const { namespaceURI, prefix } = model
       const { value: vValue, valueElementName } = v
-      const element = document.createElementNS(namespaceURI, `${prefix}:${valueElementName}`)
+      const tag = [prefix, valueElementName].filter(Boolean).join(':')
+
+      const element = document.createElementNS(namespaceURI, tag)
       element.textContent = vValue
 
       return element.outerHTML
