@@ -16,7 +16,6 @@ function setup(overrideProps) {
     readOnly: false,
     required: false,
     value: '2020-01-01T00:00:00',
-    onUpdateModel: cy.spy().as('onUpdateModel'),
     ...overrideProps
   }
 
