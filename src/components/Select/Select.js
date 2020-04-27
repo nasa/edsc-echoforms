@@ -39,6 +39,34 @@ export const Select = ({
     errorMessage = 'Required field'
   }
 
+  const options = []
+  if (!multiple) {
+    options.push(
+      <option
+        key="default option"
+      >
+        Select a value
+      </option>
+    )
+  }
+
+  Array.from(children)
+    .filter(element => element.tagName === 'item')
+    .forEach((element) => {
+      const { attributes } = element
+
+      const optionLabel = getAttribute(attributes, 'label')
+      const optionValue = getAttribute(attributes, 'value')
+      options.push(
+        <option
+          key={`option-${optionValue}`}
+          value={optionValue}
+        >
+          {optionLabel}
+        </option>
+      )
+    })
+
   return (
     <ElementWrapper
       htmlFor={id}
@@ -53,33 +81,7 @@ export const Select = ({
         value={multiple ? value : value[0]}
         onChange={onChange}
       >
-        {
-          !multiple && value.length === 0 && (
-            <option
-              key="default option"
-            >
-              Select a value
-            </option>
-          )
-        }
-        {
-          children && Array.from(children)
-            .filter(element => element.tagName === 'item')
-            .map((element) => {
-              const { attributes } = element
-
-              const optionLabel = getAttribute(attributes, 'label')
-              const optionValue = getAttribute(attributes, 'value')
-              return (
-                <option
-                  key={`option-${optionValue}`}
-                  value={optionValue}
-                >
-                  {optionLabel}
-                </option>
-              )
-            })
-        }
+        {options}
       </select>
       {
         isInvalid && (
