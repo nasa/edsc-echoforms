@@ -23,3 +23,11 @@ export const datetimeXml = '<form><model><instance><prov:options xmlns:prov="htt
 export const rangeXml = '<form><model><instance><prov:options xmlns:prov="http://www.example.com/orderoptions"><prov:rangeReference>5</prov:rangeReference></prov:options></instance></model><ui><range id="range" label="Range" start="1" stop="10" step="1" type="xs:int" ref="prov:rangeReference"><help>Helpful text</help></range></ui></form>'
 
 export const groupXml = '<form><model><instance><prov:options xmlns:prov="http://www.example.com/orderoptions"><prov:groupreference><prov:textreference>test value</prov:textreference></prov:groupreference></prov:options></instance></model><ui><group id="group" label="Group" ref="prov:groupreference"><help>Helpful group text</help><input id="textinput" label="Text input" ref="prov:textreference" type="xs:string"><help>Helpful text</help></input></group></ui></form>'
+
+export const doubleXml = '<form><model><instance><prov:options xmlns:prov="http://www.example.com/orderoptions"><prov:doubleReference>42</prov:doubleReference></prov:options></instance></model><ui><input id="double" label="Double input" ref="prov:doubleReference" type="xs:double"><help>Helpful text</help></input></ui></form>'
+
+export const integerXml = '<form><model><instance><prov:options xmlns:prov="http://www.example.com/orderoptions"><prov:integerReference>42</prov:integerReference></prov:options></instance></model><ui><input id="integer" label="Integer input" ref="prov:integerReference" type="xs:int"><help>Helpful text</help></input></ui></form>'
+
+export const longXml = '<form><model><instance><prov:options xmlns:prov="http://www.example.com/orderoptions"><prov:longReference>42</prov:longReference></prov:options></instance></model><ui><input id="long" label="Long input" ref="prov:longReference" type="xs:long"><help>Helpful text</help></input></ui></form>'
+
+export const shortXml = '<form><model><instance><prov:options xmlns:prov="http://www.example.com/orderoptions"><prov:shortReference>42</prov:shortReference></prov:options></instance></model><ui><input id="short" label="Short input" ref="prov:shortReference" type="xs:short"><help>Helpful text</help></input></ui></form>'
