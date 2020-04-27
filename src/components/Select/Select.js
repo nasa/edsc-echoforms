@@ -54,6 +54,15 @@ export const Select = ({
         onChange={onChange}
       >
         {
+          !multiple && value.length === 0 && (
+            <option
+              key="default option"
+            >
+              Select a value
+            </option>
+          )
+        }
+        {
           children && Array.from(children)
             .filter(element => element.tagName === 'item')
             .map((element) => {
