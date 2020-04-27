@@ -18,6 +18,8 @@ export const selectXml = '<form><model><instance><prov:options xmlns:prov="http:
 
 export const multiSelectXml = '<form><model><instance><prov:options xmlns:prov="http://www.example.com/orderoptions"><prov:selectreference><prov:value>value 1</prov:value><prov:value>value 2</prov:value></prov:selectreference></prov:options></instance></model><ui><select multiple="true" id="selectinput" label="Select input" ref="prov:selectreference" valueElementName="value"><help>Helpful text</help></select></ui></form>'
 
+export const selectrefXml = '<form><model><instance><prov:options xmlns:prov="http://www.example.com/orderoptions"><prov:selectrefReference><prov:value>test value 1</prov:value><prov:value>test value 2</prov:value></prov:selectrefReference></prov:options></instance></model><ui><selectref id="selectinput" label="Select input" ref="prov:selectrefReference"><item label="test label 1" value="test value 1" /><item label="test label 2" value="test value 2" /><help>Helpful text</help></selectref></ui></form>'
+
 export const datetimeXml = '<form><model><instance><prov:options xmlns:prov="http://www.example.com/orderoptions"><prov:datetimereference>2020-01-01T00:00:00</prov:datetimereference></prov:options></instance></model><ui><input id="datetimeinput" label="DateTime input" ref="prov:datetimereference" type="xs:datetime"><help>Helpful text</help></input></ui></form>'
 
 export const rangeXml = '<form><model><instance><prov:options xmlns:prov="http://www.example.com/orderoptions"><prov:rangeReference>5</prov:rangeReference></prov:options></instance></model><ui><range id="range" label="Range" start="1" stop="10" step="1" type="xs:int" ref="prov:rangeReference"><help>Helpful text</help></range></ui></form>'

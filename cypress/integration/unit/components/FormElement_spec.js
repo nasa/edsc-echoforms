@@ -30,6 +30,7 @@ import {
   readOnlyXml,
   secretXml,
   selectXml,
+  selectrefXml,
   shortXml,
   textareaXml,
   textfieldXml,
@@ -172,6 +173,26 @@ describe('FormElement component', () => {
     expect(select.props()).to.have.property('label', 'Select input')
     expect(select.props()).to.have.property('modelRef', 'prov:selectreference')
     expect(select.props()).to.have.property('multiple', true)
+    expect(select.props()).to.have.property('readOnly', false)
+    expect(select.props()).to.have.property('required', false)
+    expect(select.props()).to.have.property('valueElementName', 'value')
+  })
+
+  it('renders a Select component for a selectref field', () => {
+    const { model, ui } = readXml(selectrefXml)
+
+    const { enzymeWrapper } = setup({
+      element: ui.children[0],
+      model
+    })
+
+    const select = enzymeWrapper.find(Select)
+
+    expect(select).to.have.lengthOf(1)
+    expect(select.props().value).to.eql(['test value 1', 'test value 2'])
+    expect(select.props()).to.have.property('label', 'Select input')
+    expect(select.props()).to.have.property('modelRef', 'prov:selectrefReference')
+    expect(select.props()).to.have.property('multiple', false)
     expect(select.props()).to.have.property('readOnly', false)
     expect(select.props()).to.have.property('required', false)
     expect(select.props()).to.have.property('valueElementName', 'value')

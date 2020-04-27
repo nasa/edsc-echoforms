@@ -158,9 +158,14 @@ export const FormElement = ({
       </SecretField>
     )
   }
-  if (tagName === 'select') {
+  if (tagName === 'select' || tagName === 'selectref') {
     const multiple = getAttribute(attributes, 'multiple')
-    const valueElementName = getAttribute(attributes, 'valueElementName')
+    let valueElementName = getAttribute(attributes, 'valueElementName')
+
+    // As used, selectrefs turn out to be identical to selects, with valueElementName defaulted to 'value'
+    if (tagName === 'selectref' && valueElementName === null) {
+      valueElementName = 'value'
+    }
 
     return (
       <Select
