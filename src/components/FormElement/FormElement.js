@@ -3,15 +3,17 @@ import PropTypes from 'prop-types'
 
 import { getAttribute } from '../../util/getAttribute'
 import { getNodeValue } from '../../util/getNodeValue'
+
 import { Checkbox } from '../Checkbox/Checkbox'
-import { Output } from '../Output/Output'
-import { SecretField } from '../SecretField/SecretField'
-import { TextArea } from '../TextArea/TextArea'
-import { TextField } from '../TextField/TextField'
-import { Select } from '../Select/Select'
 import { DateTime } from '../DateTime/DateTime'
 import { Group } from '../Group/Group'
+import { Number } from '../Number/Number'
+import { Output } from '../Output/Output'
 import { Range } from '../Range/Range'
+import { SecretField } from '../SecretField/SecretField'
+import { Select } from '../Select/Select'
+import { TextArea } from '../TextArea/TextArea'
+import { TextField } from '../TextField/TextField'
 
 export const FormElement = ({
   element,
@@ -66,21 +68,7 @@ export const FormElement = ({
   if (tagName === 'input') {
     const type = getAttribute(attributes, 'type')
 
-    if (type == null || type.includes('string')) {
-      return (
-        <TextField
-          id={id}
-          label={label}
-          modelRef={modelRef}
-          readOnly={readOnly}
-          required={required}
-          value={value}
-        >
-          {children}
-        </TextField>
-      )
-    }
-    if (type.includes('boolean')) {
+    if (type && type.includes('boolean')) {
       return (
         <Checkbox
           checked={value}
@@ -94,7 +82,7 @@ export const FormElement = ({
         </Checkbox>
       )
     }
-    if (type.toLowerCase().includes('datetime')) {
+    if (type && type.toLowerCase().includes('datetime')) {
       return (
         <DateTime
           id={id}
@@ -108,17 +96,38 @@ export const FormElement = ({
         </DateTime>
       )
     }
+    if (type && (
+      type.toLowerCase().includes('double')
+      || type.toLowerCase().includes('long')
+      || type.toLowerCase().includes('int')
+      || type.toLowerCase().includes('short'))
+    ) {
+      return (
+        <Number
+          id={id}
+          label={label}
+          modelRef={modelRef}
+          readOnly={readOnly}
+          required={required}
+          type={type}
+          value={value}
+        >
+          {children}
+        </Number>
+      )
+    }
 
     return (
-      <p>
-        {type}
-        {' '}
-        other input field
-        {', '}
-        {id}
-        {', '}
-        {label}
-      </p>
+      <TextField
+        id={id}
+        label={label}
+        modelRef={modelRef}
+        readOnly={readOnly}
+        required={required}
+        value={value}
+      >
+        {children}
+      </TextField>
     )
   }
   if (tagName === 'textarea') {

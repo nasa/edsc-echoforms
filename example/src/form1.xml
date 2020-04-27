@@ -14,6 +14,12 @@
         <prov:parentReference>
           <prov:childReference>Child value</prov:childReference>
         </prov:parentReference>
+        <prov:numberGroup>
+          <prov:doubleReference>123.456</prov:doubleReference>
+          <prov:integerReference>42</prov:integerReference>
+          <prov:longReference>999999999999</prov:longReference>
+          <prov:shortReference>30000</prov:shortReference>
+        </prov:numberGroup>
       </prov:options>
     </instance>
   </model>
@@ -51,6 +57,12 @@
     <output id="urloutput" label="URL Output" type="xs:anyURI" a="a" ref="prov:reference">
       <help>Helpful text</help>
     </output>
+    <group id="group" label="Numbers Group" ref="prov:numberGroup" attrs="attrs">
+      <input id="double" label="Double value" ref="prov:doubleReference" type="xs:double" />
+      <input id="integer" label="Integer value" ref="prov:integerReference" type="xs:int" />
+      <input id="long" label="Long value" ref="prov:longReference" type="xs:long" />
+      <input id="short" label="Short value" ref="prov:shortReference" type="xs:short" />
+    </group>
     <range id="range" label="Range" start="1.0" stop="10.0" step="0.1" type="xs:double" a="a" ref="prov:rangeReference">
       <help>Helpful text</help>
     </range>

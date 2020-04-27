@@ -8,6 +8,7 @@ import { Checkbox } from '../../../../src/components/Checkbox/Checkbox'
 import { DateTime } from '../../../../src/components/DateTime/DateTime'
 import { FormElement } from '../../../../src/components/FormElement/FormElement'
 import { Group } from '../../../../src/components/Group/Group'
+import { Number } from '../../../../src/components/Number/Number'
 import { Output } from '../../../../src/components/Output/Output'
 import { parseXml } from '../../../../src/util/parseXml'
 import { Range } from '../../../../src/components/Range/Range'
@@ -18,7 +19,10 @@ import { TextField } from '../../../../src/components/TextField/TextField'
 import {
   checkboxXml,
   datetimeXml,
+  doubleXml,
   groupXml,
+  integerXml,
+  longXml,
   multiSelectXml,
   notRelevantXml,
   outputXml,
@@ -26,6 +30,7 @@ import {
   readOnlyXml,
   secretXml,
   selectXml,
+  shortXml,
   textareaXml,
   textfieldXml,
   urlOutputXml
@@ -298,5 +303,81 @@ describe('FormElement component', () => {
     expect(range.props()).to.have.property('modelRef', 'prov:rangeReference')
     expect(range.props()).to.have.property('readOnly', false)
     expect(range.props()).to.have.property('required', false)
+  })
+
+  it('renders a Number component for doubles', () => {
+    const { model, ui } = readXml(doubleXml)
+
+    const { enzymeWrapper } = setup({
+      element: ui.children[0],
+      model
+    })
+
+    const datetime = enzymeWrapper.find(Number)
+
+    expect(datetime).to.have.lengthOf(1)
+    expect(datetime.props()).to.have.property('value', '42')
+    expect(datetime.props()).to.have.property('label', 'Double input')
+    expect(datetime.props()).to.have.property('modelRef', 'prov:doubleReference')
+    expect(datetime.props()).to.have.property('readOnly', false)
+    expect(datetime.props()).to.have.property('required', false)
+    expect(datetime.props()).to.have.property('type', 'xs:double')
+  })
+
+  it('renders a Number component for integers', () => {
+    const { model, ui } = readXml(integerXml)
+
+    const { enzymeWrapper } = setup({
+      element: ui.children[0],
+      model
+    })
+
+    const datetime = enzymeWrapper.find(Number)
+
+    expect(datetime).to.have.lengthOf(1)
+    expect(datetime.props()).to.have.property('value', '42')
+    expect(datetime.props()).to.have.property('label', 'Integer input')
+    expect(datetime.props()).to.have.property('modelRef', 'prov:integerReference')
+    expect(datetime.props()).to.have.property('readOnly', false)
+    expect(datetime.props()).to.have.property('required', false)
+    expect(datetime.props()).to.have.property('type', 'xs:int')
+  })
+
+  it('renders a Number component for longs', () => {
+    const { model, ui } = readXml(longXml)
+
+    const { enzymeWrapper } = setup({
+      element: ui.children[0],
+      model
+    })
+
+    const datetime = enzymeWrapper.find(Number)
+
+    expect(datetime).to.have.lengthOf(1)
+    expect(datetime.props()).to.have.property('value', '42')
+    expect(datetime.props()).to.have.property('label', 'Long input')
+    expect(datetime.props()).to.have.property('modelRef', 'prov:longReference')
+    expect(datetime.props()).to.have.property('readOnly', false)
+    expect(datetime.props()).to.have.property('required', false)
+    expect(datetime.props()).to.have.property('type', 'xs:long')
+  })
+
+  it('renders a Number component for shorts', () => {
+    const { model, ui } = readXml(shortXml)
+
+    const { enzymeWrapper } = setup({
+      element: ui.children[0],
+      model
+    })
+
+    const datetime = enzymeWrapper.find(Number)
+
+    expect(datetime).to.have.lengthOf(1)
+    expect(datetime.props()).to.have.property('value', '42')
+    expect(datetime.props()).to.have.property('label', 'Short input')
+    expect(datetime.props()).to.have.property('modelRef', 'prov:shortReference')
+    expect(datetime.props()).to.have.property('readOnly', false)
+    expect(datetime.props()).to.have.property('required', false)
+    expect(datetime.props()).to.have.property('type', 'xs:short')
   })
 })
