@@ -342,7 +342,7 @@ describe('FormElement component', () => {
     expect(datetime.props()).to.have.property('modelRef', 'prov:doubleReference')
     expect(datetime.props()).to.have.property('readOnly', false)
     expect(datetime.props()).to.have.property('required', false)
-    expect(datetime.props()).to.have.property('type', 'xs:double')
+    expect(datetime.props()).to.have.property('type', 'double')
   })
 
   it('renders a Number component for integers', () => {
@@ -361,7 +361,7 @@ describe('FormElement component', () => {
     expect(datetime.props()).to.have.property('modelRef', 'prov:integerReference')
     expect(datetime.props()).to.have.property('readOnly', false)
     expect(datetime.props()).to.have.property('required', false)
-    expect(datetime.props()).to.have.property('type', 'xs:int')
+    expect(datetime.props()).to.have.property('type', 'int')
   })
 
   it('renders a Number component for longs', () => {
@@ -380,7 +380,7 @@ describe('FormElement component', () => {
     expect(datetime.props()).to.have.property('modelRef', 'prov:longReference')
     expect(datetime.props()).to.have.property('readOnly', false)
     expect(datetime.props()).to.have.property('required', false)
-    expect(datetime.props()).to.have.property('type', 'xs:long')
+    expect(datetime.props()).to.have.property('type', 'long')
   })
 
   it('renders a Number component for shorts', () => {
@@ -399,6 +399,6 @@ describe('FormElement component', () => {
     expect(datetime.props()).to.have.property('modelRef', 'prov:shortReference')
     expect(datetime.props()).to.have.property('readOnly', false)
     expect(datetime.props()).to.have.property('required', false)
-    expect(datetime.props()).to.have.property('type', 'xs:short')
+    expect(datetime.props()).to.have.property('type', 'short')
   })
 })

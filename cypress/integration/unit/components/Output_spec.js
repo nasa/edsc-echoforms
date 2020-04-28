@@ -51,7 +51,7 @@ describe('Output component', () => {
   })
 
   it('renders an a element when the type is anyURI', () => {
-    const { enzymeWrapper } = setup({ type: 'anyURI' })
+    const { enzymeWrapper } = setup({ type: 'anyuri' })
 
     expect(enzymeWrapper.find('a').length).to.eq(1)
     expect(enzymeWrapper.find('a').props().href).to.eq('test value')
