@@ -15,6 +15,23 @@ import { Select } from '../Select/Select'
 import { TextArea } from '../TextArea/TextArea'
 import { TextField } from '../TextField/TextField'
 
+/**
+ * Returns a simple string type from an XML type attribute
+ * @param {String} type type attribute from ECHO Forms XML
+ */
+const derivedType = (type) => {
+  if (!type) return 'string'
+  if (type.toLowerCase().includes('boolean')) return 'boolean'
+  if (type.toLowerCase().includes('datetime')) return 'datetime'
+  if (type.toLowerCase().includes('double')) return 'double'
+  if (type.toLowerCase().includes('long')) return 'long'
+  if (type.toLowerCase().includes('int')) return 'int'
+  if (type.toLowerCase().includes('short')) return 'short'
+  if (type.toLowerCase().includes('anyuri')) return 'anyuri'
+
+  return 'string'
+}
+
 export const FormElement = ({
   element,
   parentReadOnly,
@@ -65,95 +82,60 @@ export const FormElement = ({
     value = getAttribute(attributes, 'value')
   }
 
-  if (tagName === 'input') {
-    const type = getAttribute(attributes, 'type')
+  const defaultProps = {
+    id,
+    label,
+    modelRef,
+    readOnly,
+    required,
+    value
+  }
 
-    if (type && type.includes('boolean')) {
+  const type = derivedType(getAttribute(attributes, 'type'))
+
+  if (tagName === 'input') {
+    if (type === 'boolean') {
       return (
-        <Checkbox
-          checked={value}
-          id={id}
-          label={label}
-          modelRef={modelRef}
-          readOnly={readOnly}
-          required={required}
-        >
+        <Checkbox checked={value} {...defaultProps}>
           {children}
         </Checkbox>
       )
     }
-    if (type && type.toLowerCase().includes('datetime')) {
+    if (type === 'datetime') {
       return (
-        <DateTime
-          id={id}
-          label={label}
-          modelRef={modelRef}
-          readOnly={readOnly}
-          required={required}
-          value={value}
-        >
+        <DateTime {...defaultProps}>
           {children}
         </DateTime>
       )
     }
-    if (type && (
-      type.toLowerCase().includes('double')
-      || type.toLowerCase().includes('long')
-      || type.toLowerCase().includes('int')
-      || type.toLowerCase().includes('short'))
+    if (type === 'double'
+      || type === 'long'
+      || type === 'int'
+      || type === 'short'
     ) {
       return (
-        <Number
-          id={id}
-          label={label}
-          modelRef={modelRef}
-          readOnly={readOnly}
-          required={required}
-          type={type}
-          value={value}
-        >
+        <Number {...defaultProps} type={type}>
           {children}
         </Number>
       )
     }
 
     return (
-      <TextField
-        id={id}
-        label={label}
-        modelRef={modelRef}
-        readOnly={readOnly}
-        required={required}
-        value={value}
-      >
+      <TextField {...defaultProps}>
         {children}
       </TextField>
     )
   }
   if (tagName === 'textarea') {
     return (
-      <TextArea
-        id={id}
-        label={label}
-        modelRef={modelRef}
-        readOnly={readOnly}
-        required={required}
-        value={value}
-      >
+      <TextArea {...defaultProps}>
         {children}
       </TextArea>
     )
   }
   if (tagName === 'secret') {
     return (
-      <SecretField
-        id={id}
-        label={label}
-        modelRef={modelRef}
-        readOnly={readOnly}
-        required={required}
-        value={value}
-      >
+      <SecretField {...defaultProps}>
         {children}
       </SecretField>
     )
@@ -169,12 +151,8 @@ export const FormElement = ({
 
     return (
       <Select
-        id={id}
-        label={label}
-        modelRef={modelRef}
+        {...defaultProps}
         multiple={multiple === 'true'}
-        readOnly={readOnly}
-        required={required}
         value={Array.from(value)}
         valueElementName={valueElementName}
       >
@@ -189,43 +167,25 @@ export const FormElement = ({
 
     return (
       <Range
-        id={id}
-        label={label}
+        {...defaultProps}
         max={max}
         min={min}
-        modelRef={modelRef}
-        readOnly={readOnly}
-        required={required}
         step={step}
-        value={value}
       >
         {children}
       </Range>
     )
   }
   if (tagName === 'output') {
-    const type = getAttribute(attributes, 'type')
-
     return (
-      <Output
-        id={id}
-        label={label}
-        type={type}
-        value={value}
-      >
+      <Output {...defaultProps} type={type}>
         {children}
       </Output>
     )
   }
   if (tagName === 'group') {
     return (
-      <Group
-        id={id}
-        label={label}
-        model={model}
-        modelRef={modelRef}
-        readOnly={readOnly}
-      >
+      <Group {...defaultProps} model={model}>
         {children}
       </Group>
     )
