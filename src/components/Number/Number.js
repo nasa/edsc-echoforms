@@ -19,19 +19,19 @@ export const Number = ({
 }) => {
   let error
 
-  if (type.toLowerCase().includes('double') && !validateDouble(value)) {
+  if (type === 'double' && !validateDouble(value)) {
     error = 'Value must be a number'
   }
 
-  if (type.toLowerCase().includes('int') && !validateInteger(value)) {
+  if (type === 'int' && !validateInteger(value)) {
     error = 'Value must be a integer between -2,147,483,648 and 2,147,483,647'
   }
 
-  if (type.toLowerCase().includes('long') && !validateLong(value)) {
+  if (type === 'long' && !validateLong(value)) {
     error = 'Value must be a integer between -2^63 and 2^63-1'
   }
 
-  if (type.toLowerCase().includes('short') && !validateShort(value)) {
+  if (type === 'short' && !validateShort(value)) {
     error = 'Value must be a integer between -32,768 and 32,767'
   }
 

@@ -15,7 +15,7 @@ function setup(overrideProps) {
     modelRef: 'testfield',
     readOnly: false,
     required: false,
-    type: 'xs:double',
+    type: 'double',
     value: '123',
     ...overrideProps
   }
@@ -54,7 +54,7 @@ describe('Number component', () => {
 
   it('renders a validation message for integers', () => {
     const { enzymeWrapper } = setup({
-      type: 'xs:int',
+      type: 'int',
       value: 'asdf'
     })
 
@@ -64,7 +64,7 @@ describe('Number component', () => {
 
   it('renders a validation message for short integers', () => {
     const { enzymeWrapper } = setup({
-      type: 'xs:short',
+      type: 'short',
       value: 'asdf'
     })
 
@@ -74,7 +74,7 @@ describe('Number component', () => {
 
   it('renders a validation message for long integers', () => {
     const { enzymeWrapper } = setup({
-      type: 'xs:long',
+      type: 'long',
       value: 'asdf'
     })
 
