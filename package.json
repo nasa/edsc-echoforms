@@ -46,7 +46,7 @@
     "jasmine-core": "2.3.4",
     "jasmine-jquery": "2.1.0",
     "jasmine-reporters": "2.0.7",
-    "jquery": "^3.4.0",
+    "jquery": "^3.5.0",
     "jstree": "^3.3.8",
     "karma": "^4.1.0",
     "karma-chrome-launcher": "^2.2.0",
