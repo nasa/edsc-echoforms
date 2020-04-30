@@ -5,6 +5,8 @@
     <instance>
       <prov:options xmlns:prov="http://www.example.com/orderoptions">
         <prov:reference>123456</prov:reference>
+        <prov:prepopulated>I am default</prov:prepopulated>
+        <prov:prepopulatedDefault>I am default</prov:prepopulatedDefault>
         <prov:relevantReference>relevant</prov:relevantReference>
         <prov:readonlyReference>readonly</prov:readonlyReference>
         <prov:requiredReference>required</prov:requiredReference>
@@ -26,10 +28,18 @@
         </prov:numberGroup>
       </prov:options>
     </instance>
+    <extension name="pre:prepopulate" xmlns:pre="http://echo.nasa.gov/v9/echoforms/prepopulate">
+      <pre:expressions>
+          <pre:expression ref="prov:prepopulated" source="PREPOP" />
+          <pre:expression ref="prov:prepopulatedDefault" source="PREPOP_DEFAULT" />
+      </pre:expressions>
+    </extension>
   </model>
   <ui>
     <input id="reference" label="Reference value" ref="prov:reference" type="xs:string"/>
     <input id="childReference" label="Child Reference value" ref="prov:parentReference/prov:childReference" type="xs:string"/>
+    <input id="prepopulated" label="Prepopulated" ref="prov:prepopulated" type="xs:string"/>
+    <input id="prepopulateddefault" label="Prepopulated Default" ref="prov:prepopulatedDefault" type="xs:string"/>
     <group id="group" label="Group" ref="prov:parentReference" attrs="attrs">
       <help>Helpful text</help>
       <input id="grouped-child" label="Child input" ref="prov:childReference" type="xs:string"/>

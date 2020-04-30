@@ -10,6 +10,7 @@ import { updateModel } from './util/updateModel'
 export const EDSCEchoform = ({
   addBootstrapClasses,
   form,
+  prepopulateValues,
   onFormModelUpdated,
   onFormIsValidUpdated
 }) => {
@@ -21,31 +22,52 @@ export const EDSCEchoform = ({
   // relevantFields holds a hash of each field, and tells us if that field is relevant
   const relevantFields = useRef({})
 
+  // Take any prepopulate extensions and update the model
+  const handlePrepopulateExtension = (extension, model) => {
+    if (!prepopulateValues || !extension) return model
+
+    let updatedModel = model
+    Array.from(extension.children)
+      .filter(element => element.tagName === 'pre:expression')
+      .forEach((expression) => {
+        const ref = expression.getAttribute('ref')
+        const source = expression.getAttribute('source')
+        if (prepopulateValues[source]) {
+          updatedModel = updateModel(updatedModel, ref, prepopulateValues[source])
+        }
+      })
+    return updatedModel
+  }
+
   useEffect(() => {
     const doc = parseXml(form.replace(/>\s+</g, '><').replace(/^\s+|\s+$/g, ''))
     const modelResult = doc.evaluate('//*[local-name()="instance"]/*', doc, buildXPathResolverFn(doc), XPathResult.ANY_TYPE, null)
     const initialModel = modelResult.iterateNext()
 
+    const extensionResult = doc.evaluate('//*[local-name()="extension" and @name="pre:prepopulate"]/*', doc, buildXPathResolverFn(doc), XPathResult.ANY_TYPE, null)
+    const extension = extensionResult.iterateNext()
+    const extendedModel = handlePrepopulateExtension(extension, initialModel)
+
     const uiResult = doc.evaluate('//*[local-name()="ui"]', doc, buildXPathResolverFn(doc), XPathResult.ANY_TYPE, null)
     const ui = uiResult.iterateNext()
 
     setFormIsValid({})
-    setModel(initialModel)
+    setModel(extendedModel)
     setUi(ui)
 
-    onFormModelUpdated(initialModel.outerHTML)
+    onFormModelUpdated(extendedModel.outerHTML)
   }, [form])
 
   useEffect(() => {
     // This effect compares each field for relevancy and validity.
     // valid is true if all of the relevantFields also have valid values.
-    const relevantInvalidFields = Object.keys(relevantFields.current)
+    const relevantInvalidFields = Object.keys(formIsValid)
       .filter((key) => {
         const fieldValid = formIsValid[key]
         const fieldRelevant = relevantFields.current[key]
 
         // Return only relevant invalid fields
-        return fieldRelevant && fieldValid === false
+        return fieldRelevant && !fieldValid
       })
 
     // if there are no relevantInvalidFields, the form is valid
@@ -87,12 +109,14 @@ export const EDSCEchoform = ({
 }
 
 EDSCEchoform.defaultProps = {
-  addBootstrapClasses: false
+  addBootstrapClasses: false,
+  prepopulateValues: null
 }
 
 EDSCEchoform.propTypes = {
   addBootstrapClasses: PropTypes.bool,
   form: PropTypes.string.isRequired,
+  prepopulateValues: PropTypes.shape({}),
   onFormModelUpdated: PropTypes.func.isRequired,
   onFormIsValidUpdated: PropTypes.func.isRequired
 }
