@@ -33,8 +33,9 @@ function setup(overrideProps) {
   }
 
   const onUpdateModel = cy.spy().as('onUpdateModel')
+  const setFormIsValid = cy.spy().as('setFormIsValid')
   const enzymeWrapper = mount(
-    <EchoFormsContext.Provider value={{ onUpdateModel }}>
+    <EchoFormsContext.Provider value={{ onUpdateModel, setFormIsValid }}>
       <Checkbox {...props}>
         {input.children}
       </Checkbox>

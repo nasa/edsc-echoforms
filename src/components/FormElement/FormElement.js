@@ -1,5 +1,6 @@
-import React from 'react'
+import React, { useContext } from 'react'
 import PropTypes from 'prop-types'
+import murmurhash from 'murmurhash'
 
 import { getAttribute } from '../../util/getAttribute'
 import { getNodeValue } from '../../util/getNodeValue'
@@ -14,6 +15,7 @@ import { SecretField } from '../SecretField/SecretField'
 import { Select } from '../Select/Select'
 import { TextArea } from '../TextArea/TextArea'
 import { TextField } from '../TextField/TextField'
+import { EchoFormsContext } from '../../context/EchoFormsContext'
 
 /**
  * Returns a simple string type from an XML type attribute
@@ -32,11 +34,16 @@ const derivedType = (type) => {
   return 'string'
 }
 
+/**
+ * Renders a component determined by the type of the element prop
+ */
 export const FormElement = ({
   element,
   parentReadOnly,
   model
 }) => {
+  const { setRelevantFields } = useContext(EchoFormsContext)
+  const elementHash = murmurhash.v3(element.outerHTML, 'seed')
   const {
     attributes,
     children,
@@ -50,7 +57,12 @@ export const FormElement = ({
   if (relevantAttribute) {
     relevant = getNodeValue(relevantAttribute, model)
   }
-  if (!relevant) return null
+  if (relevant) {
+    setRelevantFields({ [elementHash]: true })
+  } else {
+    setRelevantFields({ [elementHash]: false })
+    return null
+  }
 
   let readOnly = false
   // The readonly attribute can be inherited from a group element.
@@ -83,6 +95,7 @@ export const FormElement = ({
   }
 
   const defaultProps = {
+    elementHash,
     id,
     label,
     modelRef,
@@ -161,7 +174,7 @@ export const FormElement = ({
     )
   }
   if (tagName === 'range') {
-    const max = getAttribute(attributes, 'stop')
+    const max = getAttribute(attributes, 'end')
     const min = getAttribute(attributes, 'start')
     const step = getAttribute(attributes, 'step')
 
@@ -204,6 +217,7 @@ FormElement.propTypes = {
   element: PropTypes.shape({
     attributes: PropTypes.shape({}),
     children: PropTypes.shape({}),
+    outerHTML: PropTypes.string,
     tagName: PropTypes.string
   }).isRequired,
   model: PropTypes.shape({}).isRequired,

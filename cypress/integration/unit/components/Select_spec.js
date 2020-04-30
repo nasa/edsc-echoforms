@@ -34,8 +34,9 @@ function setup(overrideProps) {
   }
 
   const onUpdateModel = cy.spy().as('onUpdateModel')
+  const setFormIsValid = cy.spy().as('setFormIsValid')
   const enzymeWrapper = mount(
-    <EchoFormsContext.Provider value={{ onUpdateModel }}>
+    <EchoFormsContext.Provider value={{ onUpdateModel, setFormIsValid }}>
       <Select {...props}>
         {select.children}
       </Select>
@@ -104,15 +105,5 @@ describe('Select component', () => {
       value: 'New Value',
       valueElementName: 'value'
     }])
-  })
-
-  it('renders a required message', () => {
-    const { enzymeWrapper } = setup({
-      required: true,
-      value: []
-    })
-
-    expect(enzymeWrapper.find('select').props().className).to.include('is-invalid')
-    expect(enzymeWrapper.find('div.invalid-feedback').text()).to.eq('Required field')
   })
 })
