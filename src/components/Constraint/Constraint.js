@@ -44,18 +44,17 @@ export const Constraint = ({
     })
 
   // Run basic validations
-  errors.push(typeValidation(type, value))
+  const typeValid = typeValidation(type, value)
+  if (typeValid !== true) errors.push(typeValid)
 
   // Is the field required and empty?
   if (required && !value) {
     errors.push('Required field')
   }
 
-  const filteredErrors = errors.filter(error => error !== true)
+  setFieldIsValid(!errors.length)
 
-  setFieldIsValid(filteredErrors.length === 0)
-
-  return filteredErrors.map(error => (
+  return errors.map(error => (
     <div key={error} className="invalid-feedback">
       {error}
     </div>
