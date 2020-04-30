@@ -6,7 +6,7 @@ import { configure, mount } from 'enzyme'
 
 import { EDSCEchoform } from '../../../../src'
 import { parseXml } from '../../../../src/util/parseXml'
-import { readOnlyXml } from '../../../mocks/FormElement'
+import { readOnlyXml, prepopulatedXml } from '../../../mocks/FormElement'
 import { FormBody } from '../../../../src/components/FormBody/FormBody'
 
 window.ReactDOM = ReactDOM
@@ -36,5 +36,24 @@ describe('EDSCEchoform component', () => {
     expect(formBody).to.have.lengthOf(1)
     expect(formBody.props().ui.outerHTML).to.eql(ui.outerHTML)
     expect(formBody.props().model.outerHTML).to.eql(model.outerHTML)
+  })
+
+  it('populates prepopulated values into the model', () => {
+    const onFormModelUpdatedSpy = cy.spy().as('onFormModelUpdated')
+    const onFormIsValidUpdated = cy.spy().as('onFormIsValidUpdated')
+
+    const component = mount(<EDSCEchoform
+      form={prepopulatedXml}
+      prepopulateValues={{
+        PREPOP: 'I am prepopulated'
+      }}
+      onFormModelUpdated={onFormModelUpdatedSpy}
+      onFormIsValidUpdated={onFormIsValidUpdated}
+    />)
+
+    const formBody = component.find(FormBody)
+
+    expect(formBody).to.have.lengthOf(1)
+    expect(formBody.props().model.outerHTML).to.contain('<prov:textreference>I am prepopulated</prov:textreference>')
   })
 })
