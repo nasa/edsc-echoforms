@@ -4,6 +4,7 @@ import { InputField } from '../InputField/InputField'
 
 export const TextField = ({
   children,
+  elementHash,
   id,
   label,
   modelRef,
@@ -12,6 +13,7 @@ export const TextField = ({
   value
 }) => (
   <InputField
+    elementHash={elementHash}
     id={id}
     label={label}
     modelRef={modelRef}
@@ -31,6 +33,7 @@ TextField.defaultProps = {
 
 TextField.propTypes = {
   children: PropTypes.shape({}),
+  elementHash: PropTypes.number.isRequired,
   id: PropTypes.string,
   label: PropTypes.string.isRequired,
   modelRef: PropTypes.string.isRequired,

@@ -40,23 +40,5 @@ describe('DateTime component', () => {
     expect(inputField.props()).to.have.property('readOnly', false)
     expect(inputField.props()).to.have.property('required', false)
     expect(inputField.props()).to.have.property('value', '2020-01-01T00:00:00')
-    expect(inputField.props()).to.have.property('error', null)
-  })
-
-  it('renders a validation message', () => {
-    const { enzymeWrapper } = setup({
-      value: '2020-01-01'
-    })
-
-    expect(enzymeWrapper.find(InputField).props().value).to.eq('2020-01-01')
-    expect(enzymeWrapper.find(InputField).props().error).to.eq('Value must be a date/time with format YYYY-MM-DDTHH:MM:SS')
-  })
-
-  it('does not render a validation message for an empty value', () => {
-    const { enzymeWrapper } = setup({
-      value: ''
-    })
-
-    expect(enzymeWrapper.find(InputField).props().error).to.eq(null)
   })
 })

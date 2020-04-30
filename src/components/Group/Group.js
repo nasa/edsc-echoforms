@@ -2,11 +2,11 @@ import React from 'react'
 import PropTypes from 'prop-types'
 
 import { FormElement } from '../FormElement/FormElement'
+import { Help } from '../Help/Help'
 import { useClasses } from '../../hooks/useClasses'
-import { getGroupModel } from '../../util/getGroupModel'
+import { evaluateXpath } from '../../util/evaluateXpath'
 
 import './Group.css'
-import { Help } from '../Help/Help'
 
 export const Group = ({
   children,
@@ -16,15 +16,16 @@ export const Group = ({
   modelRef,
   readOnly
 }) => {
-  const groupModel = getGroupModel(modelRef, model)
+  const { elementClasses } = useClasses()
+  const groupModel = evaluateXpath(modelRef, model)
 
   // react-hooks/rules-of-hooks - shouldn't call hooks inside of conditionals
-  const headerClasses = useClasses('group__header', 'card-header')
+  const headerClasses = elementClasses('group__header', 'card-header')
 
   return (
     <div
       id={id}
-      className={useClasses('group', 'card')}
+      className={elementClasses('group', 'card')}
     >
       {
         label && (
@@ -34,7 +35,7 @@ export const Group = ({
           </div>
         )
       }
-      <div className={useClasses('group__body', 'card-body')}>
+      <div className={elementClasses('group__body', 'card-body')}>
         {
           children && Array.from(children)
             .filter(element => element.tagName !== 'help')

@@ -3,11 +3,10 @@ import PropTypes from 'prop-types'
 import { ElementWrapper } from '../ElementWrapper/ElementWrapper'
 import { useClasses } from '../../hooks/useClasses'
 import { EchoFormsContext } from '../../context/EchoFormsContext'
-import { Help } from '../Help/Help'
 
 export const InputField = ({
   children,
-  error,
+  elementHash,
   id,
   label,
   modelRef,
@@ -18,49 +17,42 @@ export const InputField = ({
   value
 }) => {
   const { onUpdateModel } = useContext(EchoFormsContext)
+  const { elementClasses } = useClasses()
 
   const onChange = (e) => {
     onUpdateModel(modelRef, e.target.value)
   }
 
-  let isInvalid = false
-  let errorMessage = error
-  if (error != null) isInvalid = true
-  if (required && !value) {
-    isInvalid = true
-    errorMessage = 'Required field'
-  }
-
   return (
     <ElementWrapper
+      elementHash={elementHash}
+      formElements={children}
       htmlFor={id}
       label={label}
+      required={required}
+      type={type}
+      value={value}
     >
-      <input
-        className={useClasses('input', 'form-control', isInvalid)}
-        id={id}
-        name={label}
-        placeholder={placeholder}
-        readOnly={readOnly}
-        type={type}
-        value={value}
-        onChange={onChange}
-      />
       {
-        isInvalid && (
-          <div className="invalid-feedback">
-            {errorMessage}
-          </div>
+        ({ isFieldValid }) => (
+          <input
+            className={elementClasses('input', 'form-control', !isFieldValid)}
+            id={id}
+            name={label}
+            placeholder={placeholder}
+            readOnly={readOnly}
+            type={type}
+            value={value}
+            onChange={onChange}
+          />
         )
       }
-      <Help elements={children} />
     </ElementWrapper>
   )
 }
 
 InputField.defaultProps = {
   children: null,
-  error: null,
   id: '',
   placeholder: '',
   type: null,
@@ -69,7 +61,7 @@ InputField.defaultProps = {
 
 InputField.propTypes = {
   children: PropTypes.shape({}),
-  error: PropTypes.string,
+  elementHash: PropTypes.number.isRequired,
   id: PropTypes.string,
   label: PropTypes.string.isRequired,
   modelRef: PropTypes.string.isRequired,

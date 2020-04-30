@@ -7,7 +7,6 @@ import { Range } from '../../../../src/components/Range/Range'
 import { EchoFormsContext } from '../../../../src/context/EchoFormsContext'
 import { rangeXml } from '../../../mocks/FormElement'
 import { parseXml } from '../../../../src/util/parseXml'
-import { Help } from '../../../../src/components/Help/Help'
 
 chai.use(chaiEnzyme())
 configure({ adapter: new Adapter() })
@@ -37,8 +36,9 @@ function setup(overrideProps) {
   }
 
   const onUpdateModel = cy.spy().as('onUpdateModel')
+  const setFormIsValid = cy.spy().as('setFormIsValid')
   const enzymeWrapper = mount(
-    <EchoFormsContext.Provider value={{ onUpdateModel }}>
+    <EchoFormsContext.Provider value={{ onUpdateModel, setFormIsValid }}>
       <Range {...props}>
         {range.children}
       </Range>
@@ -70,8 +70,6 @@ describe('Range component', () => {
     expect(enzymeWrapper.find('.range__min')).to.have.text('0')
     expect(enzymeWrapper.find('.range__max')).to.have.text('10')
     expect(enzymeWrapper.find('.range__value')).to.have.text('5')
-
-    expect(enzymeWrapper.find(Help).props().elements[0].outerHTML).to.eq('<help>Helpful text</help>')
   })
 
   it('onChange calls onUpdateModel', () => {
@@ -84,15 +82,5 @@ describe('Range component', () => {
     expect(onUpdateModel.calledOnce).to.eq(true)
     expect(onUpdateModel.getCall(0).args[0]).to.eq('testfield')
     expect(onUpdateModel.getCall(0).args[1]).to.eq(4)
-  })
-
-  it('renders a required message', () => {
-    const { enzymeWrapper } = setup({
-      required: true,
-      value: undefined
-    })
-
-    expect(enzymeWrapper.find('input').props().className).to.include('is-invalid')
-    expect(enzymeWrapper.find('div.invalid-feedback').text()).to.eq('Required field')
   })
 })

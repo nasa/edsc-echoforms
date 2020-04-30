@@ -15,6 +15,7 @@ const App = () => {
   const [form, setForm] = useState(form1)
   const [tempForm, setTempForm] = useState(form)
   const [serializedModel, setSerializedModel] = useState('')
+  const [formIsValid, setFormIsValid] = useState(true)
 
   const onTextAreaChange = (e) => {
     setTempForm(e.target.value)
@@ -26,6 +27,10 @@ const App = () => {
 
   const onFormModelUpdated = (value) => {
     setSerializedModel(value)
+  }
+
+  const onFormIsValidUpdated = (isValid) => {
+    setFormIsValid(isValid)
   }
 
   const onSelectForm = (e) => {
@@ -72,8 +77,16 @@ const App = () => {
         addBootstrapClasses
         form={form}
         onFormModelUpdated={onFormModelUpdated}
+        onFormIsValidUpdated={onFormIsValidUpdated}
       />
       <h2>Serialized Model</h2>
+      <p>
+        Form Valid:
+        {' '}
+        <strong>
+          {formIsValid.toString()}
+        </strong>
+      </p>
       <pre id="demo-echoforms-model">
         {
           serializedModel.length && (

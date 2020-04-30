@@ -23,16 +23,18 @@ describe('EDSCEchoform component', () => {
     const model = modelResult.iterateNext()
 
     const onFormModelUpdatedSpy = cy.spy().as('onFormModelUpdated')
+    const onFormIsValidUpdated = cy.spy().as('onFormIsValidUpdated')
 
     const component = mount(<EDSCEchoform
       form={readOnlyXml}
       onFormModelUpdated={onFormModelUpdatedSpy}
+      onFormIsValidUpdated={onFormIsValidUpdated}
     />)
 
     const formBody = component.find(FormBody)
 
     expect(formBody).to.have.lengthOf(1)
-    expect(formBody.first().props().ui.outerHTML).to.eql(ui.outerHTML)
-    expect(formBody.first().props().model.outerHTML).to.eql(model.outerHTML)
+    expect(formBody.props().ui.outerHTML).to.eql(ui.outerHTML)
+    expect(formBody.props().model.outerHTML).to.eql(model.outerHTML)
   })
 })
