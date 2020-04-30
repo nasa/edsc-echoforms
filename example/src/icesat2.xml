@@ -1,0 +1,856 @@
+<?xml version="1.0"?>
+<form xmlns="http://echo.nasa.gov/v9/echoforms" xmlns:forms="http://echo.nasa.gov/v9/echoforms" xmlns:xs="http://www.w3.org/2001/XMLSchema" xmlns:xsd="http://www.w3.org/2001/XMLSchema" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" targetNamespace="http://ecs.nasa.gov/options" xsi:schemaLocation="http://echo.nasa.gov/v9/echoforms http://api.echo.nasa.gov/echo/wsdl/EchoForms.xsd">
+  <!--
+ECHO Service/Order form for DataSet "ATLAS/ICESat-2 L3A Land and Vegetation Height V002" (ATL08.2):
+-->
+  <model>
+    <instance>
+      <ecs:request xmlns:ecs="http://ecs.nasa.gov/options">
+        <!--NOTE: elements in caps losely match the ESI API, those in lowercase are helper elements -->
+        <ecs:requestInfo>
+          <ecs:email/>
+        </ecs:requestInfo>
+        <!--Dataset ID will be injected by Reverb-->
+        <ecs:CLIENT>ESI</ecs:CLIENT>
+        <!--First SubsetAgent in the input capabilities XML is used as the default.-->
+        <ecs:SUBAGENT_ID>
+          <ecs:value>ICESAT2</ecs:value>
+        </ecs:SUBAGENT_ID>
+        <!-- hardcode to async for Reverb services -->
+        <ecs:REQUEST_MODE>async</ecs:REQUEST_MODE>
+        <ecs:SPATIAL_MSG>Click the checkbox to enable spatial subsetting.</ecs:SPATIAL_MSG>
+        <ecs:NO_PROJ_MSG>No projection options available with current selection.</ecs:NO_PROJ_MSG>
+        <ecs:ADVANCED_OPT_MSG>No resampling or interpolation options available with current selection.</ecs:ADVANCED_OPT_MSG>
+        <ecs:PROJ_MSG_1>CAUTION: Re-projection parameters may alter results.</ecs:PROJ_MSG_1>
+        <ecs:PROJ_MSG_2>Leave blank to choose default values for each re-projected granule.</ecs:PROJ_MSG_2>
+        <ecs:INTRPL_MSG_1>Used to calculate data of resampled and reprojected pixels.</ecs:INTRPL_MSG_1>
+        <ecs:UTM_MSG_1>NOTE: Zone parameter(s) are calculated automatically when spatial subsetting is active.</ecs:UTM_MSG_1>
+        <ecs:NULL_MSG/>
+        <ecs:ICESAT2-request>
+          <ecs:temporal_subsetting>
+            <!--Not currently populating temporal defaults since no tools support-->
+            <ecs:START/>
+            <ecs:END/>
+          </ecs:temporal_subsetting>
+          <!--Need to populate BBOX in final ESI request as follows: "&BBOX=ullon,lrlat,lrlon,ullat"-->
+          <ecs:BBOX/>
+          <ecs:spatial_subsetting>
+            <ecs:shapefile/>
+            <ecs:boundingbox>
+              <ecs:ullat>90</ecs:ullat>
+              <ecs:ullon>-180</ecs:ullon>
+              <ecs:lrlat>-90</ecs:lrlat>
+              <ecs:lrlon>180</ecs:lrlon>
+            </ecs:boundingbox>
+          </ecs:spatial_subsetting>
+          <ecs:band_subsetting>
+            <ecs:SUBSET_DATA_LAYERS style="tree">
+              <ecs:ATL08>
+                <ecs:dataset>/ATL08</ecs:dataset>
+              </ecs:ATL08>
+            </ecs:SUBSET_DATA_LAYERS>
+          </ecs:band_subsetting>
+          <!--First Format in the input XML is used as the default.-->
+          <ecs:FORMAT>
+            <ecs:value/>
+          </ecs:FORMAT>
+          <!-- OUTPUT_GRID is never used in ESI (but should be enabled for SSW)-->
+          <!-- FILE_IDS must be injected by Reverb -->
+          <!-- FILE_URLS is not used in requests from ECHO, Use FILE_IDS instead -->
+          <ecs:advanced_file_option_flag/>
+          <ecs:advanced_file_options>
+            <ecs:INTERPOLATION>
+              <ecs:value/>
+            </ecs:INTERPOLATION>
+            <!--INCLUDE_META needs to be converted from true/false here to Y/N in the request.-->
+            <ecs:INCLUDE_META>false</ecs:INCLUDE_META>
+          </ecs:advanced_file_options>
+          <ecs:spatial_subset_flag>false</ecs:spatial_subset_flag>
+          <ecs:spatial_subset_shapefile_flag>false</ecs:spatial_subset_shapefile_flag>
+          <ecs:band_subset_flag>true</ecs:band_subset_flag>
+          <ecs:temporal_subset_flag>true</ecs:temporal_subset_flag>
+        </ecs:ICESAT2-request>
+      </ecs:request>
+    </instance>
+    <extension xmlns:pre="http://echo.nasa.gov/v9/echoforms/prepopulate" name="pre:prepopulate">
+      <pre:expressions>
+        <pre:expression ref="//ecs:requestInfo/ecs:dataset_ids" source="ALL_DATASET_IDS_FROM_CART"/>
+        <pre:expression ref="//ecs:requestInfo/ecs:email" source="EMAIL"/>
+        <pre:expression ref="//ecs:requestInfo/ecs:keywords" source="KEYWORDS"/>
+        <pre:expression ref="//ecs:requestInfo/ecs:spatial" source="SPATIAL"/>
+        <pre:expression ref="//ecs:requestInfo/ecs:shp_file" source="SHP_FILE"/>
+        <pre:expression ref="//ecs:ICESAT2-request/ecs:temporal_subsetting/ecs:START" source="TEMPORAL_START"/>
+        <pre:expression ref="//ecs:ICESAT2-request/ecs:temporal_subsetting/ecs:END" source="TEMPORAL_END"/>
+        <pre:expression ref="//ecs:ICESAT2-request/ecs:spatial_subsetting/ecs:boundingbox/ecs:ullon" source="BBOX_WEST"/>
+        <pre:expression ref="//ecs:ICESAT2-request/ecs:spatial_subsetting/ecs:boundingbox/ecs:lrlat" source="BBOX_SOUTH"/>
+        <pre:expression ref="//ecs:ICESAT2-request/ecs:spatial_subsetting/ecs:boundingbox/ecs:lrlon" source="BBOX_EAST"/>
+        <pre:expression ref="//ecs:ICESAT2-request/ecs:spatial_subsetting/ecs:boundingbox/ecs:ullat" source="BBOX_NORTH"/>
+      </pre:expressions>
+    </extension>
+  </model>
+  <ui>
+    <input label="Email Address" ref="ecs:requestInfo/ecs:email" required="false()" type="xsd:string">
+      <constraints>
+        <constraint>
+          <xpath>contains(ecs:requestInfo/ecs:email, '@') and contains(substring-after(ecs:requestInfo/ecs:email, '@'), '.') and string-length(substring-after(ecs:requestInfo/ecs:email, '.'))</xpath>
+          <alert>A valid email address is required.</alert>
+        </constraint>
+      </constraints>
+    </input>
+    <input label="Include Metadata and Processing History" ref="ecs:ICESAT2-request/ecs:advanced_file_options/ecs:INCLUDE_META" relevant="ecs:SUBAGENT_ID/ecs:value='ICESAT2'&#10;         &#9;and //ecs:SUBAGENT_ID/ecs:value!='PQF'&#10;         &#9;and //ecs:SUBAGENT_ID/ecs:value!='GLAS'&#10;         &#9;and //ecs:SUBAGENT_ID/ecs:value!='SMAPL1L2'&#10;         " type="xsd:boolean"/>
+    <group id="ICESAT2-reformatOptions" label="Reformat Output (Optional)" ref="ecs:ICESAT2-request" relevant="ecs:SUBAGENT_ID/ecs:value='ICESAT2'">
+      <select id="ICESAT2-formatselect" label="Output File Format" multiple="false" open="false" ref="ecs:FORMAT" relevant="../ecs:SUBAGENT_ID/ecs:value='ICESAT2'" type="xsd:string" valueElementName="value">
+        <item label="NetCDF4-CF" value="NetCDF4-CF"/>
+        <item label="No Reformatting" value=""/>
+        <item label="NetCDF-3" value="NetCDF-3"/>
+        <item label="Tabular ASCII" value="TABULAR_ASCII"/>
+        <item label="Shapefile" value="Shapefile"/>
+      </select>
+    </group>
+    <group id="ICESAT2-spatial" label="Spatial Subsetting (Optional)" ref="ecs:ICESAT2-request/ecs:spatial_subsetting" relevant="ecs:SUBAGENT_ID/ecs:value='ICESAT2'">
+      <input label="Click to enable" ref="../ecs:spatial_subset_flag" type="xsd:boolean"/>
+      <input id="ICESAT2-use-shapefile" label="Use Shapefile from Search" ref="../ecs:spatial_subset_shapefile_flag" type="xsd:boolean"/>
+      <group id="ICESAT2-NWESBoundingBox" label="" ref="ecs:boundingbox">
+        <input label="North" ref="ecs:ullat" relevant="../../../ecs:SUBAGENT_ID/ecs:value='ICESAT2' and ../../ecs:spatial_subset_flag='true'&#10;            " required="true()" type="xsd:double">
+          <constraints>
+            <constraint>
+              <xpath>(../../../ecs:SUBAGENT_ID/ecs:value!='HEG' and ../../../ecs:SUBAGENT_ID/ecs:value!='SMAPL1L2') or number(ecs:ullat) &gt;= -90</xpath>
+              <alert>North must be greater than -90</alert>
+            </constraint>
+            <constraint>
+              <xpath>(../../../ecs:SUBAGENT_ID/ecs:value!='HEG' and ../../../ecs:SUBAGENT_ID/ecs:value!='SMAPL1L2') or number(ecs:ullat) &lt;= 90</xpath>
+              <alert>North must be less than 90</alert>
+            </constraint>
+            <constraint>
+              <xpath>(../../../ecs:SUBAGENT_ID/ecs:value!='HEG' and ../../../ecs:SUBAGENT_ID/ecs:value!='SMAPL1L2') or number(ecs:ullat)  &gt;=  number(ecs:lrlat)</xpath>
+              <alert>North must be greater than South</alert>
+            </constraint>
+          </constraints>
+        </input>
+        <input label="West" ref="ecs:ullon" relevant="../../../ecs:SUBAGENT_ID/ecs:value='ICESAT2' and ../../ecs:spatial_subset_flag='true'&#10;            " required="true()" type="xsd:double">
+          <constraints>
+            <constraint>
+              <xpath>(../../../ecs:SUBAGENT_ID/ecs:value!='HEG' and ../../../ecs:SUBAGENT_ID/ecs:value!='SMAPL1L2') or number(ecs:ullon) &gt;= -180</xpath>
+              <alert>West must be greater than -180</alert>
+            </constraint>
+            <constraint>
+              <xpath>(../../../ecs:SUBAGENT_ID/ecs:value!='HEG' and ../../../ecs:SUBAGENT_ID/ecs:value!='SMAPL1L2') or number(ecs:ullon) &lt;= 180</xpath>
+              <alert>West must be less than 180</alert>
+            </constraint>
+            <constraint>
+              <xpath>(../../../ecs:SUBAGENT_ID/ecs:value!='HEG' and ../../../ecs:SUBAGENT_ID/ecs:value!='SMAPL1L2') or number(ecs:ullon)  &lt;=  number(ecs:lrlon)</xpath>
+              <alert>West must be less than East</alert>
+            </constraint>
+          </constraints>
+        </input>
+        <input label="East" ref="ecs:lrlon" relevant="../../../ecs:SUBAGENT_ID/ecs:value='ICESAT2' and ../../ecs:spatial_subset_flag='true'&#10;            " required="true()" type="xsd:double">
+          <constraints>
+            <constraint>
+              <xpath>(../../../ecs:SUBAGENT_ID/ecs:value!='HEG' and ../../../ecs:SUBAGENT_ID/ecs:value!='SMAPL1L2') or number(ecs:lrlon) &gt;= -180</xpath>
+              <alert>East must be greater than -180</alert>
+            </constraint>
+            <constraint>
+              <xpath>(../../../ecs:SUBAGENT_ID/ecs:value!='HEG' and ../../../ecs:SUBAGENT_ID/ecs:value!='SMAPL1L2') or number(ecs:lrlon) &lt;= 180</xpath>
+              <alert>East must be less than 180</alert>
+            </constraint>
+            <constraint>
+              <xpath>(../../../ecs:SUBAGENT_ID/ecs:value!='HEG' and ../../../ecs:SUBAGENT_ID/ecs:value!='SMAPL1L2') or number(ecs:lrlon)  &gt;=  number(ecs:ullon)</xpath>
+              <alert>East must be greater than West</alert>
+            </constraint>
+          </constraints>
+        </input>
+        <input label="South" ref="ecs:lrlat" relevant="../../../ecs:SUBAGENT_ID/ecs:value='ICESAT2' and ../../ecs:spatial_subset_flag='true'&#10;            " required="true()" type="xsd:double">
+          <constraints>
+            <constraint>
+              <xpath>(../../../ecs:SUBAGENT_ID/ecs:value!='HEG' and ../../../ecs:SUBAGENT_ID/ecs:value!='SMAPL1L2') or number(ecs:lrlat) &gt;= -90</xpath>
+              <alert>South must be greater than -90</alert>
+            </constraint>
+            <constraint>
+              <xpath>(../../../ecs:SUBAGENT_ID/ecs:value!='HEG' and ../../../ecs:SUBAGENT_ID/ecs:value!='SMAPL1L2') or number(ecs:lrlat) &lt;= 90</xpath>
+              <alert>South must be less than 90</alert>
+            </constraint>
+            <constraint>
+              <xpath>(../../../ecs:SUBAGENT_ID/ecs:value!='HEG' and ../../../ecs:SUBAGENT_ID/ecs:value!='SMAPL1L2') or number(ecs:lrlat)  &lt;=  number(ecs:ullat)</xpath>
+              <alert>South must be less than North</alert>
+            </constraint>
+          </constraints>
+        </input>
+      </group>
+    </group>
+    <group id="ICESAT2-temporalSubsetOptions" label="Temporal Subsetting (Optional)" ref="ecs:ICESAT2-request/ecs:temporal_subsetting" relevant="ecs:SUBAGENT_ID/ecs:value='ICESAT2' and ecs:ICESAT2-request/ecs:temporal_subset_flag='true'">
+      <!--
+TODO: once multi tools are fully supported, make temporal only show up if subsetagent supports temporal
+-->
+      <input label="Start Date" ref="ecs:START" relevant="../../ecs:SUBAGENT_ID/ecs:value='ICESAT2' and ../ecs:temporal_subset_flag='true'" required="false()" type="xsd:dateTime">
+        <constraints>
+          <constraint>
+            <xpath>string-length(ecs:START) = 0 or (number(translate(ecs:START,'-.:T','')) &gt;= number(translate('2000-01-01T00:00:00','-.:T','')))</xpath>
+            <alert>Start date must be greater than 2000-01-01T00:00:00</alert>
+          </constraint>
+        </constraints>
+      </input>
+      <input label="End Date" ref="ecs:END" relevant="../../ecs:SUBAGENT_ID/ecs:value='ICESAT2' and ../ecs:temporal_subset_flag='true'" required="false()" type="xsd:dateTime"/>
+    </group>
+    <group id="ICESAT2-bandSubsetOptions" label="Band Subsetting (Optional)" ref="ecs:ICESAT2-request/ecs:band_subsetting" relevant="ecs:SUBAGENT_ID/ecs:value='ICESAT2' and ecs:ICESAT2-request/ecs:band_subset_flag='true'">
+      <tree cascade="true" id="ICESAT2-bandSubsetOptions" label="Choose Bands" ref="ecs:SUBSET_DATA_LAYERS/ecs:ATL08" relevant="../../ecs:SUBAGENT_ID/ecs:value='ICESAT2' and ../ecs:band_subset_flag='true'" required="false()" separator="/" simplifyOutput="true" type="xsd:string" valueElementName="dataset">
+        <item value="ATL08">
+          <item relevant="not(contains(',Shapefile,',concat(',',../ecs:FORMAT/ecs:value/text(),',')))" value="ds_metrics"/>
+          <item relevant="not(contains(',Shapefile,',concat(',',../ecs:FORMAT/ecs:value/text(),',')))" value="ds_surf_type"/>
+          <item value="ancillary_data">
+            <item relevant="not(contains(',Shapefile,',concat(',',../ecs:FORMAT/ecs:value/text(),',')))" value="atlas_sdp_gps_epoch"/>
+            <item relevant="not(contains(',Shapefile,TABULAR_ASCII,',concat(',',../ecs:FORMAT/ecs:value/text(),',')))" value="control"/>
+            <item relevant="not(contains(',Shapefile,TABULAR_ASCII,',concat(',',../ecs:FORMAT/ecs:value/text(),',')))" value="data_end_utc"/>
+            <item relevant="not(contains(',Shapefile,TABULAR_ASCII,',concat(',',../ecs:FORMAT/ecs:value/text(),',')))" value="data_start_utc"/>
+            <item relevant="not(contains(',Shapefile,',concat(',',../ecs:FORMAT/ecs:value/text(),',')))" value="end_cycle"/>
+            <item relevant="not(contains(',Shapefile,',concat(',',../ecs:FORMAT/ecs:value/text(),',')))" value="end_delta_time"/>
+            <item relevant="not(contains(',Shapefile,',concat(',',../ecs:FORMAT/ecs:value/text(),',')))" value="end_geoseg"/>
+            <item relevant="not(contains(',Shapefile,',concat(',',../ecs:FORMAT/ecs:value/text(),',')))" value="end_gpssow"/>
+            <item relevant="not(contains(',Shapefile,',concat(',',../ecs:FORMAT/ecs:value/text(),',')))" value="end_gpsweek"/>
+            <item relevant="not(contains(',Shapefile,',concat(',',../ecs:FORMAT/ecs:value/text(),',')))" value="end_orbit"/>
+            <item relevant="not(contains(',Shapefile,',concat(',',../ecs:FORMAT/ecs:value/text(),',')))" value="end_region"/>
+            <item relevant="not(contains(',Shapefile,',concat(',',../ecs:FORMAT/ecs:value/text(),',')))" value="end_rgt"/>
+            <item relevant="not(contains(',Shapefile,TABULAR_ASCII,',concat(',',../ecs:FORMAT/ecs:value/text(),',')))" value="granule_end_utc"/>
+            <item relevant="not(contains(',Shapefile,TABULAR_ASCII,',concat(',',../ecs:FORMAT/ecs:value/text(),',')))" value="granule_start_utc"/>
+            <item relevant="not(contains(',Shapefile,',concat(',',../ecs:FORMAT/ecs:value/text(),',')))" value="qa_at_interval"/>
+            <item relevant="not(contains(',Shapefile,TABULAR_ASCII,',concat(',',../ecs:FORMAT/ecs:value/text(),',')))" value="release"/>
+            <item relevant="not(contains(',Shapefile,',concat(',',../ecs:FORMAT/ecs:value/text(),',')))" value="start_cycle"/>
+            <item relevant="not(contains(',Shapefile,',concat(',',../ecs:FORMAT/ecs:value/text(),',')))" value="start_delta_time"/>
+            <item relevant="not(contains(',Shapefile,',concat(',',../ecs:FORMAT/ecs:value/text(),',')))" value="start_geoseg"/>
+            <item relevant="not(contains(',Shapefile,',concat(',',../ecs:FORMAT/ecs:value/text(),',')))" value="start_gpssow"/>
+            <item relevant="not(contains(',Shapefile,',concat(',',../ecs:FORMAT/ecs:value/text(),',')))" value="start_gpsweek"/>
+            <item relevant="not(contains(',Shapefile,',concat(',',../ecs:FORMAT/ecs:value/text(),',')))" value="start_orbit"/>
+            <item relevant="not(contains(',Shapefile,',concat(',',../ecs:FORMAT/ecs:value/text(),',')))" value="start_region"/>
+            <item relevant="not(contains(',Shapefile,',concat(',',../ecs:FORMAT/ecs:value/text(),',')))" value="start_rgt"/>
+            <item relevant="not(contains(',Shapefile,TABULAR_ASCII,',concat(',',../ecs:FORMAT/ecs:value/text(),',')))" value="version"/>
+            <item value="land">
+              <item relevant="not(contains(',Shapefile,',concat(',',../ecs:FORMAT/ecs:value/text(),',')))" value="atl08_region"/>
+              <item relevant="not(contains(',Shapefile,',concat(',',../ecs:FORMAT/ecs:value/text(),',')))" value="bin_size_h"/>
+              <item relevant="not(contains(',Shapefile,',concat(',',../ecs:FORMAT/ecs:value/text(),',')))" value="bin_size_n"/>
+              <item relevant="not(contains(',Shapefile,',concat(',',../ecs:FORMAT/ecs:value/text(),',')))" value="bright_thresh"/>
+              <item relevant="not(contains(',Shapefile,',concat(',',../ecs:FORMAT/ecs:value/text(),',')))" value="ca_class"/>
+              <item relevant="not(contains(',Shapefile,',concat(',',../ecs:FORMAT/ecs:value/text(),',')))" value="can_noise_thresh"/>
+              <item relevant="not(contains(',Shapefile,',concat(',',../ecs:FORMAT/ecs:value/text(),',')))" value="canopy_flag_switch"/>
+              <item relevant="not(contains(',Shapefile,',concat(',',../ecs:FORMAT/ecs:value/text(),',')))" value="canopy_seg"/>
+              <item relevant="not(contains(',Shapefile,',concat(',',../ecs:FORMAT/ecs:value/text(),',')))" value="can_stat_thresh"/>
+              <item relevant="not(contains(',Shapefile,',concat(',',../ecs:FORMAT/ecs:value/text(),',')))" value="class_thresh"/>
+              <item relevant="not(contains(',Shapefile,',concat(',',../ecs:FORMAT/ecs:value/text(),',')))" value="cloud_filter_switch"/>
+              <item relevant="not(contains(',Shapefile,',concat(',',../ecs:FORMAT/ecs:value/text(),',')))" value="del_amp"/>
+              <item relevant="not(contains(',Shapefile,',concat(',',../ecs:FORMAT/ecs:value/text(),',')))" value="del_mu"/>
+              <item relevant="not(contains(',Shapefile,',concat(',',../ecs:FORMAT/ecs:value/text(),',')))" value="del_sigma"/>
+              <item relevant="not(contains(',Shapefile,',concat(',',../ecs:FORMAT/ecs:value/text(),',')))" value="dem_filter_switch"/>
+              <item relevant="not(contains(',Shapefile,',concat(',',../ecs:FORMAT/ecs:value/text(),',')))" value="dem_removal_percent_limit"/>
+              <item relevant="not(contains(',Shapefile,',concat(',',../ecs:FORMAT/ecs:value/text(),',')))" value="dragann_switch"/>
+              <item relevant="not(contains(',Shapefile,',concat(',',../ecs:FORMAT/ecs:value/text(),',')))" value="dseg"/>
+              <item relevant="not(contains(',Shapefile,',concat(',',../ecs:FORMAT/ecs:value/text(),',')))" value="dseg_buf"/>
+              <item relevant="not(contains(',Shapefile,',concat(',',../ecs:FORMAT/ecs:value/text(),',')))" value="fnlgnd_filter_switch"/>
+              <item relevant="not(contains(',Shapefile,',concat(',',../ecs:FORMAT/ecs:value/text(),',')))" value="gnd_stat_thresh"/>
+              <item relevant="not(contains(',Shapefile,',concat(',',../ecs:FORMAT/ecs:value/text(),',')))" value="gthresh_factor"/>
+              <item relevant="not(contains(',Shapefile,',concat(',',../ecs:FORMAT/ecs:value/text(),',')))" value="h_canopy_perc"/>
+              <item relevant="not(contains(',Shapefile,',concat(',',../ecs:FORMAT/ecs:value/text(),',')))" value="iter_gnd"/>
+              <item relevant="not(contains(',Shapefile,',concat(',',../ecs:FORMAT/ecs:value/text(),',')))" value="iter_max"/>
+              <item relevant="not(contains(',Shapefile,',concat(',',../ecs:FORMAT/ecs:value/text(),',')))" value="lseg"/>
+              <item relevant="not(contains(',Shapefile,',concat(',',../ecs:FORMAT/ecs:value/text(),',')))" value="lseg_buf"/>
+              <item relevant="not(contains(',Shapefile,',concat(',',../ecs:FORMAT/ecs:value/text(),',')))" value="lw_filt_bnd"/>
+              <item relevant="not(contains(',Shapefile,',concat(',',../ecs:FORMAT/ecs:value/text(),',')))" value="lw_gnd_bnd"/>
+              <item relevant="not(contains(',Shapefile,',concat(',',../ecs:FORMAT/ecs:value/text(),',')))" value="lw_toc_bnd"/>
+              <item relevant="not(contains(',Shapefile,',concat(',',../ecs:FORMAT/ecs:value/text(),',')))" value="lw_toc_cut"/>
+              <item relevant="not(contains(',Shapefile,',concat(',',../ecs:FORMAT/ecs:value/text(),',')))" value="max_atl03files"/>
+              <item relevant="not(contains(',Shapefile,',concat(',',../ecs:FORMAT/ecs:value/text(),',')))" value="max_atl09files"/>
+              <item relevant="not(contains(',Shapefile,',concat(',',../ecs:FORMAT/ecs:value/text(),',')))" value="max_peaks"/>
+              <item relevant="not(contains(',Shapefile,',concat(',',../ecs:FORMAT/ecs:value/text(),',')))" value="max_try"/>
+              <item relevant="not(contains(',Shapefile,',concat(',',../ecs:FORMAT/ecs:value/text(),',')))" value="min_nphs"/>
+              <item relevant="not(contains(',Shapefile,',concat(',',../ecs:FORMAT/ecs:value/text(),',')))" value="n_dec_mode"/>
+              <item relevant="not(contains(',Shapefile,',concat(',',../ecs:FORMAT/ecs:value/text(),',')))" value="night_thresh"/>
+              <item relevant="not(contains(',Shapefile,',concat(',',../ecs:FORMAT/ecs:value/text(),',')))" value="noise_class"/>
+              <item relevant="not(contains(',Shapefile,',concat(',',../ecs:FORMAT/ecs:value/text(),',')))" value="outlier_filter_switch"/>
+              <item relevant="not(contains(',Shapefile,',concat(',',../ecs:FORMAT/ecs:value/text(),',')))" value="ph_removal_percent_limit"/>
+              <item relevant="not(contains(',Shapefile,',concat(',',../ecs:FORMAT/ecs:value/text(),',')))" value="proc_geoseg"/>
+              <item relevant="not(contains(',Shapefile,',concat(',',../ecs:FORMAT/ecs:value/text(),',')))" value="psf"/>
+              <item relevant="not(contains(',Shapefile,',concat(',',../ecs:FORMAT/ecs:value/text(),',')))" value="p_static"/>
+              <item relevant="not(contains(',Shapefile,',concat(',',../ecs:FORMAT/ecs:value/text(),',')))" value="ref_dem_limit"/>
+              <item relevant="not(contains(',Shapefile,',concat(',',../ecs:FORMAT/ecs:value/text(),',')))" value="ref_finalground_limit"/>
+              <item relevant="not(contains(',Shapefile,',concat(',',../ecs:FORMAT/ecs:value/text(),',')))" value="relief_hbot"/>
+              <item relevant="not(contains(',Shapefile,',concat(',',../ecs:FORMAT/ecs:value/text(),',')))" value="relief_htop"/>
+              <item relevant="not(contains(',Shapefile,',concat(',',../ecs:FORMAT/ecs:value/text(),',')))" value="shp_param"/>
+              <item relevant="not(contains(',Shapefile,',concat(',',../ecs:FORMAT/ecs:value/text(),',')))" value="sig_rsq_search"/>
+              <item relevant="not(contains(',Shapefile,',concat(',',../ecs:FORMAT/ecs:value/text(),',')))" value="sseg"/>
+              <item relevant="not(contains(',Shapefile,',concat(',',../ecs:FORMAT/ecs:value/text(),',')))" value="stat_thresh"/>
+              <item relevant="not(contains(',Shapefile,',concat(',',../ecs:FORMAT/ecs:value/text(),',')))" value="tc_thresh"/>
+              <item relevant="not(contains(',Shapefile,',concat(',',../ecs:FORMAT/ecs:value/text(),',')))" value="te_class"/>
+              <item relevant="not(contains(',Shapefile,',concat(',',../ecs:FORMAT/ecs:value/text(),',')))" value="toc_class"/>
+              <item relevant="not(contains(',Shapefile,',concat(',',../ecs:FORMAT/ecs:value/text(),',')))" value="up_filt_bnd"/>
+              <item relevant="not(contains(',Shapefile,',concat(',',../ecs:FORMAT/ecs:value/text(),',')))" value="up_gnd_bnd"/>
+              <item relevant="not(contains(',Shapefile,',concat(',',../ecs:FORMAT/ecs:value/text(),',')))" value="up_toc_bnd"/>
+              <item relevant="not(contains(',Shapefile,',concat(',',../ecs:FORMAT/ecs:value/text(),',')))" value="up_toc_cut"/>
+            </item>
+          </item>
+          <item value="gt1l">
+            <item value="land_segments">
+              <item value="asr"/>
+              <item value="atlas_pa"/>
+              <item value="beam_azimuth"/>
+              <item value="beam_coelev"/>
+              <item value="brightness_flag"/>
+              <item value="cloud_flag_atm"/>
+              <item value="cloud_fold_flag"/>
+              <item value="delta_time"/>
+              <item value="delta_time_beg"/>
+              <item value="delta_time_end"/>
+              <item value="dem_flag"/>
+              <item value="dem_h"/>
+              <item value="dem_removal_flag"/>
+              <item value="h_dif_ref"/>
+              <item value="last_seg_extend"/>
+              <item value="latitude"/>
+              <item value="layer_flag"/>
+              <item value="longitude"/>
+              <item value="msw_flag"/>
+              <item value="night_flag"/>
+              <item value="n_seg_ph"/>
+              <item value="ph_ndx_beg"/>
+              <item value="ph_removal_flag"/>
+              <item value="psf_flag"/>
+              <item value="rgt"/>
+              <item value="segment_id_beg"/>
+              <item value="segment_id_end"/>
+              <item value="segment_landcover"/>
+              <item value="segment_snowcover"/>
+              <item value="segment_watermask"/>
+              <item value="sigma_across"/>
+              <item value="sigma_along"/>
+              <item value="sigma_atlas_land"/>
+              <item value="sigma_h"/>
+              <item value="sigma_topo"/>
+              <item value="snr"/>
+              <item value="solar_azimuth"/>
+              <item value="solar_elevation"/>
+              <item value="surf_type"/>
+              <item value="terrain_flg"/>
+              <item value="urban_flag"/>
+              <item value="canopy">
+                <item value="canopy_flag"/>
+                <item value="canopy_h_metrics"/>
+                <item value="canopy_h_metrics_abs"/>
+                <item value="canopy_openness"/>
+                <item value="canopy_rh_conf"/>
+                <item value="centroid_height"/>
+                <item value="h_canopy"/>
+                <item value="h_canopy_abs"/>
+                <item value="h_canopy_quad"/>
+                <item value="h_canopy_uncertainty"/>
+                <item value="h_dif_canopy"/>
+                <item value="h_max_canopy"/>
+                <item value="h_max_canopy_abs"/>
+                <item value="h_mean_canopy"/>
+                <item value="h_mean_canopy_abs"/>
+                <item value="h_median_canopy"/>
+                <item value="h_median_canopy_abs"/>
+                <item value="h_min_canopy"/>
+                <item value="h_min_canopy_abs"/>
+                <item value="landsat_flag"/>
+                <item value="landsat_perc"/>
+                <item value="n_ca_photons"/>
+                <item value="n_toc_photons"/>
+                <item value="toc_roughness"/>
+              </item>
+              <item value="terrain">
+                <item value="h_te_best_fit"/>
+                <item value="h_te_interp"/>
+                <item value="h_te_max"/>
+                <item value="h_te_mean"/>
+                <item value="h_te_median"/>
+                <item value="h_te_min"/>
+                <item value="h_te_mode"/>
+                <item value="h_te_skew"/>
+                <item value="h_te_std"/>
+                <item value="h_te_uncertainty"/>
+                <item value="n_te_photons"/>
+                <item value="terrain_slope"/>
+              </item>
+            </item>
+            <item value="signal_photons">
+              <item relevant="not(contains(',Shapefile,',concat(',',../ecs:FORMAT/ecs:value/text(),',')))" value="classed_pc_flag"/>
+              <item relevant="not(contains(',Shapefile,',concat(',',../ecs:FORMAT/ecs:value/text(),',')))" value="classed_pc_indx"/>
+              <item relevant="not(contains(',Shapefile,',concat(',',../ecs:FORMAT/ecs:value/text(),',')))" value="delta_time"/>
+              <item relevant="not(contains(',Shapefile,',concat(',',../ecs:FORMAT/ecs:value/text(),',')))" value="d_flag"/>
+              <item relevant="not(contains(',Shapefile,',concat(',',../ecs:FORMAT/ecs:value/text(),',')))" value="ph_segment_id"/>
+            </item>
+          </item>
+          <item value="gt1r">
+            <item value="land_segments">
+              <item value="asr"/>
+              <item value="atlas_pa"/>
+              <item value="beam_azimuth"/>
+              <item value="beam_coelev"/>
+              <item value="brightness_flag"/>
+              <item value="cloud_flag_atm"/>
+              <item value="cloud_fold_flag"/>
+              <item value="delta_time"/>
+              <item value="delta_time_beg"/>
+              <item value="delta_time_end"/>
+              <item value="dem_flag"/>
+              <item value="dem_h"/>
+              <item value="dem_removal_flag"/>
+              <item value="h_dif_ref"/>
+              <item value="last_seg_extend"/>
+              <item value="latitude"/>
+              <item value="layer_flag"/>
+              <item value="longitude"/>
+              <item value="msw_flag"/>
+              <item value="night_flag"/>
+              <item value="n_seg_ph"/>
+              <item value="ph_ndx_beg"/>
+              <item value="ph_removal_flag"/>
+              <item value="psf_flag"/>
+              <item value="rgt"/>
+              <item value="segment_id_beg"/>
+              <item value="segment_id_end"/>
+              <item value="segment_landcover"/>
+              <item value="segment_snowcover"/>
+              <item value="segment_watermask"/>
+              <item value="sigma_across"/>
+              <item value="sigma_along"/>
+              <item value="sigma_atlas_land"/>
+              <item value="sigma_h"/>
+              <item value="sigma_topo"/>
+              <item value="snr"/>
+              <item value="solar_azimuth"/>
+              <item value="solar_elevation"/>
+              <item value="surf_type"/>
+              <item value="terrain_flg"/>
+              <item value="urban_flag"/>
+              <item value="canopy">
+                <item value="canopy_flag"/>
+                <item value="canopy_h_metrics"/>
+                <item value="canopy_h_metrics_abs"/>
+                <item value="canopy_openness"/>
+                <item value="canopy_rh_conf"/>
+                <item value="centroid_height"/>
+                <item value="h_canopy"/>
+                <item value="h_canopy_abs"/>
+                <item value="h_canopy_quad"/>
+                <item value="h_canopy_uncertainty"/>
+                <item value="h_dif_canopy"/>
+                <item value="h_max_canopy"/>
+                <item value="h_max_canopy_abs"/>
+                <item value="h_mean_canopy"/>
+                <item value="h_mean_canopy_abs"/>
+                <item value="h_median_canopy"/>
+                <item value="h_median_canopy_abs"/>
+                <item value="h_min_canopy"/>
+                <item value="h_min_canopy_abs"/>
+                <item value="landsat_flag"/>
+                <item value="landsat_perc"/>
+                <item value="n_ca_photons"/>
+                <item value="n_toc_photons"/>
+                <item value="toc_roughness"/>
+              </item>
+              <item value="terrain">
+                <item value="h_te_best_fit"/>
+                <item value="h_te_interp"/>
+                <item value="h_te_max"/>
+                <item value="h_te_mean"/>
+                <item value="h_te_median"/>
+                <item value="h_te_min"/>
+                <item value="h_te_mode"/>
+                <item value="h_te_skew"/>
+                <item value="h_te_std"/>
+                <item value="h_te_uncertainty"/>
+                <item value="n_te_photons"/>
+                <item value="terrain_slope"/>
+              </item>
+            </item>
+            <item value="signal_photons">
+              <item relevant="not(contains(',Shapefile,',concat(',',../ecs:FORMAT/ecs:value/text(),',')))" value="classed_pc_flag"/>
+              <item relevant="not(contains(',Shapefile,',concat(',',../ecs:FORMAT/ecs:value/text(),',')))" value="classed_pc_indx"/>
+              <item relevant="not(contains(',Shapefile,',concat(',',../ecs:FORMAT/ecs:value/text(),',')))" value="delta_time"/>
+              <item relevant="not(contains(',Shapefile,',concat(',',../ecs:FORMAT/ecs:value/text(),',')))" value="d_flag"/>
+              <item relevant="not(contains(',Shapefile,',concat(',',../ecs:FORMAT/ecs:value/text(),',')))" value="ph_segment_id"/>
+            </item>
+          </item>
+          <item value="gt2l">
+            <item value="land_segments">
+              <item value="asr"/>
+              <item value="atlas_pa"/>
+              <item value="beam_azimuth"/>
+              <item value="beam_coelev"/>
+              <item value="brightness_flag"/>
+              <item value="cloud_flag_atm"/>
+              <item value="cloud_fold_flag"/>
+              <item value="delta_time"/>
+              <item value="delta_time_beg"/>
+              <item value="delta_time_end"/>
+              <item value="dem_flag"/>
+              <item value="dem_h"/>
+              <item value="dem_removal_flag"/>
+              <item value="h_dif_ref"/>
+              <item value="last_seg_extend"/>
+              <item value="latitude"/>
+              <item value="layer_flag"/>
+              <item value="longitude"/>
+              <item value="msw_flag"/>
+              <item value="night_flag"/>
+              <item value="n_seg_ph"/>
+              <item value="ph_ndx_beg"/>
+              <item value="ph_removal_flag"/>
+              <item value="psf_flag"/>
+              <item value="rgt"/>
+              <item value="segment_id_beg"/>
+              <item value="segment_id_end"/>
+              <item value="segment_landcover"/>
+              <item value="segment_snowcover"/>
+              <item value="segment_watermask"/>
+              <item value="sigma_across"/>
+              <item value="sigma_along"/>
+              <item value="sigma_atlas_land"/>
+              <item value="sigma_h"/>
+              <item value="sigma_topo"/>
+              <item value="snr"/>
+              <item value="solar_azimuth"/>
+              <item value="solar_elevation"/>
+              <item value="surf_type"/>
+              <item value="terrain_flg"/>
+              <item value="urban_flag"/>
+              <item value="canopy">
+                <item value="canopy_flag"/>
+                <item value="canopy_h_metrics"/>
+                <item value="canopy_h_metrics_abs"/>
+                <item value="canopy_openness"/>
+                <item value="canopy_rh_conf"/>
+                <item value="centroid_height"/>
+                <item value="h_canopy"/>
+                <item value="h_canopy_abs"/>
+                <item value="h_canopy_quad"/>
+                <item value="h_canopy_uncertainty"/>
+                <item value="h_dif_canopy"/>
+                <item value="h_max_canopy"/>
+                <item value="h_max_canopy_abs"/>
+                <item value="h_mean_canopy"/>
+                <item value="h_mean_canopy_abs"/>
+                <item value="h_median_canopy"/>
+                <item value="h_median_canopy_abs"/>
+                <item value="h_min_canopy"/>
+                <item value="h_min_canopy_abs"/>
+                <item value="landsat_flag"/>
+                <item value="landsat_perc"/>
+                <item value="n_ca_photons"/>
+                <item value="n_toc_photons"/>
+                <item value="toc_roughness"/>
+              </item>
+              <item value="terrain">
+                <item value="h_te_best_fit"/>
+                <item value="h_te_interp"/>
+                <item value="h_te_max"/>
+                <item value="h_te_mean"/>
+                <item value="h_te_median"/>
+                <item value="h_te_min"/>
+                <item value="h_te_mode"/>
+                <item value="h_te_skew"/>
+                <item value="h_te_std"/>
+                <item value="h_te_uncertainty"/>
+                <item value="n_te_photons"/>
+                <item value="terrain_slope"/>
+              </item>
+            </item>
+            <item value="signal_photons">
+              <item relevant="not(contains(',Shapefile,',concat(',',../ecs:FORMAT/ecs:value/text(),',')))" value="classed_pc_flag"/>
+              <item relevant="not(contains(',Shapefile,',concat(',',../ecs:FORMAT/ecs:value/text(),',')))" value="classed_pc_indx"/>
+              <item relevant="not(contains(',Shapefile,',concat(',',../ecs:FORMAT/ecs:value/text(),',')))" value="delta_time"/>
+              <item relevant="not(contains(',Shapefile,',concat(',',../ecs:FORMAT/ecs:value/text(),',')))" value="d_flag"/>
+              <item relevant="not(contains(',Shapefile,',concat(',',../ecs:FORMAT/ecs:value/text(),',')))" value="ph_segment_id"/>
+            </item>
+          </item>
+          <item value="gt2r">
+            <item value="land_segments">
+              <item value="asr"/>
+              <item value="atlas_pa"/>
+              <item value="beam_azimuth"/>
+              <item value="beam_coelev"/>
+              <item value="brightness_flag"/>
+              <item value="cloud_flag_atm"/>
+              <item value="cloud_fold_flag"/>
+              <item value="delta_time"/>
+              <item value="delta_time_beg"/>
+              <item value="delta_time_end"/>
+              <item value="dem_flag"/>
+              <item value="dem_h"/>
+              <item value="dem_removal_flag"/>
+              <item value="h_dif_ref"/>
+              <item value="last_seg_extend"/>
+              <item value="latitude"/>
+              <item value="layer_flag"/>
+              <item value="longitude"/>
+              <item value="msw_flag"/>
+              <item value="night_flag"/>
+              <item value="n_seg_ph"/>
+              <item value="ph_ndx_beg"/>
+              <item value="ph_removal_flag"/>
+              <item value="psf_flag"/>
+              <item value="rgt"/>
+              <item value="segment_id_beg"/>
+              <item value="segment_id_end"/>
+              <item value="segment_landcover"/>
+              <item value="segment_snowcover"/>
+              <item value="segment_watermask"/>
+              <item value="sigma_across"/>
+              <item value="sigma_along"/>
+              <item value="sigma_atlas_land"/>
+              <item value="sigma_h"/>
+              <item value="sigma_topo"/>
+              <item value="snr"/>
+              <item value="solar_azimuth"/>
+              <item value="solar_elevation"/>
+              <item value="surf_type"/>
+              <item value="terrain_flg"/>
+              <item value="urban_flag"/>
+              <item value="canopy">
+                <item value="canopy_flag"/>
+                <item value="canopy_h_metrics"/>
+                <item value="canopy_h_metrics_abs"/>
+                <item value="canopy_openness"/>
+                <item value="canopy_rh_conf"/>
+                <item value="centroid_height"/>
+                <item value="h_canopy"/>
+                <item value="h_canopy_abs"/>
+                <item value="h_canopy_quad"/>
+                <item value="h_canopy_uncertainty"/>
+                <item value="h_dif_canopy"/>
+                <item value="h_max_canopy"/>
+                <item value="h_max_canopy_abs"/>
+                <item value="h_mean_canopy"/>
+                <item value="h_mean_canopy_abs"/>
+                <item value="h_median_canopy"/>
+                <item value="h_median_canopy_abs"/>
+                <item value="h_min_canopy"/>
+                <item value="h_min_canopy_abs"/>
+                <item value="landsat_flag"/>
+                <item value="landsat_perc"/>
+                <item value="n_ca_photons"/>
+                <item value="n_toc_photons"/>
+                <item value="toc_roughness"/>
+              </item>
+              <item value="terrain">
+                <item value="h_te_best_fit"/>
+                <item value="h_te_interp"/>
+                <item value="h_te_max"/>
+                <item value="h_te_mean"/>
+                <item value="h_te_median"/>
+                <item value="h_te_min"/>
+                <item value="h_te_mode"/>
+                <item value="h_te_skew"/>
+                <item value="h_te_std"/>
+                <item value="h_te_uncertainty"/>
+                <item value="n_te_photons"/>
+                <item value="terrain_slope"/>
+              </item>
+            </item>
+            <item value="signal_photons">
+              <item relevant="not(contains(',Shapefile,',concat(',',../ecs:FORMAT/ecs:value/text(),',')))" value="classed_pc_flag"/>
+              <item relevant="not(contains(',Shapefile,',concat(',',../ecs:FORMAT/ecs:value/text(),',')))" value="classed_pc_indx"/>
+              <item relevant="not(contains(',Shapefile,',concat(',',../ecs:FORMAT/ecs:value/text(),',')))" value="delta_time"/>
+              <item relevant="not(contains(',Shapefile,',concat(',',../ecs:FORMAT/ecs:value/text(),',')))" value="d_flag"/>
+              <item relevant="not(contains(',Shapefile,',concat(',',../ecs:FORMAT/ecs:value/text(),',')))" value="ph_segment_id"/>
+            </item>
+          </item>
+          <item value="gt3l">
+            <item value="land_segments">
+              <item value="asr"/>
+              <item value="atlas_pa"/>
+              <item value="beam_azimuth"/>
+              <item value="beam_coelev"/>
+              <item value="brightness_flag"/>
+              <item value="cloud_flag_atm"/>
+              <item value="cloud_fold_flag"/>
+              <item value="delta_time"/>
+              <item value="delta_time_beg"/>
+              <item value="delta_time_end"/>
+              <item value="dem_flag"/>
+              <item value="dem_h"/>
+              <item value="dem_removal_flag"/>
+              <item value="h_dif_ref"/>
+              <item value="last_seg_extend"/>
+              <item value="latitude"/>
+              <item value="layer_flag"/>
+              <item value="longitude"/>
+              <item value="msw_flag"/>
+              <item value="night_flag"/>
+              <item value="n_seg_ph"/>
+              <item value="ph_ndx_beg"/>
+              <item value="ph_removal_flag"/>
+              <item value="psf_flag"/>
+              <item value="rgt"/>
+              <item value="segment_id_beg"/>
+              <item value="segment_id_end"/>
+              <item value="segment_landcover"/>
+              <item value="segment_snowcover"/>
+              <item value="segment_watermask"/>
+              <item value="sigma_across"/>
+              <item value="sigma_along"/>
+              <item value="sigma_atlas_land"/>
+              <item value="sigma_h"/>
+              <item value="sigma_topo"/>
+              <item value="snr"/>
+              <item value="solar_azimuth"/>
+              <item value="solar_elevation"/>
+              <item value="surf_type"/>
+              <item value="terrain_flg"/>
+              <item value="urban_flag"/>
+              <item value="canopy">
+                <item value="canopy_flag"/>
+                <item value="canopy_h_metrics"/>
+                <item value="canopy_h_metrics_abs"/>
+                <item value="canopy_openness"/>
+                <item value="canopy_rh_conf"/>
+                <item value="centroid_height"/>
+                <item value="h_canopy"/>
+                <item value="h_canopy_abs"/>
+                <item value="h_canopy_quad"/>
+                <item value="h_canopy_uncertainty"/>
+                <item value="h_dif_canopy"/>
+                <item value="h_max_canopy"/>
+                <item value="h_max_canopy_abs"/>
+                <item value="h_mean_canopy"/>
+                <item value="h_mean_canopy_abs"/>
+                <item value="h_median_canopy"/>
+                <item value="h_median_canopy_abs"/>
+                <item value="h_min_canopy"/>
+                <item value="h_min_canopy_abs"/>
+                <item value="landsat_flag"/>
+                <item value="landsat_perc"/>
+                <item value="n_ca_photons"/>
+                <item value="n_toc_photons"/>
+                <item value="toc_roughness"/>
+              </item>
+              <item value="terrain">
+                <item value="h_te_best_fit"/>
+                <item value="h_te_interp"/>
+                <item value="h_te_max"/>
+                <item value="h_te_mean"/>
+                <item value="h_te_median"/>
+                <item value="h_te_min"/>
+                <item value="h_te_mode"/>
+                <item value="h_te_skew"/>
+                <item value="h_te_std"/>
+                <item value="h_te_uncertainty"/>
+                <item value="n_te_photons"/>
+                <item value="terrain_slope"/>
+              </item>
+            </item>
+            <item value="signal_photons">
+              <item relevant="not(contains(',Shapefile,',concat(',',../ecs:FORMAT/ecs:value/text(),',')))" value="classed_pc_flag"/>
+              <item relevant="not(contains(',Shapefile,',concat(',',../ecs:FORMAT/ecs:value/text(),',')))" value="classed_pc_indx"/>
+              <item relevant="not(contains(',Shapefile,',concat(',',../ecs:FORMAT/ecs:value/text(),',')))" value="delta_time"/>
+              <item relevant="not(contains(',Shapefile,',concat(',',../ecs:FORMAT/ecs:value/text(),',')))" value="d_flag"/>
+              <item relevant="not(contains(',Shapefile,',concat(',',../ecs:FORMAT/ecs:value/text(),',')))" value="ph_segment_id"/>
+            </item>
+          </item>
+          <item value="gt3r">
+            <item value="land_segments">
+              <item value="asr"/>
+              <item value="atlas_pa"/>
+              <item value="beam_azimuth"/>
+              <item value="beam_coelev"/>
+              <item value="brightness_flag"/>
+              <item value="cloud_flag_atm"/>
+              <item value="cloud_fold_flag"/>
+              <item value="delta_time"/>
+              <item value="delta_time_beg"/>
+              <item value="delta_time_end"/>
+              <item value="dem_flag"/>
+              <item value="dem_h"/>
+              <item value="dem_removal_flag"/>
+              <item value="h_dif_ref"/>
+              <item value="last_seg_extend"/>
+              <item value="latitude"/>
+              <item value="layer_flag"/>
+              <item value="longitude"/>
+              <item value="msw_flag"/>
+              <item value="night_flag"/>
+              <item value="n_seg_ph"/>
+              <item value="ph_ndx_beg"/>
+              <item value="ph_removal_flag"/>
+              <item value="psf_flag"/>
+              <item value="rgt"/>
+              <item value="segment_id_beg"/>
+              <item value="segment_id_end"/>
+              <item value="segment_landcover"/>
+              <item value="segment_snowcover"/>
+              <item value="segment_watermask"/>
+              <item value="sigma_across"/>
+              <item value="sigma_along"/>
+              <item value="sigma_atlas_land"/>
+              <item value="sigma_h"/>
+              <item value="sigma_topo"/>
+              <item value="snr"/>
+              <item value="solar_azimuth"/>
+              <item value="solar_elevation"/>
+              <item value="surf_type"/>
+              <item value="terrain_flg"/>
+              <item value="urban_flag"/>
+              <item value="canopy">
+                <item value="canopy_flag"/>
+                <item value="canopy_h_metrics"/>
+                <item value="canopy_h_metrics_abs"/>
+                <item value="canopy_openness"/>
+                <item value="canopy_rh_conf"/>
+                <item value="centroid_height"/>
+                <item value="h_canopy"/>
+                <item value="h_canopy_abs"/>
+                <item value="h_canopy_quad"/>
+                <item value="h_canopy_uncertainty"/>
+                <item value="h_dif_canopy"/>
+                <item value="h_max_canopy"/>
+                <item value="h_max_canopy_abs"/>
+                <item value="h_mean_canopy"/>
+                <item value="h_mean_canopy_abs"/>
+                <item value="h_median_canopy"/>
+                <item value="h_median_canopy_abs"/>
+                <item value="h_min_canopy"/>
+                <item value="h_min_canopy_abs"/>
+                <item value="landsat_flag"/>
+                <item value="landsat_perc"/>
+                <item value="n_ca_photons"/>
+                <item value="n_toc_photons"/>
+                <item value="toc_roughness"/>
+              </item>
+              <item value="terrain">
+                <item value="h_te_best_fit"/>
+                <item value="h_te_interp"/>
+                <item value="h_te_max"/>
+                <item value="h_te_mean"/>
+                <item value="h_te_median"/>
+                <item value="h_te_min"/>
+                <item value="h_te_mode"/>
+                <item value="h_te_skew"/>
+                <item value="h_te_std"/>
+                <item value="h_te_uncertainty"/>
+                <item value="n_te_photons"/>
+                <item value="terrain_slope"/>
+              </item>
+            </item>
+            <item value="signal_photons">
+              <item relevant="not(contains(',Shapefile,',concat(',',../ecs:FORMAT/ecs:value/text(),',')))" value="classed_pc_flag"/>
+              <item relevant="not(contains(',Shapefile,',concat(',',../ecs:FORMAT/ecs:value/text(),',')))" value="classed_pc_indx"/>
+              <item relevant="not(contains(',Shapefile,',concat(',',../ecs:FORMAT/ecs:value/text(),',')))" value="delta_time"/>
+              <item relevant="not(contains(',Shapefile,',concat(',',../ecs:FORMAT/ecs:value/text(),',')))" value="d_flag"/>
+              <item relevant="not(contains(',Shapefile,',concat(',',../ecs:FORMAT/ecs:value/text(),',')))" value="ph_segment_id"/>
+            </item>
+          </item>
+          <item value="orbit_info">
+            <item relevant="not(contains(',Shapefile,',concat(',',../ecs:FORMAT/ecs:value/text(),',')))" value="crossing_time"/>
+            <item relevant="not(contains(',Shapefile,',concat(',',../ecs:FORMAT/ecs:value/text(),',')))" value="cycle_number"/>
+            <item relevant="not(contains(',Shapefile,',concat(',',../ecs:FORMAT/ecs:value/text(),',')))" value="lan"/>
+            <item relevant="not(contains(',Shapefile,',concat(',',../ecs:FORMAT/ecs:value/text(),',')))" value="orbit_number"/>
+            <item relevant="not(contains(',Shapefile,',concat(',',../ecs:FORMAT/ecs:value/text(),',')))" value="rgt"/>
+            <item relevant="not(contains(',Shapefile,',concat(',',../ecs:FORMAT/ecs:value/text(),',')))" value="sc_orient"/>
+            <item relevant="not(contains(',Shapefile,',concat(',',../ecs:FORMAT/ecs:value/text(),',')))" value="sc_orient_time"/>
+          </item>
+          <item value="quality_assessment">
+            <item relevant="not(contains(',Shapefile,',concat(',',../ecs:FORMAT/ecs:value/text(),',')))" value="qa_granule_fail_reason"/>
+            <item relevant="not(contains(',Shapefile,',concat(',',../ecs:FORMAT/ecs:value/text(),',')))" value="qa_granule_pass_fail"/>
+          </item>
+        </item>
+      </tree>
+    </group>
+  </ui>
+</form>
