@@ -76,6 +76,9 @@ const App = () => {
       <EDSCEchoform
         addBootstrapClasses
         form={form}
+        prepopulateValues={{
+          PREPOP: 'I am prepopulated'
+        }}
         onFormModelUpdated={onFormModelUpdated}
         onFormIsValidUpdated={onFormIsValidUpdated}
       />
