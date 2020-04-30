@@ -1,4 +1,4 @@
-import React, { useState, useEffect } from 'react'
+import React, { useState, useEffect, useRef } from 'react'
 import PropTypes from 'prop-types'
 
 import { EchoFormsContext } from './context/EchoFormsContext'
@@ -19,7 +19,7 @@ export const EDSCEchoform = ({
   const [formIsValid, setFormIsValid] = useState({})
 
   // relevantFields holds a hash of each field, and tells us if that field is relevant
-  let relevantFields = {}
+  const relevantFields = useRef({})
 
   useEffect(() => {
     const doc = parseXml(form.replace(/>\s+</g, '><').replace(/^\s+|\s+$/g, ''))
@@ -39,16 +39,17 @@ export const EDSCEchoform = ({
   useEffect(() => {
     // This effect compares each field for relevancy and validity.
     // valid is true if all of the relevantFields also have valid values.
-    const valid = Object.keys(relevantFields)
+    const relevantInvalidFields = Object.keys(relevantFields.current)
       .filter((key) => {
-        const value = formIsValid[key]
-        const relevant = relevantFields[key]
+        const fieldValid = formIsValid[key]
+        const fieldRelevant = relevantFields.current[key]
 
         // Return only relevant invalid fields
-        return relevant && value === false
-      }).length === 0 // if no fields are returned, the form is valid
+        return fieldRelevant && fieldValid === false
+      })
 
-    onFormIsValidUpdated(valid)
+    // if there are no relevantInvalidFields, the form is valid
+    onFormIsValidUpdated(!relevantInvalidFields.length)
   }, [formIsValid, relevantFields, onFormIsValidUpdated])
 
   const onUpdateModel = (modelRef, newValue) => {
@@ -59,8 +60,8 @@ export const EDSCEchoform = ({
   }
 
   const setRelevantFields = (newField) => {
-    relevantFields = {
-      ...relevantFields,
+    relevantFields.current = {
+      ...relevantFields.current,
       ...newField
     }
   }
