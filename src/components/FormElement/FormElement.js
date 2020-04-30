@@ -57,12 +57,8 @@ export const FormElement = ({
   if (relevantAttribute) {
     relevant = getNodeValue(relevantAttribute, model)
   }
-  if (relevant) {
-    setRelevantFields({ [elementHash]: true })
-  } else {
-    setRelevantFields({ [elementHash]: false })
-    return null
-  }
+  setRelevantFields({ [elementHash]: relevant })
+  if (!relevant) return null
 
   let readOnly = false
   // The readonly attribute can be inherited from a group element.
