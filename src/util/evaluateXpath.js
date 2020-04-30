@@ -1,13 +1,13 @@
 import { buildXPathResolverFn } from './buildXPathResolverFn'
 
 /**
- * Returns a Group's limited model from the XML model based on the ref xpath
- * @param {String} ref model ref xpath
- * @param {Object} model XML model
+ * Evaluates XPATH against the given model
+ * @param {String} xpath
+ * @param {Object} model
  */
-export const getGroupModel = (ref, model) => {
+export const evaluateXpath = (xpath, model) => {
   const result = model.ownerDocument.evaluate(
-    ref,
+    xpath,
     model,
     buildXPathResolverFn(model.ownerDocument),
     XPathResult.ANY_TYPE,

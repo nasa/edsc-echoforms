@@ -4,10 +4,10 @@ import { ElementWrapper } from '../ElementWrapper/ElementWrapper'
 import { getAttribute } from '../../util/getAttribute'
 import { useClasses } from '../../hooks/useClasses'
 import { EchoFormsContext } from '../../context/EchoFormsContext'
-import { Help } from '../Help/Help'
 
 export const Select = ({
   children,
+  elementHash,
   id,
   label,
   modelRef,
@@ -18,6 +18,7 @@ export const Select = ({
   valueElementName
 }) => {
   const { onUpdateModel } = useContext(EchoFormsContext)
+  const { elementClasses } = useClasses()
 
   const onChange = (e) => {
     // Map e.target.selectedOptions to an array of objects with the value and valueElementName
@@ -30,13 +31,6 @@ export const Select = ({
     })
 
     onUpdateModel(modelRef, values)
-  }
-
-  let isInvalid = false
-  let errorMessage
-  if (required && !value.length) {
-    isInvalid = true
-    errorMessage = 'Required field'
   }
 
   const options = []
@@ -69,28 +63,28 @@ export const Select = ({
 
   return (
     <ElementWrapper
+      elementHash={elementHash}
+      formElements={children}
       htmlFor={id}
       label={label}
+      required={required}
+      value={value}
     >
-      <select
-        className={useClasses('select__input', 'form-control', isInvalid)}
-        id={id}
-        name={label}
-        multiple={multiple}
-        readOnly={readOnly}
-        value={multiple ? value : value[0]}
-        onChange={onChange}
-      >
-        {options}
-      </select>
       {
-        isInvalid && (
-          <div className="invalid-feedback">
-            {errorMessage}
-          </div>
+        ({ isFieldValid }) => (
+          <select
+            className={elementClasses('select__input', 'form-control', !isFieldValid)}
+            id={id}
+            name={label}
+            multiple={multiple}
+            readOnly={readOnly}
+            value={multiple ? value : value[0]}
+            onChange={onChange}
+          >
+            {options}
+          </select>
         )
       }
-      <Help elements={children} />
     </ElementWrapper>
   )
 }
@@ -106,6 +100,7 @@ Select.defaultProps = {
 
 Select.propTypes = {
   children: PropTypes.shape({}),
+  elementHash: PropTypes.number.isRequired,
   id: PropTypes.string,
   label: PropTypes.string,
   modelRef: PropTypes.string.isRequired,

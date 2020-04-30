@@ -75,5 +75,8 @@
     "webpack-cli": "^3.3.10",
     "webpack-dev-server": "^3.10.3",
     "xml-formatter": "^2.0.0"
+  },
+  "dependencies": {
+    "murmurhash": "^1.0.0"
   }
 }

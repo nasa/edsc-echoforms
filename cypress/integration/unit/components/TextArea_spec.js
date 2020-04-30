@@ -7,7 +7,6 @@ import { TextArea } from '../../../../src/components/TextArea/TextArea'
 import { EchoFormsContext } from '../../../../src/context/EchoFormsContext'
 import { parseXml } from '../../../../src/util/parseXml'
 import { textareaXml } from '../../../mocks/FormElement'
-import { Help } from '../../../../src/components/Help/Help'
 
 chai.use(chaiEnzyme())
 configure({ adapter: new Adapter() })
@@ -34,8 +33,9 @@ function setup(overrideProps) {
   }
 
   const onUpdateModel = cy.spy().as('onUpdateModel')
+  const setFormIsValid = cy.spy().as('setFormIsValid')
   const enzymeWrapper = mount(
-    <EchoFormsContext.Provider value={{ onUpdateModel }}>
+    <EchoFormsContext.Provider value={{ onUpdateModel, setFormIsValid }}>
       <TextArea {...props}>
         {textarea.children}
       </TextArea>
@@ -58,8 +58,6 @@ describe('TextArea component', () => {
     expect(enzymeWrapper.find('textarea').props()).to.have.property('name', 'Test Field')
     expect(enzymeWrapper.find('textarea').props()).to.have.property('id', 'testfield')
     expect(enzymeWrapper.find('textarea').props()).to.have.property('readOnly', false)
-
-    expect(enzymeWrapper.find(Help).props().elements[0].outerHTML).to.eq('<help>Helpful text</help>')
   })
 
   it('onChange calls onUpdateModel', () => {
@@ -72,15 +70,5 @@ describe('TextArea component', () => {
     expect(onUpdateModel.calledOnce).to.eq(true)
     expect(onUpdateModel.getCall(0).args[0]).to.eq('testfield')
     expect(onUpdateModel.getCall(0).args[1]).to.eq('New Value')
-  })
-
-  it('renders a required message', () => {
-    const { enzymeWrapper } = setup({
-      required: true,
-      value: ''
-    })
-
-    expect(enzymeWrapper.find('textarea').props().className).to.include('is-invalid')
-    expect(enzymeWrapper.find('div.invalid-feedback').text()).to.eq('Required field')
   })
 })
