@@ -10,6 +10,6 @@ describe('validateDouble', () => {
   })
 
   it('validates a string as false', () => {
-    expect(validateDouble('not a number')).to.eq(false)
+    expect(validateDouble('not a number')).to.eq('Value must be a number')
   })
 })

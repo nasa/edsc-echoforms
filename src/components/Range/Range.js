@@ -6,10 +6,10 @@ import { EchoFormsContext } from '../../context/EchoFormsContext'
 import { useClasses } from '../../hooks/useClasses'
 
 import './Range.css'
-import { Help } from '../Help/Help'
 
 export const Range = ({
   children,
+  elementHash,
   id,
   label,
   max,
@@ -23,6 +23,7 @@ export const Range = ({
   const { onUpdateModel } = useContext(EchoFormsContext)
   const [position, setPosition] = useState('')
   const [newValue, setNewValue] = useState('')
+  const { elementClasses } = useClasses()
 
   useEffect(() => {
     let safeValue = value
@@ -37,54 +38,49 @@ export const Range = ({
     onUpdateModel(modelRef, e.target.value)
   }
 
-  let isInvalid = false
-  let errorMessage
-  if (required && !value) {
-    isInvalid = true
-    errorMessage = 'Required field'
-  }
-
-
   return (
     <ElementWrapper
+      elementHash={elementHash}
+      formElements={children}
+      htmlFor={id}
       label={label}
+      required={required}
+      value={value}
     >
-      <input
-        className={useClasses('range__input', 'form-control-range', isInvalid)}
-        id={id}
-        max={max}
-        min={min}
-        name={label}
-        readOnly={readOnly}
-        step={step}
-        type="range"
-        value={value || min}
-        onChange={onChange}
-      />
-      <div className="range__markers">
-        <span className="range__min">
-          {min}
-        </span>
-        <span className="range__max">
-          {max}
-        </span>
-      </div>
-      <div
-        className="range__value"
-        style={{ left: `calc(${newValue}% + (${position}px))` }}
-      >
-        <span>
-          {value || min}
-        </span>
-      </div>
       {
-        isInvalid && (
-          <div className="invalid-feedback">
-            {errorMessage}
-          </div>
+        ({ isFieldValid }) => (
+          <>
+            <input
+              className={elementClasses('range__input', 'form-control-range', !isFieldValid)}
+              id={id}
+              max={max}
+              min={min}
+              name={label}
+              readOnly={readOnly}
+              step={step}
+              type="range"
+              value={value || min}
+              onChange={onChange}
+            />
+            <div className="range__markers">
+              <span className="range__min">
+                {min}
+              </span>
+              <span className="range__max">
+                {max}
+              </span>
+            </div>
+            <div
+              className="range__value"
+              style={{ left: `calc(${newValue}% + (${position}px))` }}
+            >
+              <span>
+                {value || min}
+              </span>
+            </div>
+          </>
         )
       }
-      <Help elements={children} />
     </ElementWrapper>
   )
 }
@@ -97,6 +93,7 @@ Range.defaultProps = {
 
 Range.propTypes = {
   children: PropTypes.shape({}),
+  elementHash: PropTypes.number.isRequired,
   id: PropTypes.string,
   label: PropTypes.string.isRequired,
   max: PropTypes.string.isRequired,

@@ -5,7 +5,11 @@
     <instance>
       <prov:options xmlns:prov="http://www.example.com/orderoptions">
         <prov:reference>123456</prov:reference>
+        <prov:relevantReference>relevant</prov:relevantReference>
+        <prov:readonlyReference>readonly</prov:readonlyReference>
+        <prov:requiredReference>required</prov:requiredReference>
         <prov:boolReference>true</prov:boolReference>
+        <prov:dateReference>2020-01-01T00:00:00</prov:dateReference>
         <prov:rangeReference>5.0</prov:rangeReference>
         <prov:selectReference>
           <prov:selectValue>123456</prov:selectValue>
@@ -36,13 +40,13 @@
     <input id="boolinput" label="Bool input" a="a" ref="prov:boolReference" type="xs:boolean">
       <help>Helpful text</help>
     </input>
-    <input id="relevantinput" label="Relevant based on checkbox" relevant="prov:boolReference='true'" a="a" ref="prov:reference">
+    <input id="relevantinput" label="Relevant based on checkbox" relevant="prov:boolReference='true'" a="a" ref="prov:relevantReference">
     </input>
-    <input id="readonlyinput" label="Readonly based on checkbox" readonly="prov:boolReference='true'" a="a" ref="prov:reference">
+    <input id="readonlyinput" label="Readonly based on checkbox" readonly="prov:boolReference='true'" a="a" ref="prov:readonlyReference">
     </input>
-    <input id="requiredinput" label="Required based on checkbox" required="prov:boolReference='true'" a="a" ref="prov:reference">
+    <input id="requiredinput" label="Required based on checkbox" required="prov:boolReference='true'" a="a" ref="prov:requiredReference">
     </input>
-    <input id="dateinput" label="Date input" a="a" ref="prov:reference" type="xs:datetime">
+    <input id="dateinput" label="Date input" a="a" ref="prov:dateReference" type="xs:datetime">
       <help>Helpful text</help>
     </input>
     <textarea id="textarea" label="Textarea" a="a" ref="prov:reference">
@@ -63,7 +67,7 @@
       <input id="long" label="Long value" ref="prov:longReference" type="xs:long" />
       <input id="short" label="Short value" ref="prov:shortReference" type="xs:short" />
     </group>
-    <range id="range" label="Range" start="1.0" stop="10.0" step="0.1" type="xs:double" a="a" ref="prov:rangeReference">
+    <range id="range" label="Range" start="1.0" end="10.0" step="0.1" type="xs:double" a="a" ref="prov:rangeReference">
       <help>Helpful text</help>
     </range>
     <select id="select" label="Select" a="a" ref="prov:selectReference" valueElementName="selectValue">

@@ -1,4 +1,4 @@
-import { useContext } from 'react'
+import { useContext, useCallback } from 'react'
 import { EchoFormsContext } from '../context/EchoFormsContext'
 
 /**
@@ -7,15 +7,19 @@ import { EchoFormsContext } from '../context/EchoFormsContext'
  * @param {String} bootstrapClasses Bootstrap classes to add to the element if enabled
  * @param {Boolean} isInvalid Flag to add is-invalid class
  */
-export const useClasses = (defaultClasses, bootstrapClasses, isInvalid) => {
+export const useClasses = () => {
   const { addBootstrapClasses } = useContext(EchoFormsContext)
 
-  let defaultWithError = defaultClasses
-  if (isInvalid) defaultWithError += ' is-invalid'
+  const elementClasses = useCallback((defaultClasses, bootstrapClasses, isInvalid) => {
+    let defaultWithError = defaultClasses
+    if (isInvalid) defaultWithError += ' is-invalid'
 
-  if (addBootstrapClasses) {
-    return [bootstrapClasses, defaultWithError].filter(Boolean).join(' ')
-  }
+    if (addBootstrapClasses) {
+      return [bootstrapClasses, defaultWithError].filter(Boolean).join(' ')
+    }
 
-  return defaultWithError
+    return defaultWithError
+  }, [addBootstrapClasses])
+
+  return { elementClasses }
 }

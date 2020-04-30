@@ -7,7 +7,6 @@ import { InputField } from '../../../../src/components/InputField/InputField'
 import { EchoFormsContext } from '../../../../src/context/EchoFormsContext'
 import { textfieldXml } from '../../../mocks/FormElement'
 import { parseXml } from '../../../../src/util/parseXml'
-import { Help } from '../../../../src/components/Help/Help'
 
 chai.use(chaiEnzyme())
 configure({ adapter: new Adapter() })
@@ -34,8 +33,9 @@ function setup(overrideProps) {
   }
 
   const onUpdateModel = cy.spy().as('onUpdateModel')
+  const setFormIsValid = cy.spy().as('setFormIsValid')
   const enzymeWrapper = mount(
-    <EchoFormsContext.Provider value={{ onUpdateModel }}>
+    <EchoFormsContext.Provider value={{ onUpdateModel, setFormIsValid }}>
       <InputField {...props}>
         {input.children}
       </InputField>
@@ -59,8 +59,6 @@ describe('InputField component', () => {
     expect(enzymeWrapper.find('input').props()).to.have.property('id', 'testfield')
     expect(enzymeWrapper.find('input').props()).to.have.property('readOnly', false)
     expect(enzymeWrapper.find('input').props()).to.have.property('type', null)
-
-    expect(enzymeWrapper.find(Help).props().elements[0].outerHTML).to.eq('<help>Helpful text</help>')
   })
 
   it('renders an input element with a placeholder', () => {
@@ -87,24 +85,5 @@ describe('InputField component', () => {
     expect(onUpdateModel.calledOnce).to.eq(true)
     expect(onUpdateModel.getCall(0).args[0]).to.eq('testfield')
     expect(onUpdateModel.getCall(0).args[1]).to.eq('New Value')
-  })
-
-  it('renders a required message', () => {
-    const { enzymeWrapper } = setup({
-      value: '',
-      required: true
-    })
-
-    expect(enzymeWrapper.find('input').props().className).to.include('is-invalid')
-    expect(enzymeWrapper.find('div.invalid-feedback').text()).to.eq('Required field')
-  })
-
-  it('renders a provided error message', () => {
-    const { enzymeWrapper } = setup({
-      error: 'test error message'
-    })
-
-    expect(enzymeWrapper.find('input').props().className).to.include('is-invalid')
-    expect(enzymeWrapper.find('div.invalid-feedback').text()).to.eq('test error message')
   })
 })

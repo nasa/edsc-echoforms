@@ -1,10 +1,9 @@
 import React from 'react'
 import Adapter from 'enzyme-adapter-react-16'
 import chaiEnzyme from 'chai-enzyme'
-import { configure, shallow } from 'enzyme'
+import { configure, mount } from 'enzyme'
 
 import { Output } from '../../../../src/components/Output/Output'
-import { Help } from '../../../../src/components/Help/Help'
 import { parseXml } from '../../../../src/util/parseXml'
 import { outputXml } from '../../../mocks/FormElement'
 
@@ -28,7 +27,7 @@ function setup(overrideProps) {
     ...overrideProps
   }
 
-  const enzymeWrapper = shallow(
+  const enzymeWrapper = mount(
     <Output {...props}>
       {output.children}
     </Output>
@@ -46,8 +45,6 @@ describe('Output component', () => {
 
     expect(enzymeWrapper.find('p').length).to.eq(1)
     expect(enzymeWrapper.find('p').props()).to.have.property('children', 'test value')
-
-    expect(enzymeWrapper.find(Help).props().elements[0].outerHTML).to.eq('<help>Helpful text</help>')
   })
 
   it('renders an a element when the type is anyURI', () => {

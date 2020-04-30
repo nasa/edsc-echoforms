@@ -2,13 +2,12 @@ import React from 'react'
 import * as ReactDOM from 'react-dom'
 import Adapter from 'enzyme-adapter-react-16'
 import chaiEnzyme from 'chai-enzyme'
-import { configure, mount } from 'enzyme'
+import { configure, shallow } from 'enzyme'
 
 import { FormBody } from '../../../../src/components/FormBody/FormBody'
 import { parseXml } from '../../../../src/util/parseXml'
 import { readOnlyXml } from '../../../mocks/FormElement'
 import { FormElement } from '../../../../src/components/FormElement/FormElement'
-import { EchoFormsContext } from '../../../../src/context/EchoFormsContext'
 
 window.ReactDOM = ReactDOM
 
@@ -23,13 +22,11 @@ describe('FormBody component', () => {
     const modelResult = document.evaluate('//*[local-name()="instance"]/*', doc)
     const model = modelResult.iterateNext()
 
-    const component = mount(
-      <EchoFormsContext.Provider value={{ doc }}>
-        <FormBody
-          model={model}
-          ui={ui}
-        />
-      </EchoFormsContext.Provider>
+    const component = shallow(
+      <FormBody
+        model={model}
+        ui={ui}
+      />
     )
 
     const formElement = component.find(FormElement)

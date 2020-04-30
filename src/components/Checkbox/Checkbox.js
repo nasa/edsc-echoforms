@@ -3,11 +3,11 @@ import PropTypes from 'prop-types'
 import { ElementWrapper } from '../ElementWrapper/ElementWrapper'
 import { useClasses } from '../../hooks/useClasses'
 import { EchoFormsContext } from '../../context/EchoFormsContext'
-import { Help } from '../Help/Help'
 
 export const Checkbox = ({
   checked,
   children,
+  elementHash,
   id,
   label,
   modelRef,
@@ -15,48 +15,42 @@ export const Checkbox = ({
   required
 }) => {
   const { onUpdateModel } = useContext(EchoFormsContext)
+  const { elementClasses } = useClasses()
 
   const onChange = (e) => {
     onUpdateModel(modelRef, e.target.checked)
   }
 
-  let isInvalid = false
-  let errorMessage
-  if (required && !(checked === 'true' || checked === 'false')) {
-    isInvalid = true
-    errorMessage = 'Required field'
-  }
-
   return (
     <ElementWrapper
+      elementHash={elementHash}
+      formElements={children}
       htmlFor={id}
       label={label}
+      required={required}
+      value={checked}
     >
-      <>
-        <input
-          className={useClasses('checkbox__input', 'form-check-input', isInvalid)}
-          checked={checked === 'true'}
-          id={id}
-          name={label}
-          readOnly={readOnly}
-          type="checkbox"
-          onChange={onChange}
-        />
-        <label
-          className={useClasses('checkbox__label', 'form-check-label')}
-          htmlFor={id}
-        >
-          {label}
-        </label>
-        {
-          isInvalid && (
-            <div className="invalid-feedback">
-              {errorMessage}
-            </div>
-          )
-        }
-        <Help elements={children} />
-      </>
+      {
+        ({ isFieldValid }) => (
+          <>
+            <input
+              className={elementClasses('checkbox__input', 'form-check-input', !isFieldValid)}
+              checked={checked === 'true'}
+              id={id}
+              name={label}
+              readOnly={readOnly}
+              type="checkbox"
+              onChange={onChange}
+            />
+            <label
+              className={elementClasses('checkbox__label', 'form-check-label')}
+              htmlFor={id}
+            >
+              {label}
+            </label>
+          </>
+        )
+      }
     </ElementWrapper>
   )
 }
@@ -70,6 +64,7 @@ Checkbox.defaultProps = {
 Checkbox.propTypes = {
   checked: PropTypes.string.isRequired,
   children: PropTypes.shape({}),
+  elementHash: PropTypes.number.isRequired,
   id: PropTypes.string,
   label: PropTypes.string,
   modelRef: PropTypes.string.isRequired,
