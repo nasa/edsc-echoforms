@@ -26,6 +26,10 @@
           <prov:longReference>999999999999</prov:longReference>
           <prov:shortReference>30000</prov:shortReference>
         </prov:numberGroup>
+        <prov:SUBSET_DATA_LAYERS type="tree">
+          <prov:data_layer>/Parent1/Child1-1/Child1-1-2/Child1-1-2-1</prov:data_layer>
+          <prov:data_layer>/Parent4</prov:data_layer>
+        </prov:SUBSET_DATA_LAYERS>
       </prov:options>
     </instance>
     <extension name="pre:prepopulate" xmlns:pre="http://echo.nasa.gov/v9/echoforms/prepopulate">
@@ -92,5 +96,26 @@
       <item label="654321" value="654321" />
       <help>Helpful text</help>
     </select>
+    <tree id="subset_datalayer_tree" label="Choose datasets" ref="prov:SUBSET_DATA_LAYERS" required="false()" type="xsd:string" valueElementName="data_layer" separator="/" simplifyOutput="false" cascade="true">
+      <item value="Parent1">
+        <item label="Child 1-1" value="Child1-1">
+          <help> help text </help>
+          <item label="Child 1-1-1" value="Child1-1-1"/>
+          <item label="Child 1-1-2" value="Child1-1-2">
+            <item label="Child 1-1-2-1" value="Child1-1-2-1"/>
+            <item label="Child 1-1-2-2" value="Child1-1-2-2" relevant="contains('654321',//prov:selectReference)"/>
+          </item>
+        </item>
+        <item label="Child 1-2" value="Child1-2" required="true()"/>
+      </item>
+      <item value="Parent2"/>
+      <item value="Parent3">
+        <item label="Child 3-1" value="Child3-1" required="prov:boolReference='true'"/>
+      </item>
+      <item value="Parent4">
+        <item value="Child4-1" />
+        <item value="Child4-2" />
+      </item>
+    </tree>
   </ui>
 </form>

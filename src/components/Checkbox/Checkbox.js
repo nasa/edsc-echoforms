@@ -10,6 +10,7 @@ export const Checkbox = ({
   elementHash,
   id,
   label,
+  model,
   modelRef,
   readOnly,
   required
@@ -27,6 +28,7 @@ export const Checkbox = ({
       formElements={children}
       htmlFor={id}
       label={label}
+      model={model}
       required={required}
       value={checked}
     >
@@ -67,6 +69,7 @@ Checkbox.propTypes = {
   elementHash: PropTypes.number.isRequired,
   id: PropTypes.string,
   label: PropTypes.string,
+  model: PropTypes.shape({}).isRequired,
   modelRef: PropTypes.string.isRequired,
   readOnly: PropTypes.bool.isRequired,
   required: PropTypes.bool.isRequired

@@ -1,15 +1,13 @@
-import { buildXPathResolverFn } from './buildXPathResolverFn'
-
 /**
  * Evaluates XPATH against the given model
  * @param {String} xpath
  * @param {Object} model
  */
-export const evaluateXpath = (xpath, model) => {
+export const evaluateXpath = (xpath, model, resolver) => {
   const result = model.ownerDocument.evaluate(
     xpath,
     model,
-    buildXPathResolverFn(model.ownerDocument),
+    resolver,
     XPathResult.ANY_TYPE,
     null
   )

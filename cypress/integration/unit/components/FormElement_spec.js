@@ -2,7 +2,7 @@ import React from 'react'
 import * as ReactDOM from 'react-dom'
 import Adapter from 'enzyme-adapter-react-16'
 import chaiEnzyme from 'chai-enzyme'
-import { configure, shallow } from 'enzyme'
+import { configure, mount } from 'enzyme'
 
 import { Checkbox } from '../../../../src/components/Checkbox/Checkbox'
 import { DateTime } from '../../../../src/components/DateTime/DateTime'
@@ -34,8 +34,12 @@ import {
   shortXml,
   textareaXml,
   textfieldXml,
-  urlOutputXml
+  urlOutputXml,
+  treeXml
 } from '../../../mocks/FormElement'
+import { buildXPathResolverFn } from '../../../../src/util/buildXPathResolverFn'
+import { EchoFormsContext } from '../../../../src/context/EchoFormsContext'
+import { Tree } from '../../../../src/components/Tree/Tree'
 
 window.ReactDOM = ReactDOM
 
@@ -49,13 +53,24 @@ function readXml(file) {
   const modelResult = document.evaluate('//*[local-name()="instance"]/*', doc)
   const model = modelResult.iterateNext()
 
-  return { model, ui }
+  const resolver = buildXPathResolverFn(doc)
+
+  return { model, ui, resolver }
 }
 
-function setup(props) {
+function setup(props, resolver) {
   const onUpdateModel = cy.spy().as('onUpdateModel')
-  const enzymeWrapper = shallow(
-    <FormElement {...props} />
+  const enzymeWrapper = mount(
+    <EchoFormsContext.Provider
+      value={{
+        resolver,
+        setRelevantFields: () => {},
+        setFormIsValid: () => {},
+        onUpdateModel: () => {}
+      }}
+    >
+      <FormElement {...props} />
+    </EchoFormsContext.Provider>
   )
 
   return {
@@ -67,338 +82,360 @@ function setup(props) {
 
 describe('FormElement component', () => {
   it('renders a Checkbox component', () => {
-    const { model, ui } = readXml(checkboxXml)
+    const { model, ui, resolver } = readXml(checkboxXml)
 
     const { enzymeWrapper } = setup({
       element: ui.children[0],
       model
-    })
+    }, resolver)
 
     const checkbox = enzymeWrapper.find(Checkbox)
 
     expect(checkbox).to.have.lengthOf(1)
-    expect(checkbox.props()).to.have.property('checked', 'true')
-    expect(checkbox.props()).to.have.property('label', 'Bool input')
-    expect(checkbox.props()).to.have.property('modelRef', 'prov:boolreference')
-    expect(checkbox.props()).to.have.property('readOnly', false)
-    expect(checkbox.props()).to.have.property('required', false)
+    expect(checkbox.props().checked).to.eq('true')
+    expect(checkbox.props().label).to.eq('Bool input')
+    expect(checkbox.props().modelRef).to.eq('prov:boolreference')
+    expect(checkbox.props().readOnly).to.eq(false)
+    expect(checkbox.props().required).to.eq(false)
   })
 
   it('renders a TextField component', () => {
-    const { model, ui } = readXml(textfieldXml)
+    const { model, ui, resolver } = readXml(textfieldXml)
 
     const { enzymeWrapper } = setup({
       element: ui.children[0],
       model
-    })
+    }, resolver)
 
     const textfield = enzymeWrapper.find(TextField)
 
     expect(textfield).to.have.lengthOf(1)
-    expect(textfield.props()).to.have.property('value', 'test value')
-    expect(textfield.props()).to.have.property('label', 'Text input')
-    expect(textfield.props()).to.have.property('modelRef', 'prov:textreference')
-    expect(textfield.props()).to.have.property('readOnly', false)
-    expect(textfield.props()).to.have.property('required', false)
+    expect(textfield.props().value).to.eq('test value')
+    expect(textfield.props().label).to.eq('Text input')
+    expect(textfield.props().modelRef).to.eq('prov:textreference')
+    expect(textfield.props().readOnly).to.eq(false)
+    expect(textfield.props().required).to.eq(false)
   })
 
   it('renders a secret TextField component', () => {
-    const { model, ui } = readXml(secretXml)
+    const { model, ui, resolver } = readXml(secretXml)
 
     const { enzymeWrapper } = setup({
       element: ui.children[0],
       model
-    })
+    }, resolver)
 
     const secretfield = enzymeWrapper.find(SecretField)
 
     expect(secretfield).to.have.lengthOf(1)
-    expect(secretfield.props()).to.have.property('value', 'test value')
-    expect(secretfield.props()).to.have.property('label', 'Secret')
-    expect(secretfield.props()).to.have.property('modelRef', 'prov:textreference')
-    expect(secretfield.props()).to.have.property('readOnly', false)
-    expect(secretfield.props()).to.have.property('required', false)
+    expect(secretfield.props().value).to.eq('test value')
+    expect(secretfield.props().label).to.eq('Secret')
+    expect(secretfield.props().modelRef).to.eq('prov:textreference')
+    expect(secretfield.props().readOnly).to.eq(false)
+    expect(secretfield.props().required).to.eq(false)
   })
 
   it('renders a TextArea component', () => {
-    const { model, ui } = readXml(textareaXml)
+    const { model, ui, resolver } = readXml(textareaXml)
 
     const { enzymeWrapper } = setup({
       element: ui.children[0],
       model
-    })
+    }, resolver)
 
     const textarea = enzymeWrapper.find(TextArea)
 
     expect(textarea).to.have.lengthOf(1)
-    expect(textarea.props()).to.have.property('value', 'test value')
-    expect(textarea.props()).to.have.property('label', 'Textarea input')
-    expect(textarea.props()).to.have.property('modelRef', 'prov:textreference')
-    expect(textarea.props()).to.have.property('readOnly', false)
-    expect(textarea.props()).to.have.property('required', false)
+    expect(textarea.props().value).to.eq('test value')
+    expect(textarea.props().label).to.eq('Textarea input')
+    expect(textarea.props().modelRef).to.eq('prov:textreference')
+    expect(textarea.props().readOnly).to.eq(false)
+    expect(textarea.props().required).to.eq(false)
   })
 
   it('renders a Select component', () => {
-    const { model, ui } = readXml(selectXml)
+    const { model, ui, resolver } = readXml(selectXml)
 
     const { enzymeWrapper } = setup({
       element: ui.children[0],
       model
-    })
+    }, resolver)
 
     const select = enzymeWrapper.find(Select)
 
     expect(select).to.have.lengthOf(1)
     expect(select.props().value).to.eql(['test value 1', 'test value 2'])
-    expect(select.props()).to.have.property('label', 'Select input')
-    expect(select.props()).to.have.property('modelRef', 'prov:selectreference')
-    expect(select.props()).to.have.property('multiple', false)
-    expect(select.props()).to.have.property('readOnly', false)
-    expect(select.props()).to.have.property('required', false)
-    expect(select.props()).to.have.property('valueElementName', 'value')
+    expect(select.props().label).to.eq('Select input')
+    expect(select.props().modelRef).to.eq('prov:selectreference')
+    expect(select.props().multiple).to.eq(false)
+    expect(select.props().readOnly).to.eq(false)
+    expect(select.props().required).to.eq(false)
+    expect(select.props().valueElementName).to.eq('value')
   })
 
   it('renders a multi-Select component', () => {
-    const { model, ui } = readXml(multiSelectXml)
+    const { model, ui, resolver } = readXml(multiSelectXml)
 
     const { enzymeWrapper } = setup({
       element: ui.children[0],
       model
-    })
+    }, resolver)
 
     const select = enzymeWrapper.find(Select)
 
     expect(select).to.have.lengthOf(1)
     expect(select.props().value).to.eql(['value 1', 'value 2'])
-    expect(select.props()).to.have.property('label', 'Select input')
-    expect(select.props()).to.have.property('modelRef', 'prov:selectreference')
-    expect(select.props()).to.have.property('multiple', true)
-    expect(select.props()).to.have.property('readOnly', false)
-    expect(select.props()).to.have.property('required', false)
-    expect(select.props()).to.have.property('valueElementName', 'value')
+    expect(select.props().label).to.eq('Select input')
+    expect(select.props().modelRef).to.eq('prov:selectreference')
+    expect(select.props().multiple).to.eq(true)
+    expect(select.props().readOnly).to.eq(false)
+    expect(select.props().required).to.eq(false)
+    expect(select.props().valueElementName).to.eq('value')
   })
 
   it('renders a Select component for a selectref field', () => {
-    const { model, ui } = readXml(selectrefXml)
+    const { model, ui, resolver } = readXml(selectrefXml)
 
     const { enzymeWrapper } = setup({
       element: ui.children[0],
       model
-    })
+    }, resolver)
 
     const select = enzymeWrapper.find(Select)
 
     expect(select).to.have.lengthOf(1)
     expect(select.props().value).to.eql(['test value 1', 'test value 2'])
-    expect(select.props()).to.have.property('label', 'Select input')
-    expect(select.props()).to.have.property('modelRef', 'prov:selectrefReference')
-    expect(select.props()).to.have.property('multiple', false)
-    expect(select.props()).to.have.property('readOnly', false)
-    expect(select.props()).to.have.property('required', false)
-    expect(select.props()).to.have.property('valueElementName', 'value')
+    expect(select.props().label).to.eq('Select input')
+    expect(select.props().modelRef).to.eq('prov:selectrefReference')
+    expect(select.props().multiple).to.eq(false)
+    expect(select.props().readOnly).to.eq(false)
+    expect(select.props().required).to.eq(false)
+    expect(select.props().valueElementName).to.eq('value')
   })
 
   it('renders a DateTime component', () => {
-    const { model, ui } = readXml(datetimeXml)
+    const { model, ui, resolver } = readXml(datetimeXml)
 
     const { enzymeWrapper } = setup({
       element: ui.children[0],
       model
-    })
+    }, resolver)
 
     const datetime = enzymeWrapper.find(DateTime)
 
     expect(datetime).to.have.lengthOf(1)
-    expect(datetime.props()).to.have.property('value', '2020-01-01T00:00:00')
-    expect(datetime.props()).to.have.property('label', 'DateTime input')
-    expect(datetime.props()).to.have.property('modelRef', 'prov:datetimereference')
-    expect(datetime.props()).to.have.property('readOnly', false)
-    expect(datetime.props()).to.have.property('required', false)
+    expect(datetime.props().value).to.eq('2020-01-01T00:00:00')
+    expect(datetime.props().label).to.eq('DateTime input')
+    expect(datetime.props().modelRef).to.eq('prov:datetimereference')
+    expect(datetime.props().readOnly).to.eq(false)
+    expect(datetime.props().required).to.eq(false)
   })
 
   it('renders an Output component', () => {
-    const { model, ui } = readXml(outputXml)
+    const { model, ui, resolver } = readXml(outputXml)
 
     const { enzymeWrapper } = setup({
       element: ui.children[0],
       model
-    })
+    }, resolver)
 
     const output = enzymeWrapper.find(Output)
 
     expect(output).to.have.lengthOf(1)
-    expect(output.props()).to.have.property('value', 'test value')
-    expect(output.props()).to.have.property('label', 'Output')
+    expect(output.props().value).to.eq('test value')
+    expect(output.props().label).to.eq('Output')
   })
 
   it('renders an URL Output component', () => {
-    const { model, ui } = readXml(urlOutputXml)
+    const { model, ui, resolver } = readXml(urlOutputXml)
 
     const { enzymeWrapper } = setup({
       element: ui.children[0],
       model
-    })
+    }, resolver)
 
     const output = enzymeWrapper.find(Output)
 
     expect(output).to.have.lengthOf(1)
-    expect(output.props()).to.have.property('value', 'test value')
-    expect(output.props()).to.have.property('label', 'URL Output')
+    expect(output.props().value).to.eq('test value')
+    expect(output.props().label).to.eq('URL Output')
   })
 
   it('does not render a field that is not relevant', () => {
-    const { model, ui } = readXml(notRelevantXml)
+    const { model, ui, resolver } = readXml(notRelevantXml)
 
     const { enzymeWrapper } = setup({
       element: ui.children[1],
       model
-    })
+    }, resolver)
 
     expect(enzymeWrapper.find(TextField)).to.have.lengthOf(0)
   })
 
   it('renders a readonly field as readonly', () => {
-    const { model, ui } = readXml(readOnlyXml)
+    const { model, ui, resolver } = readXml(readOnlyXml)
 
     const { enzymeWrapper } = setup({
       element: ui.children[1],
       model
-    })
+    }, resolver)
 
     const textfield = enzymeWrapper.find(TextField)
     expect(textfield).to.have.lengthOf(1)
-    expect(textfield.props()).to.have.property('readOnly', true)
+    expect(textfield.props().readOnly).to.eq(true)
   })
 
   it('renders a Group component', () => {
-    const { model, ui } = readXml(groupXml)
+    const { model, ui, resolver } = readXml(groupXml)
 
     const { enzymeWrapper } = setup({
       element: ui.children[0],
       model
-    })
+    }, resolver)
 
     const group = enzymeWrapper.find(Group)
 
     expect(group).to.have.lengthOf(1)
-    expect(group.props()).to.have.property('id', 'group')
-    expect(group.props()).to.have.property('label', 'Group')
-    expect(group.props()).to.have.property('modelRef', 'prov:groupreference')
-    expect(group.props()).to.have.property('readOnly', false)
+    expect(group.props().id).to.eq('group')
+    expect(group.props().label).to.eq('Group')
+    expect(group.props().modelRef).to.eq('prov:groupreference')
+    expect(group.props().readOnly).to.eq(false)
   })
 
   it('handles parent props', () => {
-    const { model, ui } = readXml(textfieldXml)
+    const { model, ui, resolver } = readXml(textfieldXml)
 
     const { enzymeWrapper } = setup({
       element: ui.children[0],
       model,
       parentReadOnly: true
-    })
+    }, resolver)
 
     const textfield = enzymeWrapper.find(TextField)
 
     expect(textfield).to.have.lengthOf(1)
-    expect(textfield.props()).to.have.property('value', 'test value')
-    expect(textfield.props()).to.have.property('label', 'Text input')
-    expect(textfield.props()).to.have.property('modelRef', 'prov:textreference')
-    expect(textfield.props()).to.have.property('readOnly', true)
+    expect(textfield.props().value).to.eq('test value')
+    expect(textfield.props().label).to.eq('Text input')
+    expect(textfield.props().modelRef).to.eq('prov:textreference')
+    expect(textfield.props().readOnly).to.eq(true)
   })
 
   it('renders a Range component', () => {
-    const { model, ui } = readXml(rangeXml)
+    const { model, ui, resolver } = readXml(rangeXml)
 
     const { enzymeWrapper } = setup({
       element: ui.children[0],
       model
-    })
+    }, resolver)
 
     const range = enzymeWrapper.find(Range)
 
     expect(range).to.have.lengthOf(1)
-    expect(range.props()).to.have.property('value', '5')
-    expect(range.props()).to.have.property('min', '1')
-    expect(range.props()).to.have.property('max', '10')
-    expect(range.props()).to.have.property('step', '1')
-    expect(range.props()).to.have.property('label', 'Range')
-    expect(range.props()).to.have.property('modelRef', 'prov:rangeReference')
-    expect(range.props()).to.have.property('readOnly', false)
-    expect(range.props()).to.have.property('required', false)
+    expect(range.props().value).to.eq('5')
+    expect(range.props().min).to.eq('1')
+    expect(range.props().max).to.eq('10')
+    expect(range.props().step).to.eq('1')
+    expect(range.props().label).to.eq('Range')
+    expect(range.props().modelRef).to.eq('prov:rangeReference')
+    expect(range.props().readOnly).to.eq(false)
+    expect(range.props().required).to.eq(false)
   })
 
   it('renders a Number component for doubles', () => {
-    const { model, ui } = readXml(doubleXml)
+    const { model, ui, resolver } = readXml(doubleXml)
 
     const { enzymeWrapper } = setup({
       element: ui.children[0],
       model
-    })
+    }, resolver)
 
     const datetime = enzymeWrapper.find(Number)
 
     expect(datetime).to.have.lengthOf(1)
-    expect(datetime.props()).to.have.property('value', '42')
-    expect(datetime.props()).to.have.property('label', 'Double input')
-    expect(datetime.props()).to.have.property('modelRef', 'prov:doubleReference')
-    expect(datetime.props()).to.have.property('readOnly', false)
-    expect(datetime.props()).to.have.property('required', false)
-    expect(datetime.props()).to.have.property('type', 'double')
+    expect(datetime.props().value).to.eq('42')
+    expect(datetime.props().label).to.eq('Double input')
+    expect(datetime.props().modelRef).to.eq('prov:doubleReference')
+    expect(datetime.props().readOnly).to.eq(false)
+    expect(datetime.props().required).to.eq(false)
+    expect(datetime.props().type).to.eq('double')
   })
 
   it('renders a Number component for integers', () => {
-    const { model, ui } = readXml(integerXml)
+    const { model, ui, resolver } = readXml(integerXml)
 
     const { enzymeWrapper } = setup({
       element: ui.children[0],
       model
-    })
+    }, resolver)
 
     const datetime = enzymeWrapper.find(Number)
 
     expect(datetime).to.have.lengthOf(1)
-    expect(datetime.props()).to.have.property('value', '42')
-    expect(datetime.props()).to.have.property('label', 'Integer input')
-    expect(datetime.props()).to.have.property('modelRef', 'prov:integerReference')
-    expect(datetime.props()).to.have.property('readOnly', false)
-    expect(datetime.props()).to.have.property('required', false)
-    expect(datetime.props()).to.have.property('type', 'int')
+    expect(datetime.props().value).to.eq('42')
+    expect(datetime.props().label).to.eq('Integer input')
+    expect(datetime.props().modelRef).to.eq('prov:integerReference')
+    expect(datetime.props().readOnly).to.eq(false)
+    expect(datetime.props().required).to.eq(false)
+    expect(datetime.props().type).to.eq('int')
   })
 
   it('renders a Number component for longs', () => {
-    const { model, ui } = readXml(longXml)
+    const { model, ui, resolver } = readXml(longXml)
 
     const { enzymeWrapper } = setup({
       element: ui.children[0],
       model
-    })
+    }, resolver)
 
     const datetime = enzymeWrapper.find(Number)
 
     expect(datetime).to.have.lengthOf(1)
-    expect(datetime.props()).to.have.property('value', '42')
-    expect(datetime.props()).to.have.property('label', 'Long input')
-    expect(datetime.props()).to.have.property('modelRef', 'prov:longReference')
-    expect(datetime.props()).to.have.property('readOnly', false)
-    expect(datetime.props()).to.have.property('required', false)
-    expect(datetime.props()).to.have.property('type', 'long')
+    expect(datetime.props().value).to.eq('42')
+    expect(datetime.props().label).to.eq('Long input')
+    expect(datetime.props().modelRef).to.eq('prov:longReference')
+    expect(datetime.props().readOnly).to.eq(false)
+    expect(datetime.props().required).to.eq(false)
+    expect(datetime.props().type).to.eq('long')
   })
 
   it('renders a Number component for shorts', () => {
-    const { model, ui } = readXml(shortXml)
+    const { model, ui, resolver } = readXml(shortXml)
 
     const { enzymeWrapper } = setup({
       element: ui.children[0],
       model
-    })
+    }, resolver)
 
     const datetime = enzymeWrapper.find(Number)
 
     expect(datetime).to.have.lengthOf(1)
-    expect(datetime.props()).to.have.property('value', '42')
-    expect(datetime.props()).to.have.property('label', 'Short input')
-    expect(datetime.props()).to.have.property('modelRef', 'prov:shortReference')
-    expect(datetime.props()).to.have.property('readOnly', false)
-    expect(datetime.props()).to.have.property('required', false)
-    expect(datetime.props()).to.have.property('type', 'short')
+    expect(datetime.props().value).to.eq('42')
+    expect(datetime.props().label).to.eq('Short input')
+    expect(datetime.props().modelRef).to.eq('prov:shortReference')
+    expect(datetime.props().readOnly).to.eq(false)
+    expect(datetime.props().required).to.eq(false)
+    expect(datetime.props().type).to.eq('short')
+  })
+
+  it('renders a Tree component', () => {
+    const { model, ui, resolver } = readXml(treeXml)
+
+    const { enzymeWrapper } = setup({
+      element: ui.children[0],
+      model
+    }, resolver)
+
+    const tree = enzymeWrapper.find(Tree)
+
+    expect(tree).to.have.lengthOf(1)
+    expect(tree.props().value).to.eql(['/Parent1'])
+    expect(tree.props().cascade).to.eq(true)
+    expect(tree.props().separator).to.eq('/')
+    expect(tree.props().maxParameters).to.eq(null)
+    expect(tree.props().valueElementName).to.eq('data_layer')
+    expect(tree.props().label).to.eq('Choose datasets')
+    expect(tree.props().modelRef).to.eq('prov:treeReference')
+    expect(tree.props().readOnly).to.eq(false)
+    expect(tree.props().required).to.eq(false)
   })
 })

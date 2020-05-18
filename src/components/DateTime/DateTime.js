@@ -8,6 +8,7 @@ export const DateTime = ({
   elementHash,
   id,
   label,
+  model,
   modelRef,
   readOnly,
   required,
@@ -17,6 +18,7 @@ export const DateTime = ({
     elementHash={elementHash}
     id={id}
     label={label}
+    model={model}
     modelRef={modelRef}
     placeholder="YYYY-MM-DDTHH:MM:SS"
     readOnly={readOnly}
@@ -39,6 +41,7 @@ DateTime.propTypes = {
   elementHash: PropTypes.number.isRequired,
   id: PropTypes.string,
   label: PropTypes.string.isRequired,
+  model: PropTypes.shape({}).isRequired,
   modelRef: PropTypes.string.isRequired,
   readOnly: PropTypes.bool.isRequired,
   required: PropTypes.bool.isRequired,
