@@ -1,4 +1,4 @@
-import React, { useContext } from 'react'
+import React, { useContext, useRef } from 'react'
 import PropTypes from 'prop-types'
 import murmurhash from 'murmurhash'
 
@@ -15,6 +15,7 @@ import { SecretField } from '../SecretField/SecretField'
 import { Select } from '../Select/Select'
 import { TextArea } from '../TextArea/TextArea'
 import { TextField } from '../TextField/TextField'
+import { Tree } from '../Tree/Tree'
 import { EchoFormsContext } from '../../context/EchoFormsContext'
 
 /**
@@ -42,7 +43,18 @@ export const FormElement = ({
   parentReadOnly,
   model
 }) => {
-  const { setRelevantFields } = useContext(EchoFormsContext)
+  const { resolver, setRelevantFields } = useContext(EchoFormsContext)
+
+  // These calls to getAttribute don't need to happen on every render because they are string attributes that will never change.
+  // useRef allows us to keep the value for the life of the component with only fetching them from the XML once
+  const relevantAttribute = useRef(undefined)
+  const readOnlyAttribute = useRef(undefined)
+  const requiredAttribute = useRef(undefined)
+  const modelRef = useRef(undefined)
+  const label = useRef(undefined)
+  const id = useRef(undefined)
+  const type = useRef(undefined)
+
   const elementHash = murmurhash.v3(element.outerHTML, 'seed')
   const {
     attributes,
@@ -52,10 +64,12 @@ export const FormElement = ({
 
   if (!attributes) return null
 
+  if (relevantAttribute.current === undefined) {
+    relevantAttribute.current = getAttribute(attributes, 'relevant')
+  }
   let relevant = true
-  const relevantAttribute = getAttribute(attributes, 'relevant')
-  if (relevantAttribute) {
-    relevant = getNodeValue(relevantAttribute, model)
+  if (relevantAttribute.current) {
+    relevant = getNodeValue(relevantAttribute.current, model, resolver)
   }
   setRelevantFields({ [elementHash]: relevant })
   if (!relevant) return null
@@ -66,64 +80,76 @@ export const FormElement = ({
   if (parentReadOnly) {
     readOnly = parentReadOnly
   } else {
-    const readOnlyAttribute = getAttribute(attributes, 'readonly')
-    if (readOnlyAttribute) {
-      readOnly = getNodeValue(readOnlyAttribute, model)
+    if (readOnlyAttribute.current === undefined) {
+      readOnlyAttribute.current = getAttribute(attributes, 'readonly')
+    }
+    if (readOnlyAttribute.current) {
+      readOnly = getNodeValue(readOnlyAttribute.current, model, resolver)
     }
   }
 
+  if (requiredAttribute.current === undefined) {
+    requiredAttribute.current = getAttribute(attributes, 'required')
+  }
   let required = false
-  const requiredAttribute = getAttribute(attributes, 'required')
-  if (requiredAttribute) {
-    required = getNodeValue(requiredAttribute, model)
+  if (requiredAttribute.current) {
+    required = getNodeValue(requiredAttribute.current, model, resolver)
   }
 
-  const modelRef = getAttribute(attributes, 'ref')
-
-  const label = getAttribute(attributes, 'label')
-  const id = getAttribute(attributes, 'id')
+  if (modelRef.current === undefined) {
+    modelRef.current = getAttribute(attributes, 'ref')
+  }
+  if (label.current === undefined) {
+    label.current = getAttribute(attributes, 'label')
+  }
+  if (id.current === undefined) {
+    id.current = getAttribute(attributes, 'id')
+  }
 
   let value
-  if (modelRef) {
-    value = getNodeValue(modelRef, model)
+  if (modelRef.current) {
+    value = getNodeValue(modelRef.current, model, resolver, tagName === 'tree')
   } else {
     value = getAttribute(attributes, 'value')
   }
 
   const defaultProps = {
     elementHash,
-    id,
-    label,
-    modelRef,
+    id: id.current,
+    label: label.current,
+    model,
+    modelRef: modelRef.current,
     readOnly,
     required,
     value
   }
 
-  const type = derivedType(getAttribute(attributes, 'type'))
+  if (type.current === undefined) {
+    type.current = derivedType(getAttribute(attributes, 'type'))
+  }
 
   if (tagName === 'input') {
-    if (type === 'boolean') {
+    if (type.current === 'boolean') {
       return (
         <Checkbox checked={value} {...defaultProps}>
           {children}
         </Checkbox>
       )
     }
-    if (type === 'datetime') {
+    if (type.current === 'datetime') {
       return (
         <DateTime {...defaultProps}>
           {children}
         </DateTime>
       )
     }
-    if (type === 'double'
-      || type === 'long'
-      || type === 'int'
-      || type === 'short'
+    if (type.current === 'double'
+      || type.current === 'long'
+      || type.current === 'int'
+      || type.current === 'short'
     ) {
       return (
-        <Number {...defaultProps} type={type}>
+        <Number {...defaultProps} type={type.current}>
           {children}
         </Number>
       )
@@ -187,16 +213,37 @@ export const FormElement = ({
   }
   if (tagName === 'output') {
     return (
-      <Output {...defaultProps} type={type}>
+      <Output {...defaultProps} type={type.current}>
         {children}
       </Output>
     )
   }
   if (tagName === 'group') {
     return (
-      <Group {...defaultProps} model={model}>
+      <Group {...defaultProps}>
         {children}
       </Group>
+    )
+  }
+  if (tagName === 'tree') {
+    const cascade = getAttribute(attributes, 'cascade') || 'true'
+    const maxParameters = getAttribute(attributes, 'maxParameters')
+    const separator = getAttribute(attributes, 'separator')
+    // const simplifyOutput = getAttribute(attributes, 'simplifyOutput') || 'true'
+    const valueElementName = getAttribute(attributes, 'valueElementName') || 'value'
+
+    return (
+      <Tree
+        {...defaultProps}
+        element={element}
+        cascade={cascade === 'true'}
+        maxParameters={maxParameters}
+        separator={separator}
+        // simplifyOutput={simplifyOutput === 'true'}
+        valueElementName={valueElementName}
+      >
+        {children}
+      </Tree>
     )
   }
 

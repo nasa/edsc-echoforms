@@ -1,6 +1,7 @@
 import { getNodeValue } from '../../../../src/util/getNodeValue'
 import { parseXml } from '../../../../src/util/parseXml'
 import { selectXml, textareaXml } from '../../../mocks/FormElement'
+import { buildXPathResolverFn } from '../../../../src/util/buildXPathResolverFn'
 
 describe('getNodeValue', () => {
   it('returns the value from the model', () => {
@@ -8,8 +9,9 @@ describe('getNodeValue', () => {
     const doc = parseXml(textareaXml)
     const modelResult = document.evaluate('//*[local-name()="instance"]/*', doc)
     const model = modelResult.iterateNext()
+    const resolver = buildXPathResolverFn(doc)
 
-    expect(getNodeValue(ref, model)).to.eq('test value')
+    expect(getNodeValue(ref, model, resolver)).to.eq('test value')
   })
 
   it('returns an array value from the model', () => {
@@ -17,8 +19,9 @@ describe('getNodeValue', () => {
     const doc = parseXml(selectXml)
     const modelResult = document.evaluate('//*[local-name()="instance"]/*', doc)
     const model = modelResult.iterateNext()
+    const resolver = buildXPathResolverFn(doc)
 
-    expect(getNodeValue(ref, model)).to.eql([
+    expect(getNodeValue(ref, model, resolver)).to.eql([
       'test value 1',
       'test value 2'
     ])

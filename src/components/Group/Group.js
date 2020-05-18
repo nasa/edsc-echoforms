@@ -1,10 +1,11 @@
-import React from 'react'
+import React, { useContext } from 'react'
 import PropTypes from 'prop-types'
 
 import { FormElement } from '../FormElement/FormElement'
 import { Help } from '../Help/Help'
 import { useClasses } from '../../hooks/useClasses'
 import { evaluateXpath } from '../../util/evaluateXpath'
+import { EchoFormsContext } from '../../context/EchoFormsContext'
 
 import './Group.css'
 
@@ -16,8 +17,9 @@ export const Group = ({
   modelRef,
   readOnly
 }) => {
+  const { resolver } = useContext(EchoFormsContext)
   const { elementClasses } = useClasses()
-  const groupModel = evaluateXpath(modelRef, model)
+  const groupModel = evaluateXpath(modelRef, model, resolver)
 
   // react-hooks/rules-of-hooks - shouldn't call hooks inside of conditionals
   const headerClasses = elementClasses('group__header', 'card-header')

@@ -7,6 +7,7 @@ export const Output = ({
   elementHash,
   id,
   label,
+  model,
   type,
   value
 }) => (
@@ -15,6 +16,7 @@ export const Output = ({
     formElements={children}
     htmlFor={id}
     label={label}
+    model={model}
   >
     {
       () => (
@@ -47,6 +49,7 @@ Output.propTypes = {
   elementHash: PropTypes.number.isRequired,
   id: PropTypes.string,
   label: PropTypes.string.isRequired,
+  model: PropTypes.shape({}).isRequired,
   type: PropTypes.string,
   value: PropTypes.string
 }

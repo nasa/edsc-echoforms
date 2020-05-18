@@ -6,6 +6,7 @@ import { createContext } from 'react'
 export const EchoFormsContext = createContext({
   addBootstrapClasses: false,
   model: {},
+  resolver: () => {},
   onUpdateModel: () => {},
   setFormIsValid: () => {},
   setRelevantFields: () => {}

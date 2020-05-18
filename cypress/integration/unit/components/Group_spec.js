@@ -1,13 +1,15 @@
 import React from 'react'
 import Adapter from 'enzyme-adapter-react-16'
 import chaiEnzyme from 'chai-enzyme'
-import { configure, shallow } from 'enzyme'
+import { configure, mount } from 'enzyme'
 
 import { Group } from '../../../../src/components/Group/Group'
 import { FormElement } from '../../../../src/components/FormElement/FormElement'
 import { parseXml } from '../../../../src/util/parseXml'
 import { groupXml } from '../../../mocks/FormElement'
 import { Help } from '../../../../src/components/Help/Help'
+import { EchoFormsContext } from '../../../../src/context/EchoFormsContext'
+import { buildXPathResolverFn } from '../../../../src/util/buildXPathResolverFn'
 
 chai.use(chaiEnzyme())
 configure({ adapter: new Adapter() })
@@ -19,11 +21,13 @@ function readXml(file) {
   const modelResult = document.evaluate('//*[local-name()="instance"]/*', doc)
   const model = modelResult.iterateNext()
 
-  return { model, group }
+  const resolver = buildXPathResolverFn(doc)
+
+  return { model, group, resolver }
 }
 
 function setup(overrideProps) {
-  const { model, group } = readXml(groupXml)
+  const { model, group, resolver } = readXml(groupXml)
   const props = {
     id: 'testgroup',
     label: 'Test Group',
@@ -33,10 +37,19 @@ function setup(overrideProps) {
     ...overrideProps
   }
 
-  const enzymeWrapper = shallow(
-    <Group {...props}>
-      {group.children}
-    </Group>
+  const enzymeWrapper = mount(
+    <EchoFormsContext.Provider
+      value={{
+        resolver,
+        setRelevantFields: () => {},
+        setFormIsValid: () => {},
+        onUpdateModel: () => {}
+      }}
+    >
+      <Group {...props}>
+        {group.children}
+      </Group>
+    </EchoFormsContext.Provider>
   )
 
   return {
