@@ -10,6 +10,7 @@ export const Select = ({
   elementHash,
   id,
   label,
+  model,
   modelRef,
   multiple,
   readOnly,
@@ -67,6 +68,7 @@ export const Select = ({
       formElements={children}
       htmlFor={id}
       label={label}
+      model={model}
       required={required}
       value={value}
     >
@@ -103,6 +105,7 @@ Select.propTypes = {
   elementHash: PropTypes.number.isRequired,
   id: PropTypes.string,
   label: PropTypes.string,
+  model: PropTypes.shape({}).isRequired,
   modelRef: PropTypes.string.isRequired,
   multiple: PropTypes.bool,
   readOnly: PropTypes.bool.isRequired,

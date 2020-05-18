@@ -1,20 +1,19 @@
 import React, { useContext } from 'react'
 import PropTypes from 'prop-types'
 
-import { EchoFormsContext } from '../../context/EchoFormsContext'
-
 import { evaluateXpath } from '../../util/evaluateXpath'
 import { typeValidation } from '../../util/validations/typeValidation'
+import { EchoFormsContext } from '../../context/EchoFormsContext'
 
 export const Constraint = ({
   elements,
+  model,
   required,
   type,
   value,
   setFieldIsValid
 }) => {
-  const { model } = useContext(EchoFormsContext)
-
+  const { resolver } = useContext(EchoFormsContext)
   if (!elements) return null
 
   const errors = []
@@ -33,7 +32,7 @@ export const Constraint = ({
           const pattern = Array.from(constraintElements).filter(element => element.tagName === 'pattern')[0]
           const alert = Array.from(constraintElements).filter(element => element.tagName === 'alert')[0]
 
-          if (xpath && !evaluateXpath(xpath.textContent, model)) {
+          if (xpath && !evaluateXpath(xpath.textContent, model, resolver)) {
             errors.push(alert.textContent)
           }
           if (pattern) {
@@ -69,6 +68,7 @@ Constraint.defaultProps = {
 
 Constraint.propTypes = {
   elements: PropTypes.shape({}),
+  model: PropTypes.shape({}).isRequired,
   required: PropTypes.bool.isRequired,
   type: PropTypes.string,
   value: PropTypes.oneOfType([
