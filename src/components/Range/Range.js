@@ -14,6 +14,7 @@ export const Range = ({
   label,
   max,
   min,
+  model,
   modelRef,
   readOnly,
   required,
@@ -44,6 +45,7 @@ export const Range = ({
       formElements={children}
       htmlFor={id}
       label={label}
+      model={model}
       required={required}
       value={value}
     >
@@ -98,6 +100,7 @@ Range.propTypes = {
   label: PropTypes.string.isRequired,
   max: PropTypes.string.isRequired,
   min: PropTypes.string.isRequired,
+  model: PropTypes.shape({}).isRequired,
   modelRef: PropTypes.string.isRequired,
   readOnly: PropTypes.bool.isRequired,
   required: PropTypes.bool.isRequired,

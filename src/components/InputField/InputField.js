@@ -9,6 +9,7 @@ export const InputField = ({
   elementHash,
   id,
   label,
+  model,
   modelRef,
   placeholder,
   readOnly,
@@ -29,6 +30,7 @@ export const InputField = ({
       formElements={children}
       htmlFor={id}
       label={label}
+      model={model}
       required={required}
       type={type}
       value={value}
@@ -64,6 +66,7 @@ InputField.propTypes = {
   elementHash: PropTypes.number.isRequired,
   id: PropTypes.string,
   label: PropTypes.string.isRequired,
+  model: PropTypes.shape({}).isRequired,
   modelRef: PropTypes.string.isRequired,
   placeholder: PropTypes.string,
   readOnly: PropTypes.bool.isRequired,

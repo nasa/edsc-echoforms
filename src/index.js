@@ -19,6 +19,11 @@ export const EDSCEchoform = ({
   // formIsValid holds a hash of each field, and tells us if that field is valid
   const [formIsValid, setFormIsValid] = useState({})
 
+  // formKey is a timestamp. Updating this value will force a rerender of the component because it is used as a key prop in FormBody
+  const [formKey, setFormKey] = useState(Date.now())
+
+  const resolver = useRef(undefined)
+
   // relevantFields holds a hash of each field, and tells us if that field is relevant
   const relevantFields = useRef({})
 
@@ -41,16 +46,20 @@ export const EDSCEchoform = ({
 
   useEffect(() => {
     const doc = parseXml(form.replace(/>\s+</g, '><').replace(/^\s+|\s+$/g, ''))
-    const modelResult = doc.evaluate('//*[local-name()="instance"]/*', doc, buildXPathResolverFn(doc), XPathResult.ANY_TYPE, null)
+
+    resolver.current = buildXPathResolverFn(doc)
+
+    const modelResult = doc.evaluate('//*[local-name()="instance"]/*', doc, resolver.current, XPathResult.ANY_TYPE, null)
     const initialModel = modelResult.iterateNext()
 
-    const extensionResult = doc.evaluate('//*[local-name()="extension" and @name="pre:prepopulate"]/*', doc, buildXPathResolverFn(doc), XPathResult.ANY_TYPE, null)
+    const extensionResult = doc.evaluate('//*[local-name()="extension" and @name="pre:prepopulate"]/*', doc, resolver.current, XPathResult.ANY_TYPE, null)
     const extension = extensionResult.iterateNext()
     const extendedModel = handlePrepopulateExtension(extension, initialModel)
 
-    const uiResult = doc.evaluate('//*[local-name()="ui"]', doc, buildXPathResolverFn(doc), XPathResult.ANY_TYPE, null)
+    const uiResult = doc.evaluate('//*[local-name()="ui"]', doc, resolver.current, XPathResult.ANY_TYPE, null)
     const ui = uiResult.iterateNext()
 
+    setFormKey(Date.now())
     setFormIsValid({})
     setModel(extendedModel)
     setUi(ui)
@@ -93,6 +102,7 @@ export const EDSCEchoform = ({
       value={{
         addBootstrapClasses,
         model,
+        resolver: resolver.current,
         onUpdateModel,
         setFormIsValid,
         setRelevantFields
@@ -100,6 +110,7 @@ export const EDSCEchoform = ({
     >
       <form>
         <FormBody
+          key={formKey}
           ui={ui}
           model={model}
         />

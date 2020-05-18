@@ -1,6 +1,7 @@
 import { evaluateXpath } from '../../../../src/util/evaluateXpath'
 import { parseXml } from '../../../../src/util/parseXml'
 import { groupXml, readOnlyXml } from '../../../mocks/FormElement'
+import { buildXPathResolverFn } from '../../../../src/util/buildXPathResolverFn'
 
 describe('evaluateXpath', () => {
   it('returns an element result from xpath', () => {
@@ -8,8 +9,9 @@ describe('evaluateXpath', () => {
     const doc = parseXml(groupXml)
     const modelResult = document.evaluate('//*[local-name()="instance"]/*', doc)
     const model = modelResult.iterateNext()
+    const resolver = buildXPathResolverFn(doc)
 
-    expect(evaluateXpath(ref, model).outerHTML).to.eq('<prov:groupreference xmlns:prov="http://www.example.com/orderoptions"><prov:textreference>test value</prov:textreference></prov:groupreference>')
+    expect(evaluateXpath(ref, model, resolver).outerHTML).to.eq('<prov:groupreference xmlns:prov="http://www.example.com/orderoptions"><prov:textreference>test value</prov:textreference></prov:groupreference>')
   })
 
   it('returns a boolean result from xpath', () => {
@@ -17,7 +19,8 @@ describe('evaluateXpath', () => {
     const doc = parseXml(readOnlyXml)
     const modelResult = document.evaluate('//*[local-name()="instance"]/*', doc)
     const model = modelResult.iterateNext()
+    const resolver = buildXPathResolverFn(doc)
 
-    expect(evaluateXpath(ref, model)).to.eq(true)
+    expect(evaluateXpath(ref, model, resolver)).to.eq(true)
   })
 })

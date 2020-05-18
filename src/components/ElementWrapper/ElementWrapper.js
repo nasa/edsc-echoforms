@@ -11,6 +11,7 @@ export const ElementWrapper = ({
   formElements,
   htmlFor,
   label,
+  model,
   required,
   type,
   value
@@ -36,6 +37,7 @@ export const ElementWrapper = ({
         <Constraint
           elements={formElements}
           setFieldIsValid={setFieldIsValid}
+          model={model}
           required={required}
           type={type}
           value={value}
@@ -62,6 +64,7 @@ ElementWrapper.propTypes = {
   formElements: PropTypes.shape({}),
   htmlFor: PropTypes.string,
   label: PropTypes.string,
+  model: PropTypes.shape({}).isRequired,
   required: PropTypes.bool,
   type: PropTypes.string,
   value: PropTypes.oneOfType([

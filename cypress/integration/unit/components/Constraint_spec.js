@@ -6,6 +6,7 @@ import { configure, mount } from 'enzyme'
 import { Constraint } from '../../../../src/components/Constraint/Constraint'
 import { parseXml } from '../../../../src/util/parseXml'
 import { EchoFormsContext } from '../../../../src/context/EchoFormsContext'
+import { buildXPathResolverFn } from '../../../../src/util/buildXPathResolverFn'
 import {
   textfieldXml,
   textFieldWithXpathConstraintXml,
@@ -22,21 +23,24 @@ function readXml(file) {
   const modelResult = document.evaluate('//*[local-name()="instance"]/*', doc)
   const model = modelResult.iterateNext()
 
-  return { input, model }
+  const resolver = buildXPathResolverFn(doc)
+
+  return { input, model, resolver }
 }
 
 function nonConstraintElements() {
-  const { input, model } = readXml(textfieldXml)
-  return { elements: input.children, model }
+  const { input, model, resolver } = readXml(textfieldXml)
+  return { elements: input.children, model, resolver }
 }
 
 function constraintElements(file) {
-  const { input, model } = readXml(file)
-  return { elements: input.children, model }
+  const { input, model, resolver } = readXml(file)
+  return { elements: input.children, model, resolver }
 }
 
-function setup(overrideProps, model) {
+function setup(overrideProps, model, resolver) {
   const props = {
+    model,
     required: false,
     type: 'double',
     value: '123',
@@ -45,7 +49,7 @@ function setup(overrideProps, model) {
   }
 
   const enzymeWrapper = mount(
-    <EchoFormsContext.Provider value={{ model }}>
+    <EchoFormsContext.Provider value={{ model, resolver }}>
       <Constraint {...props} />
     </EchoFormsContext.Provider>
   )
@@ -58,10 +62,10 @@ function setup(overrideProps, model) {
 
 describe('Constraint component', () => {
   it('does not render an error with no constraints', () => {
-    const { elements, model } = nonConstraintElements()
+    const { elements, model, resolver } = nonConstraintElements()
     const { enzymeWrapper, props } = setup({
       elements
-    }, model)
+    }, model, resolver)
 
     const { setFieldIsValid } = props
 
@@ -71,12 +75,12 @@ describe('Constraint component', () => {
   })
 
   it('does not render an error with passing constraints', () => {
-    const { elements, model } = constraintElements(textFieldWithPatternConstraintXml)
+    const { elements, model, resolver } = constraintElements(textFieldWithPatternConstraintXml)
     const { enzymeWrapper, props } = setup({
       elements,
       type: 'string',
       value: 'test value'
-    }, model)
+    }, model, resolver)
 
     const { setFieldIsValid } = props
 
@@ -86,12 +90,12 @@ describe('Constraint component', () => {
   })
 
   it('renders a required field error', () => {
-    const { elements, model } = nonConstraintElements()
+    const { elements, model, resolver } = nonConstraintElements()
     const { enzymeWrapper, props } = setup({
       elements,
       required: true,
       value: ''
-    }, model)
+    }, model, resolver)
 
     const { setFieldIsValid } = props
 
@@ -103,11 +107,11 @@ describe('Constraint component', () => {
   })
 
   it('renders basic validation errors', () => {
-    const { elements, model } = nonConstraintElements()
+    const { elements, model, resolver } = nonConstraintElements()
     const { enzymeWrapper, props } = setup({
       elements,
       value: 'adsf'
-    }, model)
+    }, model, resolver)
 
     const { setFieldIsValid } = props
 
@@ -119,11 +123,11 @@ describe('Constraint component', () => {
   })
 
   it('renders xpath constraint errors', () => {
-    const { elements, model } = constraintElements(textFieldWithXpathConstraintXml)
+    const { elements, model, resolver } = constraintElements(textFieldWithXpathConstraintXml)
     const { enzymeWrapper, props } = setup({
       elements,
       value: ''
-    }, model)
+    }, model, resolver)
 
     const { setFieldIsValid } = props
 
@@ -135,11 +139,11 @@ describe('Constraint component', () => {
   })
 
   it('renders pattern constraint errors', () => {
-    const { elements, model } = constraintElements(textFieldWithPatternConstraintXml)
+    const { elements, model, resolver } = constraintElements(textFieldWithPatternConstraintXml)
     const { enzymeWrapper, props } = setup({
       elements,
       value: ''
-    }, model)
+    }, model, resolver)
 
     const { setFieldIsValid } = props
 
