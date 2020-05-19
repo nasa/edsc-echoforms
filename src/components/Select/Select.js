@@ -28,10 +28,10 @@ export const Select = ({
     const values = []
     Array.from(selectedOptions).forEach((option) => {
       const { value } = option
-      values.push({ value, valueElementName })
+      values.push(value)
     })
 
-    onUpdateModel(modelRef, values)
+    onUpdateModel(modelRef, { value: values, valueElementName })
   }
 
   const options = []

@@ -5,35 +5,38 @@ import { getNodeValue } from './getNodeValue'
 
 export class TreeNode {
   constructor(props) {
+    // properties based on props
     this.props = props
-
-    this.level = this.props.level || 0
-
-    this.element = this.props.element
-    this.separator = this.props.separator
     this.cascade = this.props.cascade
+    this.checkedFields = this.props.checkedFields
+    this.element = this.props.element
+    this.level = this.props.level || 0
+    this.model = this.props.model
+    this.parentChecked = this.props.parentChecked // Used for cascading from the top down on initial render
     this.resolver = this.props.resolver
+    this.separator = this.props.separator
+    this.onUpdateFinished = this.props.onUpdateFinished
 
+    // elementHash used as key for TreeItem components
     this.elementHash = murmurhash.v3(this.element.outerHTML, 'seed')
 
-    this.model = this.props.model
-    this.checkedFields = this.props.checkedFields
-    this.parentChecked = this.props.parentChecked
-
-    this.disabled = false
+    // properties with default values
     this.allItems = {}
     this.checked = false
     this.children = []
+    this.disabled = false
     this.expanded = this.level === 1
 
-    this.value = undefined
-    this.originalLabel = undefined
+    // properties derived from element attributes, default to undefined for caching
     this.relevantAttribute = undefined
     this.requiredAttribute = undefined
     this.totalLeafNodes = undefined
+    this.value = undefined
 
+    // build remaining node properties
     this.buildNode(props)
 
+    // bind methods
     this.setup = this.setup.bind(this)
     this.setupChildren = this.setupChildren.bind(this)
     this.updateNode = this.updateNode.bind(this)
@@ -48,18 +51,22 @@ export class TreeNode {
   }
 
   /**
-   * Builds the properties of the current tree item
+   * Builds the remaining properties of the current tree item based on element attributes
    * @param {Object} item
+   * @param {Object} item.element current item's XML element
    * @param {Object} item.parent current item's parent item
    */
   buildNode({
+    element,
     parent = {}
   }) {
-    const { attributes, children } = this.element
+    const { attributes, children } = element
     this.value = this.getValue(attributes, this.value)
     this.fullValue = this.getFullValue(parent.fullValue, this.value)
     this.id = this.fullValue
+    this.label = this.getLabel(attributes, this.value)
 
+    // Don't add the 'tree' element to allItems
     if (this.element.tagName !== 'tree') {
       this.parent = parent
 
@@ -87,11 +94,15 @@ export class TreeNode {
   setup(attributes) {
     this.relevant = this.getRelevant(attributes)
     this.required = this.getRequired(attributes)
-    this.label = this.getLabel(attributes, this.value)
     this.disabled = this.getDisabled()
     this.checked = this.determineChecked(
       this.checkedFields.includes(this.fullValue) || this.required
     )
+
+    // this.onUpdateFinished is only defined at the top level. if it exists call the function to let the component know to rerender
+    if (this.onUpdateFinished) {
+      this.onUpdateFinished()
+    }
   }
 
   /**
@@ -102,25 +113,24 @@ export class TreeNode {
     Array.from(children)
       .filter(child => child.tagName === 'item')
       .forEach((child) => {
-        const { attributes: childAttributes } = child
-
-        const childValue = this.getValue(childAttributes)
-        const childFullValue = this.getFullValue(this.fullValue, childValue)
-
+        // Setup new TreeNode for each child
         const childNode = new TreeNode({
           ...this.props,
           level: this.level + 1,
           element: child,
           parent: this,
-          parentChecked: this.checkedFields.includes(this.fullValue) || this.required || this.parentChecked
+          parentChecked: this.checkedFields.includes(this.fullValue) || this.required || this.parentChecked,
+          onUpdateFinished: undefined
         })
 
+        // Add the childNode and the childNode's allItems to this node's allItems
         this.allItems = {
           ...this.allItems,
-          [childFullValue]: childNode,
+          [childNode.fullValue]: childNode,
           ...childNode.allItems
         }
 
+        // Add the childNode to this nodes children
         this.children.push(childNode)
       })
   }
@@ -139,7 +149,10 @@ export class TreeNode {
     if (children.length) {
       this.updateChildren()
     }
+
+    // Update properties that need evaluation
     this.setup(attributes)
+
     return this
   }
 
@@ -148,7 +161,10 @@ export class TreeNode {
    */
   updateChildren() {
     this.children.forEach((child) => {
+      // Clear parent checked as this isn't the initial render
+      // eslint-disable-next-line no-param-reassign
       child.parentChecked = undefined
+
       child.updateNode(child, this.model, this.checkedFields)
     })
   }
@@ -186,7 +202,7 @@ export class TreeNode {
    */
   getNumberSelectedNodes() {
     return Object.values(this.allItems).reduce((total, value) => {
-      if (value.isLeaf && value.checked) return total + 1
+      if (value.isLeaf && value.checked === true) return total + 1
       return total
     }, 0)
   }
@@ -211,14 +227,19 @@ export class TreeNode {
   determineChecked(value) {
     if (!this.relevant) return false
 
-    if ((this.isLeaf || !this.cascade) && value != null) {
-      if (this.cascade && this.parent && this.parentChecked === true) {
+    if (this.cascade) {
+      // parentChecked used to determine checked value with cascading during initial render
+      if (this.parent && this.parentChecked === true) {
         return true
       }
+    }
 
+    // if cascade is false or this is a leaf, and a value does exist, return that value
+    if ((!this.cascade || this.isLeaf) && value != null) {
       return value
     }
 
+    // If cascade is true, determine if this node should be checked based on children all checked or some checked
     if (this.allChildrenChecked()) {
       return true
     }
@@ -236,14 +257,19 @@ export class TreeNode {
    */
   setChecked(checked) {
     let newChecked = checked
+
+    // If the node is currently indeterminate, clicking the checkbox should switch to checked
     if (this.checked === 'indeterminate') {
       newChecked = true
     }
 
+    // Required fields are always checked
     this.checked = newChecked || this.required
 
+    // Irrelevant fields are never checked
     if (!this.relevant) this.checked = false
 
+    // If cascading, set all children equal to this node
     if (this.cascade) {
       this.children.forEach((child) => {
         child.setChecked(this.checked)
@@ -264,13 +290,6 @@ export class TreeNode {
    */
   allChildrenChecked() {
     return this.children.every(child => child.checked === true)
-  }
-
-  /**
-   * Determines if none of the items children are checked
-   */
-  noChildrenChecked() {
-    return this.children.every(child => child.checked === false)
   }
 
   /**
@@ -299,14 +318,11 @@ export class TreeNode {
    * @param {String} value value attribute
    */
   getLabel(attributes, value) {
-    if (this.originalLabel === undefined) {
-      this.originalLabel = getAttribute(attributes, 'label') || value
+    if (this.label === undefined) {
+      this.label = getAttribute(attributes, 'label') || value
     }
 
-    if (!this.relevant) return `${this.originalLabel} (not available)`
-    if (this.required) return `${this.originalLabel} (required)`
-
-    return this.originalLabel
+    return this.label
   }
 
   /**
