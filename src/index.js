@@ -19,8 +19,8 @@ export const EDSCEchoform = ({
   // formIsValid holds a hash of each field, and tells us if that field is valid
   const [formIsValid, setFormIsValid] = useState({})
 
-  // formKey is a timestamp. Updating this value will force a rerender of the component because it is used as a key prop in FormBody
-  const [formKey, setFormKey] = useState(Date.now())
+  // Updating this value will force a rerender of the component because it is used as a key prop in FormBody
+  const [updateAt, setUpdatedAt] = useState(Date.now())
 
   const resolver = useRef(undefined)
 
@@ -59,7 +59,7 @@ export const EDSCEchoform = ({
     const uiResult = doc.evaluate('//*[local-name()="ui"]', doc, resolver.current, XPathResult.ANY_TYPE, null)
     const ui = uiResult.iterateNext()
 
-    setFormKey(Date.now())
+    setUpdatedAt(Date.now())
     setFormIsValid({})
     setModel(extendedModel)
     setUi(ui)
@@ -110,7 +110,7 @@ export const EDSCEchoform = ({
     >
       <form>
         <FormBody
-          key={formKey}
+          key={updateAt}
           ui={ui}
           model={model}
         />

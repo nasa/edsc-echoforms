@@ -1,5 +1,7 @@
+/* eslint-disable react-hooks/exhaustive-deps */
+
 import React, {
-  useContext, useState, useRef, useEffect
+  useContext, useState, useRef, useEffect, useCallback
 } from 'react'
 import PropTypes from 'prop-types'
 
@@ -7,6 +9,7 @@ import { TreeItem } from './TreeItem'
 import { TreeNode } from '../../util/TreeNode'
 import { EchoFormsContext } from '../../context/EchoFormsContext'
 import { ElementWrapper } from '../ElementWrapper/ElementWrapper'
+import { isArrayEqual } from '../../util/isArrayEqual'
 
 export const Tree = ({
   children,
@@ -25,10 +28,25 @@ export const Tree = ({
   const { resolver, onUpdateModel } = useContext(EchoFormsContext)
   const treeModel = useRef(undefined)
 
-  // keyTimeStamp is a timestamp. Updating this value will force a rerender of the component because it is used as a key prop in ElementWrapper
-  const [keyTimeStamp, setKeyTimeStamp] = useState(Date.now())
   const lastSeralized = useRef([])
 
+  const [, updateState] = useState()
+  const forceUpdate = useCallback(() => updateState({}), [])
+
+  /**
+   * Update the form model with new values from the tree
+   */
+  const updateModel = () => {
+    const seralized = treeModel.current.seralize()
+
+    // Compare the last seralized value to the current value. If it hasn't changed, don't update the model
+    if (lastSeralized.current === undefined || !isArrayEqual(seralized, lastSeralized.current)) {
+      lastSeralized.current = seralized
+      onUpdateModel(modelRef, { value: seralized, valueElementName })
+    }
+  }
+
+  // Initial render - setup TreeNode object to drive the tree data
   useEffect(() => {
     treeModel.current = new TreeNode({
       cascade,
@@ -36,45 +54,32 @@ export const Tree = ({
       element,
       model,
       resolver,
-      separator
+      separator,
+      onUpdateFinished: forceUpdate
     })
-    const seralized = treeModel.current.seralize()
-    lastSeralized.current = seralized
-    onUpdateModel(modelRef, { value: seralized, valueElementName })
-  }, [])
 
-  const updateNode = () => {
+    // Update the model, cascading could cause model changes
+    updateModel()
+  }, []) // Only execute this useEffect once on initial render
+
+  /**
+   * Update the treeModel with new values
+   */
+  const updateTreeModel = () => {
     treeModel.current = treeModel.current.updateNode(element, model, value)
   }
 
-  const isEqual = (array1, array2) => {
-    if (array1.length !== array2.length) return false
-
-    for (let i = 0; array1.length < i; i += 1) {
-      if (array1[i] !== array2[i]) return false
-    }
-
-    return true
-  }
-
-  const updateModel = () => {
-    const seralized = treeModel.current.seralize()
-
-    // Compare the last seralized value to the current value. If it hasn't changed, don't update the model
-    if (!isEqual(seralized, lastSeralized.current)) {
-      lastSeralized.current = seralized
-      onUpdateModel(modelRef, { value: seralized, valueElementName })
-    }
-  }
-
+  /**
+   * Update the tree model, then update the form model with changes from the update
+   */
   const update = (async () => {
-    await updateNode()
+    await updateTreeModel()
     await updateModel()
   })
 
+  // Update the treeModel when the form model data changes
   useEffect(() => {
     update()
-    setKeyTimeStamp(Date.now())
   }, [model.outerHTML])
 
   if (!treeModel.current) {
@@ -83,12 +88,15 @@ export const Tree = ({
     )
   }
 
+  /**
+   * onChange callback from TreeItem, update the form model
+   */
   const onChange = () => {
     updateModel()
-    setKeyTimeStamp(Date.now())
   }
 
-  const nodeList = treeModel.current.children.map(child => (
+
+  const nodeList = () => treeModel.current.children.map(child => (
     <TreeItem
       key={`${child.elementHash}`}
       item={child}
@@ -99,7 +107,6 @@ export const Tree = ({
 
   return (
     <ElementWrapper
-      key={keyTimeStamp}
       elementHash={elementHash}
       formElements={children}
       htmlFor={id}
@@ -120,7 +127,7 @@ export const Tree = ({
               {' '}
               bands selected
             </span>
-            {nodeList}
+            {nodeList()}
           </>
         )
       }
@@ -144,7 +151,9 @@ Tree.propTypes = {
   elementHash: PropTypes.number.isRequired,
   id: PropTypes.string,
   label: PropTypes.string,
-  model: PropTypes.shape({}).isRequired,
+  model: PropTypes.shape({
+    outerHTML: PropTypes.string
+  }).isRequired,
   modelRef: PropTypes.string.isRequired,
   required: PropTypes.bool.isRequired,
   separator: PropTypes.string.isRequired,
