@@ -40,6 +40,7 @@ function setup(overrideProps) {
       disabled: false,
       expanded: true,
       id: '/Parent1',
+      isParent: true,
       fullValue: '/Parent1',
       label: 'Parent 1',
       level: 1,

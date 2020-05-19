@@ -11,21 +11,8 @@ export const updateModel = (model, modelRef, newValue) => {
   const result = doc.evaluate(`//${modelRef}`, model, buildXPathResolverFn(doc), XPathResult.ANY_TYPE, null)
   const value = result.iterateNext()
 
-  // Select values
-  if (Array.isArray(newValue)) {
-    const values = newValue.map((v) => {
-      const { namespaceURI, prefix } = model
-      const { value: vValue, valueElementName } = v
-      const tag = [prefix, valueElementName].filter(Boolean).join(':')
-
-      const element = document.createElementNS(namespaceURI, tag)
-      element.textContent = vValue
-
-      return element.outerHTML
-    })
-    value.innerHTML = values.join('')
-  } else if (typeof newValue === 'object') {
-    // Tree values
+  if (typeof newValue === 'object') {
+    // Array values
     const { value: values, valueElementName } = newValue
     const { namespaceURI, prefix } = model
 
