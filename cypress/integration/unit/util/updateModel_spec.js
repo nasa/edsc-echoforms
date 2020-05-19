@@ -19,16 +19,10 @@ describe('updateModel', () => {
     expect(updateModel(
       model,
       'prov:selectreference',
-      [
-        {
-          value: 'value1',
-          valueElementName: 'value'
-        },
-        {
-          value: 'value2',
-          valueElementName: 'value'
-        }
-      ]
+      {
+        value: ['value1', 'value2'],
+        valueElementName: 'value'
+      }
     ).outerHTML).to.eq('<prov:options xmlns:prov="http://www.example.com/orderoptions"><prov:selectreference><prov:value>value1</prov:value><prov:value>value2</prov:value></prov:selectreference></prov:options>')
   })
 })

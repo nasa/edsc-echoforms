@@ -5,49 +5,56 @@ import React, {
 } from 'react'
 import PropTypes from 'prop-types'
 
+import './TreeItem.css'
+
 export const TreeItem = ({
   item,
   model,
   onChange
 }) => {
   const {
-    id,
-    fullValue,
     checked,
-    expanded,
-    level,
+    children,
     disabled,
+    expanded,
+    fullValue,
+    id,
+    isParent,
     label,
-    children
+    level,
+    relevant,
+    required
   } = item
-  const [timeStamp, setTimeStamp] = useState(Date.now())
   const checkboxElement = useRef(null)
 
   const [isExpanded, setIsExpanded] = useState(expanded)
 
-  const childItems = () => {
-    return children.map((child) => {
-      return (
-        <TreeItem
-          key={`${child.elementHash}`}
-          item={child}
-          model={model}
-          onChange={onChange}
-        />
-      )
-    })
-  }
+  const childItems = () => children.map(child => (
+    <TreeItem
+      key={`${child.elementHash}`}
+      item={child}
+      model={model}
+      onChange={onChange}
+    />
+  ))
 
+  /**
+   * Handle a change in the checkbox
+   * @param {Object} e event object
+   */
   const handleChange = (e) => {
     item.setChecked(e.target.checked)
     onChange()
-    setTimeStamp(Date.now())
   }
 
+  // Updates the indeterminate property of the checkbox when the checked value changes
   useEffect(() => {
     checkboxElement.current.indeterminate = checked === 'indeterminate'
   }, [checked])
 
+  /**
+   * Sets the new expanded property of the node
+   */
   const onToggleExpanded = () => {
     item.setExpanded(!isExpanded)
     setIsExpanded(!isExpanded)
@@ -55,10 +62,9 @@ export const TreeItem = ({
 
   return (
     <div
-      key={timeStamp}
       style={{ marginLeft: level * 15 }}
     >
-      { children.length > 0 && !isExpanded && (
+      { isParent && !isExpanded && (
         <button
           type="button"
           onClick={onToggleExpanded}
@@ -67,7 +73,7 @@ export const TreeItem = ({
         </button>
       )}
 
-      { children.length > 0 && isExpanded && (
+      { isParent && isExpanded && (
         <button
           type="button"
           onClick={onToggleExpanded}
@@ -84,7 +90,23 @@ export const TreeItem = ({
         disabled={disabled}
         ref={checkboxElement}
       />
-      <label htmlFor={id}>{label}</label>
+      <label htmlFor={id}>
+        {label}
+        {
+          !relevant && (
+            <span className="tree-item__irrelevant-label">
+              (not available)
+            </span>
+          )
+        }
+        {
+          required && (
+            <span className="tree-item__required-label">
+              (required)
+            </span>
+          )
+        }
+      </label>
       {
         isExpanded && childItems()
       }
@@ -107,8 +129,11 @@ TreeItem.propTypes = {
     expanded: PropTypes.bool,
     fullValue: PropTypes.string,
     id: PropTypes.string,
+    isParent: PropTypes.bool,
     label: PropTypes.string,
     level: PropTypes.number,
+    relevant: PropTypes.bool,
+    required: PropTypes.bool,
     setChecked: PropTypes.func,
     setExpanded: PropTypes.func
   }).isRequired,

@@ -47,13 +47,22 @@ export const FormElement = ({
 
   // These calls to getAttribute don't need to happen on every render because they are string attributes that will never change.
   // useRef allows us to keep the value for the life of the component with only fetching them from the XML once
-  const relevantAttribute = useRef(undefined)
-  const readOnlyAttribute = useRef(undefined)
-  const requiredAttribute = useRef(undefined)
-  const modelRef = useRef(undefined)
-  const label = useRef(undefined)
+  const cascade = useRef(undefined)
   const id = useRef(undefined)
+  const label = useRef(undefined)
+  const max = useRef(undefined)
+  const maxParameters = useRef(undefined)
+  const min = useRef(undefined)
+  const modelRef = useRef(undefined)
+  const multiple = useRef(undefined)
+  const readOnlyAttribute = useRef(undefined)
+  const relevantAttribute = useRef(undefined)
+  const requiredAttribute = useRef(undefined)
+  const separator = useRef(undefined)
+  const simplifyOutput = useRef(undefined)
+  const step = useRef(undefined)
   const type = useRef(undefined)
+  const valueElementName = useRef(undefined)
 
   const elementHash = murmurhash.v3(element.outerHTML, 'seed')
   const {
@@ -176,36 +185,46 @@ export const FormElement = ({
     )
   }
   if (tagName === 'select' || tagName === 'selectref') {
-    const multiple = getAttribute(attributes, 'multiple')
-    let valueElementName = getAttribute(attributes, 'valueElementName')
+    if (multiple.current === undefined) {
+      multiple.current = getAttribute(attributes, 'multiple')
+    }
+    if (valueElementName.current === undefined) {
+      valueElementName.current = getAttribute(attributes, 'valueElementName')
+    }
 
     // As used, selectrefs turn out to be identical to selects, with valueElementName defaulted to 'value'
-    if (tagName === 'selectref' && valueElementName === null) {
-      valueElementName = 'value'
+    if (tagName === 'selectref' && valueElementName.current === null) {
+      valueElementName.current = 'value'
     }
 
     return (
       <Select
         {...defaultProps}
-        multiple={multiple === 'true'}
+        multiple={multiple.current === 'true'}
         value={Array.from(value)}
-        valueElementName={valueElementName}
+        valueElementName={valueElementName.current}
       >
         {children}
       </Select>
     )
   }
   if (tagName === 'range') {
-    const max = getAttribute(attributes, 'end')
-    const min = getAttribute(attributes, 'start')
-    const step = getAttribute(attributes, 'step')
+    if (max.current === undefined) {
+      max.current = getAttribute(attributes, 'end')
+    }
+    if (min.current === undefined) {
+      min.current = getAttribute(attributes, 'start')
+    }
+    if (step.current === undefined) {
+      step.current = getAttribute(attributes, 'step')
+    }
 
     return (
       <Range
         {...defaultProps}
-        max={max}
-        min={min}
-        step={step}
+        max={max.current}
+        min={min.current}
+        step={step.current}
       >
         {children}
       </Range>
@@ -226,21 +245,31 @@ export const FormElement = ({
     )
   }
   if (tagName === 'tree') {
-    const cascade = getAttribute(attributes, 'cascade') || 'true'
-    const maxParameters = getAttribute(attributes, 'maxParameters')
-    const separator = getAttribute(attributes, 'separator')
-    // const simplifyOutput = getAttribute(attributes, 'simplifyOutput') || 'true'
-    const valueElementName = getAttribute(attributes, 'valueElementName') || 'value'
+    if (cascade.current === undefined) {
+      cascade.current = getAttribute(attributes, 'cascade') === 'true'
+    }
+    if (maxParameters.current === undefined) {
+      maxParameters.current = getAttribute(attributes, 'maxParameters')
+    }
+    if (separator.current === undefined) {
+      separator.current = getAttribute(attributes, 'separator')
+    }
+    if (simplifyOutput.current === undefined) {
+      simplifyOutput.current = getAttribute(attributes, 'simplifyOutput') || true
+    }
+    if (valueElementName.current === undefined) {
+      valueElementName.current = getAttribute(attributes, 'valueElementName') || value
+    }
 
     return (
       <Tree
         {...defaultProps}
         element={element}
-        cascade={cascade === 'true'}
-        maxParameters={maxParameters}
-        separator={separator}
-        // simplifyOutput={simplifyOutput === 'true'}
-        valueElementName={valueElementName}
+        cascade={cascade.current}
+        maxParameters={maxParameters.current}
+        separator={separator.current}
+        simplifyOutput={simplifyOutput.current}
+        valueElementName={valueElementName.current}
       >
         {children}
       </Tree>
