@@ -34,7 +34,9 @@ function setup(overrideProps) {
         id: '/Parent1/Child1',
         fullValue: '/Parent1/Child1',
         label: 'Child 1',
-        level: 2
+        level: 2,
+        relevant: true,
+        required: false
       }],
       checked: true,
       disabled: false,
@@ -44,6 +46,8 @@ function setup(overrideProps) {
       fullValue: '/Parent1',
       label: 'Parent 1',
       level: 1,
+      relevant: true,
+      required: false,
       setChecked,
       setExpanded
     },
@@ -91,7 +95,9 @@ describe('TreeItem component', () => {
       id: '/Parent1/Child1',
       fullValue: '/Parent1/Child1',
       label: 'Child 1',
-      level: 2
+      level: 2,
+      relevant: true,
+      required: false
     })
   })
 
