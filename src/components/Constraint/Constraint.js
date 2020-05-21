@@ -7,6 +7,7 @@ import { EchoFormsContext } from '../../context/EchoFormsContext'
 
 export const Constraint = ({
   elements,
+  manualError,
   model,
   required,
   type,
@@ -17,6 +18,10 @@ export const Constraint = ({
   if (!elements) return null
 
   const errors = []
+
+  // Add any manual error passed in as a prop (e.g. maxParameters tree error)
+  if (manualError) errors.push(manualError)
+
   // Run any constraint validations
   Array.from(elements)
     .filter(element => element.tagName === 'constraints')
@@ -62,12 +67,14 @@ export const Constraint = ({
 
 Constraint.defaultProps = {
   elements: {},
+  manualError: null,
   type: null,
   value: null
 }
 
 Constraint.propTypes = {
   elements: PropTypes.shape({}),
+  manualError: PropTypes.string,
   model: PropTypes.shape({}).isRequired,
   required: PropTypes.bool.isRequired,
   type: PropTypes.string,
