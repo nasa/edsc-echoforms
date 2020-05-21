@@ -22,10 +22,11 @@ export const Tree = ({
   modelRef,
   required,
   separator,
+  simplifyOutput,
   value,
   valueElementName
 }) => {
-  const { resolver, onUpdateModel } = useContext(EchoFormsContext)
+  const { resolver, setSimplifiedTree, onUpdateModel } = useContext(EchoFormsContext)
   const treeModel = useRef(undefined)
 
   const lastSeralized = useRef([])
@@ -41,6 +42,15 @@ export const Tree = ({
 
     // Compare the last seralized value to the current value. If it hasn't changed, don't update the model
     if (lastSeralized.current === undefined || !isArrayEqual(seralized, lastSeralized.current)) {
+      // If simplifyOutput, save a simplified tree output to be added to the model later
+      if (simplifyOutput) {
+        setSimplifiedTree({
+          modelRef,
+          value: treeModel.current.simplifiedSeralize(),
+          valueElementName
+        })
+      }
+
       lastSeralized.current = seralized
       onUpdateModel(modelRef, { value: seralized, valueElementName })
     }
@@ -55,6 +65,7 @@ export const Tree = ({
       model,
       resolver,
       separator,
+      simplifyOutput,
       onUpdateFinished: forceUpdate
     })
 
@@ -136,7 +147,6 @@ export const Tree = ({
 }
 
 Tree.defaultProps = {
-  cascade: true,
   children: null,
   id: '',
   label: '',
@@ -145,7 +155,7 @@ Tree.defaultProps = {
 }
 
 Tree.propTypes = {
-  cascade: PropTypes.bool,
+  cascade: PropTypes.bool.isRequired,
   children: PropTypes.shape({}),
   element: PropTypes.shape({}).isRequired,
   elementHash: PropTypes.number.isRequired,
@@ -157,6 +167,7 @@ Tree.propTypes = {
   modelRef: PropTypes.string.isRequired,
   required: PropTypes.bool.isRequired,
   separator: PropTypes.string.isRequired,
+  simplifyOutput: PropTypes.bool.isRequired,
   value: PropTypes.arrayOf(PropTypes.string),
   valueElementName: PropTypes.string
 }

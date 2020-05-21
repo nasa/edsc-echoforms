@@ -5,7 +5,8 @@ import {
   treeXml,
   treeWithRequiredXml,
   treeWithIrrelevantXml,
-  treeWithIndeterminateXml
+  treeWithIndeterminateXml,
+  treeWithSimplifyOutputXml
 } from '../../../mocks/FormElement'
 
 function setup(xml) {
@@ -378,6 +379,73 @@ describe('TreeNode', () => {
     })
 
     expect(treeNode.seralize()).to.eql(['/Parent1', '/Parent1/Child1'])
+  })
+
+  it('returns the simplified seralized data', () => {
+    const {
+      tree,
+      model,
+      resolver
+    } = setup(treeWithSimplifyOutputXml)
+
+    let checkedFields = ['/Parent1']
+    let treeNode = new TreeNode({
+      cascade: true,
+      checkedFields,
+      element: tree,
+      model,
+      resolver,
+      separator: '/',
+      simplifyOutput: true
+    })
+
+    expect(treeNode.seralize()).to.eql([
+      '/Parent1',
+      '/Parent1/Child1-1',
+      '/Parent1/Child1-1/Child1-1-1',
+      '/Parent1/Child1-1/Child1-1-2',
+      '/Parent1/Child1-1/Child1-1-3',
+      '/Parent1/Child1-1/Child1-1-3/Child1-1-3-1',
+      '/Parent1/Child1-1/Child1-1-3/Child1-1-3-2',
+      '/Parent1/Child1-2',
+      '/Parent1/Child1-2/Child1-2-1',
+      '/Parent1/Child1-2/Child1-2-2',
+      '/Parent1/Child1-3',
+      '/Parent1/Child1-3/Child1-3-1',
+      '/Parent1/Child1-3/Child1-3-2'
+    ])
+    expect(treeNode.simplifiedSeralize()).to.eql(['/Parent1'])
+
+
+    checkedFields = [
+      '/Parent1/Child1-1/Child1-1-3/Child1-1-3-1',
+      '/Parent1/Child1-2/Child1-2-1',
+      '/Parent1/Child1-2/Child1-2-2',
+      '/Parent1/Child1-3'
+    ]
+    treeNode = new TreeNode({
+      cascade: true,
+      checkedFields,
+      element: tree,
+      model,
+      resolver,
+      separator: '/',
+      simplifyOutput: true
+    })
+    expect(treeNode.seralize()).to.eql([
+      '/Parent1/Child1-1/Child1-1-3/Child1-1-3-1',
+      '/Parent1/Child1-2',
+      '/Parent1/Child1-2/Child1-2-1',
+      '/Parent1/Child1-2/Child1-2-2',
+      '/Parent1/Child1-3',
+      '/Parent1/Child1-3/Child1-3-1',
+      '/Parent1/Child1-3/Child1-3-2'
+    ])
+    expect(treeNode.simplifiedSeralize()).to.eql([
+      '/Parent1/Child1-1/Child1-1-3/Child1-1-3-1',
+      '/Parent1/Child1-2',
+      '/Parent1/Child1-3'
+    ])
   })
 
   it('selecting an indeterminate parents selects all children', () => {
