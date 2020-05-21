@@ -47,7 +47,6 @@ function setup(overrideProps) {
 describe('ElementWrapper component', () => {
   it('renders a Constraint component', () => {
     const { enzymeWrapper } = setup()
-    console.log('enzymeWrapper', enzymeWrapper.debug())
 
     const constraint = enzymeWrapper.find(Constraint)
 

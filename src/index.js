@@ -66,6 +66,7 @@ export const EDSCEchoform = ({
     setFormIsValid({})
     setModel(extendedModel)
     setUi(ui)
+    simplifiedTree.current = undefined
 
     onFormModelUpdated(extendedModel.outerHTML)
   }, [form])
