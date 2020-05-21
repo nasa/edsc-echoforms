@@ -10,6 +10,7 @@ import { TreeNode } from '../../util/TreeNode'
 import { EchoFormsContext } from '../../context/EchoFormsContext'
 import { ElementWrapper } from '../ElementWrapper/ElementWrapper'
 import { isArrayEqual } from '../../util/isArrayEqual'
+import { useClasses } from '../../hooks/useClasses'
 
 export const Tree = ({
   children,
@@ -18,6 +19,7 @@ export const Tree = ({
   cascade,
   id,
   label,
+  maxParameters,
   model,
   modelRef,
   required,
@@ -26,13 +28,23 @@ export const Tree = ({
   value,
   valueElementName
 }) => {
-  const { resolver, setSimplifiedTree, onUpdateModel } = useContext(EchoFormsContext)
+  const {
+    resolver,
+    setSimplifiedTree,
+    onUpdateModel
+  } = useContext(EchoFormsContext)
+  const { elementClasses } = useClasses()
+
   const treeModel = useRef(undefined)
 
   const lastSeralized = useRef([])
 
   const [, updateState] = useState()
   const forceUpdate = useCallback(() => updateState({}), [])
+
+  const [totalNodes, setTotalNodes] = useState(0)
+  const [selectedNodes, setSelectedNodes] = useState(0)
+  const [maxParametersError, setMaxParametersError] = useState(null)
 
   /**
    * Update the form model with new values from the tree
@@ -53,6 +65,7 @@ export const Tree = ({
 
       lastSeralized.current = seralized
       onUpdateModel(modelRef, { value: seralized, valueElementName })
+      setSelectedNodes(treeModel.current.getNumberSelectedNodes())
     }
   }
 
@@ -71,7 +84,20 @@ export const Tree = ({
 
     // Update the model, cascading could cause model changes
     updateModel()
+    setTotalNodes(treeModel.current.getTotalLeafNodes())
+    setSelectedNodes(treeModel.current.getNumberSelectedNodes())
   }, []) // Only execute this useEffect once on initial render
+
+  // When selectedNodes changes, set maxParametersError
+  useEffect(() => {
+    if (!simplifyOutput && maxParameters) {
+      if (selectedNodes > parseInt(maxParameters, 10)) {
+        setMaxParametersError(`No more than ${maxParameters} parameters can be selected.`)
+      } else {
+        setMaxParametersError(null)
+      }
+    }
+  }, [selectedNodes])
 
   /**
    * Update the treeModel with new values
@@ -106,7 +132,6 @@ export const Tree = ({
     updateModel()
   }
 
-
   const nodeList = () => treeModel.current.children.map(child => (
     <TreeItem
       key={`${child.elementHash}`}
@@ -122,23 +147,29 @@ export const Tree = ({
       formElements={children}
       htmlFor={id}
       label={label}
+      manualError={maxParametersError}
       model={model}
       required={required}
       value={value}
     >
       {
-        () => (
+        ({ isFieldValid }) => (
           <>
-            <span>
-              {treeModel.current.getNumberSelectedNodes()}
-              {' '}
-              of
-              {' '}
-              {treeModel.current.getTotalLeafNodes()}
-              {' '}
-              bands selected
-            </span>
-            {nodeList()}
+            <div className={elementClasses('tree', '', !isFieldValid)}>
+              <div className="tree__node-count">
+                <span>
+                  {selectedNodes}
+                  {' '}
+                  of
+                  {' '}
+                  {totalNodes}
+                  {' '}
+                  bands selected
+                </span>
+              </div>
+              {nodeList()}
+            </div>
+
           </>
         )
       }
@@ -150,6 +181,7 @@ Tree.defaultProps = {
   children: null,
   id: '',
   label: '',
+  maxParameters: null,
   value: [],
   valueElementName: ''
 }
@@ -161,6 +193,7 @@ Tree.propTypes = {
   elementHash: PropTypes.number.isRequired,
   id: PropTypes.string,
   label: PropTypes.string,
+  maxParameters: PropTypes.string,
   model: PropTypes.shape({
     outerHTML: PropTypes.string
   }).isRequired,
