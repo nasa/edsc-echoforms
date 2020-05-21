@@ -153,4 +153,20 @@ describe('Constraint component', () => {
     expect(error).to.have.length(1)
     expect(error.text()).to.eq('Value must be "test value"')
   })
+
+  it('renders a manual error', () => {
+    const { elements, model, resolver } = nonConstraintElements()
+    const { enzymeWrapper, props } = setup({
+      elements,
+      manualError: 'No more than 4 parameters can be selected.'
+    }, model, resolver)
+
+    const { setFieldIsValid } = props
+
+    expect(setFieldIsValid).to.be.calledWith(false)
+
+    const error = enzymeWrapper.find('div.invalid-feedback')
+    expect(error).to.have.length(1)
+    expect(error.text()).to.eq('No more than 4 parameters can be selected.')
+  })
 })

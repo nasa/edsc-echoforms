@@ -11,6 +11,7 @@ export const ElementWrapper = ({
   formElements,
   htmlFor,
   label,
+  manualError,
   model,
   required,
   type,
@@ -23,7 +24,7 @@ export const ElementWrapper = ({
   // When isFieldValid changes, call setFormIsValid to update this field with the new value
   useEffect(() => {
     setFormIsValid(prevState => ({ ...prevState, [elementHash]: isFieldValid }))
-  }, [elementHash, isFieldValid, setFormIsValid])
+  }, [isFieldValid])
 
   return (
     <div className={elementClasses('', 'form-group row')}>
@@ -37,6 +38,7 @@ export const ElementWrapper = ({
         <Constraint
           elements={formElements}
           setFieldIsValid={setFieldIsValid}
+          manualError={manualError}
           model={model}
           required={required}
           type={type}
@@ -53,6 +55,7 @@ ElementWrapper.defaultProps = {
   formElements: null,
   htmlFor: '',
   label: null,
+  manualError: null,
   required: false,
   type: null,
   value: null
@@ -64,6 +67,7 @@ ElementWrapper.propTypes = {
   formElements: PropTypes.shape({}),
   htmlFor: PropTypes.string,
   label: PropTypes.string,
+  manualError: PropTypes.string,
   model: PropTypes.shape({}).isRequired,
   required: PropTypes.bool,
   type: PropTypes.string,

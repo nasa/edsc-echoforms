@@ -6,8 +6,9 @@ import { configure, mount } from 'enzyme'
 import { Tree } from '../../../../src/components/Tree/Tree'
 import { EchoFormsContext } from '../../../../src/context/EchoFormsContext'
 import { parseXml } from '../../../../src/util/parseXml'
-import { treeXml } from '../../../mocks/FormElement'
+import { treeXml, treeWithMaxParametersXml } from '../../../mocks/FormElement'
 import { TreeItem } from '../../../../src/components/Tree/TreeItem'
+import { ElementWrapper } from '../../../../src/components/ElementWrapper/ElementWrapper'
 
 chai.use(chaiEnzyme())
 configure({ adapter: new Adapter() })
@@ -22,8 +23,8 @@ function readXml(file) {
   return { tree, model }
 }
 
-function setup(overrideProps) {
-  const { tree, model } = readXml(treeXml)
+function setup(overrideProps, file = treeXml) {
+  const { tree, model } = readXml(file)
 
   const props = {
     cascade: true,
@@ -120,5 +121,25 @@ describe('Tree component', () => {
       value: ['/Parent1'],
       valueElementName: 'data_layer'
     })
+  })
+
+  it('calculates the maxParameter error', () => {
+    const { enzymeWrapper } = setup({
+      maxParameters: 4,
+      value: [
+        '/Parent1',
+        '/Parent1/Child1-1',
+        '/Parent1/Child1-2',
+        '/Parent1/Child1-2/Child1-2-1',
+        '/Parent1/Child1-2/Child1-2-2',
+        '/Parent1/Child1-3',
+        '/Parent1/Child1-3/Child1-3-1',
+        '/Parent1/Child1-3/Child1-3-2'
+      ]
+    }, treeWithMaxParametersXml)
+
+    const elementWrapper = enzymeWrapper.find(ElementWrapper)
+
+    expect(elementWrapper.props().manualError).to.eq('No more than 4 parameters can be selected.')
   })
 })
