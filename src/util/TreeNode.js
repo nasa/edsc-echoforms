@@ -5,7 +5,7 @@ import { getNodeValue } from './getNodeValue'
 
 export class TreeNode {
   constructor(props) {
-    // properties based on props
+    // Properties based on props
     this.props = props
     this.cascade = this.props.cascade
     this.checkedFields = this.props.checkedFields
@@ -15,28 +15,29 @@ export class TreeNode {
     this.parentChecked = this.props.parentChecked // Used for cascading from the top down on initial render
     this.resolver = this.props.resolver
     this.separator = this.props.separator
+    this.simplifyOutput = this.props.simplifyOutput
     this.onUpdateFinished = this.props.onUpdateFinished
 
     // elementHash used as key for TreeItem components
     this.elementHash = murmurhash.v3(this.element.outerHTML, 'seed')
 
-    // properties with default values
+    // Properties with default values
     this.allItems = {}
     this.checked = false
     this.children = []
     this.disabled = false
     this.expanded = this.level === 1
 
-    // properties derived from element attributes, default to undefined for caching
+    // Properties derived from element attributes, default to undefined for caching
     this.relevantAttribute = undefined
     this.requiredAttribute = undefined
     this.totalLeafNodes = undefined
     this.value = undefined
 
-    // build remaining node properties
+    // Build remaining node properties
     this.buildNode(props)
 
-    // bind methods
+    // Bind methods
     this.setup = this.setup.bind(this)
     this.setupChildren = this.setupChildren.bind(this)
     this.updateNode = this.updateNode.bind(this)
@@ -177,7 +178,38 @@ export class TreeNode {
 
     Object.keys(this.allItems).forEach((key) => {
       const item = this.allItems[key]
-      if (item.element.tagName !== 'tree' && item.checked === true) checked.push(item.fullValue)
+      if (item.checked === true) checked.push(item.fullValue)
+    })
+
+    return checked
+  }
+
+  /**
+   * Seralizes a simplified version of the tree data.
+   * If a parent is checked, we don't want to know every single child that is also checked.
+   */
+  simplifiedSeralize() {
+    const checked = []
+
+    Object.keys(this.allItems).forEach((key) => {
+      const item = this.allItems[key]
+
+      let shouldAdd = false
+      if (item.checked === true) {
+        if (item.isParent && item.allChildrenChecked()) {
+          // If the item is a parent will all children checked, only add the item if it is also a child without a checked parent, or if it isn't a child
+          if (item.isChild && item.parent.checked !== true) {
+            shouldAdd = true
+          } else if (!item.isChild) {
+            shouldAdd = true
+          }
+        } else if (!item.isParent && item.parent.checked !== true) {
+          // If the item is not a parent, only add the item if it's parent is not checked
+          shouldAdd = true
+        }
+      }
+
+      if (shouldAdd) checked.push(item.fullValue)
     })
 
     return checked

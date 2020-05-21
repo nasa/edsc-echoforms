@@ -19,6 +19,9 @@ export const EDSCEchoform = ({
   // formIsValid holds a hash of each field, and tells us if that field is valid
   const [formIsValid, setFormIsValid] = useState({})
 
+  // The Tree component needs to keep a verbose record of the nodes to ensure speed and accuracy, so we save a simplified output here if the tree form element has simplifyOutput set
+  const simplifiedTree = useRef(undefined)
+
   // Updating this value will force a rerender of the component because it is used as a key prop in FormBody
   const [updateAt, setUpdatedAt] = useState(Date.now())
 
@@ -83,11 +86,28 @@ export const EDSCEchoform = ({
     onFormIsValidUpdated(!relevantInvalidFields.length)
   }, [formIsValid, relevantFields, onFormIsValidUpdated])
 
-  const onUpdateModel = (modelRef, newValue) => {
-    const updatedModel = updateModel(model, modelRef, newValue)
+  const setSimplifiedTree = (data) => {
+    simplifiedTree.current = data
+  }
 
-    onFormModelUpdated(updatedModel.outerHTML)
+  const onUpdateModel = (modelRef, newValue) => {
+    const updatedModel = updateModel(model.cloneNode(true), modelRef, newValue)
+
     setModel(updatedModel)
+
+    // If the tree needs simplified output, take the simplified tree output and add to the model that is give to the onFormModelUpdated callback. This leaves the verbose tree output in the internal model
+
+    let updatedModelWithSimplifiedTree = updatedModel.cloneNode(true)
+    if (simplifiedTree.current !== undefined) {
+      const {
+        modelRef: treeRef,
+        value,
+        valueElementName
+      } = simplifiedTree.current
+      updatedModelWithSimplifiedTree = updateModel(updatedModelWithSimplifiedTree, treeRef, { value, valueElementName })
+    }
+
+    onFormModelUpdated(updatedModelWithSimplifiedTree.outerHTML)
   }
 
   const setRelevantFields = (newField) => {
@@ -103,6 +123,7 @@ export const EDSCEchoform = ({
         addBootstrapClasses,
         model,
         resolver: resolver.current,
+        setSimplifiedTree,
         onUpdateModel,
         setFormIsValid,
         setRelevantFields
