@@ -96,7 +96,7 @@
       <item label="654321" value="654321" />
       <help>Helpful text</help>
     </select>
-    <tree id="subset_datalayer_tree" label="Choose datasets" ref="prov:SUBSET_DATA_LAYERS" required="false()" type="xsd:string" valueElementName="data_layer" separator="/" simplifyOutput="false" cascade="true">
+    <tree id="subset_datalayer_tree" label="Choose datasets" ref="prov:SUBSET_DATA_LAYERS" required="false()" type="xsd:string" valueElementName="data_layer" separator="/" simplifyOutput="true" cascade="true">
       <item value="Parent1">
         <item label="Child 1-1" value="Child1-1">
           <help> help text </help>

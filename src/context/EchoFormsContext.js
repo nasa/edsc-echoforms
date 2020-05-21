@@ -7,6 +7,7 @@ export const EchoFormsContext = createContext({
   addBootstrapClasses: false,
   model: {},
   resolver: () => {},
+  setSimplifiedTree: () => {},
   onUpdateModel: () => {},
   setFormIsValid: () => {},
   setRelevantFields: () => {}
