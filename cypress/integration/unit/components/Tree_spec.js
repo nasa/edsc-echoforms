@@ -35,6 +35,7 @@ function setup(overrideProps) {
     modelRef: 'testfield',
     required: false,
     separator: '/',
+    simplifyOutput: false,
     value: ['/Parent1'],
     valueElementName: 'data_layer',
     ...overrideProps
@@ -42,8 +43,15 @@ function setup(overrideProps) {
 
   const onUpdateModel = cy.spy().as('onUpdateModel')
   const setFormIsValid = cy.spy().as('setFormIsValid')
+  const setSimplifiedTree = cy.spy().as('setSimplifiedTree')
   const enzymeWrapper = mount(
-    <EchoFormsContext.Provider value={{ onUpdateModel, setFormIsValid }}>
+    <EchoFormsContext.Provider
+      value={{
+        onUpdateModel,
+        setFormIsValid,
+        setSimplifiedTree
+      }}
+    >
       <Tree {...props} />
     </EchoFormsContext.Provider>
   )
@@ -53,7 +61,8 @@ function setup(overrideProps) {
     props,
     onUpdateModel,
     model,
-    tree
+    tree,
+    setSimplifiedTree
   }
 }
 
@@ -96,5 +105,20 @@ describe('Tree component', () => {
     treeItem.props().onChange()
 
     expect(onUpdateModel.calledOnce).to.eq(false)
+  })
+
+  it('updating a simplifyOutput tree calls setSimplifiedTree', () => {
+    const { enzymeWrapper, setSimplifiedTree } = setup({ simplifyOutput: true })
+
+    const treeItem = enzymeWrapper.find(TreeItem).first()
+
+    treeItem.find('input').first().simulate('change', { target: { checked: true } })
+
+    expect(setSimplifiedTree.calledOnce).to.eq(true)
+    expect(setSimplifiedTree.getCall(0).args[0]).to.eql({
+      modelRef: 'testfield',
+      value: ['/Parent1'],
+      valueElementName: 'data_layer'
+    })
   })
 })

@@ -246,7 +246,7 @@ export const FormElement = ({
   }
   if (tagName === 'tree') {
     if (cascade.current === undefined) {
-      cascade.current = getAttribute(attributes, 'cascade') === 'true'
+      cascade.current = (getAttribute(attributes, 'cascade') || 'true') === 'true'
     }
     if (maxParameters.current === undefined) {
       maxParameters.current = getAttribute(attributes, 'maxParameters')
@@ -255,7 +255,7 @@ export const FormElement = ({
       separator.current = getAttribute(attributes, 'separator')
     }
     if (simplifyOutput.current === undefined) {
-      simplifyOutput.current = getAttribute(attributes, 'simplifyOutput') || true
+      simplifyOutput.current = (getAttribute(attributes, 'simplifyOutput') || 'true') === 'true'
     }
     if (valueElementName.current === undefined) {
       valueElementName.current = getAttribute(attributes, 'valueElementName') || value
