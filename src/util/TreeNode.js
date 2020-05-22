@@ -218,11 +218,19 @@ export class TreeNode {
   }
 
   /**
+   * Format filter text to ensure matching results
+   * @param {String} text formatText
+   */
+  formatFilterText(text) {
+    return text.trim().toLowerCase()
+  }
+
+  /**
    * Determines if the node matches the given text
    * @param {String} filterText text to filter the node on
    */
   matchesFilter(filterText) {
-    return this.label.toLowerCase().indexOf(filterText) !== -1
+    return this.label.toLowerCase().indexOf(this.formatFilterText(filterText)) !== -1
   }
 
   /**
@@ -231,7 +239,7 @@ export class TreeNode {
    */
   childrenMatchFilter(filterText) {
     return this.children.some(item => (
-      item.matchesFilter(filterText) || item.childrenMatchFilter(filterText)))
+      item.matchesFilter(this.formatFilterText(filterText)) || item.childrenMatchFilter(this.formatFilterText(filterText))))
   }
 
   /**

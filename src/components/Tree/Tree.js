@@ -1,5 +1,3 @@
-/* eslint-disable react-hooks/exhaustive-deps */
-
 import React, {
   useContext, useState, useRef, useEffect, useCallback
 } from 'react'
@@ -141,7 +139,7 @@ export const Tree = ({
    */
   const onFilterChange = (e) => {
     const { value } = e.target
-    setFilterText(value.toLowerCase())
+    setFilterText(value)
   }
 
   /**
@@ -150,7 +148,7 @@ export const Tree = ({
   const nodeList = () => treeModel.current.children.map(child => (
     <TreeItem
       key={`${child.elementHash}`}
-      filterText={filterText.trim()}
+      filterText={filterText}
       item={child}
       model={model}
       onChange={onChange}
