@@ -140,7 +140,8 @@ export const Tree = ({
    * @param {Object} e event object
    */
   const onFilterChange = (e) => {
-    setFilterText(e.target.value.toLowerCase())
+    const { value } = e.target
+    setFilterText(value.toLowerCase())
   }
 
   /**
@@ -149,7 +150,7 @@ export const Tree = ({
   const nodeList = () => treeModel.current.children.map(child => (
     <TreeItem
       key={`${child.elementHash}`}
-      filterText={filterText}
+      filterText={filterText.trim()}
       item={child}
       model={model}
       onChange={onChange}
