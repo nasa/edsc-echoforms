@@ -49,6 +49,8 @@ export class TreeNode {
     this.getDisabled = this.getDisabled.bind(this)
     this.getTotalLeafNodes = this.getTotalLeafNodes.bind(this)
     this.getNumberSelectedNodes = this.getNumberSelectedNodes.bind(this)
+    this.matchesFilter = this.matchesFilter.bind(this)
+    this.childrenMatchFilter = this.childrenMatchFilter.bind(this)
   }
 
   /**
@@ -213,6 +215,24 @@ export class TreeNode {
     })
 
     return checked
+  }
+
+  /**
+   * Determines if the node matches the given text
+   * @param {String} filterText text to filter the node on
+   */
+  matchesFilter(filterText) {
+    // return this.value.toLowerCase().indexOf(filterText) !== -1 || this.label.toLowerCase().indexOf(filterText) !== -1
+    return this.label.toLowerCase().indexOf(filterText) !== -1
+  }
+
+  /**
+   * Determines if any of the nodes children matches the given text
+   * @param {String} filterText text to filter the node on
+   */
+  childrenMatchFilter(filterText) {
+    return this.children.some(item => (
+      item.matchesFilter(filterText) || item.childrenMatchFilter(filterText)))
   }
 
   /**
