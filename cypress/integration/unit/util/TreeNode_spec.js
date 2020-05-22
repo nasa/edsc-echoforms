@@ -473,6 +473,50 @@ describe('TreeNode', () => {
     expect(treeNode.allItems['/Parent1/Child2'].checked).to.eq(true)
   })
 
+  describe('formatFilterText', () => {
+    it('removes leading and trailing spaces', () => {
+      const {
+        tree,
+        model,
+        resolver
+      } = setup(treeXml)
+
+      const checkedFields = ['/Parent1']
+
+      const treeNode = new TreeNode({
+        cascade: true,
+        checkedFields,
+        element: tree,
+        model,
+        resolver,
+        separator: '/'
+      })
+
+      expect(treeNode.allItems['/Parent1'].formatFilterText('  test text  ')).to.eq('test text')
+    })
+
+    it('lowercases the filter text', () => {
+      const {
+        tree,
+        model,
+        resolver
+      } = setup(treeXml)
+
+      const checkedFields = ['/Parent1']
+
+      const treeNode = new TreeNode({
+        cascade: true,
+        checkedFields,
+        element: tree,
+        model,
+        resolver,
+        separator: '/'
+      })
+
+      expect(treeNode.allItems['/Parent1'].formatFilterText('TEST')).to.eq('test')
+    })
+  })
+
   describe('matchesFilter', () => {
     it('returns true if the filter text matches the label', () => {
       const {
