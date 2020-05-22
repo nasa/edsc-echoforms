@@ -472,4 +472,92 @@ describe('TreeNode', () => {
     expect(treeNode.allItems['/Parent1/Child1'].checked).to.eq(true)
     expect(treeNode.allItems['/Parent1/Child2'].checked).to.eq(true)
   })
+
+  describe('matchesFilter', () => {
+    it('returns true if the filter text matches the label', () => {
+      const {
+        tree,
+        model,
+        resolver
+      } = setup(treeXml)
+
+      const checkedFields = ['/Parent1']
+
+      const treeNode = new TreeNode({
+        cascade: true,
+        checkedFields,
+        element: tree,
+        model,
+        resolver,
+        separator: '/'
+      })
+
+      expect(treeNode.allItems['/Parent1'].matchesFilter('ren')).to.eq(true)
+    })
+
+    it('returns false if the filter text does not matches the label', () => {
+      const {
+        tree,
+        model,
+        resolver
+      } = setup(treeXml)
+
+      const checkedFields = ['/Parent1']
+
+      const treeNode = new TreeNode({
+        cascade: true,
+        checkedFields,
+        element: tree,
+        model,
+        resolver,
+        separator: '/'
+      })
+
+      expect(treeNode.allItems['/Parent1'].matchesFilter('asdf')).to.eq(false)
+    })
+  })
+
+  describe('childrenMatchFilter', () => {
+    it('returns true if the filter text matches any children\'s label', () => {
+      const {
+        tree,
+        model,
+        resolver
+      } = setup(treeXml)
+
+      const checkedFields = ['/Parent1']
+
+      const treeNode = new TreeNode({
+        cascade: true,
+        checkedFields,
+        element: tree,
+        model,
+        resolver,
+        separator: '/'
+      })
+
+      expect(treeNode.allItems['/Parent1'].childrenMatchFilter('chi')).to.eq(true)
+    })
+
+    it('returns false if the filter text does not matches the label', () => {
+      const {
+        tree,
+        model,
+        resolver
+      } = setup(treeXml)
+
+      const checkedFields = ['/Parent1']
+
+      const treeNode = new TreeNode({
+        cascade: true,
+        checkedFields,
+        element: tree,
+        model,
+        resolver,
+        separator: '/'
+      })
+
+      expect(treeNode.allItems['/Parent1'].childrenMatchFilter('asdf')).to.eq(false)
+    })
+  })
 })

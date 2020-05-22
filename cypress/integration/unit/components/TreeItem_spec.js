@@ -18,7 +18,10 @@ function readXml(file) {
   return { model }
 }
 
-function setup(overrideProps) {
+function setup(overrideProps, {
+  childrenMatchFilter,
+  matchesFilter
+} = {}) {
   const { model } = readXml(treeXml)
   const onChange = cy.spy().as('onChange')
   const setChecked = cy.spy().as('setChecked')
@@ -48,6 +51,8 @@ function setup(overrideProps) {
       level: 1,
       relevant: true,
       required: false,
+      childrenMatchFilter,
+      matchesFilter,
       setChecked,
       setExpanded
     },
@@ -125,5 +130,28 @@ describe('TreeItem component', () => {
 
     expect(setExpanded.calledTwice).to.eq(true)
     expect(setExpanded.getCall(1).args[0]).to.eq(true)
+  })
+
+  it('does not render the node if it does not match the filterText', () => {
+    const { enzymeWrapper } = setup({
+      filterText: 'asdf'
+    },
+    {
+      childrenMatchFilter: () => false,
+      matchesFilter: () => false
+    })
+    expect(enzymeWrapper.isEmptyRender()).to.eq(true)
+  })
+
+  it('expands the node if children match the filterText', () => {
+    const { enzymeWrapper } = setup({
+      filterText: 'asdf'
+    },
+    {
+      childrenMatchFilter: () => true,
+      matchesFilter: () => false
+    })
+
+    expect(enzymeWrapper.find(TreeItem).length).to.eq(1)
   })
 })

@@ -8,6 +8,7 @@ import PropTypes from 'prop-types'
 import './TreeItem.css'
 
 export const TreeItem = ({
+  filterText,
   item,
   model,
   onChange
@@ -32,6 +33,7 @@ export const TreeItem = ({
   const childItems = () => children.map(child => (
     <TreeItem
       key={`${child.elementHash}`}
+      filterText={filterText}
       item={child}
       model={model}
       onChange={onChange}
@@ -49,8 +51,10 @@ export const TreeItem = ({
 
   // Updates the indeterminate property of the checkbox when the checked value changes
   useEffect(() => {
-    checkboxElement.current.indeterminate = checked === 'indeterminate'
-  }, [checked])
+    if (checkboxElement.current) {
+      checkboxElement.current.indeterminate = checked === 'indeterminate'
+    }
+  }, [checkboxElement.current, checked])
 
   /**
    * Sets the new expanded property of the node
@@ -60,11 +64,23 @@ export const TreeItem = ({
     setIsExpanded(!isExpanded)
   }
 
+  let matchesFilter
+  let filterExpanded
+
+  // Don't filter anything until they type two characters
+  if (filterText.length > 1) {
+    filterExpanded = item.childrenMatchFilter(filterText)
+    matchesFilter = item.matchesFilter(filterText)
+
+    // If the item doesn't match or need to be expanded, don't render anything
+    if (!matchesFilter && !filterExpanded) return null
+  }
+
   return (
     <div
       style={{ marginLeft: level * 15 }}
     >
-      { isParent && !isExpanded && (
+      { isParent && !isExpanded && !filterExpanded && (
         <button
           type="button"
           onClick={onToggleExpanded}
@@ -73,7 +89,7 @@ export const TreeItem = ({
         </button>
       )}
 
-      { isParent && isExpanded && (
+      { isParent && (isExpanded || filterExpanded) && (
         <button
           type="button"
           onClick={onToggleExpanded}
@@ -108,13 +124,18 @@ export const TreeItem = ({
         }
       </label>
       {
-        isExpanded && childItems()
+        (isExpanded || filterExpanded) && childItems()
       }
     </div>
   )
 }
 
+TreeItem.defaultProps = {
+  filterText: ''
+}
+
 TreeItem.propTypes = {
+  filterText: PropTypes.string,
   item: PropTypes.shape({
     checked: PropTypes.oneOfType([
       PropTypes.string,
@@ -134,6 +155,8 @@ TreeItem.propTypes = {
     level: PropTypes.number,
     relevant: PropTypes.bool,
     required: PropTypes.bool,
+    childrenMatchFilter: PropTypes.func,
+    matchesFilter: PropTypes.func,
     setChecked: PropTypes.func,
     setExpanded: PropTypes.func
   }).isRequired,

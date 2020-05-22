@@ -97,7 +97,6 @@ export const EDSCEchoform = ({
     setModel(updatedModel)
 
     // If the tree needs simplified output, take the simplified tree output and add to the model that is give to the onFormModelUpdated callback. This leaves the verbose tree output in the internal model
-
     let updatedModelWithSimplifiedTree = updatedModel.cloneNode(true)
     if (simplifiedTree.current !== undefined) {
       const {
