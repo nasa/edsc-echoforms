@@ -15,6 +15,8 @@ const App = () => {
   const [form, setForm] = useState(form1)
   const [tempForm, setTempForm] = useState(form)
   const [serializedModel, setSerializedModel] = useState('')
+  const [serializedRawModel, setSerializedRawModel] = useState('')
+  const [selectedModel, setSelectedModel] = useState('rawModel')
   const [formIsValid, setFormIsValid] = useState(true)
 
   const onTextAreaChange = (e) => {
@@ -26,7 +28,9 @@ const App = () => {
   }
 
   const onFormModelUpdated = (value) => {
-    setSerializedModel(value)
+    const { model, rawModel } = value
+    setSerializedModel(model)
+    setSerializedRawModel(rawModel)
   }
 
   const onFormIsValidUpdated = (isValid) => {
@@ -38,6 +42,14 @@ const App = () => {
     setForm(value)
     setTempForm(value)
   }
+
+  const onSelectModelFormat = (e) => {
+    const { value } = e.target
+    setSelectedModel(value)
+  }
+
+  let modelPreview = serializedRawModel
+  if (selectedModel === 'model') modelPreview = serializedModel
 
   return (
     <>
@@ -90,10 +102,24 @@ const App = () => {
           {formIsValid.toString()}
         </strong>
       </p>
+      <form>
+        <div className="form-check form-check-inline">
+          <input className="form-check-input" type="radio" name="model-select" id="model-select1" value="rawModel" onChange={onSelectModelFormat} defaultChecked />
+          <label className="form-check-label" htmlFor="model-select1">
+            Raw Model (all fields)
+          </label>
+        </div>
+        <div className="form-check form-check-inline">
+          <input className="form-check-input" type="radio" name="model-select" id="model-select2" value="model" onChange={onSelectModelFormat} />
+          <label className="form-check-label" htmlFor="model-select2">
+            Model (Pruned of irrelevant fields)
+          </label>
+        </div>
+      </form>
       <pre id="demo-echoforms-model">
         {
-          serializedModel.length && (
-            format(serializedModel, {
+          modelPreview.length && (
+            format(modelPreview, {
               indentation: '  '
             })
           )

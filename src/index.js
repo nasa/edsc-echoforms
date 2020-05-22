@@ -6,6 +6,7 @@ import { parseXml } from './util/parseXml'
 import { buildXPathResolverFn } from './util/buildXPathResolverFn'
 import { FormBody } from './components/FormBody/FormBody'
 import { updateModel } from './util/updateModel'
+import { pruneModel } from './util/pruneModel'
 
 export const EDSCEchoform = ({
   addBootstrapClasses,
@@ -41,12 +42,13 @@ export const EDSCEchoform = ({
         const ref = expression.getAttribute('ref')
         const source = expression.getAttribute('source')
         if (prepopulateValues[source]) {
-          updatedModel = updateModel(updatedModel, ref, prepopulateValues[source])
+          updatedModel = updateModel(updatedModel, resolver.current, ref, prepopulateValues[source])
         }
       })
     return updatedModel
   }
 
+  // Build the model and ui state objects to pass to FormBody
   useEffect(() => {
     const doc = parseXml(form.replace(/>\s+</g, '><').replace(/^\s+|\s+$/g, ''))
 
@@ -62,13 +64,14 @@ export const EDSCEchoform = ({
     const uiResult = doc.evaluate('//*[local-name()="ui"]', doc, resolver.current, XPathResult.ANY_TYPE, null)
     const ui = uiResult.iterateNext()
 
+    // Reset values for a newly created form
     setUpdatedAt(Date.now())
     setFormIsValid({})
-    setModel(extendedModel)
-    setUi(ui)
     simplifiedTree.current = undefined
 
-    onFormModelUpdated(extendedModel.outerHTML)
+    // Set model and ui state
+    setModel(extendedModel)
+    setUi(ui)
   }, [form])
 
   useEffect(() => {
@@ -85,29 +88,37 @@ export const EDSCEchoform = ({
 
     // if there are no relevantInvalidFields, the form is valid
     onFormIsValidUpdated(!relevantInvalidFields.length)
-  }, [formIsValid, relevantFields, onFormIsValidUpdated])
+  }, [formIsValid, relevantFields])
+
+  // When the model changes, call onFormModelUpdated to update the parent app
+  useEffect(() => {
+    if (model.outerHTML) {
+      // If there is a tree that needs simplified output, take the simplified tree output and add to the model that is give to the onFormModelUpdated callback. This leaves the verbose tree output in the internal model
+      let updatedModelWithSimplifiedTree = model.cloneNode(true)
+      if (simplifiedTree.current !== undefined) {
+        const {
+          modelRef: treeRef,
+          value,
+          valueElementName
+        } = simplifiedTree.current
+        updatedModelWithSimplifiedTree = updateModel(updatedModelWithSimplifiedTree, resolver.current, treeRef, { value, valueElementName })
+      }
+
+      onFormModelUpdated({
+        model: pruneModel(updatedModelWithSimplifiedTree.cloneNode(true)).outerHTML,
+        rawModel: updatedModelWithSimplifiedTree.outerHTML
+      })
+    }
+  }, [model.outerHTML])
 
   const setSimplifiedTree = (data) => {
     simplifiedTree.current = data
   }
 
   const onUpdateModel = (modelRef, newValue) => {
-    const updatedModel = updateModel(model.cloneNode(true), modelRef, newValue)
+    const updatedModel = updateModel(model.cloneNode(true), resolver.current, modelRef, newValue)
 
     setModel(updatedModel)
-
-    // If the tree needs simplified output, take the simplified tree output and add to the model that is give to the onFormModelUpdated callback. This leaves the verbose tree output in the internal model
-    let updatedModelWithSimplifiedTree = updatedModel.cloneNode(true)
-    if (simplifiedTree.current !== undefined) {
-      const {
-        modelRef: treeRef,
-        value,
-        valueElementName
-      } = simplifiedTree.current
-      updatedModelWithSimplifiedTree = updateModel(updatedModelWithSimplifiedTree, treeRef, { value, valueElementName })
-    }
-
-    onFormModelUpdated(updatedModelWithSimplifiedTree.outerHTML)
   }
 
   const setRelevantFields = (newField) => {
