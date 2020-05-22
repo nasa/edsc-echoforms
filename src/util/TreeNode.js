@@ -222,7 +222,6 @@ export class TreeNode {
    * @param {String} filterText text to filter the node on
    */
   matchesFilter(filterText) {
-    // return this.value.toLowerCase().indexOf(filterText) !== -1 || this.label.toLowerCase().indexOf(filterText) !== -1
     return this.label.toLowerCase().indexOf(filterText) !== -1
   }
 
