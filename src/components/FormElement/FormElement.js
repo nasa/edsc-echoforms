@@ -17,6 +17,7 @@ import { TextArea } from '../TextArea/TextArea'
 import { TextField } from '../TextField/TextField'
 import { Tree } from '../Tree/Tree'
 import { EchoFormsContext } from '../../context/EchoFormsContext'
+import { setRelevantAttribute } from '../../util/setRelevantAttribute'
 
 /**
  * Returns a simple string type from an XML type attribute
@@ -73,6 +74,10 @@ export const FormElement = ({
 
   if (!attributes) return null
 
+  if (modelRef.current === undefined) {
+    modelRef.current = getAttribute(attributes, 'ref')
+  }
+
   if (relevantAttribute.current === undefined) {
     relevantAttribute.current = getAttribute(attributes, 'relevant')
   }
@@ -81,6 +86,7 @@ export const FormElement = ({
     relevant = getNodeValue(relevantAttribute.current, model, resolver)
   }
   setRelevantFields({ [elementHash]: relevant })
+  setRelevantAttribute(model, resolver, modelRef.current, relevant)
   if (!relevant) return null
 
   let readOnly = false
@@ -105,9 +111,6 @@ export const FormElement = ({
     required = getNodeValue(requiredAttribute.current, model, resolver)
   }
 
-  if (modelRef.current === undefined) {
-    modelRef.current = getAttribute(attributes, 'ref')
-  }
   if (label.current === undefined) {
     label.current = getAttribute(attributes, 'label')
   }
