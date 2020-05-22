@@ -29,6 +29,7 @@ export const Tree = ({
   valueElementName
 }) => {
   const {
+    model: fullModel,
     resolver,
     setSimplifiedTree,
     onUpdateModel
@@ -45,6 +46,8 @@ export const Tree = ({
   const [totalNodes, setTotalNodes] = useState(0)
   const [selectedNodes, setSelectedNodes] = useState(0)
   const [maxParametersError, setMaxParametersError] = useState(null)
+
+  const [filterText, setFilterText] = useState('')
 
   /**
    * Update the form model with new values from the tree
@@ -117,7 +120,7 @@ export const Tree = ({
   // Update the treeModel when the form model data changes
   useEffect(() => {
     update()
-  }, [model.outerHTML])
+  }, [fullModel.outerHTML]) // When the tree is inside a group, it needs to update when anything in the form changes, so this useEffect runs on the full data model from the context
 
   if (!treeModel.current) {
     return (
@@ -132,9 +135,21 @@ export const Tree = ({
     updateModel()
   }
 
+  /**
+   * Sets the filterText state
+   * @param {Object} e event object
+   */
+  const onFilterChange = (e) => {
+    setFilterText(e.target.value.toLowerCase())
+  }
+
+  /**
+   * Build out the TreeItem list of children elements
+   */
   const nodeList = () => treeModel.current.children.map(child => (
     <TreeItem
       key={`${child.elementHash}`}
+      filterText={filterText}
       item={child}
       model={model}
       onChange={onChange}
@@ -156,6 +171,14 @@ export const Tree = ({
         ({ isFieldValid }) => (
           <>
             <div className={elementClasses('tree', '', !isFieldValid)}>
+              <div className="tree_filter">
+                <input
+                  className={elementClasses('tree_filter-input', 'form-control')}
+                  placeholder="Filter bands"
+                  value={filterText}
+                  onChange={onFilterChange}
+                />
+              </div>
               <div className="tree__node-count">
                 <span>
                   {selectedNodes}

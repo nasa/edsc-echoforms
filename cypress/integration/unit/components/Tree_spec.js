@@ -48,6 +48,7 @@ function setup(overrideProps, file = treeXml) {
   const enzymeWrapper = mount(
     <EchoFormsContext.Provider
       value={{
+        model,
         onUpdateModel,
         setFormIsValid,
         setSimplifiedTree
@@ -141,5 +142,19 @@ describe('Tree component', () => {
     const elementWrapper = enzymeWrapper.find(ElementWrapper)
 
     expect(elementWrapper.props().manualError).to.eq('No more than 4 parameters can be selected.')
+  })
+
+  it('onFilterChange updates the filterText in TreeItem', () => {
+    const { enzymeWrapper } = setup()
+
+    let treeItem = enzymeWrapper.find(TreeItem).first()
+    expect(treeItem.props().filterText).to.eq('')
+
+    const filterInput = enzymeWrapper.find('.tree_filter-input')
+    filterInput.props().onChange({ target: { value: 'filter text' } })
+    enzymeWrapper.update()
+
+    treeItem = enzymeWrapper.find(TreeItem).first()
+    expect(treeItem.props().filterText).to.eq('filter text')
   })
 })

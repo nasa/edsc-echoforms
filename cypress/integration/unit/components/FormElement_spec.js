@@ -63,6 +63,7 @@ function setup(props, resolver) {
   const enzymeWrapper = mount(
     <EchoFormsContext.Provider
       value={{
+        model: props.model,
         resolver,
         setRelevantFields: () => {},
         setFormIsValid: () => {},
