@@ -6,7 +6,7 @@ import { configure, mount } from 'enzyme'
 
 import { EDSCEchoform } from '../../../../src'
 import { parseXml } from '../../../../src/util/parseXml'
-import { readOnlyXml, prepopulatedXml, treeWithSimplifyOutputXml } from '../../../mocks/FormElement'
+import { readOnlyXml, prepopulatedXml, treeWithSimplifyOutputXml, notRelevantXml } from '../../../mocks/FormElement'
 import { FormBody } from '../../../../src/components/FormBody/FormBody'
 
 window.ReactDOM = ReactDOM
@@ -71,6 +71,24 @@ describe('EDSCEchoform component', () => {
     expect(onFormModelUpdatedSpy.calledTwice).to.eq(true)
 
     // onFormModelUpdated is called with the simplified output
-    expect(onFormModelUpdatedSpy.getCall(1).args[0]).to.eq('<prov:options xmlns:prov="http://www.example.com/orderoptions"><prov:treeReference><prov:data_layer>/Parent1</prov:data_layer></prov:treeReference></prov:options>')
+    expect(onFormModelUpdatedSpy.getCall(1).args[0].rawModel).to.eq('<prov:options xmlns:prov="http://www.example.com/orderoptions"><prov:treeReference><prov:data_layer>/Parent1</prov:data_layer></prov:treeReference></prov:options>')
+    expect(onFormModelUpdatedSpy.getCall(1).args[0].model).to.eq('<prov:options xmlns:prov="http://www.example.com/orderoptions"><prov:treeReference><prov:data_layer>/Parent1</prov:data_layer></prov:treeReference></prov:options>')
+  })
+
+  it('removes irrelevant fields in the model', () => {
+    const onFormModelUpdatedSpy = cy.spy().as('onFormModelUpdated')
+    const onFormIsValidUpdated = cy.spy().as('onFormIsValidUpdated')
+
+    mount(<EDSCEchoform
+      form={notRelevantXml}
+      onFormModelUpdated={onFormModelUpdatedSpy}
+      onFormIsValidUpdated={onFormIsValidUpdated}
+    />)
+
+    // Called the first time on page load, second time from tree updates
+    expect(onFormModelUpdatedSpy.calledTwice).to.eq(true)
+
+    expect(onFormModelUpdatedSpy.getCall(1).args[0].rawModel).to.eq('<prov:options xmlns:prov="http://www.example.com/orderoptions"><prov:boolreference>false</prov:boolreference><prov:textreference irrelevant="true">test value</prov:textreference></prov:options>')
+    expect(onFormModelUpdatedSpy.getCall(1).args[0].model).to.eq('<prov:options xmlns:prov="http://www.example.com/orderoptions"><prov:boolreference>false</prov:boolreference></prov:options>')
   })
 })
