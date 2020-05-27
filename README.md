@@ -1,16 +1,17 @@
 # Earthdata Search Components:  ECHO Forms
 
+[![npm version](https://badge.fury.io/js/edsc-echoforms.svg)](https://badge.fury.io/js/edsc-echoforms)
 [![Build Status](https://travis-ci.org/nasa/edsc-echoforms.svg?branch=master)](https://travis-ci.org/nasa/edsc-echoforms)
 
 A React component implementing the
 [ECHO Forms](https://earthdata.nasa.gov/files/ECHO_Forms_Specification_0.pdf)
 specification. For a basic usage example and a testbed for changes,
-see `example/src`
+see `example/src`.
 
 The ECHO Forms component was developed as a component of
 [Earthdata Search](https://github.com/nasa/earthdata-search).
 
-For the jQuery version of this plugin see [this branch](https://github.com/nasa/edsc-echoforms/tree/jquery-plugin)
+For the jQuery version of this plugin see [this branch](https://github.com/nasa/edsc-echoforms/tree/jquery-plugin).
 
 ## Installation
 
@@ -18,7 +19,7 @@ For the jQuery version of this plugin see [this branch](https://github.com/nasa/
 
 ## Usage
 
-After installing you can use the component in your code
+After installing you can use the component in your code.
 
 ```javascript
 import EDSCEchoform from 'edsc-echoforms'
@@ -38,14 +39,14 @@ const Component = () => {
 
 | Prop | Type | Required | Default Value | Description
 | ---- |:----:|:--------:|:-------------:| -----------
-addBootstrapClasses | Boolean | false | false | Adds Bootstrap class names to elements. Bootstrap is **not** included in this package
-form | String | true | | ECHO Forms XML string
-hasShapefile | Boolean | false | false | Is a shapefile included in the search parameters. This is used to display help text about shapefile processing to users on shapefile form fields
-prepopulateValues | Object | false | | Values used to prepopulate fields through the form's `pre:prepopulate` extensions
-onFormModelUpdated | Function | true | | Callback function that returns `{ model, rawModel }`. `model` is the data model pruned of irrelevant fields. `rawModel` is the full data model
-onFormIsValidUpdated | Function | true | | Callback function that returns a Boolean value of the form's isValid property
+addBootstrapClasses | Boolean | false | false | Adds Bootstrap class names to elements. Bootstrap is **not** included in this package.
+form | String | true | | ECHO Forms XML string.
+hasShapefile | Boolean | false | false | Is a shapefile included in the search parameters. This is used to display help text about shapefile processing to users on shapefile form fields.
+prepopulateValues | Object | false | | Values used to prepopulate fields through the form's `pre:prepopulate` extensions.
+onFormModelUpdated | Function | true | | Callback function that returns `{ model, rawModel }`. `model` is the data model pruned of irrelevant fields. `rawModel` is the full data model.
+onFormIsValidUpdated | Function | true | | Callback function that returns a Boolean value of the form's isValid property.
 
-### Building
+## Development
 
 To compile:
 
