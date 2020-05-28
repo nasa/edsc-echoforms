@@ -72,12 +72,21 @@ describe('Range component', () => {
     expect(enzymeWrapper.find('.range__value')).to.have.text('5')
   })
 
-  it('onChange calls onUpdateModel', () => {
+  it('onChange sets the state', () => {
+    const { enzymeWrapper } = setup()
+
+    enzymeWrapper.find('input').props().onChange({ target: { value: 4 } })
+    enzymeWrapper.update()
+
+    expect(enzymeWrapper.find('input').props().value).to.eq(4)
+  })
+
+  it('onMouseUp calls onUpdateModel', () => {
     const { enzymeWrapper, onUpdateModel } = setup()
 
     const range = enzymeWrapper.find('input')
 
-    range.props().onChange({ target: { value: 4 } })
+    range.props().onMouseUp({ target: { value: 4 } })
 
     expect(onUpdateModel.calledOnce).to.eq(true)
     expect(onUpdateModel.getCall(0).args[0]).to.eq('testfield')
