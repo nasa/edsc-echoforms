@@ -25,7 +25,7 @@ module.exports = (on, config) => {
   on('file:preprocessor', require('@cypress/code-coverage/use-babelrc'))
 
   const options = {
-    webpackOptions: require('../../webpack.config'),
+    webpackOptions: require('../../example/webpack.config'),
     watchOptions: {}
   }
   on('file:preprocessor', webpackPreprocessor(options))
