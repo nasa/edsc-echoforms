@@ -1,3 +1,5 @@
+import { evaluateXpath } from './evaluateXpath'
+
 /**
  * Sets the irrelevant attribute on a model element
  * @param {Object} model XML Model
@@ -5,9 +7,9 @@
  * @param {Boolean} relevant Is the field relevant
  */
 export const setRelevantAttribute = (model, resolver, modelRef, relevant) => {
-  const doc = model.ownerDocument
-  const result = doc.evaluate(`//${modelRef}`, model, resolver, XPathResult.ANY_TYPE, null)
-  const element = result.iterateNext()
+  if (!modelRef) return model
+
+  const element = evaluateXpath(modelRef, model, resolver)
 
   if (relevant) {
     element.removeAttribute('irrelevant')
