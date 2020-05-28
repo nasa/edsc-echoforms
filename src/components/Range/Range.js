@@ -19,9 +19,11 @@ export const Range = ({
   readOnly,
   required,
   step,
-  value
+  value: propsValue
 }) => {
   const { onUpdateModel } = useContext(EchoFormsContext)
+
+  const [value, setValue] = useState(propsValue)
   const [position, setPosition] = useState('')
   const [newValue, setNewValue] = useState('')
   const { elementClasses } = useClasses()
@@ -36,6 +38,10 @@ export const Range = ({
   }, [value, max, min])
 
   const onChange = (e) => {
+    setValue(e.target.value)
+  }
+
+  const onMouseUp = (e) => {
     onUpdateModel(modelRef, e.target.value)
   }
 
@@ -63,6 +69,7 @@ export const Range = ({
               type="range"
               value={value || min}
               onChange={onChange}
+              onMouseUp={onMouseUp}
             />
             <div className="range__markers">
               <span className="range__min">
