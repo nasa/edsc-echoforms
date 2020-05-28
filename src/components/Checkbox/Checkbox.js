@@ -15,11 +15,30 @@ export const Checkbox = ({
   readOnly,
   required
 }) => {
-  const { onUpdateModel } = useContext(EchoFormsContext)
+  const { hasShapefile, onUpdateModel } = useContext(EchoFormsContext)
   const { elementClasses } = useClasses()
 
   const onChange = (e) => {
     onUpdateModel(modelRef, e.target.checked)
+  }
+
+  let disabled = false
+  let shapefileHelp
+  if (id && (id.includes('spatial') || id.includes('use-shapefile'))) {
+    if (hasShapefile) {
+      shapefileHelp = 'Complex shapefiles may take longer to process. You will receive an email when your files are finished processing.'
+    } else {
+      disabled = true
+      shapefileHelp = (
+        <span>
+          Click
+          {' '}
+          <b>Back to Search</b>
+          {' '}
+          and upload a KML or Shapefile to enable this option.
+        </span>
+      )
+    }
   }
 
   return (
@@ -27,7 +46,8 @@ export const Checkbox = ({
       elementHash={elementHash}
       formElements={children}
       htmlFor={id}
-      label={label}
+      // label={label}
+      manualHelp={shapefileHelp}
       model={model}
       required={required}
       value={checked}
@@ -38,6 +58,7 @@ export const Checkbox = ({
             <input
               className={elementClasses('checkbox__input', 'form-check-input', !isFieldValid)}
               checked={checked === 'true'}
+              disabled={disabled}
               id={id}
               name={label}
               readOnly={readOnly}

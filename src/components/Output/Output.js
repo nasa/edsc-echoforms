@@ -27,7 +27,7 @@ export const Output = ({
             )
           }
           {
-            (!type || !type === 'anyuri') && (
+            (!type || type !== 'anyuri') && (
               <p id={id}>{value}</p>
             )
           }

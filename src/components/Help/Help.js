@@ -3,32 +3,55 @@ import PropTypes from 'prop-types'
 
 import { useClasses } from '../../hooks/useClasses'
 
-export const Help = ({ elements }) => {
+export const Help = ({ elements, manualHelp }) => {
   const { elementClasses } = useClasses()
   const classes = elementClasses('help-text', 'form-text text-muted')
 
-  return (
-    elements && Array.from(elements)
+  const help = []
+  if (elements) {
+    Array.from(elements)
       .filter(element => element.tagName === 'help')
-      .map((element) => {
+      .forEach((element) => {
         const { textContent } = element
 
-        return (
+        help.push((
           <small
             key={textContent}
             className={classes}
           >
             {textContent}
           </small>
-        )
+        ))
       })
+  }
+
+  if (manualHelp) {
+    help.push((
+      <small
+        key={manualHelp}
+        className={classes}
+      >
+        {manualHelp}
+      </small>
+    ))
+  }
+
+  return (
+    <>
+      {help}
+    </>
   )
 }
 
 Help.defaultProps = {
-  elements: {}
+  elements: {},
+  manualHelp: null
 }
 
 Help.propTypes = {
-  elements: PropTypes.shape({})
+  elements: PropTypes.shape({}),
+  manualHelp: PropTypes.oneOfType([
+    PropTypes.string,
+    PropTypes.node
+  ])
 }
