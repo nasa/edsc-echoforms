@@ -9,7 +9,8 @@
     "start": "webpack-dev-server --config example/webpack.config.js --mode development",
     "cypress:open": "cypress open",
     "cypress:run": "cypress run -c video=false",
-    "test": "npm run cypress:run"
+    "test": "npm run cypress:run",
+    "test:bamboo": "cypress run --reporter junit --reporter-options \"mochaFile=junit.xml\" -c video=false"
   },
   "repository": {
     "type": "git",
