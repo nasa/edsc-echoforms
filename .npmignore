@@ -9,6 +9,7 @@ coverage
 cypress
 cypress.json
 example
+source.tgz
 src
 tmp
 webpack.config.js
