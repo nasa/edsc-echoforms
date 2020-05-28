@@ -15,14 +15,14 @@ For the jQuery version of this plugin see [this branch](https://github.com/nasa/
 
 ## Installation
 
-    npm install edsc-echoforms
+    npm install @edsc/echoforms
 
 ## Usage
 
 After installing you can use the component in your code.
 
 ```javascript
-import EDSCEchoform from 'edsc-echoforms'
+import EDSCEchoform from '@edsc/echoforms'
 
 const Component = () => {
   return (
