@@ -12,13 +12,7 @@ export const getNodeValue = (ref, model, resolver, isTree) => {
     return ref === 'true'
   }
 
-  let modelRef = ref
-
-  if (ref.charAt(0) === '[') {
-    modelRef = `self::*${ref}`
-  }
-
-  const result = evaluateXpath(modelRef, model, resolver)
+  const result = evaluateXpath(ref, model, resolver)
 
   if (typeof result === 'boolean') {
     return result
