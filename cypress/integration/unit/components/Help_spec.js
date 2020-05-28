@@ -21,12 +21,13 @@ function readXml(file, type) {
   return { input }
 }
 
-function setup(file, type) {
+function setup(file, type, manualHelp) {
   const { input } = readXml(file, type)
 
   const enzymeWrapper = shallow(
     <Help
       elements={input.children}
+      manualHelp={manualHelp}
     />
   )
 
@@ -47,5 +48,12 @@ describe('Help component', () => {
 
     expect(enzymeWrapper.find('small')).to.have.length(1)
     expect(enzymeWrapper.find('small')).to.have.text('Helpful text')
+  })
+
+  it('renders manualHelp', () => {
+    const { enzymeWrapper } = setup(textfieldXml, 'input', 'Manual Help Message')
+
+    expect(enzymeWrapper.find('small')).to.have.length(2)
+    expect(enzymeWrapper.find('small').last()).to.have.text('Manual Help Message')
   })
 })

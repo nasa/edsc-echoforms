@@ -1,5 +1,7 @@
 export const checkboxXml = '<form><model><instance><prov:options xmlns:prov="http://www.example.com/orderoptions"><prov:boolreference>true</prov:boolreference></prov:options></instance></model><ui><input id="boolinput" label="Bool input" ref="prov:boolreference" type="xs:boolean"><help>Helpful text</help></input></ui></form>'
 
+export const shapeFileCheckboxXml = '<form><model><instance><prov:options xmlns:prov="http://www.example.com/orderoptions"><prov:shapefileReference>true</prov:shapefileReference></prov:options></instance></model><ui><input id="test-use-shapefile" label="Use Shapefile" ref="prov:shapefileReference" type="xs:boolean" /></ui></form>'
+
 export const textfieldXml = '<form><model><instance><prov:options xmlns:prov="http://www.example.com/orderoptions"><prov:textreference>test value</prov:textreference></prov:options></instance></model><ui><input id="textinput" label="Text input" ref="prov:textreference" type="xs:string"><help>Helpful text</help></input></ui></form>'
 
 export const textFieldWithXpathConstraintXml = '<form><model><instance><prov:options xmlns:prov="http://www.example.com/orderoptions"><prov:textreference>test</prov:textreference></prov:options></instance></model><ui><input id="textinput" label="Text input" ref="prov:textreference" type="xs:string"><help>Helpful text</help><constraints><constraint><xpath>prov:textreference="test value"</xpath><alert>Value must be "test value"</alert></constraint></constraints></input></ui></form>'

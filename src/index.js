@@ -11,6 +11,7 @@ import { pruneModel } from './util/pruneModel'
 export const EDSCEchoform = ({
   addBootstrapClasses,
   form,
+  hasShapefile,
   prepopulateValues,
   onFormModelUpdated,
   onFormIsValidUpdated
@@ -32,7 +33,7 @@ export const EDSCEchoform = ({
   const relevantFields = useRef({})
 
   // Take any prepopulate extensions and update the model
-  const handlePrepopulateExtension = (extension, model) => {
+  const handlePrepopulateExtension = (extension, model, resolver) => {
     if (!prepopulateValues || !extension) return model
 
     let updatedModel = model
@@ -42,7 +43,7 @@ export const EDSCEchoform = ({
         const ref = expression.getAttribute('ref')
         const source = expression.getAttribute('source')
         if (prepopulateValues[source]) {
-          updatedModel = updateModel(updatedModel, resolver.current, ref, prepopulateValues[source])
+          updatedModel = updateModel(updatedModel, resolver, ref, prepopulateValues[source])
         }
       })
     return updatedModel
@@ -59,7 +60,7 @@ export const EDSCEchoform = ({
 
     const extensionResult = doc.evaluate('//*[local-name()="extension" and @name="pre:prepopulate"]/*', doc, resolver.current, XPathResult.ANY_TYPE, null)
     const extension = extensionResult.iterateNext()
-    const extendedModel = handlePrepopulateExtension(extension, initialModel)
+    const extendedModel = handlePrepopulateExtension(extension, initialModel.cloneNode(true), resolver.current)
 
     const uiResult = doc.evaluate('//*[local-name()="ui"]', doc, resolver.current, XPathResult.ANY_TYPE, null)
     const ui = uiResult.iterateNext()
@@ -132,33 +133,34 @@ export const EDSCEchoform = ({
     <EchoFormsContext.Provider
       value={{
         addBootstrapClasses,
+        hasShapefile,
         model,
-        resolver: resolver.current,
-        setSimplifiedTree,
         onUpdateModel,
+        resolver: resolver.current,
         setFormIsValid,
-        setRelevantFields
+        setRelevantFields,
+        setSimplifiedTree
       }}
     >
-      <form>
-        <FormBody
-          key={updateAt}
-          ui={ui}
-          model={model}
-        />
-      </form>
+      <FormBody
+        key={updateAt}
+        ui={ui}
+        model={model}
+      />
     </EchoFormsContext.Provider>
   )
 }
 
 EDSCEchoform.defaultProps = {
   addBootstrapClasses: false,
+  hasShapefile: false,
   prepopulateValues: null
 }
 
 EDSCEchoform.propTypes = {
   addBootstrapClasses: PropTypes.bool,
   form: PropTypes.string.isRequired,
+  hasShapefile: PropTypes.bool,
   prepopulateValues: PropTypes.shape({}),
   onFormModelUpdated: PropTypes.func.isRequired,
   onFormIsValidUpdated: PropTypes.func.isRequired
