@@ -1,4 +1,10 @@
 const path = require('path')
+const HtmlWebpackPlugin = require('html-webpack-plugin')
+
+const htmlWebpackPlugin = new HtmlWebpackPlugin({
+  template: path.join(__dirname, 'src/index.html'),
+  filename: './index.html'
+})
 
 module.exports = {
   entry: path.join(__dirname, 'src/index.js'),
@@ -19,17 +25,12 @@ module.exports = {
       }
     ]
   },
+  plugins: [htmlWebpackPlugin],
   resolve: {
     extensions: ['.js', '.jsx']
   },
   devtool: 'source-map',
-  output: {
-    path: path.resolve(__dirname, 'dist'),
-    filename: 'index.js',
-    libraryTarget: 'commonjs2'
-  },
-  externals: {
-    react: 'commonjs react',
-    'react-dom': 'commonjs react-dom'
+  devServer: {
+    port: 3002
   }
 }

@@ -1,0 +1,14 @@
+.eslintignore
+.eslintrc
+.nvmrc
+.nyc_output
+.travis.yml
+babel.config.js
+bin
+coverage
+cypress
+cypress.json
+example
+src
+tmp
+webpack.config.js
