@@ -88,6 +88,7 @@ const App = () => {
       <EDSCEchoform
         addBootstrapClasses
         form={form}
+        hasShapefile
         prepopulateValues={{
           PREPOP: 'I am prepopulated'
         }}

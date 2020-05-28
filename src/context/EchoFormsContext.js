@@ -5,10 +5,11 @@ import { createContext } from 'react'
  */
 export const EchoFormsContext = createContext({
   addBootstrapClasses: false,
+  hasShapefile: false,
   model: {},
-  resolver: () => {},
-  setSimplifiedTree: () => {},
   onUpdateModel: () => {},
+  resolver: () => {},
   setFormIsValid: () => {},
-  setRelevantFields: () => {}
+  setRelevantFields: () => {},
+  setSimplifiedTree: () => {}
 })

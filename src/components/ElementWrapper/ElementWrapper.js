@@ -12,6 +12,7 @@ export const ElementWrapper = ({
   htmlFor,
   label,
   manualError,
+  manualHelp,
   model,
   required,
   type,
@@ -28,10 +29,10 @@ export const ElementWrapper = ({
 
   return (
     <div className={elementClasses('', 'form-group row')}>
-      <label htmlFor={htmlFor} className={elementClasses('', 'form-label col-form-label col-sm-2')}>
+      <label htmlFor={htmlFor} className={elementClasses('', 'form-label col-form-label col-sm-4 text-right')}>
         {label}
       </label>
-      <div className={elementClasses('', 'col-sm-10')}>
+      <div className={elementClasses('', 'col-sm-8')}>
         {
           children({ isFieldValid })
         }
@@ -44,7 +45,7 @@ export const ElementWrapper = ({
           type={type}
           value={value}
         />
-        <Help elements={formElements} />
+        <Help elements={formElements} manualHelp={manualHelp} />
       </div>
     </div>
   )
@@ -56,6 +57,7 @@ ElementWrapper.defaultProps = {
   htmlFor: '',
   label: null,
   manualError: null,
+  manualHelp: null,
   required: false,
   type: null,
   value: null
@@ -68,6 +70,10 @@ ElementWrapper.propTypes = {
   htmlFor: PropTypes.string,
   label: PropTypes.string,
   manualError: PropTypes.string,
+  manualHelp: PropTypes.oneOfType([
+    PropTypes.string,
+    PropTypes.node
+  ]),
   model: PropTypes.shape({}).isRequired,
   required: PropTypes.bool,
   type: PropTypes.string,
