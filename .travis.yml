@@ -17,3 +17,9 @@ branches:
 script:
   - npm install
   - npm run cypress:run
+deploy:
+  provider: script
+  script: bin/ecc-sync
+  on:
+    branch: master
+    repo: nasa/edsc-echoforms
