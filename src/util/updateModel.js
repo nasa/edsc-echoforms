@@ -1,3 +1,5 @@
+import { evaluateXpath } from './evaluateXpath'
+
 /**
  * Updates an XML Model with a new value
  * @param {Object} model XML Model
@@ -5,9 +7,11 @@
  * @param {String|Array} newValue New value to be inserted into model
  */
 export const updateModel = (model, resolver, modelRef, newValue) => {
-  const doc = model.ownerDocument
-  const result = doc.evaluate(`//${modelRef}`, model, resolver, XPathResult.ANY_TYPE, null)
-  const value = result.iterateNext()
+  let prefixedRef = modelRef
+  if (!modelRef.startsWith('//')) {
+    prefixedRef = `//${modelRef}`
+  }
+  const value = evaluateXpath(prefixedRef, model, resolver)
 
   if (typeof newValue === 'object') {
     // Array values

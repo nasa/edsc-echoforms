@@ -4,6 +4,11 @@
  * @param {Object} model
  */
 export const evaluateXpath = (xpath, model, resolver) => {
+  if (xpath.charAt(0) === '[') {
+    // eslint-disable-next-line no-param-reassign
+    xpath = `self::*${xpath}`
+  }
+
   const result = model.ownerDocument.evaluate(
     xpath,
     model,
