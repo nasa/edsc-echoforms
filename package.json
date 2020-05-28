@@ -1,5 +1,5 @@
 {
-  "name": "edsc-echoforms",
+  "name": "@edsc/echoforms",
   "title": "Earthdata Search Components: ECHO Forms",
   "description": "A React component implementation of the ECHO Forms specification.",
   "main": "dist/index.js",
