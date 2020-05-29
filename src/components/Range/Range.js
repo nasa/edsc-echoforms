@@ -41,7 +41,7 @@ export const Range = ({
     setValue(e.target.value)
   }
 
-  const onMouseUp = (e) => {
+  const updateModel = (e) => {
     onUpdateModel(modelRef, e.target.value)
   }
 
@@ -69,7 +69,8 @@ export const Range = ({
               type="range"
               value={value || min}
               onChange={onChange}
-              onMouseUp={onMouseUp}
+              onMouseUp={updateModel}
+              onKeyUp={updateModel}
             />
             <div className="range__markers">
               <span className="range__min">

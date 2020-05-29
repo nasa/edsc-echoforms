@@ -46,7 +46,6 @@ export const Checkbox = ({
       elementHash={elementHash}
       formElements={children}
       htmlFor={id}
-      // label={label}
       manualHelp={shapefileHelp}
       model={model}
       required={required}
