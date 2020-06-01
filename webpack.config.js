@@ -1,6 +1,8 @@
+const TerserPlugin = require('terser-webpack-plugin')
 const path = require('path')
 
 module.exports = {
+  mode: 'production',
   entry: path.join(__dirname, 'src/index.js'),
   module: {
     rules: [
@@ -31,5 +33,15 @@ module.exports = {
   externals: {
     react: 'commonjs react',
     'react-dom': 'commonjs react-dom'
+  },
+  optimization: {
+    minimize: true,
+    minimizer: [new TerserPlugin({
+      extractComments: false,
+      terserOptions: {
+        keep_classnames: true,
+        keep_fnames: true
+      }
+    })]
   }
 }
