@@ -14,4 +14,4 @@ git fetch ecc "+refs/heads/*:refs/remotes/origin/*"
 
 git fetch --unshallow || true
 echo "TRAVIS_COMMIT=$TRAVIS_COMMIT"
-git push ecc $TRAVIS_COMMIT:refs/heads/master
+git push ecc $TRAVIS_COMMIT:refs/heads/EDSC-2569
