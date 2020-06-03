@@ -17,7 +17,18 @@ module.exports = {
       },
       {
         test: /\.(css|scss)$/,
-        use: ['style-loader', 'css-loader']
+        use: [
+          'style-loader',
+          'css-loader',
+          'sass-loader',
+          {
+            loader: 'sass-resources-loader',
+            options: {
+              // eslint-disable-next-line import/no-dynamic-require, global-require
+              resources: require(path.join(process.cwd(), '/src/css/globalUtils.js'))
+            }
+          }
+        ]
       },
       {
         test: /\.xml$/,
