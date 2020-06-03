@@ -87,7 +87,7 @@ describe('Checkbox component', () => {
     expect(enzymeWrapper.find('div.invalid-feedback').text()).to.eq('Required field')
   })
 
-  describe('shapfiles', () => {
+  describe('shapefiles', () => {
     it('renders a help message for a shapefile field when a shapefile exists', () => {
       const { enzymeWrapper } = setup(shapeFileCheckboxXml, { id: 'test-use-shapefile' }, true)
 
