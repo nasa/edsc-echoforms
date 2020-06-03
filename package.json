@@ -11,7 +11,7 @@
     "cypress:run": "cypress run -c video=false",
     "test": "npm run cypress:run",
     "test:bamboo": "cypress run --reporter junit --reporter-options \"mochaFile=junit.xml\" -c video=false",
-    "prepublish": "npm run build"
+    "prepare": "npm run build"
   },
   "repository": {
     "type": "git",

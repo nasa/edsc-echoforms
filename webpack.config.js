@@ -20,10 +20,8 @@ module.exports = {
           {
             loader: 'sass-resources-loader',
             options: {
-              resources: [
-                // eslint-disable-next-line import/no-dynamic-require, global-require
-                require(path.join(process.cwd(), '/src/css/globalUtils.js'))
-              ]
+              // eslint-disable-next-line import/no-dynamic-require, global-require
+              resources: require(path.join(process.cwd(), '/src/css/globalUtils.js'))
             }
           }
         ]
