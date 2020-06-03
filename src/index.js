@@ -10,6 +10,7 @@ import { pruneModel } from './util/pruneModel'
 
 export const EDSCEchoform = ({
   addBootstrapClasses,
+  className,
   form,
   hasShapefile,
   prepopulateValues,
@@ -102,7 +103,16 @@ export const EDSCEchoform = ({
           value,
           valueElementName
         } = simplifiedTree.current
-        updatedModelWithSimplifiedTree = updateModel(updatedModelWithSimplifiedTree, resolver.current, treeRef, { value, valueElementName })
+
+        updatedModelWithSimplifiedTree = updateModel(
+          updatedModelWithSimplifiedTree,
+          resolver.current,
+          treeRef,
+          {
+            value,
+            valueElementName
+          }
+        )
       }
 
       onFormModelUpdated({
@@ -143,6 +153,7 @@ export const EDSCEchoform = ({
       }}
     >
       <FormBody
+        className={className}
         key={updateAt}
         ui={ui}
         model={model}
@@ -153,12 +164,14 @@ export const EDSCEchoform = ({
 
 EDSCEchoform.defaultProps = {
   addBootstrapClasses: false,
+  className: null,
   hasShapefile: false,
   prepopulateValues: null
 }
 
 EDSCEchoform.propTypes = {
   addBootstrapClasses: PropTypes.bool,
+  className: PropTypes.string,
   form: PropTypes.string.isRequired,
   hasShapefile: PropTypes.bool,
   prepopulateValues: PropTypes.shape({}),

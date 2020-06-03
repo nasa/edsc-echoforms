@@ -4,14 +4,20 @@ import React, {
   useEffect
 } from 'react'
 import PropTypes from 'prop-types'
+import { IconContext } from 'react-icons'
+import { FaFolder, FaFolderOpen } from 'react-icons/fa'
 
-import './TreeItem.css'
+import { useClasses } from '../../hooks/useClasses'
+
+import './TreeItem.scss'
 
 export const TreeItem = ({
   filterText,
   item,
   model,
-  onChange
+  onChange,
+  isFirst,
+  isLast
 }) => {
   const {
     checked,
@@ -27,16 +33,18 @@ export const TreeItem = ({
     required
   } = item
   const checkboxElement = useRef(null)
-
+  const { elementClasses } = useClasses()
   const [isExpanded, setIsExpanded] = useState(expanded)
 
-  const childItems = () => children.map(child => (
+  const childItems = () => children.map((child, i) => (
     <TreeItem
       key={`${child.elementHash}`}
       filterText={filterText}
       item={child}
       model={model}
       onChange={onChange}
+      isFirst={i === 0}
+      isLast={i === children.length - 1}
     />
   ))
 
@@ -76,53 +84,76 @@ export const TreeItem = ({
     if (!matchesFilter && !filterExpanded) return null
   }
 
+  const isClosed = !isExpanded && !filterExpanded
+
+  let treeItemClasses = 'tree-item'
+
+  treeItemClasses += ` ${`tree-item--child-${level}`}`
+  treeItemClasses += ` ${isParent ? 'tree-item--is-parent' : ''}`
+  treeItemClasses += ` ${isFirst ? 'tree-item--is-first' : ''}`
+  treeItemClasses += ` ${isLast ? 'tree-item--is-last' : ''}`
+  treeItemClasses += ` ${!isClosed ? 'tree-item--is-open' : ''}`
+  treeItemClasses += ` ${isLast ? 'tree-item--has-blocker' : ''}`
+  treeItemClasses += ` ${!relevant ? 'tree-item--is-not-relevant' : ''}`
+
   return (
     <div
-      style={{ marginLeft: level * 15 }}
+      className={elementClasses(treeItemClasses)}
     >
-      { isParent && !isExpanded && !filterExpanded && (
-        <button
-          type="button"
-          onClick={onToggleExpanded}
+      <div
+        className={elementClasses('tree-item__header')}
+      >
+        { isParent && (
+          <button
+            className={elementClasses('tree-item__parent-button', 'btn')}
+            type="button"
+            onClick={onToggleExpanded}
+          >
+            <IconContext.Provider value={{
+              style: {
+                width: '1.25em'
+              }
+            }}
+            >
+              {
+                isClosed
+                  ? <FaFolder />
+                  : <FaFolderOpen />
+              }
+            </IconContext.Provider>
+          </button>
+        )}
+        <input
+          id={id}
+          className={elementClasses('tree-item__checkbox')}
+          type="checkbox"
+          value={fullValue}
+          onChange={handleChange}
+          checked={checked}
+          disabled={disabled}
+          ref={checkboxElement}
+        />
+        <label
+          className={elementClasses('tree-item__label')}
+          htmlFor={id}
         >
-          +
-        </button>
-      )}
-
-      { isParent && (isExpanded || filterExpanded) && (
-        <button
-          type="button"
-          onClick={onToggleExpanded}
-        >
-          -
-        </button>
-      )}
-      <input
-        id={id}
-        type="checkbox"
-        value={fullValue}
-        onChange={handleChange}
-        checked={checked}
-        disabled={disabled}
-        ref={checkboxElement}
-      />
-      <label htmlFor={id}>
-        {label}
-        {
-          !relevant && (
-            <span className="tree-item__irrelevant-label">
-              (not available)
-            </span>
-          )
-        }
-        {
-          required && (
-            <span className="tree-item__required-label">
-              (required)
-            </span>
-          )
-        }
-      </label>
+          {label}
+          {
+            !relevant && (
+              <span className={elementClasses('tree-item__irrelevant-label', 'ml-1 small')}>
+                (not available)
+              </span>
+            )
+          }
+          {
+            required && (
+              <span className={elementClasses('tree-item__required-label', 'ml-1 small')}>
+                (required)
+              </span>
+            )
+          }
+        </label>
+      </div>
       {
         (isExpanded || filterExpanded) && childItems()
       }
@@ -136,6 +167,8 @@ TreeItem.defaultProps = {
 
 TreeItem.propTypes = {
   filterText: PropTypes.string,
+  isFirst: PropTypes.bool.isRequired,
+  isLast: PropTypes.bool.isRequired,
   item: PropTypes.shape({
     checked: PropTypes.oneOfType([
       PropTypes.string,

@@ -2,6 +2,7 @@
 .eslintrc
 .nvmrc
 .nyc_output
+.travis
 .travis.yml
 babel.config.js
 bin

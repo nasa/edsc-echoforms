@@ -86,6 +86,15 @@ describe('Tree component', () => {
     expect(treeElement.props().valueElementName).to.eq('data_layer')
   })
 
+  it('passes a custom classname to the container', () => {
+    const { enzymeWrapper } = setup({
+      className: 'edsc-echoforms'
+    })
+
+    const treeElement = enzymeWrapper.find('.edsc-echoforms')
+    expect(treeElement.length).to.equal(1)
+  })
+
   it('changing a TreeItem calls onUpdateModel', () => {
     const { enzymeWrapper, onUpdateModel } = setup()
 
@@ -100,7 +109,7 @@ describe('Tree component', () => {
   })
 
   it('onUpdateModel isn\'t called if the tree value hasn\'t changed', () => {
-    const { enzymeWrapper, onUpdateModel } = setup()
+    const { enzymeWrapper, onUpdateModel } = setup({})
 
     const treeItem = enzymeWrapper.find(TreeItem).first()
 
@@ -150,11 +159,32 @@ describe('Tree component', () => {
     let treeItem = enzymeWrapper.find(TreeItem).first()
     expect(treeItem.props().filterText).to.eq('')
 
-    const filterInput = enzymeWrapper.find('.tree_filter-input')
+    const filterInput = enzymeWrapper.find('.tree__filter-input')
     filterInput.props().onChange({ target: { value: 'filter text' } })
     enzymeWrapper.update()
 
     treeItem = enzymeWrapper.find(TreeItem).first()
     expect(treeItem.props().filterText).to.eq('filter text')
+  })
+
+  it('onFilterClear clears the filterText in TreeItem', () => {
+    const { enzymeWrapper } = setup()
+
+    let treeItem = enzymeWrapper.find(TreeItem).first()
+    expect(treeItem.props().filterText).to.eq('')
+
+    const filterInput = enzymeWrapper.find('.tree__filter-input')
+    filterInput.props().onChange({ target: { value: 'filter text' } })
+    enzymeWrapper.update()
+
+    treeItem = enzymeWrapper.find(TreeItem).first()
+    expect(treeItem.props().filterText).to.eq('filter text')
+
+    const filterClearButton = enzymeWrapper.find('.tree__filter-clear-button')
+    filterClearButton.simulate('click')
+    enzymeWrapper.update()
+
+    treeItem = enzymeWrapper.find(TreeItem).first()
+    expect(treeItem.props().filterText).to.eq('')
   })
 })

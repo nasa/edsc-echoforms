@@ -10,12 +10,38 @@ import { treeXml } from '../../../mocks/FormElement'
 chai.use(chaiEnzyme())
 configure({ adapter: new Adapter() })
 
+
 function readXml(file) {
   const doc = parseXml(file)
   const modelResult = document.evaluate('//*[local-name()="instance"]/*', doc)
   const model = modelResult.iterateNext()
 
   return { model }
+}
+
+const defaultItem = {
+  children: [{
+    children: [],
+    checked: true,
+    disabled: false,
+    expanded: true,
+    id: '/Parent1/Child1',
+    fullValue: '/Parent1/Child1',
+    label: 'Child 1',
+    level: 2,
+    relevant: true,
+    required: false
+  }],
+  checked: true,
+  disabled: false,
+  expanded: true,
+  id: '/Parent1',
+  isParent: true,
+  fullValue: '/Parent1',
+  label: 'Parent 1',
+  level: 1,
+  relevant: true,
+  required: false
 }
 
 function setup(overrideProps, {
@@ -29,28 +55,7 @@ function setup(overrideProps, {
 
   const props = {
     item: {
-      children: [{
-        children: [],
-        checked: true,
-        disabled: false,
-        expanded: true,
-        id: '/Parent1/Child1',
-        fullValue: '/Parent1/Child1',
-        label: 'Child 1',
-        level: 2,
-        relevant: true,
-        required: false
-      }],
-      checked: true,
-      disabled: false,
-      expanded: true,
-      id: '/Parent1',
-      isParent: true,
-      fullValue: '/Parent1',
-      label: 'Parent 1',
-      level: 1,
-      relevant: true,
-      required: false,
+      ...defaultItem,
       childrenMatchFilter,
       matchesFilter,
       setChecked,
@@ -58,6 +63,7 @@ function setup(overrideProps, {
     },
     model,
     onChange,
+    isFirst: true,
     ...overrideProps
   }
 
@@ -153,5 +159,58 @@ describe('TreeItem component', () => {
     })
 
     expect(enzymeWrapper.find(TreeItem).length).to.eq(1)
+  })
+
+  it('adds the level modifier classname', () => {
+    const { enzymeWrapper } = setup({ item: { ...defaultItem, level: 2 } })
+    expect(enzymeWrapper.props().className).contains('tree-item--child-2')
+  })
+
+  describe('when the item is a parent', () => {
+    it('adds the modifier classname', () => {
+      const { enzymeWrapper } = setup()
+      expect(enzymeWrapper.props().className).contains('tree-item--is-parent')
+    })
+  })
+
+  describe('when the item is first in the list', () => {
+    it('adds the modifier classname', () => {
+      const { enzymeWrapper } = setup()
+      expect(enzymeWrapper.props().className).contains('tree-item--is-first')
+    })
+  })
+
+  describe('when the item is last in the list', () => {
+    it('adds the modifier classname', () => {
+      const { enzymeWrapper } = setup({
+        isFirst: false,
+        isLast: true
+      })
+      expect(enzymeWrapper.props().className).contains('tree-item--is-last')
+    })
+  })
+
+  describe('when the item is is open', () => {
+    it('adds the modifier classname', () => {
+      const { enzymeWrapper } = setup()
+      expect(enzymeWrapper.props().className).contains('tree-item--is-open')
+    })
+  })
+
+  describe('when the item is is closed', () => {
+    it('does not add the modifier classname', () => {
+      const { enzymeWrapper, setExpanded } = setup()
+
+      enzymeWrapper.find('button').simulate('click')
+      expect(setExpanded.calledOnce).to.eq(true)
+      expect(enzymeWrapper.props().className).not.contains('tree-item--is-open')
+    })
+  })
+
+  describe('when the item is not relevant', () => {
+    it('adds the modifier classname', () => {
+      const { enzymeWrapper } = setup({ item: { ...defaultItem, relevant: false } })
+      expect(enzymeWrapper.props().className).contains('tree-item--is-not-relevant')
+    })
   })
 })

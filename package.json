@@ -7,11 +7,11 @@
   "scripts": {
     "build": "webpack",
     "start": "webpack-dev-server --config example/webpack.config.js --mode development",
-    "cypress:open": "cypress open",
-    "cypress:run": "cypress run -c video=false",
+    "cypress:open": "NODE_ENV=test cypress open",
+    "cypress:run": "NODE_ENV=test cypress run -c video=false",
     "test": "npm run cypress:run",
     "test:bamboo": "cypress run --reporter junit --reporter-options \"mochaFile=junit.xml\" -c video=false",
-    "prepublish": "npm run build"
+    "prepare": "npm run build"
   },
   "repository": {
     "type": "git",
@@ -80,6 +80,9 @@
     "raw-loader": "^4.0.0",
     "react": "^16.12.0",
     "react-dom": "^16.12.0",
+    "sass": "^1.26.7",
+    "sass-loader": "^8.0.2",
+    "sass-resources-loader": "^2.0.3",
     "style-loader": "^1.1.3",
     "terser-webpack-plugin": "^3.0.2",
     "webpack": "^4.41.5",
@@ -88,6 +91,7 @@
     "xml-formatter": "^2.0.0"
   },
   "dependencies": {
-    "murmurhash": "^1.0.0"
+    "murmurhash": "^1.0.0",
+    "react-icons": "^3.10.0"
   }
 }
