@@ -10,6 +10,8 @@ import { ElementWrapper } from '../ElementWrapper/ElementWrapper'
 import { isArrayEqual } from '../../util/isArrayEqual'
 import { useClasses } from '../../hooks/useClasses'
 
+import './Tree.scss'
+
 export const Tree = ({
   children,
   element,
@@ -143,15 +145,25 @@ export const Tree = ({
   }
 
   /**
+   * Sets the filterText state
+   * @param {Object} e event object
+   */
+  const onFilterClear = () => {
+    setFilterText('')
+  }
+
+  /**
    * Build out the TreeItem list of children elements
    */
-  const nodeList = () => treeModel.current.children.map(child => (
+  const nodeList = () => treeModel.current.children.map((child, i) => (
     <TreeItem
       key={`${child.elementHash}`}
       filterText={filterText}
       item={child}
       model={model}
       onChange={onChange}
+      isFirst={i === 0}
+      isLast={i === treeModel.current.children.length - 1}
     />
   ))
 
@@ -170,16 +182,42 @@ export const Tree = ({
         ({ isFieldValid }) => (
           <>
             <div className={elementClasses('tree', '', !isFieldValid)}>
-              <div className="tree_filter">
-                <input
-                  className={elementClasses('tree_filter-input', 'form-control')}
-                  placeholder="Filter bands"
-                  value={filterText}
-                  onChange={onFilterChange}
-                />
+              <div className={elementClasses('tree__filter')}>
+                <label
+                  className={elementClasses('tree__filter-label', 'sr-only')}
+                  htmlFor="tree_filter_input"
+                >
+                  Filter
+                </label>
+                <div className={elementClasses('tree__filter-input-group', 'input-group input-group-sm mb-2 mt-1')}>
+                  <div className={elementClasses('tree__filter-input-group-prepend', 'input-group-prepend input-group-prepend-sm')}>
+                    <div className="input-group-text">Filter</div>
+                  </div>
+                  <input
+                    id="tree_filter_input"
+                    name="tree_filter_input"
+                    className={elementClasses('tree__filter-input', 'form-control form-control-sm')}
+                    placeholder="Enter text to filter bands"
+                    value={filterText}
+                    onChange={onFilterChange}
+                  />
+                  <div className={elementClasses('tree__filter-input-append tree__filter-input-append--clear', 'input-group-append')}>
+                    <button
+                      type="button"
+                      label="Clear"
+                      value=""
+                      className={elementClasses('tree__filter-clear-button', 'btn btn-outline-secondary form-control-sm')}
+                      onClick={onFilterClear}
+                    >
+                      <span className={elementClasses('tree__filter-clear-button-text', '')}>
+                        Clear
+                      </span>
+                    </button>
+                  </div>
+                </div>
               </div>
-              <div className="tree__node-count">
-                <span>
+              <div className={elementClasses('tree__node-count', 'mb-3')}>
+                <span className={elementClasses('tree__node-count-text', 'text-secondary small')}>
                   {selectedNodes}
                   {' '}
                   of
@@ -189,7 +227,11 @@ export const Tree = ({
                   bands selected
                 </span>
               </div>
-              {nodeList()}
+              <div className="tree__list-wrapper">
+                <div className="tree__list">
+                  {nodeList()}
+                </div>
+              </div>
             </div>
           </>
         )

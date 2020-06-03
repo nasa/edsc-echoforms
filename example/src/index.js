@@ -58,7 +58,7 @@ const App = () => {
       </h1>
       <h2>ECHO Forms XML</h2>
       <p>Enter ECHO Forms XML in the box below to see it rendered</p>
-      <form>
+      <form className="mb-4">
         <div className="form-check form-check-inline">
           <input className="form-check-input" type="radio" name="form-select" id="form-select1" value={form1} onChange={onSelectForm} defaultChecked />
           <label className="form-check-label" htmlFor="form-select1">
@@ -80,12 +80,14 @@ const App = () => {
       </form>
       <textarea
         id="demo-echoforms-xml"
+        className="mb-4"
         value={tempForm}
         onBlur={onTextAreaBlur}
         onChange={onTextAreaChange}
       />
       <h2>Generated Interface</h2>
       <EDSCEchoform
+        className="mb-4"
         addBootstrapClasses
         form={form}
         hasShapefile
@@ -96,7 +98,7 @@ const App = () => {
         onFormIsValidUpdated={onFormIsValidUpdated}
       />
       <h2>Serialized Model</h2>
-      <p>
+      <p className="mb-4">
         Form Valid:
         {' '}
         <strong>
