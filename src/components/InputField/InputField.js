@@ -1,4 +1,4 @@
-import React, { useContext } from 'react'
+import React, { useContext, useState } from 'react'
 import PropTypes from 'prop-types'
 import { ElementWrapper } from '../ElementWrapper/ElementWrapper'
 import { useClasses } from '../../hooks/useClasses'
@@ -17,11 +17,16 @@ export const InputField = ({
   type,
   value
 }) => {
+  const [stateValue, setStateValue] = useState(value)
   const { onUpdateModel } = useContext(EchoFormsContext)
   const { elementClasses } = useClasses()
 
+  const onBlur = () => {
+    onUpdateModel(modelRef, stateValue)
+  }
+
   const onChange = (e) => {
-    onUpdateModel(modelRef, e.target.value)
+    setStateValue(e.target.value)
   }
 
   return (
@@ -44,7 +49,8 @@ export const InputField = ({
             placeholder={placeholder}
             readOnly={readOnly}
             type={type}
-            value={value}
+            value={stateValue}
+            onBlur={onBlur}
             onChange={onChange}
           />
         )
