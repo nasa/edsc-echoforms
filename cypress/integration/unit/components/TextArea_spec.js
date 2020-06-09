@@ -60,15 +60,26 @@ describe('TextArea component', () => {
     expect(enzymeWrapper.find('textarea').props()).to.have.property('readOnly', false)
   })
 
-  it('onChange calls onUpdateModel', () => {
+  it('onBlur calls onUpdateModel', () => {
     const { enzymeWrapper, onUpdateModel } = setup()
 
     const TextArea = enzymeWrapper.find('textarea')
 
-    TextArea.props().onChange({ target: { value: 'New Value' } })
+    TextArea.props().onBlur()
 
     expect(onUpdateModel.calledOnce).to.eq(true)
     expect(onUpdateModel.getCall(0).args[0]).to.eq('testfield')
-    expect(onUpdateModel.getCall(0).args[1]).to.eq('New Value')
+    expect(onUpdateModel.getCall(0).args[1]).to.eq('test value')
+  })
+
+  it('onChange sets the state', () => {
+    const { enzymeWrapper } = setup()
+
+    const textarea = enzymeWrapper.find('textarea')
+
+    textarea.props().onChange({ target: { value: 'New Value' } })
+    enzymeWrapper.update()
+
+    expect(enzymeWrapper.find('textarea').props()).to.have.property('value', 'New Value')
   })
 })

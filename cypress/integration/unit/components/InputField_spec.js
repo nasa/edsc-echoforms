@@ -75,15 +75,26 @@ describe('InputField component', () => {
     expect(enzymeWrapper.find('input').props()).to.have.property('placeholder', 'YYYY-MM-DDTHH:MM:SS')
   })
 
-  it('onChange calls onUpdateModel', () => {
+  it('onBlur calls onUpdateModel', () => {
     const { enzymeWrapper, onUpdateModel } = setup()
 
     const input = enzymeWrapper.find('input')
 
-    input.props().onChange({ target: { value: 'New Value' } })
+    input.props().onBlur()
 
     expect(onUpdateModel.calledOnce).to.eq(true)
     expect(onUpdateModel.getCall(0).args[0]).to.eq('testfield')
-    expect(onUpdateModel.getCall(0).args[1]).to.eq('New Value')
+    expect(onUpdateModel.getCall(0).args[1]).to.eq('test value')
+  })
+
+  it('onChange sets the state', () => {
+    const { enzymeWrapper } = setup()
+
+    const input = enzymeWrapper.find('input')
+
+    input.props().onChange({ target: { value: 'New Value' } })
+    enzymeWrapper.update()
+
+    expect(enzymeWrapper.find('input').props()).to.have.property('value', 'New Value')
   })
 })
