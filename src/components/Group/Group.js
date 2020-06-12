@@ -15,6 +15,7 @@ export const Group = ({
   label,
   model,
   modelRef,
+  parentRef,
   readOnly
 }) => {
   const { resolver } = useContext(EchoFormsContext)
@@ -23,6 +24,11 @@ export const Group = ({
 
   // react-hooks/rules-of-hooks - shouldn't call hooks inside of conditionals
   const headerClasses = elementClasses('group__header', 'card-header')
+
+  let newParentRef = modelRef
+  if (parentRef) {
+    newParentRef = `${parentRef}/${modelRef}`
+  }
 
   return (
     <div
@@ -41,13 +47,13 @@ export const Group = ({
         {
           children && Array.from(children)
             .filter(element => element.tagName !== 'help')
-            .map((element, index) => (
+            .map(element => (
               <FormElement
-                // eslint-disable-next-line react/no-array-index-key
-                key={`fix-this-later-${index}`}
+                key={element.outerHTML}
                 element={element}
                 model={groupModel}
                 parentReadOnly={readOnly}
+                parentRef={newParentRef}
               />
             ))
         }

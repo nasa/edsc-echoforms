@@ -309,7 +309,8 @@ describe('FormElement component', () => {
     const { enzymeWrapper } = setup({
       element: ui.children[0],
       model,
-      parentReadOnly: true
+      parentReadOnly: true,
+      parentRef: 'parentRef'
     }, resolver)
 
     const textfield = enzymeWrapper.find(TextField)
@@ -318,6 +319,7 @@ describe('FormElement component', () => {
     expect(textfield.props().value).to.eq('test value')
     expect(textfield.props().label).to.eq('Text input')
     expect(textfield.props().modelRef).to.eq('prov:textreference')
+    expect(textfield.props().parentRef).to.eq('parentRef')
     expect(textfield.props().readOnly).to.eq(true)
   })
 

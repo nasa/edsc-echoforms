@@ -11,6 +11,7 @@ export const InputField = ({
   label,
   model,
   modelRef,
+  parentRef,
   placeholder,
   readOnly,
   required,
@@ -22,7 +23,7 @@ export const InputField = ({
   const { elementClasses } = useClasses()
 
   const onBlur = () => {
-    onUpdateModel(modelRef, stateValue)
+    onUpdateModel(parentRef, modelRef, stateValue)
   }
 
   const onChange = (e) => {
@@ -62,6 +63,7 @@ export const InputField = ({
 InputField.defaultProps = {
   children: null,
   id: '',
+  parentRef: null,
   placeholder: '',
   type: null,
   value: ''
@@ -74,6 +76,7 @@ InputField.propTypes = {
   label: PropTypes.string.isRequired,
   model: PropTypes.shape({}).isRequired,
   modelRef: PropTypes.string.isRequired,
+  parentRef: PropTypes.string,
   placeholder: PropTypes.string,
   readOnly: PropTypes.bool.isRequired,
   required: PropTypes.bool.isRequired,

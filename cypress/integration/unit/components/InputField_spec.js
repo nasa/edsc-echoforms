@@ -76,15 +76,18 @@ describe('InputField component', () => {
   })
 
   it('onBlur calls onUpdateModel', () => {
-    const { enzymeWrapper, onUpdateModel } = setup()
+    const { enzymeWrapper, onUpdateModel } = setup({
+      parentRef: 'parentRef'
+    })
 
     const input = enzymeWrapper.find('input')
 
     input.props().onBlur()
 
     expect(onUpdateModel.calledOnce).to.eq(true)
-    expect(onUpdateModel.getCall(0).args[0]).to.eq('testfield')
-    expect(onUpdateModel.getCall(0).args[1]).to.eq('test value')
+    expect(onUpdateModel.getCall(0).args[0]).to.eq('parentRef')
+    expect(onUpdateModel.getCall(0).args[1]).to.eq('testfield')
+    expect(onUpdateModel.getCall(0).args[2]).to.eq('test value')
   })
 
   it('onChange sets the state', () => {

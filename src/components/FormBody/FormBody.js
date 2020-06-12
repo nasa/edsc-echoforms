@@ -19,10 +19,9 @@ export const FormBody = ({
     <div className={elementClasses(formBodyClassnames, 'card')}>
       <div className={elementClasses('form__body', 'card-body')}>
         {
-          ui.childElementCount > 0 && Array.from(ui.children).map((element, i) => (
+          ui.childElementCount > 0 && Array.from(ui.children).map(element => (
             <FormElement
-              // eslint-disable-next-line react/no-array-index-key
-              key={`fix-this-later-${i}`}
+              key={element.outerHTML}
               element={element}
               model={model}
             />

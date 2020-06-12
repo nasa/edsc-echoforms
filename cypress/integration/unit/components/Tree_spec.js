@@ -34,6 +34,7 @@ function setup(overrideProps, file = treeXml) {
     maxParameters: null,
     model,
     modelRef: 'testfield',
+    parentRef: 'parentRef',
     required: false,
     separator: '/',
     simplifyOutput: false,
@@ -51,7 +52,8 @@ function setup(overrideProps, file = treeXml) {
         model,
         onUpdateModel,
         setFormIsValid,
-        setSimplifiedTree
+        setSimplifiedTree,
+        simplifiedTree: {}
       }}
     >
       <Tree {...props} />
@@ -103,9 +105,10 @@ describe('Tree component', () => {
     treeItem.find('input').first().simulate('change', { target: { checked: true } })
 
     expect(onUpdateModel.calledOnce).to.eq(true)
-    expect(onUpdateModel.getCall(0).args[0]).to.eq('testfield')
-    expect(onUpdateModel.getCall(0).args[1].value).to.eql(['/Parent1', '/Parent1/Child1'])
-    expect(onUpdateModel.getCall(0).args[1].valueElementName).to.eq('data_layer')
+    expect(onUpdateModel.getCall(0).args[0]).to.eq('parentRef')
+    expect(onUpdateModel.getCall(0).args[1]).to.eq('testfield')
+    expect(onUpdateModel.getCall(0).args[2].value).to.eql(['/Parent1', '/Parent1/Child1'])
+    expect(onUpdateModel.getCall(0).args[2].valueElementName).to.eq('data_layer')
   })
 
   it('onUpdateModel isn\'t called if the tree value hasn\'t changed', () => {
@@ -127,9 +130,12 @@ describe('Tree component', () => {
 
     expect(setSimplifiedTree.calledOnce).to.eq(true)
     expect(setSimplifiedTree.getCall(0).args[0]).to.eql({
-      modelRef: 'testfield',
-      value: ['/Parent1'],
-      valueElementName: 'data_layer'
+      testfield: {
+        parentRef: 'parentRef',
+        modelRef: 'testfield',
+        value: ['/Parent1'],
+        valueElementName: 'data_layer'
+      }
     })
   })
 

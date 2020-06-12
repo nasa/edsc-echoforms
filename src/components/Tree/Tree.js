@@ -22,6 +22,7 @@ export const Tree = ({
   maxParameters,
   model,
   modelRef,
+  parentRef,
   required,
   separator,
   simplifyOutput,
@@ -31,6 +32,7 @@ export const Tree = ({
   const {
     model: fullModel,
     resolver,
+    simplifiedTree,
     setSimplifiedTree,
     onUpdateModel
   } = useContext(EchoFormsContext)
@@ -60,14 +62,18 @@ export const Tree = ({
       // If simplifyOutput, save a simplified tree output to be added to the model later
       if (simplifyOutput) {
         setSimplifiedTree({
-          modelRef,
-          value: treeModel.current.simplifiedSeralize(),
-          valueElementName
+          ...simplifiedTree.current,
+          [id]: {
+            parentRef,
+            modelRef,
+            value: treeModel.current.simplifiedSeralize(),
+            valueElementName
+          }
         })
       }
 
       lastSeralized.current = seralized
-      onUpdateModel(modelRef, { value: seralized, valueElementName })
+      onUpdateModel(parentRef, modelRef, { value: seralized, valueElementName })
       setSelectedNodes(treeModel.current.getNumberSelectedNodes())
     }
   }
@@ -245,6 +251,7 @@ Tree.defaultProps = {
   id: '',
   label: '',
   maxParameters: null,
+  parentRef: null,
   value: [],
   valueElementName: ''
 }
@@ -261,6 +268,7 @@ Tree.propTypes = {
     outerHTML: PropTypes.string
   }).isRequired,
   modelRef: PropTypes.string.isRequired,
+  parentRef: PropTypes.string,
   required: PropTypes.bool.isRequired,
   separator: PropTypes.string.isRequired,
   simplifyOutput: PropTypes.bool.isRequired,

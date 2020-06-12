@@ -11,6 +11,7 @@ export const TextArea = ({
   label,
   model,
   modelRef,
+  parentRef,
   readOnly,
   required,
   value
@@ -20,7 +21,7 @@ export const TextArea = ({
   const { elementClasses } = useClasses()
 
   const onBlur = () => {
-    onUpdateModel(modelRef, stateValue)
+    onUpdateModel(parentRef, modelRef, stateValue)
   }
 
   const onChange = (e) => {
@@ -57,6 +58,7 @@ export const TextArea = ({
 TextArea.defaultProps = {
   children: null,
   id: '',
+  parentRef: null,
   value: ''
 }
 
@@ -67,6 +69,7 @@ TextArea.propTypes = {
   label: PropTypes.string.isRequired,
   model: PropTypes.shape({}).isRequired,
   modelRef: PropTypes.string.isRequired,
+  parentRef: PropTypes.string,
   readOnly: PropTypes.bool.isRequired,
   required: PropTypes.bool.isRequired,
   value: PropTypes.string

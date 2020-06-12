@@ -16,6 +16,7 @@ export const Range = ({
   min,
   model,
   modelRef,
+  parentRef,
   readOnly,
   required,
   step,
@@ -42,7 +43,7 @@ export const Range = ({
   }
 
   const updateModel = (e) => {
-    onUpdateModel(modelRef, e.target.value)
+    onUpdateModel(parentRef, modelRef, e.target.value)
   }
 
   return (
@@ -98,6 +99,7 @@ export const Range = ({
 Range.defaultProps = {
   children: null,
   id: '',
+  parentRef: null,
   value: ''
 }
 
@@ -110,6 +112,7 @@ Range.propTypes = {
   min: PropTypes.string.isRequired,
   model: PropTypes.shape({}).isRequired,
   modelRef: PropTypes.string.isRequired,
+  parentRef: PropTypes.string,
   readOnly: PropTypes.bool.isRequired,
   required: PropTypes.bool.isRequired,
   step: PropTypes.string.isRequired,

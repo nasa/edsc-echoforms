@@ -100,8 +100,9 @@ describe('Select component', () => {
     Select.props().onChange({ target: { selectedOptions: [{ value: 'New Value' }] } })
 
     expect(onUpdateModel.calledOnce).to.eq(true)
-    expect(onUpdateModel.getCall(0).args[0]).to.eq('testfield')
-    expect(onUpdateModel.getCall(0).args[1]).to.eql({
+    expect(onUpdateModel.getCall(0).args[0]).to.eq(null)
+    expect(onUpdateModel.getCall(0).args[1]).to.eq('testfield')
+    expect(onUpdateModel.getCall(0).args[2]).to.eql({
       value: ['New Value'],
       valueElementName: 'value'
     })

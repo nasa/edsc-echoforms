@@ -11,5 +11,6 @@ export const EchoFormsContext = createContext({
   resolver: () => {},
   setFormIsValid: () => {},
   setRelevantFields: () => {},
-  setSimplifiedTree: () => {}
+  setSimplifiedTree: () => {},
+  simplifiedTree: {}
 })

@@ -89,8 +89,9 @@ describe('Range component', () => {
     range.props().onKeyUp({ target: { value: 4 } })
 
     expect(onUpdateModel.calledOnce).to.eq(true)
-    expect(onUpdateModel.getCall(0).args[0]).to.eq('testfield')
-    expect(onUpdateModel.getCall(0).args[1]).to.eq(4)
+    expect(onUpdateModel.getCall(0).args[0]).to.eq(null)
+    expect(onUpdateModel.getCall(0).args[1]).to.eq('testfield')
+    expect(onUpdateModel.getCall(0).args[2]).to.eq(4)
   })
 
   it('onMouseUp calls onUpdateModel', () => {
@@ -101,7 +102,8 @@ describe('Range component', () => {
     range.props().onMouseUp({ target: { value: 4 } })
 
     expect(onUpdateModel.calledOnce).to.eq(true)
-    expect(onUpdateModel.getCall(0).args[0]).to.eq('testfield')
-    expect(onUpdateModel.getCall(0).args[1]).to.eq(4)
+    expect(onUpdateModel.getCall(0).args[0]).to.eq(null)
+    expect(onUpdateModel.getCall(0).args[1]).to.eq('testfield')
+    expect(onUpdateModel.getCall(0).args[2]).to.eq(4)
   })
 })

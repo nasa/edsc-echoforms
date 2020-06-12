@@ -12,6 +12,7 @@ export const Checkbox = ({
   label,
   model,
   modelRef,
+  parentRef,
   readOnly,
   required
 }) => {
@@ -19,7 +20,7 @@ export const Checkbox = ({
   const { elementClasses } = useClasses()
 
   const onChange = (e) => {
-    onUpdateModel(modelRef, e.target.checked)
+    onUpdateModel(parentRef, modelRef, e.target.checked)
   }
 
   let disabled = false
@@ -80,7 +81,8 @@ export const Checkbox = ({
 Checkbox.defaultProps = {
   children: null,
   id: '',
-  label: ''
+  label: '',
+  parentRef: null
 }
 
 Checkbox.propTypes = {
@@ -91,6 +93,7 @@ Checkbox.propTypes = {
   label: PropTypes.string,
   model: PropTypes.shape({}).isRequired,
   modelRef: PropTypes.string.isRequired,
+  parentRef: PropTypes.string,
   readOnly: PropTypes.bool.isRequired,
   required: PropTypes.bool.isRequired
 }

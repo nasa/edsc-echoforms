@@ -73,8 +73,9 @@ describe('Checkbox component', () => {
     checkbox.props().onChange({ target: { checked: false } })
 
     expect(onUpdateModel.calledOnce).to.eq(true)
-    expect(onUpdateModel.getCall(0).args[0]).to.eq('testfield')
-    expect(onUpdateModel.getCall(0).args[1]).to.eq(false)
+    expect(onUpdateModel.getCall(0).args[0]).to.eq(null)
+    expect(onUpdateModel.getCall(0).args[1]).to.eq('testfield')
+    expect(onUpdateModel.getCall(0).args[2]).to.eq(false)
   })
 
   it('renders a required message', () => {
