@@ -8,6 +8,7 @@ export const SecretField = ({
   label,
   model,
   modelRef,
+  parentRef,
   readOnly,
   required,
   value
@@ -18,6 +19,7 @@ export const SecretField = ({
     label={label}
     model={model}
     modelRef={modelRef}
+    parentRef={parentRef}
     readOnly={readOnly}
     required={required}
     type="password"
@@ -27,6 +29,7 @@ export const SecretField = ({
 
 SecretField.defaultProps = {
   id: '',
+  parentRef: null,
   value: ''
 }
 
@@ -36,6 +39,7 @@ SecretField.propTypes = {
   label: PropTypes.string.isRequired,
   model: PropTypes.shape({}).isRequired,
   modelRef: PropTypes.string.isRequired,
+  parentRef: PropTypes.string,
   readOnly: PropTypes.bool.isRequired,
   required: PropTypes.bool.isRequired,
   value: PropTypes.string
