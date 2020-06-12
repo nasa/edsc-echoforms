@@ -9,9 +9,16 @@ export const evaluateXpath = (xpath, model, resolver) => {
     xpath = `self::*${xpath}`
   }
 
+  let modelForEvaluation = model
+
+  // If absolute xpath is provided, evaluate the xpath based on the ownerDocument of the model.
+  if (xpath.startsWith('//')) {
+    modelForEvaluation = model.ownerDocument
+  }
+
   const result = model.ownerDocument.evaluate(
     xpath,
-    model,
+    modelForEvaluation,
     resolver,
     XPathResult.ANY_TYPE,
     null

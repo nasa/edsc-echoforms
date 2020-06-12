@@ -287,7 +287,8 @@ export const FormElement = ({
 }
 
 FormElement.defaultProps = {
-  parentReadOnly: undefined
+  parentReadOnly: undefined,
+  parentRef: null
 }
 
 FormElement.propTypes = {
@@ -298,5 +299,6 @@ FormElement.propTypes = {
     tagName: PropTypes.string
   }).isRequired,
   model: PropTypes.shape({}).isRequired,
-  parentReadOnly: PropTypes.bool
+  parentReadOnly: PropTypes.bool,
+  parentRef: PropTypes.string
 }
