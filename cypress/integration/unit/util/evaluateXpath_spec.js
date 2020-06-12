@@ -24,7 +24,22 @@ describe('evaluateXpath', () => {
     expect(evaluateXpath(ref, model, resolver)).to.eq(true)
   })
 
-  it('evaluates absolute xpath within a limited node context', () => {
+  it('evaluates absolute xpath (/) within a limited node context', () => {
+    // Absolute xpath should return the full groupreference
+    const ref = '/prov:options/prov:groupreference'
+    const doc = parseXml(groupXml)
+
+    // Limit the model to the group's children
+    const modelResult = document.evaluate('//*[local-name()="groupreference"]/*', doc)
+    const model = modelResult.iterateNext()
+    const resolver = buildXPathResolverFn(doc)
+    const result = evaluateXpath(ref, model, resolver)
+
+    // Passing limited model and absolute xpath returns data outside the limited model
+    expect(result.outerHTML).to.eq('<prov:groupreference xmlns:prov="http://www.example.com/orderoptions"><prov:textreference>test value</prov:textreference></prov:groupreference>')
+  })
+
+  it('evaluates absolute xpath (//) within a limited node context', () => {
     // Absolute xpath should return the full groupreference
     const ref = '//prov:groupreference'
     const doc = parseXml(groupXml)
