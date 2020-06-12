@@ -9,6 +9,7 @@ export const TextField = ({
   label,
   model,
   modelRef,
+  parentRef,
   readOnly,
   required,
   value
@@ -19,6 +20,7 @@ export const TextField = ({
     label={label}
     model={model}
     modelRef={modelRef}
+    parentRef={parentRef}
     readOnly={readOnly}
     required={required}
     value={value}
@@ -30,6 +32,7 @@ export const TextField = ({
 TextField.defaultProps = {
   children: null,
   id: '',
+  parentRef: null,
   value: ''
 }
 
@@ -40,6 +43,7 @@ TextField.propTypes = {
   label: PropTypes.string.isRequired,
   model: PropTypes.shape({}).isRequired,
   modelRef: PropTypes.string.isRequired,
+  parentRef: PropTypes.string,
   readOnly: PropTypes.bool.isRequired,
   required: PropTypes.bool.isRequired,
   value: PropTypes.string

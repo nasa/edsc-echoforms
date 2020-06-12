@@ -13,6 +13,7 @@ function setup(overrideProps) {
   const props = {
     label: 'Test Field',
     modelRef: 'testfield',
+    parentRef: 'parentRef',
     readOnly: false,
     required: false,
     value: '2020-01-01T00:00:00',
@@ -36,6 +37,7 @@ describe('DateTime component', () => {
     expect(inputField).to.have.lengthOf(1)
     expect(inputField.props()).to.have.property('label', 'Test Field')
     expect(inputField.props()).to.have.property('modelRef', 'testfield')
+    expect(inputField.props()).to.have.property('parentRef', 'parentRef')
     expect(inputField.props()).to.have.property('placeholder', 'YYYY-MM-DDTHH:MM:SS')
     expect(inputField.props()).to.have.property('readOnly', false)
     expect(inputField.props()).to.have.property('required', false)

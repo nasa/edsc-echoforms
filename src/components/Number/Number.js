@@ -10,6 +10,7 @@ export const Number = ({
   label,
   model,
   modelRef,
+  parentRef,
   readOnly,
   required,
   type,
@@ -21,6 +22,7 @@ export const Number = ({
     label={label}
     model={model}
     modelRef={modelRef}
+    parentRef={parentRef}
     readOnly={readOnly}
     required={required}
     type={type}
@@ -33,6 +35,7 @@ export const Number = ({
 Number.defaultProps = {
   children: null,
   id: '',
+  parentRef: null,
   value: ''
 }
 
@@ -43,6 +46,7 @@ Number.propTypes = {
   label: PropTypes.string.isRequired,
   model: PropTypes.shape({}).isRequired,
   modelRef: PropTypes.string.isRequired,
+  parentRef: PropTypes.string,
   readOnly: PropTypes.bool.isRequired,
   required: PropTypes.bool.isRequired,
   type: PropTypes.string.isRequired,

@@ -10,6 +10,7 @@ export const DateTime = ({
   label,
   model,
   modelRef,
+  parentRef,
   readOnly,
   required,
   value
@@ -20,6 +21,7 @@ export const DateTime = ({
     label={label}
     model={model}
     modelRef={modelRef}
+    parentRef={parentRef}
     placeholder="YYYY-MM-DDTHH:MM:SS"
     readOnly={readOnly}
     required={required}
@@ -33,6 +35,7 @@ export const DateTime = ({
 DateTime.defaultProps = {
   children: null,
   id: '',
+  parentRef: null,
   value: ''
 }
 
@@ -43,6 +46,7 @@ DateTime.propTypes = {
   label: PropTypes.string.isRequired,
   model: PropTypes.shape({}).isRequired,
   modelRef: PropTypes.string.isRequired,
+  parentRef: PropTypes.string,
   readOnly: PropTypes.bool.isRequired,
   required: PropTypes.bool.isRequired,
   value: PropTypes.string
