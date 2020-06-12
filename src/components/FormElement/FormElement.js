@@ -42,6 +42,7 @@ const derivedType = (type) => {
 export const FormElement = ({
   element,
   parentReadOnly,
+  parentRef,
   model
 }) => {
   const { resolver, setRelevantFields } = useContext(EchoFormsContext)
@@ -131,6 +132,7 @@ export const FormElement = ({
     label: label.current,
     model,
     modelRef: modelRef.current,
+    parentRef,
     readOnly,
     required,
     value

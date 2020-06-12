@@ -98,21 +98,29 @@ export const EDSCEchoform = ({
       // If there is a tree that needs simplified output, take the simplified tree output and add to the model that is give to the onFormModelUpdated callback. This leaves the verbose tree output in the internal model
       let updatedModelWithSimplifiedTree = model.cloneNode(true)
       if (simplifiedTree.current !== undefined) {
-        const {
-          modelRef: treeRef,
-          value,
-          valueElementName
-        } = simplifiedTree.current
-
-        updatedModelWithSimplifiedTree = updateModel(
-          updatedModelWithSimplifiedTree,
-          resolver.current,
-          treeRef,
-          {
+        Object.values(simplifiedTree.current).forEach((treeValue) => {
+          const {
+            parentRef,
+            modelRef: treeRef,
             value,
             valueElementName
+          } = treeValue
+
+          let xpath = treeRef
+          if (parentRef) {
+            xpath = `${parentRef}/${treeRef}`
           }
-        )
+
+          updatedModelWithSimplifiedTree = updateModel(
+            updatedModelWithSimplifiedTree,
+            resolver.current,
+            xpath,
+            {
+              value,
+              valueElementName
+            }
+          )
+        })
       }
 
       onFormModelUpdated({
@@ -126,8 +134,12 @@ export const EDSCEchoform = ({
     simplifiedTree.current = data
   }
 
-  const onUpdateModel = (modelRef, newValue) => {
-    const updatedModel = updateModel(model.cloneNode(true), resolver.current, modelRef, newValue)
+  const onUpdateModel = (parentRef, modelRef, newValue) => {
+    let xpath = modelRef
+    if (parentRef) {
+      xpath = `${parentRef}/${modelRef}`
+    }
+    const updatedModel = updateModel(model.cloneNode(true), resolver.current, xpath, newValue)
 
     setModel(updatedModel)
   }
@@ -149,7 +161,8 @@ export const EDSCEchoform = ({
         resolver: resolver.current,
         setFormIsValid,
         setRelevantFields,
-        setSimplifiedTree
+        setSimplifiedTree,
+        simplifiedTree
       }}
     >
       <FormBody

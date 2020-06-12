@@ -70,8 +70,17 @@ describe('Group component', () => {
     expect(formElement.length).to.eq(1)
     expect(formElement.props().model.outerHTML).to.eq('<prov:groupreference xmlns:prov="http://www.example.com/orderoptions"><prov:textreference>test value</prov:textreference></prov:groupreference>')
     expect(formElement.props().parentReadOnly).to.eq(undefined)
+    expect(formElement.props().parentRef).to.eq('prov:groupreference')
 
     expect(formElement.props().element.outerHTML).to.eq('<input id="textinput" label="Text input" ref="prov:textreference" type="xs:string"><help>Helpful text</help></input>')
+  })
+
+  it('renders a FormElement component and with a combined parentRef', () => {
+    const { enzymeWrapper } = setup({
+      parentRef: 'prov:parent'
+    })
+
+    expect(enzymeWrapper.find(FormElement).props().parentRef).to.eq('prov:parent/prov:groupreference')
   })
 
   it('renders a FormElement component and passes on readonly prop', () => {

@@ -68,8 +68,9 @@ describe('TextArea component', () => {
     TextArea.props().onBlur()
 
     expect(onUpdateModel.calledOnce).to.eq(true)
-    expect(onUpdateModel.getCall(0).args[0]).to.eq('testfield')
-    expect(onUpdateModel.getCall(0).args[1]).to.eq('test value')
+    expect(onUpdateModel.getCall(0).args[0]).to.eq(null)
+    expect(onUpdateModel.getCall(0).args[1]).to.eq('testfield')
+    expect(onUpdateModel.getCall(0).args[2]).to.eq('test value')
   })
 
   it('onChange sets the state', () => {

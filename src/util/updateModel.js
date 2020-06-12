@@ -7,11 +7,11 @@ import { evaluateXpath } from './evaluateXpath'
  * @param {String|Array} newValue New value to be inserted into model
  */
 export const updateModel = (model, resolver, modelRef, newValue) => {
-  let prefixedRef = modelRef
-  if (!modelRef.startsWith('//')) {
-    prefixedRef = `//${modelRef}`
+  const value = evaluateXpath(modelRef, model, resolver)
+
+  if (!value) {
+    console.warn('Unable to update model value, value is:', value, modelRef, model.outerHTML)
   }
-  const value = evaluateXpath(prefixedRef, model, resolver)
 
   if (typeof newValue === 'object') {
     // Array values

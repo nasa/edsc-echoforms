@@ -13,6 +13,7 @@ export const Select = ({
   model,
   modelRef,
   multiple,
+  parentRef,
   readOnly,
   required,
   value,
@@ -31,7 +32,7 @@ export const Select = ({
       values.push(value)
     })
 
-    onUpdateModel(modelRef, { value: values, valueElementName })
+    onUpdateModel(parentRef, modelRef, { value: values, valueElementName })
   }
 
   const options = []
@@ -96,6 +97,7 @@ Select.defaultProps = {
   id: '',
   label: '',
   multiple: false,
+  parentRef: null,
   value: [],
   valueElementName: ''
 }
@@ -108,6 +110,7 @@ Select.propTypes = {
   model: PropTypes.shape({}).isRequired,
   modelRef: PropTypes.string.isRequired,
   multiple: PropTypes.bool,
+  parentRef: PropTypes.string,
   readOnly: PropTypes.bool.isRequired,
   required: PropTypes.bool.isRequired,
   value: PropTypes.arrayOf(PropTypes.string),
