@@ -25,7 +25,7 @@ export const Checkbox = ({
 
   let disabled = false
   let shapefileHelp
-  if (id && (id.includes('spatial') || id.includes('use-shapefile'))) {
+  if (id && id.includes('use-shapefile')) {
     if (hasShapefile) {
       shapefileHelp = 'Complex shapefiles may take longer to process. You will receive an email when your files are finished processing.'
     } else {
