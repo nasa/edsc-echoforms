@@ -11,6 +11,7 @@ describe('evaluateXpath', () => {
     const model = modelResult.iterateNext()
     const resolver = buildXPathResolverFn(doc)
 
+    // Use firstElementChild to run the xpath on the correct context
     expect(evaluateXpath(ref, model.firstElementChild, resolver).outerHTML).to.eq('<prov:groupreference xmlns:prov="http://www.example.com/orderoptions"><prov:textreference>test value</prov:textreference></prov:groupreference>')
   })
 
@@ -21,6 +22,7 @@ describe('evaluateXpath', () => {
     const model = modelResult.iterateNext()
     const resolver = buildXPathResolverFn(doc)
 
+    // Use firstElementChild to run the xpath on the correct context
     expect(evaluateXpath(ref, model.firstElementChild, resolver)).to.eq(true)
   })
 
@@ -31,9 +33,9 @@ describe('evaluateXpath', () => {
 
     // Limit the model to the group's children
     const modelResult = document.evaluate('//*[local-name()="groupreference"]/*', doc)
-    const model = modelResult.iterateNext()
+    const groupModel = modelResult.iterateNext()
     const resolver = buildXPathResolverFn(doc)
-    const result = evaluateXpath(ref, model, resolver)
+    const result = evaluateXpath(ref, groupModel, resolver)
 
     // Passing limited model and absolute xpath returns data outside the limited model
     expect(result.outerHTML).to.eq('<prov:groupreference xmlns:prov="http://www.example.com/orderoptions"><prov:textreference>test value</prov:textreference></prov:groupreference>')
@@ -46,10 +48,11 @@ describe('evaluateXpath', () => {
 
     // Limit the model to the group's children
     const modelResult = document.evaluate('//*[local-name()="groupreference"]/*', doc)
-    const model = modelResult.iterateNext()
+    const groupModel = modelResult.iterateNext()
     const resolver = buildXPathResolverFn(doc)
+    const result = evaluateXpath(ref, groupModel, resolver)
 
     // Passing limited model and absolute xpath returns data outside the limited model
-    expect(evaluateXpath(ref, model, resolver).outerHTML).to.eq('<prov:groupreference xmlns:prov="http://www.example.com/orderoptions"><prov:textreference>test value</prov:textreference></prov:groupreference>')
+    expect(result.outerHTML).to.eq('<prov:groupreference xmlns:prov="http://www.example.com/orderoptions"><prov:textreference>test value</prov:textreference></prov:groupreference>')
   })
 })
