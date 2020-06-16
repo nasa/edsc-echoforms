@@ -18,7 +18,7 @@ function readXml(file) {
   const doc = parseXml(file)
   const groupResult = document.evaluate('//*[local-name()="group"]', doc)
   const group = groupResult.iterateNext()
-  const modelResult = document.evaluate('//*[local-name()="instance"]/*', doc)
+  const modelResult = document.evaluate('//*[local-name()="instance"]', doc)
   const model = modelResult.iterateNext()
 
   const resolver = buildXPathResolverFn(doc)
@@ -31,7 +31,7 @@ function setup(overrideProps) {
   const props = {
     id: 'testgroup',
     label: 'Test Group',
-    model,
+    model: model.firstElementChild,
     modelRef: 'prov:groupreference',
     onUpdateModel: cy.spy().as('onUpdateModel'),
     ...overrideProps

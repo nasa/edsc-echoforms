@@ -21,10 +21,18 @@ export const evaluateXpath = (xpath, model, resolver) => {
 
   let modelForEvaluation = model
 
-  // If absolute xpath is provided, evaluate the xpath based on the ownerDocument of the model.
-  if (xpath.startsWith('/')) {
-    const modelResult = doc.evaluate('//*[local-name()="instance"]/*', doc, resolver, XPathResult.ANY_TYPE, null)
-    modelForEvaluation = modelResult.iterateNext()
+  // If absolute xpath is provided and model is a submodel, find the relative path to <instance>
+  if (xpath.startsWith('/') && model.parentNode != null) {
+    const relativePathToRoot = []
+    let { parentNode } = model
+
+    while (parentNode != null && parentNode.tagName !== 'instance') {
+      relativePathToRoot.push('../');
+      ({ parentNode } = parentNode)
+    }
+
+    // modelForEvaluation will be <instance>
+    modelForEvaluation = evaluateXpath(`${relativePathToRoot.join('')}.`, model, resolver)
   }
 
   const result = doc.evaluate(

@@ -13,7 +13,7 @@ function setup(xml) {
   const doc = parseXml(xml)
   const treeResult = document.evaluate('//*[local-name()="tree"]', doc)
   const tree = treeResult.iterateNext()
-  const modelResult = document.evaluate('//*[local-name()="instance"]/*', doc)
+  const modelResult = document.evaluate('//*[local-name()="instance"]', doc)
   const model = modelResult.iterateNext()
 
   const resolver = buildXPathResolverFn(doc)

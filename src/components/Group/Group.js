@@ -6,6 +6,7 @@ import { Help } from '../Help/Help'
 import { useClasses } from '../../hooks/useClasses'
 import { evaluateXpath } from '../../util/evaluateXpath'
 import { EchoFormsContext } from '../../context/EchoFormsContext'
+import { buildParentXpath } from '../../util/buildParentXpath'
 
 import './Group.css'
 
@@ -25,10 +26,7 @@ export const Group = ({
   // react-hooks/rules-of-hooks - shouldn't call hooks inside of conditionals
   const headerClasses = elementClasses('group__header', 'card-header')
 
-  let newParentRef = modelRef
-  if (parentRef) {
-    newParentRef = `${parentRef}/${modelRef}`
-  }
+  const newParentRef = buildParentXpath(parentRef, modelRef)
 
   return (
     <div
@@ -66,6 +64,7 @@ Group.defaultProps = {
   children: null,
   id: '',
   modelRef: undefined,
+  parentRef: null,
   readOnly: undefined
 }
 
@@ -75,5 +74,6 @@ Group.propTypes = {
   label: PropTypes.string.isRequired,
   model: PropTypes.shape({}).isRequired,
   modelRef: PropTypes.string,
+  parentRef: PropTypes.string,
   readOnly: PropTypes.bool
 }
