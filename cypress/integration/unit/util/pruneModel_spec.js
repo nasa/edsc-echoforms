@@ -11,6 +11,7 @@ describe('pruneModel', () => {
     const model = modelResult.iterateNext()
     const resolver = buildXPathResolverFn(doc)
 
+    // Use firstElementChild to run the xpath on the correct context
     expect(pruneModel(setRelevantAttribute(model.firstElementChild.cloneNode(true), resolver, 'prov:textreference', false)).outerHTML).to.eq('<prov:options xmlns:prov="http://www.example.com/orderoptions"><prov:boolreference>false</prov:boolreference></prov:options>')
   })
 })

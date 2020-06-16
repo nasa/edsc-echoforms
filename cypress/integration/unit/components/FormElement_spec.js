@@ -56,6 +56,7 @@ function readXml(file) {
   const resolver = buildXPathResolverFn(doc)
 
   return {
+    // Use firstElementChild because FormElement doesn't deal with <instance>
     model: model.firstElementChild,
     ui,
     resolver

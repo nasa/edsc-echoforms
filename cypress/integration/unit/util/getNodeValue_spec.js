@@ -11,6 +11,7 @@ describe('getNodeValue', () => {
     const model = modelResult.iterateNext()
     const resolver = buildXPathResolverFn(doc)
 
+    // Use firstElementChild to run the xpath on the correct context
     expect(getNodeValue(ref, model.firstElementChild, resolver)).to.eq('test value')
   })
 
@@ -21,6 +22,7 @@ describe('getNodeValue', () => {
     const model = modelResult.iterateNext()
     const resolver = buildXPathResolverFn(doc)
 
+    // Use firstElementChild to run the xpath on the correct context
     expect(getNodeValue(ref, model.firstElementChild, resolver)).to.eql([
       'test value 1',
       'test value 2'

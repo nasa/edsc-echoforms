@@ -23,7 +23,12 @@ function readXml(file) {
 
   const resolver = buildXPathResolverFn(doc)
 
-  return { model, group, resolver }
+  return {
+    // Use firstElementChild because FormElement doesn't deal with <instance>
+    model: model.firstElementChild,
+    group,
+    resolver
+  }
 }
 
 function setup(overrideProps) {
@@ -31,7 +36,7 @@ function setup(overrideProps) {
   const props = {
     id: 'testgroup',
     label: 'Test Group',
-    model: model.firstElementChild,
+    model,
     modelRef: 'prov:groupreference',
     onUpdateModel: cy.spy().as('onUpdateModel'),
     ...overrideProps

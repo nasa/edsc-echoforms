@@ -149,6 +149,7 @@ export const EDSCEchoform = ({
     }
   }
 
+  // If the model hasn't been populated yet, don't render
   if (!model.firstElementChild) return null
 
   return (

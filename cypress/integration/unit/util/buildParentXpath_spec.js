@@ -8,10 +8,17 @@ describe('buildParentXpath', () => {
     expect(buildParentXpath(parent, child)).to.eq('parent/child')
   })
 
-  it('does not concatenate parent and child xpath if child is absolute', () => {
+  it('does not concatenate parent and child xpath if child is absolute (/)', () => {
     const parent = 'parent'
     const child = '/child/path'
 
     expect(buildParentXpath(parent, child)).to.eq('/child/path')
+  })
+
+  it('does not concatenate parent and child xpath if child is absolute (//)', () => {
+    const parent = 'parent'
+    const child = '//child/path'
+
+    expect(buildParentXpath(parent, child)).to.eq('//child/path')
   })
 })

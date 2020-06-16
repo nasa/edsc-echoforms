@@ -40,6 +40,7 @@ describe('EDSCEchoform component', () => {
 
     expect(formBody).to.have.lengthOf(1)
     expect(formBody.props().ui.outerHTML).to.eql(ui.outerHTML)
+    // model.firstElementChild is passed to FormBody, not <instance>
     expect(formBody.props().model.outerHTML).to.eql(model.firstElementChild.outerHTML)
   })
 
