@@ -6,7 +6,12 @@ import { configure, mount } from 'enzyme'
 
 import { EDSCEchoform } from '../../../../src'
 import { parseXml } from '../../../../src/util/parseXml'
-import { readOnlyXml, prepopulatedXml, treeWithSimplifyOutputXml, notRelevantXml } from '../../../mocks/FormElement'
+import {
+  readOnlyXml,
+  prepopulatedXml,
+  treeWithSimplifyOutputXml,
+  notRelevantXml
+} from '../../../mocks/FormElement'
 import { FormBody } from '../../../../src/components/FormBody/FormBody'
 
 window.ReactDOM = ReactDOM
@@ -19,7 +24,7 @@ describe('EDSCEchoform component', () => {
     const doc = parseXml(readOnlyXml)
     const uiResult = document.evaluate('//*[local-name()="ui"]', doc)
     const ui = uiResult.iterateNext()
-    const modelResult = document.evaluate('//*[local-name()="instance"]/*', doc)
+    const modelResult = document.evaluate('//*[local-name()="instance"]', doc)
     const model = modelResult.iterateNext()
 
     const onFormModelUpdatedSpy = cy.spy().as('onFormModelUpdated')
@@ -35,7 +40,7 @@ describe('EDSCEchoform component', () => {
 
     expect(formBody).to.have.lengthOf(1)
     expect(formBody.props().ui.outerHTML).to.eql(ui.outerHTML)
-    expect(formBody.props().model.outerHTML).to.eql(model.outerHTML)
+    expect(formBody.props().model.outerHTML).to.eql(model.firstElementChild.outerHTML)
   })
 
   it('populates prepopulated values into the model', () => {
@@ -85,10 +90,9 @@ describe('EDSCEchoform component', () => {
       onFormIsValidUpdated={onFormIsValidUpdated}
     />)
 
-    // Called the first time on page load, second time from tree updates
-    expect(onFormModelUpdatedSpy.calledTwice).to.eq(true)
+    expect(onFormModelUpdatedSpy.calledOnce).to.eq(true)
 
-    expect(onFormModelUpdatedSpy.getCall(1).args[0].rawModel).to.eq('<prov:options xmlns:prov="http://www.example.com/orderoptions"><prov:boolreference>false</prov:boolreference><prov:textreference irrelevant="true">test value</prov:textreference></prov:options>')
-    expect(onFormModelUpdatedSpy.getCall(1).args[0].model).to.eq('<prov:options xmlns:prov="http://www.example.com/orderoptions"><prov:boolreference>false</prov:boolreference></prov:options>')
+    expect(onFormModelUpdatedSpy.getCall(0).args[0].rawModel).to.eq('<prov:options xmlns:prov="http://www.example.com/orderoptions"><prov:boolreference>false</prov:boolreference><prov:textreference irrelevant="true">test value</prov:textreference></prov:options>')
+    expect(onFormModelUpdatedSpy.getCall(0).args[0].model).to.eq('<prov:options xmlns:prov="http://www.example.com/orderoptions"><prov:boolreference>false</prov:boolreference></prov:options>')
   })
 })

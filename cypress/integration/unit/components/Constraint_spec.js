@@ -20,7 +20,7 @@ function readXml(file) {
   const doc = parseXml(file)
   const inputResult = document.evaluate('//*[local-name()="input"]', doc)
   const input = inputResult.iterateNext()
-  const modelResult = document.evaluate('//*[local-name()="instance"]/*', doc)
+  const modelResult = document.evaluate('//*[local-name()="instance"]', doc)
   const model = modelResult.iterateNext()
 
   const resolver = buildXPathResolverFn(doc)

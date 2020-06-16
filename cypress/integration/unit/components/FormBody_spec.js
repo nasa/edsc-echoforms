@@ -19,7 +19,7 @@ describe('FormBody component', () => {
     const doc = parseXml(readOnlyXml)
     const uiResult = document.evaluate('//*[local-name()="ui"]', doc)
     const ui = uiResult.iterateNext()
-    const modelResult = document.evaluate('//*[local-name()="instance"]/*', doc)
+    const modelResult = document.evaluate('//*[local-name()="instance"]', doc)
     const model = modelResult.iterateNext()
 
     const component = shallow(

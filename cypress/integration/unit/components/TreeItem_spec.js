@@ -13,7 +13,7 @@ configure({ adapter: new Adapter() })
 
 function readXml(file) {
   const doc = parseXml(file)
-  const modelResult = document.evaluate('//*[local-name()="instance"]/*', doc)
+  const modelResult = document.evaluate('//*[local-name()="instance"]', doc)
   const model = modelResult.iterateNext()
 
   return { model }

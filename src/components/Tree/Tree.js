@@ -126,7 +126,7 @@ export const Tree = ({
   // Update the treeModel when the form model data changes
   useEffect(() => {
     update()
-  }, [fullModel.outerHTML]) // When the tree is inside a group, it needs to update when anything in the form changes, so this useEffect runs on the full data model from the context
+  }, [fullModel]) // When the tree is inside a group, it needs to update when anything in the form changes, so this useEffect runs on the full data model from the context
 
   if (!treeModel.current) {
     return (

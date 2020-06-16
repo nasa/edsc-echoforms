@@ -7,6 +7,7 @@ import { buildXPathResolverFn } from './util/buildXPathResolverFn'
 import { FormBody } from './components/FormBody/FormBody'
 import { updateModel } from './util/updateModel'
 import { pruneModel } from './util/pruneModel'
+import { buildParentXpath } from './util/buildParentXpath'
 
 export const EDSCEchoform = ({
   addBootstrapClasses,
@@ -56,7 +57,7 @@ export const EDSCEchoform = ({
 
     resolver.current = buildXPathResolverFn(doc)
 
-    const modelResult = doc.evaluate('//*[local-name()="instance"]/*', doc, resolver.current, XPathResult.ANY_TYPE, null)
+    const modelResult = doc.evaluate('//*[local-name()="instance"]', doc, resolver.current, XPathResult.ANY_TYPE, null)
     const initialModel = modelResult.iterateNext()
 
     const extensionResult = doc.evaluate('//*[local-name()="extension" and @name="pre:prepopulate"]/*', doc, resolver.current, XPathResult.ANY_TYPE, null)
@@ -124,21 +125,18 @@ export const EDSCEchoform = ({
       }
 
       onFormModelUpdated({
-        model: pruneModel(updatedModelWithSimplifiedTree.cloneNode(true)).outerHTML,
-        rawModel: updatedModelWithSimplifiedTree.outerHTML
+        model: pruneModel(updatedModelWithSimplifiedTree.cloneNode(true)).innerHTML,
+        rawModel: updatedModelWithSimplifiedTree.innerHTML
       })
     }
-  }, [model.outerHTML])
+  }, [model])
 
   const setSimplifiedTree = (data) => {
     simplifiedTree.current = data
   }
 
   const onUpdateModel = (parentRef, modelRef, newValue) => {
-    let xpath = modelRef
-    if (parentRef) {
-      xpath = `${parentRef}/${modelRef}`
-    }
+    const xpath = buildParentXpath(parentRef, modelRef)
     const updatedModel = updateModel(model.cloneNode(true), resolver.current, xpath, newValue)
 
     setModel(updatedModel)
@@ -151,12 +149,14 @@ export const EDSCEchoform = ({
     }
   }
 
+  if (!model.firstElementChild) return null
+
   return (
     <EchoFormsContext.Provider
       value={{
         addBootstrapClasses,
         hasShapefile,
-        model,
+        model: model.firstElementChild.innerHTML,
         onUpdateModel,
         resolver: resolver.current,
         setFormIsValid,
@@ -169,7 +169,7 @@ export const EDSCEchoform = ({
         className={className}
         key={updateAt}
         ui={ui}
-        model={model}
+        model={model.firstElementChild}
       />
     </EchoFormsContext.Provider>
   )

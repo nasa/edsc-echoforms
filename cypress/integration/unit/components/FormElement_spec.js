@@ -50,12 +50,16 @@ function readXml(file) {
   const doc = parseXml(file)
   const uiResult = document.evaluate('//*[local-name()="ui"]', doc)
   const ui = uiResult.iterateNext()
-  const modelResult = document.evaluate('//*[local-name()="instance"]/*', doc)
+  const modelResult = document.evaluate('//*[local-name()="instance"]', doc)
   const model = modelResult.iterateNext()
 
   const resolver = buildXPathResolverFn(doc)
 
-  return { model, ui, resolver }
+  return {
+    model: model.firstElementChild,
+    ui,
+    resolver
+  }
 }
 
 function setup(props, resolver) {

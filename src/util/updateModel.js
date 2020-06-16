@@ -7,7 +7,8 @@ import { evaluateXpath } from './evaluateXpath'
  * @param {String|Array} newValue New value to be inserted into model
  */
 export const updateModel = (model, resolver, modelRef, newValue) => {
-  const value = evaluateXpath(modelRef, model, resolver)
+  // model is at the <instance> level, xpath needs to be evaluated based on the first child of <instance>
+  const value = evaluateXpath(modelRef, model.firstElementChild, resolver)
 
   if (!value) {
     console.warn('Unable to update model value, value is:', value, modelRef, model.outerHTML)
@@ -16,7 +17,7 @@ export const updateModel = (model, resolver, modelRef, newValue) => {
   if (typeof newValue === 'object') {
     // Array values
     const { value: values, valueElementName } = newValue
-    const { namespaceURI, prefix } = model
+    const { namespaceURI, prefix } = model.firstElementChild
 
     const tag = [prefix, valueElementName].filter(Boolean).join(':')
 
