@@ -19,25 +19,9 @@ export const evaluateXpath = (xpath, model, resolver) => {
 
   const doc = model.ownerDocument
 
-  let modelForEvaluation = model
-
-  // If absolute xpath is provided and model is a submodel, find the relative path to <instance>
-  if (xpath.startsWith('/') && model.parentNode != null) {
-    const relativePathToRoot = []
-    let { parentNode } = model
-
-    while (parentNode != null && parentNode.tagName !== 'instance') {
-      relativePathToRoot.push('../');
-      ({ parentNode } = parentNode)
-    }
-
-    // modelForEvaluation will be <instance>
-    modelForEvaluation = evaluateXpath(`${relativePathToRoot.join('')}.`, model, resolver)
-  }
-
   const result = doc.evaluate(
     updatedXpath,
-    modelForEvaluation,
+    model,
     resolver,
     XPathResult.ANY_TYPE,
     null
