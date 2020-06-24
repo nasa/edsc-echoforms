@@ -12,6 +12,7 @@ import { buildParentXpath } from './util/buildParentXpath'
 export const EDSCEchoform = ({
   addBootstrapClasses,
   className,
+  defaultRawModel,
   form,
   hasShapefile,
   prepopulateValues,
@@ -52,18 +53,27 @@ export const EDSCEchoform = ({
   }
 
   // Build the model and ui state objects to pass to FormBody
-  useEffect(() => {
-    const doc = parseXml(form.replace(/>\s+</g, '><').replace(/^\s+|\s+$/g, ''))
+  const setupForm = () => {
+    // If we have a defaultRawModel, insert that into the form before parsing
+    let formWithModel = form
+    if (defaultRawModel) {
+      formWithModel = form.replace(/(?:<instance>)(?:.|\n)*(?:<\/instance>)/, `<instance>\n${defaultRawModel}\n</instance>`)
+    }
 
+    // Parse the form XML
+    const doc = parseXml(formWithModel.replace(/>\s+</g, '><').replace(/^\s+|\s+$/g, ''))
     resolver.current = buildXPathResolverFn(doc)
 
+    // Pull the model out of the form
     const modelResult = doc.evaluate('//*[local-name()="instance"]', doc, resolver.current, XPathResult.ANY_TYPE, null)
     const initialModel = modelResult.iterateNext()
 
+    // Pull the prepopulate extensions out of the form
     const extensionResult = doc.evaluate('//*[local-name()="extension" and @name="pre:prepopulate"]/*', doc, resolver.current, XPathResult.ANY_TYPE, null)
     const extension = extensionResult.iterateNext()
     const extendedModel = handlePrepopulateExtension(extension, initialModel.cloneNode(true), resolver.current)
 
+    // Pull the UI out of the form
     const uiResult = doc.evaluate('//*[local-name()="ui"]', doc, resolver.current, XPathResult.ANY_TYPE, null)
     const ui = uiResult.iterateNext()
 
@@ -75,7 +85,20 @@ export const EDSCEchoform = ({
     // Set model and ui state
     setModel(extendedModel)
     setUi(ui)
+  }
+
+  // When the form prop changes a new form has been passed in and we need to call setupForm
+  useEffect(() => {
+    setupForm()
   }, [form])
+
+  // When the defaultRawModel prop changes, we might need to reset the form.
+  // If we already have an existing model and defaultRawModel is null, the reset button was pressed and we need to run setupForm
+  useEffect(() => {
+    if (model.outerHTML && !defaultRawModel) {
+      setupForm()
+    }
+  }, [defaultRawModel])
 
   useEffect(() => {
     // This effect compares each field for relevancy and validity.
@@ -179,6 +202,7 @@ export const EDSCEchoform = ({
 EDSCEchoform.defaultProps = {
   addBootstrapClasses: false,
   className: null,
+  defaultRawModel: null,
   hasShapefile: false,
   prepopulateValues: null
 }
@@ -186,6 +210,7 @@ EDSCEchoform.defaultProps = {
 EDSCEchoform.propTypes = {
   addBootstrapClasses: PropTypes.bool,
   className: PropTypes.string,
+  defaultRawModel: PropTypes.string,
   form: PropTypes.string.isRequired,
   hasShapefile: PropTypes.bool,
   prepopulateValues: PropTypes.shape({}),

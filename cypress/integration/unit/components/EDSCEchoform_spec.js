@@ -9,6 +9,7 @@ import { parseXml } from '../../../../src/util/parseXml'
 import {
   readOnlyXml,
   prepopulatedXml,
+  textfieldXml,
   treeWithSimplifyOutputXml,
   notRelevantXml
 } from '../../../mocks/FormElement'
@@ -42,6 +43,28 @@ describe('EDSCEchoform component', () => {
     expect(formBody.props().ui.outerHTML).to.eql(ui.outerHTML)
     // model.firstElementChild is passed to FormBody, not <instance>
     expect(formBody.props().model.outerHTML).to.eql(model.firstElementChild.outerHTML)
+  })
+
+  it('populates the entire model with defaultRawModel', () => {
+    const onFormModelUpdatedSpy = cy.spy().as('onFormModelUpdated')
+    const onFormIsValidUpdated = cy.spy().as('onFormIsValidUpdated')
+
+    const defaultRawModel = '<prov:options xmlns:prov="http://www.example.com/orderoptions"><prov:textreference>defaultRawModel value</prov:textreference></prov:options>'
+
+    const component = mount(<EDSCEchoform
+      defaultRawModel={defaultRawModel}
+      form={textfieldXml}
+      prepopulateValues={{
+        PREPOP: 'I am prepopulated'
+      }}
+      onFormModelUpdated={onFormModelUpdatedSpy}
+      onFormIsValidUpdated={onFormIsValidUpdated}
+    />)
+
+    const formBody = component.find(FormBody)
+
+    expect(formBody).to.have.lengthOf(1)
+    expect(formBody.props().model.outerHTML).to.contain('<prov:textreference>defaultRawModel value</prov:textreference>')
   })
 
   it('populates prepopulated values into the model', () => {
@@ -95,5 +118,30 @@ describe('EDSCEchoform component', () => {
 
     expect(onFormModelUpdatedSpy.getCall(0).args[0].rawModel).to.eq('<prov:options xmlns:prov="http://www.example.com/orderoptions"><prov:boolreference>false</prov:boolreference><prov:textreference irrelevant="true">test value</prov:textreference></prov:options>')
     expect(onFormModelUpdatedSpy.getCall(0).args[0].model).to.eq('<prov:options xmlns:prov="http://www.example.com/orderoptions"><prov:boolreference>false</prov:boolreference></prov:options>')
+  })
+
+  it('resets the model to the original form model by passing defaultRawModel as null', () => {
+    const onFormModelUpdatedSpy = cy.spy().as('onFormModelUpdated')
+    const onFormIsValidUpdated = cy.spy().as('onFormIsValidUpdated')
+
+    const defaultRawModel = '<prov:options xmlns:prov="http://www.example.com/orderoptions"><prov:textreference>defaultRawModel value</prov:textreference></prov:options>'
+
+    const component = mount(<EDSCEchoform
+      defaultRawModel={defaultRawModel}
+      form={textfieldXml}
+      prepopulateValues={{
+        PREPOP: 'I am prepopulated'
+      }}
+      onFormModelUpdated={onFormModelUpdatedSpy}
+      onFormIsValidUpdated={onFormIsValidUpdated}
+    />)
+
+    component.setProps({ defaultRawModel: null })
+    component.update()
+
+    const formBody = component.find(FormBody)
+
+    expect(formBody).to.have.lengthOf(1)
+    expect(formBody.props().model.outerHTML).to.contain('<prov:textreference>test value</prov:textreference>')
   })
 })

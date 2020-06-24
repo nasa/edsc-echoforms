@@ -18,6 +18,7 @@ const App = () => {
   const [serializedRawModel, setSerializedRawModel] = useState('')
   const [selectedModel, setSelectedModel] = useState('rawModel')
   const [formIsValid, setFormIsValid] = useState(true)
+  const [defaultRawModel, setDefaultRawModel] = useState(null)
 
   const onTextAreaChange = (e) => {
     setTempForm(e.target.value)
@@ -31,6 +32,7 @@ const App = () => {
     const { model, rawModel } = value
     setSerializedModel(model)
     setSerializedRawModel(rawModel)
+    setDefaultRawModel(rawModel)
   }
 
   const onFormIsValidUpdated = (isValid) => {
@@ -85,10 +87,21 @@ const App = () => {
         onBlur={onTextAreaBlur}
         onChange={onTextAreaChange}
       />
+      <button
+        className="btn btn-secondary"
+        type="button"
+        title="Reset Form Values"
+        onClick={() => {
+          setDefaultRawModel(null)
+        }}
+      >
+        Reset Form Values
+      </button>
       <h2>Generated Interface</h2>
       <EDSCEchoform
-        className="mb-4"
         addBootstrapClasses
+        className="mb-4"
+        defaultRawModel={defaultRawModel}
         form={form}
         hasShapefile
         prepopulateValues={{
