@@ -84,7 +84,7 @@ export const FormElement = ({
   }
   let relevant = true
   if (relevantAttribute.current) {
-    relevant = getNodeValue(relevantAttribute.current, model, resolver)
+    relevant = getNodeValue(relevantAttribute.current, model, resolver, true)
   }
   setRelevantFields({ [elementHash]: relevant })
   setRelevantAttribute(model, resolver, modelRef.current, relevant)
@@ -100,7 +100,7 @@ export const FormElement = ({
       readOnlyAttribute.current = getAttribute(attributes, 'readonly')
     }
     if (readOnlyAttribute.current) {
-      readOnly = getNodeValue(readOnlyAttribute.current, model, resolver)
+      readOnly = getNodeValue(readOnlyAttribute.current, model, resolver, true)
     }
   }
 
@@ -109,7 +109,7 @@ export const FormElement = ({
   }
   let required = false
   if (requiredAttribute.current) {
-    required = getNodeValue(requiredAttribute.current, model, resolver)
+    required = getNodeValue(requiredAttribute.current, model, resolver, true)
   }
 
   if (label.current === undefined) {
@@ -121,7 +121,7 @@ export const FormElement = ({
 
   let value
   if (modelRef.current) {
-    value = getNodeValue(modelRef.current, model, resolver, tagName === 'tree')
+    value = getNodeValue(modelRef.current, model, resolver, false, tagName === 'tree')
   } else {
     value = getAttribute(attributes, 'value')
   }
