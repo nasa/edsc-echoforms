@@ -43,6 +43,7 @@ const App = () => {
     const { value } = e.target
     setForm(value)
     setTempForm(value)
+    setDefaultRawModel(null)
   }
 
   const onSelectModelFormat = (e) => {

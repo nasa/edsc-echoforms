@@ -17,7 +17,8 @@ export const updateModel = (model, resolver, modelRef, newValue) => {
   if (typeof newValue === 'object') {
     // Array values
     const { value: values, valueElementName } = newValue
-    const { namespaceURI, prefix } = model.firstElementChild
+    // Use the namespace information from the element modelRef points to
+    const { namespaceURI, prefix } = value
 
     const tag = [prefix, valueElementName].filter(Boolean).join(':')
 
