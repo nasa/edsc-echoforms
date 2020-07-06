@@ -3,6 +3,7 @@ import PropTypes from 'prop-types'
 import { InputField } from '../InputField/InputField'
 
 export const SecretField = ({
+  children,
   elementHash,
   id,
   label,
@@ -24,16 +25,20 @@ export const SecretField = ({
     required={required}
     type="password"
     value={value}
-  />
+  >
+    {children}
+  </InputField>
 )
 
 SecretField.defaultProps = {
+  children: null,
   id: '',
   parentRef: null,
   value: ''
 }
 
 SecretField.propTypes = {
+  children: PropTypes.shape({}),
   elementHash: PropTypes.number.isRequired,
   id: PropTypes.string,
   label: PropTypes.string.isRequired,
