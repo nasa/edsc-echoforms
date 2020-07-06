@@ -26,6 +26,7 @@ const App = () => {
 
   const onTextAreaBlur = () => {
     setForm(tempForm)
+    setDefaultRawModel(null)
   }
 
   const onFormModelUpdated = (value) => {
