@@ -1,6 +1,9 @@
-import React from 'react'
+import React, { useContext } from 'react'
 import PropTypes from 'prop-types'
+
 import { ElementWrapper } from '../ElementWrapper/ElementWrapper'
+import { evaluateXpath } from '../../util/evaluateXpath'
+import { EchoFormsContext } from '../../context/EchoFormsContext'
 
 export const Output = ({
   children,
@@ -10,32 +13,56 @@ export const Output = ({
   model,
   type,
   value
-}) => (
-  <ElementWrapper
-    elementHash={elementHash}
-    formElements={children}
-    htmlFor={id}
-    label={label}
-    model={model}
-  >
-    {
-      () => (
-        <>
-          {
-            type === 'anyuri' && (
-              <a id={id} href={value}>{value}</a>
-            )
-          }
-          {
-            (!type || type !== 'anyuri') && (
-              <p id={id}>{value}</p>
-            )
-          }
-        </>
-      )
-    }
-  </ElementWrapper>
-)
+}) => {
+  const { resolver } = useContext(EchoFormsContext)
+
+  // Output elements can have xpath as their value attribute.
+  // Try to evaluate the value, but catch any error and use the given value
+  let evaluatedValue
+  try {
+    evaluatedValue = evaluateXpath(value, model, resolver)
+  } catch (e) {
+    evaluatedValue = value
+  }
+
+  return (
+    <ElementWrapper
+      elementHash={elementHash}
+      formElements={children}
+      htmlFor={id}
+      label={label}
+      model={model}
+    >
+      {
+        () => (
+          <>
+            {
+              type === 'anyuri' && (
+                <a
+                  className="form-text"
+                  id={id}
+                  href={evaluatedValue}
+                >
+                  {evaluatedValue}
+                </a>
+              )
+            }
+            {
+              (!type || type !== 'anyuri') && (
+                <span
+                  className="form-text"
+                  id={id}
+                >
+                  {evaluatedValue}
+                </span>
+              )
+            }
+          </>
+        )
+      }
+    </ElementWrapper>
+  )
+}
 
 Output.defaultProps = {
   children: null,

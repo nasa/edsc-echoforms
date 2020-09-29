@@ -5,7 +5,7 @@ import { configure, mount } from 'enzyme'
 
 import { Output } from '../../../../src/components/Output/Output'
 import { parseXml } from '../../../../src/util/parseXml'
-import { outputXml } from '../../../mocks/FormElement'
+import { outputXml, outputXpathXml } from '../../../mocks/FormElement'
 
 chai.use(chaiEnzyme())
 configure({ adapter: new Adapter() })
@@ -14,16 +14,19 @@ function readXml(file) {
   const doc = parseXml(file)
   const outputResult = document.evaluate('//*[local-name()="output"]', doc)
   const output = outputResult.iterateNext()
+  const modelResult = document.evaluate('//*[local-name()="instance"]', doc)
+  const model = modelResult.iterateNext()
 
-  return { output }
+  return { model, output }
 }
 
-function setup(overrideProps) {
-  const { output } = readXml(outputXml)
+function setup(file, overrideProps) {
+  const { model, output } = readXml(file)
   const props = {
     label: 'Test Field',
     modelRef: 'testfield',
     value: 'test value',
+    model,
     ...overrideProps
   }
 
@@ -41,16 +44,25 @@ function setup(overrideProps) {
 
 describe('Output component', () => {
   it('renders a p element', () => {
-    const { enzymeWrapper } = setup()
+    const { enzymeWrapper } = setup(outputXml)
 
-    expect(enzymeWrapper.find('p').length).to.eq(1)
-    expect(enzymeWrapper.find('p').props()).to.have.property('children', 'test value')
+    expect(enzymeWrapper.find('span').length).to.eq(1)
+    expect(enzymeWrapper.find('span').props()).to.have.property('children', 'test value')
   })
 
   it('renders an a element when the type is anyURI', () => {
-    const { enzymeWrapper } = setup({ type: 'anyuri' })
+    const { enzymeWrapper } = setup(outputXml, { type: 'anyuri' })
 
     expect(enzymeWrapper.find('a').length).to.eq(1)
     expect(enzymeWrapper.find('a').props().href).to.eq('test value')
+  })
+
+  it('renders evaluated xpath output values', () => {
+    const { enzymeWrapper } = setup(outputXpathXml, {
+      value: '7 * 6'
+    })
+
+    expect(enzymeWrapper.find('span').length).to.eq(1)
+    expect(enzymeWrapper.find('span').props()).to.have.property('children', 42)
   })
 })

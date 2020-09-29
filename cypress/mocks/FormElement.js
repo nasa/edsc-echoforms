@@ -14,6 +14,8 @@ export const textareaXml = '<form><model><instance><prov:options xmlns:prov="htt
 
 export const outputXml = '<form><model><instance><prov:options xmlns:prov="http://www.example.com/orderoptions"><prov:textreference>test value</prov:textreference></prov:options></instance></model><ui><output id="output" label="Output" ref="prov:textreference"><help>Helpful text</help></output></ui></form>'
 
+export const outputXpathXml = '<form><model><instance><prov:options xmlns:prov="http://www.example.com/orderoptions"><prov:textreference>test value</prov:textreference></prov:options></instance></model><ui><output id="output" label="Output" value="7 * 6"><help>Helpful text</help></output></ui></form>'
+
 export const urlOutputXml = '<form><model><instance><prov:options xmlns:prov="http://www.example.com/orderoptions"><prov:textreference>test value</prov:textreference></prov:options></instance></model><ui><output type="xs:anyURI" id="output" label="URL Output" ref="prov:textreference"></output></ui></form>'
 
 export const notRelevantXml = '<form><model><instance><prov:options xmlns:prov="http://www.example.com/orderoptions"><prov:boolreference>false</prov:boolreference><prov:textreference>test value</prov:textreference></prov:options></instance></model><ui><input id="boolinput" label="Bool input" ref="prov:boolreference" type="xs:boolean"></input><input id="textinput" label="Relevant based on checkbox" ref="prov:textreference" relevant="prov:boolreference=\'true\'" type="xs:string"></input></ui></form>'
