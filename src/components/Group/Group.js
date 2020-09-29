@@ -63,6 +63,7 @@ export const Group = ({
 Group.defaultProps = {
   children: null,
   id: '',
+  label: '',
   modelRef: undefined,
   parentRef: null,
   readOnly: undefined
@@ -71,7 +72,7 @@ Group.defaultProps = {
 Group.propTypes = {
   children: PropTypes.shape({}),
   id: PropTypes.string,
-  label: PropTypes.string.isRequired,
+  label: PropTypes.string,
   model: PropTypes.shape({}).isRequired,
   modelRef: PropTypes.string,
   parentRef: PropTypes.string,
