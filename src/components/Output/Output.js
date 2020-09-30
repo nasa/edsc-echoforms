@@ -18,9 +18,15 @@ export const Output = ({
 
   // Output elements can have xpath as their value attribute.
   // Try to evaluate the value, but catch any error and use the given value
-  let evaluatedValue
+  let evaluatedValue = value
+
   try {
     evaluatedValue = evaluateXpath(value, model, resolver)
+
+    // If no result was found from evaluating the xpath, default to original value
+    if (evaluatedValue == null) {
+      evaluatedValue = value
+    }
   } catch (e) {
     evaluatedValue = value
   }
@@ -49,12 +55,12 @@ export const Output = ({
             }
             {
               (!type || type !== 'anyuri') && (
-                <span
-                  className="form-text"
+                <p
+                  className="form-text mb-0"
                   id={id}
                 >
                   {evaluatedValue}
-                </span>
+                </p>
               )
             }
           </>
