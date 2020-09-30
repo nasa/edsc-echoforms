@@ -46,8 +46,8 @@ describe('Output component', () => {
   it('renders a p element', () => {
     const { enzymeWrapper } = setup(outputXml)
 
-    expect(enzymeWrapper.find('span').length).to.eq(1)
-    expect(enzymeWrapper.find('span').props()).to.have.property('children', 'test value')
+    expect(enzymeWrapper.find('p').length).to.eq(1)
+    expect(enzymeWrapper.find('p').props()).to.have.property('children', 'test value')
   })
 
   it('renders an a element when the type is anyURI', () => {
@@ -62,7 +62,16 @@ describe('Output component', () => {
       value: '7 * 6'
     })
 
-    expect(enzymeWrapper.find('span').length).to.eq(1)
-    expect(enzymeWrapper.find('span').props()).to.have.property('children', 42)
+    expect(enzymeWrapper.find('p').length).to.eq(1)
+    expect(enzymeWrapper.find('p').props()).to.have.property('children', 42)
+  })
+
+  it('renders the value when it is valid xpath that returns no result', () => {
+    const { enzymeWrapper } = setup(outputXpathXml, {
+      value: 'asdf'
+    })
+
+    expect(enzymeWrapper.find('p').length).to.eq(1)
+    expect(enzymeWrapper.find('p').props()).to.have.property('children', 'asdf')
   })
 })
