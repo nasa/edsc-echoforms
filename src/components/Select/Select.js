@@ -92,7 +92,7 @@ export const Select = ({
             name={label}
             multiple={multiple}
             readOnly={readOnly}
-            value={multiple ? value : value[0]}
+            value={multiple ? value : (value[0] || '')}
             onChange={onChange}
           >
             {options}
