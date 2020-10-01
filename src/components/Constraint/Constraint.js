@@ -52,7 +52,7 @@ export const Constraint = ({
   if (typeValid !== true) errors.push(typeValid)
 
   // Is the field required and empty?
-  if (required && !value) {
+  if (required && (!value || !value.length)) {
     errors.push('Required field')
   }
 

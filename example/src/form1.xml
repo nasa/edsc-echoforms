@@ -84,7 +84,7 @@
     <range id="range" label="Range" start="1.0" end="10.0" step="0.1" type="xs:double" a="a" ref="prov:rangeReference">
       <help>Helpful text</help>
     </range>
-    <select id="select" label="Select" a="a" ref="prov:selectReference" valueElementName="selectValue">
+    <select id="select" label="Select" a="a" ref="prov:selectReference" valueElementName="selectValue" required="prov:boolReference='true'">
       <item label="Alphabetic" value="Alphabetic" />
       <item label="123456" value="123456" />
       <item label="654321" value="654321" />

@@ -1,4 +1,4 @@
-import React, { useContext } from 'react'
+import React, { useContext, useRef } from 'react'
 import PropTypes from 'prop-types'
 import { ElementWrapper } from '../ElementWrapper/ElementWrapper'
 import { getAttribute } from '../../util/getAttribute'
@@ -21,6 +21,7 @@ export const Select = ({
 }) => {
   const { onUpdateModel } = useContext(EchoFormsContext)
   const { elementClasses } = useClasses()
+  const defaultOption = useRef(value)
 
   const onChange = (e) => {
     // Map e.target.selectedOptions to an array of objects with the value and valueElementName
@@ -28,23 +29,18 @@ export const Select = ({
 
     const values = []
     Array.from(selectedOptions).forEach((option) => {
-      const { value } = option
-      values.push(value)
+      const { attributes } = option
+      const value = getAttribute(attributes, 'value')
+
+      // Don't push a null default value
+      if (value) values.push(value)
     })
 
     onUpdateModel(parentRef, modelRef, { value: values, valueElementName })
   }
 
   const options = []
-  if (!multiple) {
-    options.push(
-      <option
-        key="default option"
-      >
-        Select a value
-      </option>
-    )
-  }
+  let hasBlankOption = false
 
   Array.from(children)
     .filter(element => element.tagName === 'item')
@@ -53,6 +49,9 @@ export const Select = ({
 
       const optionLabel = getAttribute(attributes, 'label')
       const optionValue = getAttribute(attributes, 'value')
+
+      if (optionValue === '') hasBlankOption = true
+
       options.push(
         <option
           key={`option-${optionValue}`}
@@ -62,6 +61,18 @@ export const Select = ({
         </option>
       )
     })
+
+  // Add a default blank option unless the form provides either an item with value = "" or a default option
+  if (!multiple && !hasBlankOption && !defaultOption.current.length) {
+    let optionText = ' -- No selection -- '
+    if (required) optionText = ' -- Select a value -- '
+
+    options.unshift(
+      <option key="default option">
+        {optionText}
+      </option>
+    )
+  }
 
   return (
     <ElementWrapper
