@@ -3,6 +3,8 @@
 [![npm version](https://badge.fury.io/js/%40edsc%2Fechoforms.svg)](https://badge.fury.io/js/%40edsc%2Fechoforms)
 [![Build Status](https://travis-ci.org/nasa/edsc-echoforms.svg?branch=master)](https://travis-ci.org/nasa/edsc-echoforms)
 
+Try out the [online demo](http://nasa.github.io/edsc-echoforms/)
+
 A React component implementing the
 [ECHO Forms](https://earthdata.nasa.gov/files/ECHO_Forms_Specification_0.pdf)
 specification. For a basic usage example and a testbed for changes,
