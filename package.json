@@ -3,7 +3,7 @@
   "title": "Earthdata Search Components: ECHO Forms",
   "description": "A React component implementation of the ECHO Forms specification.",
   "main": "dist/index.js",
-  "version": "1.1.7",
+  "version": "1.1.8",
   "scripts": {
     "build": "webpack",
     "start": "webpack-dev-server --config example/webpack.config.js --mode development",
