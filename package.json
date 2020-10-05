@@ -11,7 +11,9 @@
     "cypress:run": "NODE_ENV=test cypress run -c video=false",
     "test": "npm run cypress:run",
     "test:bamboo": "cypress run --reporter junit --reporter-options \"mochaFile=junit.xml\" -c video=false",
-    "prepare": "npm run build"
+    "prepare": "npm run build",
+    "predeploy": "webpack --config example/webpack.config.js",
+    "deploy": "gh-pages -d dist"
   },
   "repository": {
     "type": "git",
@@ -35,7 +37,7 @@
   "bugs": {
     "url": "https://github.com/nasa/edsc-echoforms/issues"
   },
-  "homepage": "https://github.com/nasa/edsc-echoforms",
+  "homepage": "http://nasa.github.io/edsc-echoforms/",
   "keywords": [
     "Earthdata Search",
     "ECHO Forms",
@@ -72,6 +74,7 @@
     "eslint-plugin-jsx-a11y": "^6.1.2",
     "eslint-plugin-react": "^7.12.4",
     "eslint-plugin-react-hooks": "^2.3.0",
+    "gh-pages": "^3.1.0",
     "html-webpack-plugin": "^3.2.0",
     "istanbul-lib-coverage": "^3.0.0",
     "node-sass": "^4.14.1",
@@ -80,6 +83,7 @@
     "raw-loader": "^4.0.0",
     "react": "^16.12.0",
     "react-dom": "^16.12.0",
+    "react-github-corner": "^2.5.0",
     "sass": "^1.26.7",
     "sass-loader": "^8.0.2",
     "sass-resources-loader": "^2.1.1",
