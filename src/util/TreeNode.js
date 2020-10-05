@@ -320,6 +320,9 @@ export class TreeNode {
     // If the node is currently indeterminate, clicking the checkbox should switch to checked
     if (this.checked === 'indeterminate') {
       newChecked = true
+
+      // If all enabled children are checked, newChecked should be false
+      if (this.allEnabledChildrenChecked()) newChecked = false
     }
 
     // Required fields are always checked
@@ -345,14 +348,21 @@ export class TreeNode {
   }
 
   /**
-   * Determines if all the items children are checked
+   * Determines if all the item's children are checked
    */
   allChildrenChecked() {
     return this.children.every(child => child.checked === true)
   }
 
   /**
-   * Determines if some the items children are checked
+   * Determines if all the item's enabled children are checked
+   */
+  allEnabledChildrenChecked() {
+    return this.children.every(child => child.checked === true || child.getDisabled())
+  }
+
+  /**
+   * Determines if some the item's children are checked
    */
   someChildrenChecked() {
     return this.children.some(child => child.checked === true || child.checked === 'indeterminate')
@@ -388,7 +398,14 @@ export class TreeNode {
    * Determines if the item should be disabled
    */
   getDisabled() {
-    return this.required || !this.relevant
+    return (
+      this.required
+      || !this.relevant
+      || (
+        this.isParent
+        && this.children.every(child => child.getDisabled())
+      )
+    )
   }
 
   /**

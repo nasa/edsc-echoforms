@@ -6,6 +6,7 @@ import {
   treeWithRequiredXml,
   treeWithIrrelevantXml,
   treeWithIndeterminateXml,
+  treeWithIndeterminateDisabledChildrenXml,
   treeWithSimplifyOutputXml
 } from '../../../mocks/FormElement'
 
@@ -231,7 +232,7 @@ describe('TreeNode', () => {
 
     expect(treeNode.allItems['/Parent1'].cascade).to.eq(true)
     expect(treeNode.allItems['/Parent1'].checked).to.eq(true)
-    expect(treeNode.allItems['/Parent1'].disabled).to.eq(false)
+    expect(treeNode.allItems['/Parent1'].disabled).to.eq(true)
     expect(treeNode.allItems['/Parent1'].fullValue).to.eq('/Parent1')
     expect(treeNode.allItems['/Parent1'].id).to.eq('/Parent1')
     expect(treeNode.allItems['/Parent1'].label).to.eq('Parent1')
@@ -272,7 +273,7 @@ describe('TreeNode', () => {
 
     expect(treeNode.allItems['/Parent1'].cascade).to.eq(true)
     expect(treeNode.allItems['/Parent1'].checked).to.eq(false)
-    expect(treeNode.allItems['/Parent1'].disabled).to.eq(false)
+    expect(treeNode.allItems['/Parent1'].disabled).to.eq(true)
     expect(treeNode.allItems['/Parent1'].fullValue).to.eq('/Parent1')
     expect(treeNode.allItems['/Parent1'].id).to.eq('/Parent1')
     expect(treeNode.allItems['/Parent1'].label).to.eq('Parent1')
@@ -471,6 +472,31 @@ describe('TreeNode', () => {
     expect(treeNode.allItems['/Parent1'].checked).to.eq(true)
     expect(treeNode.allItems['/Parent1/Child1'].checked).to.eq(true)
     expect(treeNode.allItems['/Parent1/Child2'].checked).to.eq(true)
+  })
+
+  it('selecting an indetermindate parent that has all enabled children selected deselects those children', () => {
+    const {
+      tree,
+      model,
+      resolver
+    } = setup(treeWithIndeterminateDisabledChildrenXml)
+
+    const checkedFields = ['/Parent1/Child2']
+
+    const treeNode = new TreeNode({
+      cascade: true,
+      checkedFields,
+      element: tree,
+      model,
+      resolver,
+      separator: '/'
+    })
+
+    treeNode.allItems['/Parent1'].setChecked(true)
+
+    expect(treeNode.allItems['/Parent1'].checked).to.eq(false)
+    expect(treeNode.allItems['/Parent1/Child1'].checked).to.eq(false)
+    expect(treeNode.allItems['/Parent1/Child2'].checked).to.eq(false)
   })
 
   describe('formatFilterText', () => {
