@@ -52,8 +52,8 @@ export const EDSCEchoform = ({
     return updatedModel
   }
 
-  // Build the model and ui state objects to pass to FormBody
-  const setupForm = () => {
+  // Parse the XML form and return the XML document
+  const getFormDoc = () => {
     // If we have a defaultRawModel, insert that into the form before parsing
     let formWithModel = form
     if (defaultRawModel) {
@@ -64,14 +64,28 @@ export const EDSCEchoform = ({
     const doc = parseXml(formWithModel.replace(/>\s+</g, '><').replace(/^\s+|\s+$/g, ''))
     resolver.current = buildXPathResolverFn(doc)
 
+    return doc
+  }
+
+  // Extend the given model with prepopulate values
+  const extendModelWithPrepopulateValues = (doc, initialModel) => {
+    // Pull the prepopulate extensions out of the form
+    const extensionResult = doc.evaluate('//*[local-name()="extension" and @name="pre:prepopulate"]/*', doc, resolver.current, XPathResult.ANY_TYPE, null)
+    const extension = extensionResult.iterateNext()
+    const extendedModel = handlePrepopulateExtension(extension, initialModel, resolver.current)
+
+    return extendedModel
+  }
+
+  // Build the model and ui state objects to pass to FormBody
+  const setupForm = () => {
+    const doc = getFormDoc()
+
     // Pull the model out of the form
     const modelResult = doc.evaluate('//*[local-name()="instance"]', doc, resolver.current, XPathResult.ANY_TYPE, null)
     const initialModel = modelResult.iterateNext()
 
-    // Pull the prepopulate extensions out of the form
-    const extensionResult = doc.evaluate('//*[local-name()="extension" and @name="pre:prepopulate"]/*', doc, resolver.current, XPathResult.ANY_TYPE, null)
-    const extension = extensionResult.iterateNext()
-    const extendedModel = handlePrepopulateExtension(extension, initialModel.cloneNode(true), resolver.current)
+    const extendedModel = extendModelWithPrepopulateValues(doc, initialModel.cloneNode(true))
 
     // Pull the UI out of the form
     const uiResult = doc.evaluate('//*[local-name()="ui"]', doc, resolver.current, XPathResult.ANY_TYPE, null)
@@ -91,6 +105,17 @@ export const EDSCEchoform = ({
   useEffect(() => {
     setupForm()
   }, [form])
+
+  // When the prepopulateValues change update the model with the new values
+  useEffect(() => {
+    if (model.outerHTML && prepopulateValues) {
+      const doc = getFormDoc()
+
+      const extendedModel = extendModelWithPrepopulateValues(doc, model)
+
+      setModel(extendedModel)
+    }
+  }, [prepopulateValues])
 
   // When the defaultRawModel prop changes, we might need to reset the form.
   // If we already have an existing model and defaultRawModel is null, the reset button was pressed and we need to run setupForm
