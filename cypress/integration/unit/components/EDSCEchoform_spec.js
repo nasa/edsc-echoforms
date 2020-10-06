@@ -86,6 +86,32 @@ describe('EDSCEchoform component', () => {
     expect(formBody.props().model.outerHTML).to.contain('<prov:textreference>I am prepopulated</prov:textreference>')
   })
 
+  it('updates the form when the prepopulated values change', () => {
+    const onFormModelUpdatedSpy = cy.spy().as('onFormModelUpdated')
+    const onFormIsValidUpdated = cy.spy().as('onFormIsValidUpdated')
+
+    const component = mount(<EDSCEchoform
+      form={prepopulatedXml}
+      prepopulateValues={{
+        PREPOP: 'I am prepopulated'
+      }}
+      onFormModelUpdated={onFormModelUpdatedSpy}
+      onFormIsValidUpdated={onFormIsValidUpdated}
+    />)
+
+    const formBody = component.find(FormBody)
+
+    // Update the prepop values
+    component.setProps({
+      prepopulateValues: {
+        PREPOP: 'New prepopulated value'
+      }
+    })
+
+    expect(formBody).to.have.lengthOf(1)
+    expect(formBody.props().model.outerHTML).to.contain('<prov:textreference>New prepopulated value</prov:textreference>')
+  })
+
   it('with simplifyOutput on a tree onUpdateModel updates the model and calls onFormModelUpdated', () => {
     const onFormModelUpdatedSpy = cy.spy().as('onFormModelUpdated')
     const onFormIsValidUpdated = cy.spy().as('onFormIsValidUpdated')
