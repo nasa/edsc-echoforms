@@ -17,8 +17,15 @@ script:
   - npm install
   - npm run cypress:run
 deploy:
-  provider: script
-  script: bin/ecc-sync
-  on:
-    branch: master
-    repo: nasa/edsc-echoforms
+  - provider: script
+    script: bin/ecc-sync
+    on:
+      branch: master
+      repo: nasa/edsc-echoforms
+  - provider: pages
+    skip_cleanup: true
+    github_token: $GITHUB_TOKEN
+    local_dir: dist
+    on:
+      branch: master
+      repo: nasa/edsc-echoforms
