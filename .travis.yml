@@ -16,6 +16,7 @@ branches:
 script:
   - npm install
   - npm run cypress:run
+before_deploy: "npm run predeploy"
 deploy:
   - provider: script
     script: bin/ecc-sync
@@ -23,9 +24,8 @@ deploy:
       branch: master
       repo: nasa/edsc-echoforms
   - provider: pages
-    skip_cleanup: true
     github_token: $GITHUB_TOKEN
     local_dir: dist
-    on:
-      branch: master
-      repo: nasa/edsc-echoforms
+    # on:
+    #   branch: master
+    #   repo: nasa/edsc-echoforms
