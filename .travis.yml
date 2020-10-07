@@ -13,6 +13,7 @@ cache:
 branches:
   only:
     - master
+    - EDSC-2897
 script:
   - npm install
   - npm run cypress:run
@@ -26,6 +27,6 @@ deploy:
   - provider: pages
     github_token: $GITHUB_TOKEN
     local_dir: dist
-    # on:
-    #   branch: master
-    #   repo: nasa/edsc-echoforms
+    on:
+      branch: EDSC-2897
+      repo: nasa/edsc-echoforms
