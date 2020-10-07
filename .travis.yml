@@ -26,7 +26,7 @@ deploy:
       repo: nasa/edsc-echoforms
   - provider: pages
     github_token: $GITHUB_TOKEN
-    local_dir: dist
+    local_dir: './dist'
     on:
       branch: EDSC-2897
       repo: nasa/edsc-echoforms
