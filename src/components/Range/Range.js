@@ -29,6 +29,11 @@ export const Range = ({
   const [newValue, setNewValue] = useState('')
   const { elementClasses } = useClasses()
 
+  // When the value from props changes, update the state value that drives the input
+  useEffect(() => {
+    setValue(propsValue)
+  }, [propsValue])
+
   useEffect(() => {
     let safeValue = value
     if (!value) safeValue = min

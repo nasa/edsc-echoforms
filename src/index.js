@@ -36,16 +36,19 @@ export const EDSCEchoform = ({
   const relevantFields = useRef({})
 
   // Take any prepopulate extensions and update the model
-  const handlePrepopulateExtension = (extension, model, resolver) => {
-    if (!prepopulateValues || !extension) return model
+  const handlePrepopulateExtension = (extension, initialModel, resolver) => {
+    if (!prepopulateValues || !extension) return initialModel
 
-    let updatedModel = model
+    let updatedModel = initialModel
     Array.from(extension.children)
       .filter(element => element.tagName === 'pre:expression')
       .forEach((expression) => {
         const ref = expression.getAttribute('ref')
         const source = expression.getAttribute('source')
-        if (prepopulateValues[source]) {
+
+        // If there is no value for this prepopulate value, don't update the model
+        // This should update the model for empty values, like empty strings
+        if (prepopulateValues[source] != null) {
           updatedModel = updateModel(updatedModel, resolver, ref, prepopulateValues[source])
         }
       })
@@ -108,10 +111,10 @@ export const EDSCEchoform = ({
 
   // When the prepopulateValues change update the model with the new values
   useEffect(() => {
-    if (model.outerHTML && prepopulateValues) {
+    if (model.outerHTML) {
       const doc = getFormDoc()
 
-      const extendedModel = extendModelWithPrepopulateValues(doc, model)
+      const extendedModel = extendModelWithPrepopulateValues(doc, model.cloneNode(true))
 
       setModel(extendedModel)
     }

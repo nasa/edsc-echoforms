@@ -99,8 +99,6 @@ describe('EDSCEchoform component', () => {
       onFormIsValidUpdated={onFormIsValidUpdated}
     />)
 
-    const formBody = component.find(FormBody)
-
     // Update the prepop values
     component.setProps({
       prepopulateValues: {
@@ -108,6 +106,9 @@ describe('EDSCEchoform component', () => {
       }
     })
 
+    component.update()
+
+    const formBody = component.find(FormBody)
     expect(formBody).to.have.lengthOf(1)
     expect(formBody.props().model.outerHTML).to.contain('<prov:textreference>New prepopulated value</prov:textreference>')
   })
