@@ -14,7 +14,11 @@ import './styles.css'
 
 const App = () => {
   const [form, setForm] = useState(form1)
+  const [prepopulateValues, setPrepopulateValues] = useState({
+    PREPOP: 'I am prepopulated'
+  })
   const [tempForm, setTempForm] = useState(form)
+  const [tempPrepop, setTempPrepop] = useState(JSON.stringify(prepopulateValues))
   const [serializedModel, setSerializedModel] = useState('')
   const [serializedRawModel, setSerializedRawModel] = useState('')
   const [selectedModel, setSelectedModel] = useState('rawModel')
@@ -22,12 +26,20 @@ const App = () => {
   const [defaultRawModel, setDefaultRawModel] = useState(null)
 
   const onTextAreaChange = (e) => {
-    setTempForm(e.target.value)
+    if (e.target.id === 'demo-echoforms-xml') {
+      setTempForm(e.target.value)
+    } else {
+      setTempPrepop(e.target.value)
+    }
   }
 
-  const onTextAreaBlur = () => {
-    setForm(tempForm)
-    setDefaultRawModel(null)
+  const onTextAreaBlur = (e) => {
+    if (e.target.id === 'demo-echoforms-xml') {
+      setForm(tempForm)
+      setDefaultRawModel(null)
+    } else {
+      setPrepopulateValues(JSON.parse(tempPrepop))
+    }
   }
 
   const onFormModelUpdated = (value) => {
@@ -93,6 +105,14 @@ const App = () => {
         onBlur={onTextAreaBlur}
         onChange={onTextAreaChange}
       />
+      <h3>Prepopulate Form Values</h3>
+      <textarea
+        id="demo-echoforms-prepopulate"
+        className="mb-4"
+        value={tempPrepop}
+        onBlur={onTextAreaBlur}
+        onChange={onTextAreaChange}
+      />
       <h2>Generated Interface</h2>
       <p>View and interact with the generated form</p>
       <button
@@ -111,9 +131,7 @@ const App = () => {
         defaultRawModel={defaultRawModel}
         form={form}
         hasShapefile
-        prepopulateValues={{
-          PREPOP: 'I am prepopulated'
-        }}
+        prepopulateValues={prepopulateValues}
         onFormModelUpdated={onFormModelUpdated}
         onFormIsValidUpdated={onFormIsValidUpdated}
       />

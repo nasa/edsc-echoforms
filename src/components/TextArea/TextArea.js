@@ -1,4 +1,4 @@
-import React, { useContext, useState } from 'react'
+import React, { useContext, useEffect, useState } from 'react'
 import PropTypes from 'prop-types'
 import { ElementWrapper } from '../ElementWrapper/ElementWrapper'
 import { useClasses } from '../../hooks/useClasses'
@@ -19,6 +19,11 @@ export const TextArea = ({
   const [stateValue, setStateValue] = useState(value)
   const { onUpdateModel } = useContext(EchoFormsContext)
   const { elementClasses } = useClasses()
+
+  // When the value from props changes, update the state value that drives the text area
+  useEffect(() => {
+    setStateValue(value)
+  }, [value])
 
   const onBlur = () => {
     onUpdateModel(parentRef, modelRef, stateValue)
