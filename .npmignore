@@ -14,3 +14,6 @@ source.tgz
 src
 tmp
 webpack.config.js
+.codecov.yml
+.github/workflows/ci.yml
+.snyk
