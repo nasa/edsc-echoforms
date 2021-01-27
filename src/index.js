@@ -1,13 +1,16 @@
 import React, { useState, useEffect, useRef } from 'react'
 import PropTypes from 'prop-types'
 
-import { EchoFormsContext } from './context/EchoFormsContext'
-import { parseXml } from './util/parseXml'
-import { buildXPathResolverFn } from './util/buildXPathResolverFn'
-import { FormBody } from './components/FormBody/FormBody'
-import { updateModel } from './util/updateModel'
-import { pruneModel } from './util/pruneModel'
 import { buildParentXpath } from './util/buildParentXpath'
+import { buildXPathResolverFn } from './util/buildXPathResolverFn'
+import { hasModelChanged } from './util/hasModelChanged'
+import { parseXml } from './util/parseXml'
+import { pruneModel } from './util/pruneModel'
+import { removeIrrelevantAttribute } from './util/removeIrrelevantAttribute'
+import { updateModel } from './util/updateModel'
+
+import { EchoFormsContext } from './context/EchoFormsContext'
+import { FormBody } from './components/FormBody/FormBody'
 
 export const EDSCEchoform = ({
   addBootstrapClasses,
@@ -23,6 +26,9 @@ export const EDSCEchoform = ({
   const [ui, setUi] = useState({})
   // formIsValid holds a hash of each field, and tells us if that field is valid
   const [formIsValid, setFormIsValid] = useState({})
+
+  // originalModel is the model included in the form XML, used to compare if the model has been changed at all
+  const [originalModel, setOriginalModel] = useState({})
 
   // The Tree component needs to keep a verbose record of the nodes to ensure speed and accuracy, so we save a simplified output here if the tree form element has simplifyOutput set
   const simplifiedTree = useRef(undefined)
@@ -56,39 +62,74 @@ export const EDSCEchoform = ({
   }
 
   // Parse the XML form and return the XML document
-  const getFormDoc = () => {
+  const getFormDoc = (defaultRawModel) => {
     // If we have a defaultRawModel, insert that into the form before parsing
     let formWithModel = form
     if (defaultRawModel) {
-      formWithModel = form.replace(/(?:<instance>)(?:.|\n)*(?:<\/instance>)/, `<instance>\n${defaultRawModel}\n</instance>`)
+      formWithModel = form.replace(
+        /(?:<instance>)(?:.|\n)*(?:<\/instance>)/,
+        `<instance>\n${defaultRawModel}\n</instance>`
+      )
     }
 
     // Parse the form XML
     const doc = parseXml(formWithModel.replace(/>\s+</g, '><').replace(/^\s+|\s+$/g, ''))
-    resolver.current = buildXPathResolverFn(doc)
 
-    return doc
+    return {
+      doc,
+      resolver: buildXPathResolverFn(doc)
+    }
   }
 
   // Extend the given model with prepopulate values
-  const extendModelWithPrepopulateValues = (doc, initialModel) => {
+  const extendModelWithPrepopulateValues = (doc, initialModel, modelResolver) => {
     // Pull the prepopulate extensions out of the form
-    const extensionResult = doc.evaluate('//*[local-name()="extension" and @name="pre:prepopulate"]/*', doc, resolver.current, XPathResult.ANY_TYPE, null)
+    const extensionResult = doc.evaluate(
+      '//*[local-name()="extension" and @name="pre:prepopulate"]/*',
+      doc,
+      modelResolver,
+      XPathResult.ANY_TYPE,
+      null
+    )
     const extension = extensionResult.iterateNext()
-    const extendedModel = handlePrepopulateExtension(extension, initialModel, resolver.current)
+    const extendedModel = handlePrepopulateExtension(extension, initialModel, modelResolver)
 
     return extendedModel
   }
 
   // Build the model and ui state objects to pass to FormBody
   const setupForm = () => {
-    const doc = getFormDoc()
+    // Pull out the model from the unaltered form xml
+    const { doc: defaultDoc, resolver: defaultResolver } = getFormDoc()
+    const defaultModelResult = defaultDoc.evaluate(
+      '//*[local-name()="instance"]',
+      defaultDoc,
+      defaultResolver,
+      XPathResult.ANY_TYPE,
+      null
+    )
+    const defaultInitialModel = defaultModelResult.iterateNext()
+    const defaultExtendedModel = extendModelWithPrepopulateValues(
+      defaultDoc,
+      defaultInitialModel.cloneNode(true),
+      defaultResolver
+    )
+    // Save the unaltered extended model for later comparison with the working model
+    setOriginalModel(defaultExtendedModel)
+
+    // Pull out the model and UI from the form, but with the defaultRawModel provided (savedAccessConfig)
+    const { doc, resolver: newResolver } = getFormDoc(defaultRawModel)
+    resolver.current = newResolver
 
     // Pull the model out of the form
     const modelResult = doc.evaluate('//*[local-name()="instance"]', doc, resolver.current, XPathResult.ANY_TYPE, null)
     const initialModel = modelResult.iterateNext()
 
-    const extendedModel = extendModelWithPrepopulateValues(doc, initialModel.cloneNode(true))
+    const extendedModel = extendModelWithPrepopulateValues(
+      doc,
+      initialModel.cloneNode(true),
+      resolver.current
+    )
 
     // Pull the UI out of the form
     const uiResult = doc.evaluate('//*[local-name()="ui"]', doc, resolver.current, XPathResult.ANY_TYPE, null)
@@ -112,9 +153,14 @@ export const EDSCEchoform = ({
   // When the prepopulateValues change update the model with the new values
   useEffect(() => {
     if (model.outerHTML) {
-      const doc = getFormDoc()
+      const { doc, resolver: newResolver } = getFormDoc(defaultRawModel)
+      resolver.current = newResolver
 
-      const extendedModel = extendModelWithPrepopulateValues(doc, model.cloneNode(true))
+      const extendedModel = extendModelWithPrepopulateValues(
+        doc,
+        model.cloneNode(true),
+        newResolver
+      )
 
       setModel(extendedModel)
     }
@@ -175,9 +221,21 @@ export const EDSCEchoform = ({
         })
       }
 
+      // Prune the model of irrelevant fields to create the 'model' to return
+      const prunedModel = pruneModel(updatedModelWithSimplifiedTree.cloneNode(true)).innerHTML
+
+      // Remove the irrelevant attributes from the rawModel in order to comparent to the originaModel
+      const removedIrrelevant = removeIrrelevantAttribute(
+        updatedModelWithSimplifiedTree.cloneNode(true)
+      )
+
       onFormModelUpdated({
-        model: pruneModel(updatedModelWithSimplifiedTree.cloneNode(true)).innerHTML,
-        rawModel: updatedModelWithSimplifiedTree.innerHTML
+        model: prunedModel,
+        rawModel: updatedModelWithSimplifiedTree.innerHTML,
+        hasChanged: hasModelChanged(
+          originalModel.cloneNode(true).innerHTML,
+          removedIrrelevant.innerHTML
+        )
       })
     }
   }, [model])

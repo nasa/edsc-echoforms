@@ -32,8 +32,7 @@ export const Select = ({
       const { attributes } = option
       const value = getAttribute(attributes, 'value')
 
-      // Don't push a null default value
-      if (value) values.push(value)
+      values.push(value)
     })
 
     onUpdateModel(parentRef, modelRef, { value: values, valueElementName })

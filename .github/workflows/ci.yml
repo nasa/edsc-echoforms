@@ -37,6 +37,8 @@ jobs:
       run: npm run test
     - name: Upload coverage to codecov
       uses: codecov/codecov-action@v1
+      with:
+        files: './coverage/clover.xml'
   deploy:
     if: success() && github.ref == 'refs/heads/master' # only run on master success
     needs: [tests] # only run after jest and cypress jobs complete
