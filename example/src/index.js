@@ -48,7 +48,7 @@ const App = () => {
     setSerializedModel(model)
     setSerializedRawModel(rawModel)
     setDefaultRawModel(rawModel)
-    setFormHasBeenUpdated(!!hasChanged)
+    setFormHasBeenUpdated(hasChanged)
   }
 
   const onFormIsValidUpdated = (isValid) => {
