@@ -6,7 +6,6 @@ import { buildXPathResolverFn } from './util/buildXPathResolverFn'
 import { hasModelChanged } from './util/hasModelChanged'
 import { parseXml } from './util/parseXml'
 import { pruneModel } from './util/pruneModel'
-import { removeIrrelevantAttribute } from './util/removeIrrelevantAttribute'
 import { updateModel } from './util/updateModel'
 
 import { EchoFormsContext } from './context/EchoFormsContext'
@@ -224,17 +223,13 @@ export const EDSCEchoform = ({
       // Prune the model of irrelevant fields to create the 'model' to return
       const prunedModel = pruneModel(updatedModelWithSimplifiedTree.cloneNode(true)).innerHTML
 
-      // Remove the irrelevant attributes from the rawModel in order to comparent to the originaModel
-      const removedIrrelevant = removeIrrelevantAttribute(
-        updatedModelWithSimplifiedTree.cloneNode(true)
-      )
-
       onFormModelUpdated({
         model: prunedModel,
         rawModel: updatedModelWithSimplifiedTree.innerHTML,
         hasChanged: hasModelChanged(
-          originalModel.cloneNode(true).innerHTML,
-          removedIrrelevant.innerHTML
+          originalModel.cloneNode(true),
+          updatedModelWithSimplifiedTree.cloneNode(true),
+          resolver.current
         )
       })
     }
