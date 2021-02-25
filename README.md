@@ -1,4 +1,4 @@
-# Earthdata Search Components:  ECHO Forms
+# Earthdata Search Components: ECHO Forms
 
 [![npm version](https://badge.fury.io/js/%40edsc%2Fechoforms.svg)](https://badge.fury.io/js/%40edsc%2Fechoforms)
 ![Build Status](https://github.com/nasa/edsc-echoforms/workflows/CI/badge.svg?branch=master)
