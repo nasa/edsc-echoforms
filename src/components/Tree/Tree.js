@@ -186,60 +186,58 @@ export const Tree = ({
     >
       {
         ({ isFieldValid }) => (
-          <>
-            <div className={elementClasses('tree', '', !isFieldValid)}>
-              <div className={elementClasses('tree__filter')}>
-                <label
-                  className={elementClasses('tree__filter-label', 'sr-only')}
-                  htmlFor="tree_filter_input"
-                >
-                  Filter
-                </label>
-                <div className={elementClasses('tree__filter-input-group', 'input-group input-group-sm mb-2 mt-1')}>
-                  <div className={elementClasses('tree__filter-input-group-prepend', 'input-group-prepend input-group-prepend-sm')}>
-                    <div className="input-group-text">Filter</div>
-                  </div>
-                  <input
-                    id="tree_filter_input"
-                    name="tree_filter_input"
-                    className={elementClasses('tree__filter-input', 'form-control form-control-sm')}
-                    placeholder="Enter text to filter bands"
-                    value={filterText}
-                    onChange={onFilterChange}
-                  />
-                  <div className={elementClasses('tree__filter-input-append tree__filter-input-append--clear', 'input-group-append')}>
-                    <button
-                      type="button"
-                      label="Clear"
-                      value=""
-                      className={elementClasses('tree__filter-clear-button', 'btn btn-outline-secondary form-control-sm')}
-                      onClick={onFilterClear}
-                    >
-                      <span className={elementClasses('tree__filter-clear-button-text', '')}>
-                        Clear
-                      </span>
-                    </button>
-                  </div>
+          <div className={elementClasses('tree', '', !isFieldValid)}>
+            <div className={elementClasses('tree__filter')}>
+              <label
+                className={elementClasses('tree__filter-label', 'sr-only')}
+                htmlFor="tree_filter_input"
+              >
+                Filter
+              </label>
+              <div className={elementClasses('tree__filter-input-group', 'input-group input-group-sm mb-2 mt-1')}>
+                <div className={elementClasses('tree__filter-input-group-prepend', 'input-group-prepend input-group-prepend-sm')}>
+                  <div className="input-group-text">Filter</div>
                 </div>
-              </div>
-              <div className={elementClasses('tree__node-count', 'mb-3')}>
-                <span className={elementClasses('tree__node-count-text', 'text-secondary small')}>
-                  {selectedNodes}
-                  {' '}
-                  of
-                  {' '}
-                  {totalNodes}
-                  {' '}
-                  bands selected
-                </span>
-              </div>
-              <div className="tree__list-wrapper">
-                <div className="tree__list">
-                  {nodeList()}
+                <input
+                  id="tree_filter_input"
+                  name="tree_filter_input"
+                  className={elementClasses('tree__filter-input', 'form-control form-control-sm')}
+                  placeholder="Enter text to filter bands"
+                  value={filterText}
+                  onChange={onFilterChange}
+                />
+                <div className={elementClasses('tree__filter-input-append tree__filter-input-append--clear', 'input-group-append')}>
+                  <button
+                    type="button"
+                    label="Clear"
+                    value=""
+                    className={elementClasses('tree__filter-clear-button', 'btn btn-outline-secondary form-control-sm')}
+                    onClick={onFilterClear}
+                  >
+                    <span className={elementClasses('tree__filter-clear-button-text', '')}>
+                      Clear
+                    </span>
+                  </button>
                 </div>
               </div>
             </div>
-          </>
+            <div className={elementClasses('tree__node-count', 'mb-3')}>
+              <span className={elementClasses('tree__node-count-text', 'text-secondary small')}>
+                {selectedNodes}
+                {' '}
+                of
+                {' '}
+                {totalNodes}
+                {' '}
+                bands selected
+              </span>
+            </div>
+            <div className="tree__list-wrapper">
+              <div className="tree__list">
+                {nodeList()}
+              </div>
+            </div>
+          </div>
         )
       }
     </ElementWrapper>

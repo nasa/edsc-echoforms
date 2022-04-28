@@ -13,8 +13,8 @@ export const validateDateTime = (value) => {
   }
 
   const [date, time] = Array.from(value.split('T'))
-  const [year, month, day] = date.split('-').map(x => parseInt(x, 10))
-  const [hour, minute, second] = time.split(':').map(x => parseInt(x, 10))
+  const [year, month, day] = date.split('-').map((x) => parseInt(x, 10))
+  const [hour, minute, second] = time.split(':').map((x) => parseInt(x, 10))
 
   if (
     year

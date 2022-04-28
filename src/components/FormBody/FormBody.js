@@ -19,7 +19,7 @@ export const FormBody = ({
     <div className={elementClasses(formBodyClassnames, 'card')}>
       <div className={elementClasses('form__body', 'card-body')}>
         {
-          ui.childElementCount > 0 && Array.from(ui.children).map(element => (
+          ui.childElementCount > 0 && Array.from(ui.children).map((element) => (
             <FormElement
               key={element.outerHTML}
               element={element}

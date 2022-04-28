@@ -42,7 +42,7 @@ export const Select = ({
   let hasBlankOption = false
 
   Array.from(children)
-    .filter(element => element.tagName === 'item')
+    .filter((element) => element.tagName === 'item')
     .forEach((element) => {
       const { attributes } = element
 

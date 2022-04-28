@@ -114,7 +114,7 @@ export class TreeNode {
    */
   setupChildren(children) {
     Array.from(children)
-      .filter(child => child.tagName === 'item')
+      .filter((child) => child.tagName === 'item')
       .forEach((child) => {
         // Setup new TreeNode for each child
         const childNode = new TreeNode({
@@ -122,7 +122,9 @@ export class TreeNode {
           level: this.level + 1,
           element: child,
           parent: this,
-          parentChecked: this.checkedFields.includes(this.fullValue) || this.required || this.parentChecked,
+          parentChecked: this.checkedFields.includes(this.fullValue)
+            || this.required
+            || this.parentChecked,
           onUpdateFinished: undefined
         })
 
@@ -238,8 +240,10 @@ export class TreeNode {
    * @param {String} filterText text to filter the node on
    */
   childrenMatchFilter(filterText) {
-    return this.children.some(item => (
-      item.matchesFilter(this.formatFilterText(filterText)) || item.childrenMatchFilter(this.formatFilterText(filterText))))
+    return this.children.some((item) => (
+      item.matchesFilter(this.formatFilterText(filterText))
+        || item.childrenMatchFilter(this.formatFilterText(filterText))
+    ))
   }
 
   /**
@@ -351,21 +355,21 @@ export class TreeNode {
    * Determines if all the item's children are checked
    */
   allChildrenChecked() {
-    return this.children.every(child => child.checked === true)
+    return this.children.every((child) => child.checked === true)
   }
 
   /**
    * Determines if all the item's enabled children are checked
    */
   allEnabledChildrenChecked() {
-    return this.children.every(child => child.checked === true || child.getDisabled())
+    return this.children.every((child) => child.checked === true || child.getDisabled())
   }
 
   /**
    * Determines if some the item's children are checked
    */
   someChildrenChecked() {
-    return this.children.some(child => child.checked === true || child.checked === 'indeterminate')
+    return this.children.some((child) => child.checked === true || child.checked === 'indeterminate')
   }
 
   /**
@@ -403,7 +407,7 @@ export class TreeNode {
       || !this.relevant
       || (
         this.isParent
-        && this.children.every(child => child.getDisabled())
+        && this.children.every((child) => child.getDisabled())
       )
     )
   }

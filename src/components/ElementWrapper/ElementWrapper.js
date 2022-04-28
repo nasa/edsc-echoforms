@@ -24,7 +24,7 @@ export const ElementWrapper = ({
 
   // When isFieldValid changes, call setFormIsValid to update this field with the new value
   useEffect(() => {
-    setFormIsValid(prevState => ({ ...prevState, [elementHash]: isFieldValid }))
+    setFormIsValid((prevState) => ({ ...prevState, [elementHash]: isFieldValid }))
   }, [isFieldValid])
 
   return (

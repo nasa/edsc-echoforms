@@ -8,4 +8,4 @@ const resources = [
   'vendor/bootstrap/_variables.scss'
 ]
 
-module.exports = resources.map(file => path.resolve(__dirname, file))
+module.exports = resources.map((file) => path.resolve(__dirname, file))

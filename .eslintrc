@@ -79,7 +79,9 @@
 
     "react/jsx-props-no-spreading": ["error", {
       "custom": "ignore"
-    }]
+    }],
+
+    "react/function-component-definition": "off"
   },
 
   "overrides": [

@@ -33,5 +33,5 @@ export const getNodeValue = (ref, model, resolver, isBooleanAttribute, isTree) =
   }
 
   // If children has values then we need to get the text content of the children
-  return Array.from(children).map(child => child.textContent.trim())
+  return Array.from(children).map((child) => child.textContent.trim())
 }

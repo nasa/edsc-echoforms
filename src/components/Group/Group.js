@@ -44,8 +44,8 @@ export const Group = ({
       <div className={elementClasses('group__body', 'card-body')}>
         {
           children && Array.from(children)
-            .filter(element => element.tagName !== 'help')
-            .map(element => (
+            .filter((element) => element.tagName !== 'help')
+            .map((element) => (
               <FormElement
                 key={element.outerHTML}
                 element={element}
