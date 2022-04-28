@@ -24,18 +24,18 @@ export const Constraint = ({
 
   // Run any constraint validations
   Array.from(elements)
-    .filter(element => element.tagName === 'constraints')
+    .filter((element) => element.tagName === 'constraints')
     .forEach((element) => {
       const { children: constraints } = element
 
       Array.from(constraints)
-        .filter(element => element.tagName === 'constraint')
+        .filter((element) => element.tagName === 'constraint')
         .forEach((constraint) => {
           const { children: constraintElements } = constraint
 
-          const xpath = Array.from(constraintElements).filter(element => element.tagName === 'xpath')[0]
-          const pattern = Array.from(constraintElements).filter(element => element.tagName === 'pattern')[0]
-          const alert = Array.from(constraintElements).filter(element => element.tagName === 'alert')[0]
+          const xpath = Array.from(constraintElements).filter((element) => element.tagName === 'xpath')[0]
+          const pattern = Array.from(constraintElements).filter((element) => element.tagName === 'pattern')[0]
+          const alert = Array.from(constraintElements).filter((element) => element.tagName === 'alert')[0]
 
           if (xpath && !evaluateXpath(xpath.textContent, model, resolver)) {
             errors.push(alert.textContent)
@@ -58,7 +58,7 @@ export const Constraint = ({
 
   setFieldIsValid(!errors.length)
 
-  return errors.map(error => (
+  return errors.map((error) => (
     <div key={error} className="invalid-feedback">
       {error}
     </div>

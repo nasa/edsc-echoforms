@@ -15,5 +15,5 @@ export const buildXPathResolverFn = (xml) => {
     match = namespaceRegex.exec(xml.firstChild.outerHTML)
   }
 
-  return prefix => namespaces[prefix !== null ? prefix : defaultName]
+  return (prefix) => namespaces[prefix !== null ? prefix : defaultName]
 }

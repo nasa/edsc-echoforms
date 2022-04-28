@@ -5,7 +5,7 @@
 export const pruneModel = (model) => {
   const elements = model.querySelectorAll('[irrelevant=true]')
 
-  elements.forEach(element => element.parentNode.removeChild(element))
+  elements.forEach((element) => element.parentNode.removeChild(element))
 
   return model
 }

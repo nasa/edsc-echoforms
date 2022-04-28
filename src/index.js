@@ -46,7 +46,7 @@ export const EDSCEchoform = ({
 
     let updatedModel = initialModel
     Array.from(extension.children)
-      .filter(element => element.tagName === 'pre:expression')
+      .filter((element) => element.tagName === 'pre:expression')
       .forEach((expression) => {
         const ref = expression.getAttribute('ref')
         const source = expression.getAttribute('source')
@@ -258,6 +258,7 @@ export const EDSCEchoform = ({
 
   return (
     <EchoFormsContext.Provider
+      // eslint-disable-next-line react/jsx-no-constructed-context-values
       value={{
         addBootstrapClasses,
         hasShapefile,

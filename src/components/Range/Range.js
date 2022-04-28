@@ -37,7 +37,7 @@ export const Range = ({
   useEffect(() => {
     let safeValue = value
     if (!value) safeValue = min
-    const newValue = Number((safeValue - min) * 100 / (max - min))
+    const newValue = (Number((safeValue - min) * 100) / (max - min))
     const newPosition = 25 - (newValue * 0.5)
     setPosition(newPosition)
     setNewValue(newValue)

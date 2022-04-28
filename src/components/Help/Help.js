@@ -10,7 +10,7 @@ export const Help = ({ elements, manualHelp }) => {
   const help = []
   if (elements) {
     Array.from(elements)
-      .filter(element => element.tagName === 'help')
+      .filter((element) => element.tagName === 'help')
       .forEach((element) => {
         const { textContent } = element
 
@@ -37,6 +37,8 @@ export const Help = ({ elements, manualHelp }) => {
   }
 
   return (
+    // Disabled because `help` is an array that can have multiple values, so the fragment is needed
+    // eslint-disable-next-line react/jsx-no-useless-fragment
     <>
       {help}
     </>
