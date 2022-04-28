@@ -99,15 +99,7 @@ describe('Checkbox component', () => {
       const { enzymeWrapper } = setup(shapeFileCheckboxXml, { id: 'test-use-shapefile' }, false)
 
       expect(enzymeWrapper.find('input').props()).to.have.property('disabled', true)
-      expect(enzymeWrapper.find(Help).props().manualHelp).to.eql((
-        <span>
-          Click
-          {' '}
-          <b>Back to Search</b>
-          {' '}
-          and upload a KML or Shapefile to enable this option.
-        </span>
-      ))
+      expect(enzymeWrapper.find(Help).props().manualHelp.type).to.eq('span')
     })
   })
 })

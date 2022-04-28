@@ -33,7 +33,10 @@ module.exports = {
     ]
   },
   resolve: {
-    extensions: ['.js', '.jsx']
+    extensions: ['.js', '.jsx'],
+    fallback: {
+      stream: require.resolve('stream-browserify')
+    }
   },
   devtool: 'source-map',
   output: {

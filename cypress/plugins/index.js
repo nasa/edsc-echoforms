@@ -21,12 +21,15 @@ module.exports = (on, config) => {
   // `on` is used to hook into various events Cypress emits
   // `config` is the resolved Cypress config
 
-  on('task', require('@cypress/code-coverage/task'))
   on('file:preprocessor', require('@cypress/code-coverage/use-babelrc'))
+
+  require('@cypress/code-coverage/task')(on, config)
 
   const options = {
     webpackOptions: require('../../example/webpack.config'),
     watchOptions: {}
   }
   on('file:preprocessor', webpackPreprocessor(options))
+
+  return config
 }

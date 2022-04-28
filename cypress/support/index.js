@@ -20,15 +20,6 @@ import './commands'
 // require('./commands')
 import '@cypress/code-coverage/support'
 
-import 'cypress-react-unit-test'
-
-// Fixes incorrect React version
-// https://github.com/bahmutov/cypress-react-unit-test/issues/51
-Cypress.on('window:load', (win) => {
-  // eslint-disable-next-line no-param-reassign
-  win.ReactDOM = window.ReactDOM
-})
-
 // HACK: chai-enzyme does not play nice with chai-jquery, so remove the
 // problem-causing assertions that collide with chai-jquery
 'visible hidden selected checked enabled disabled'.split(' ').forEach((selector) => {
