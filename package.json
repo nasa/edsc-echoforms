@@ -3,7 +3,7 @@
   "title": "Earthdata Search Components: ECHO Forms",
   "description": "A React component implementation of the ECHO Forms specification.",
   "main": "dist/index.js",
-  "version": "1.1.12",
+  "version": "1.1.13",
   "scripts": {
     "build": "webpack",
     "start": "webpack-dev-server --config example/webpack.config.js --mode development",
@@ -69,7 +69,6 @@
     "enzyme-adapter-react-16": "^1.15.6",
     "eslint": "^8.14.0",
     "eslint-config-airbnb": "^19.0.4",
-    "eslint-loader": "^4.0.2",
     "eslint-plugin-cypress": "^2.12.1",
     "eslint-plugin-import": "^2.26.0",
     "eslint-plugin-jsx-a11y": "^6.5.1",
