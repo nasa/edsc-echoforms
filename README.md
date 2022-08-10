@@ -7,7 +7,7 @@
 Try out the [online demo](http://nasa.github.io/edsc-echoforms/)
 
 A React component implementing the
-[ECHO Forms](https://earthdata.nasa.gov/files/ECHO_Forms_Specification_0.pdf)
+[ECHO Forms](docs/ECHO_Forms_Specification.pdf)
 specification. For a basic usage example and a testbed for changes,
 see `example/src`.
 
