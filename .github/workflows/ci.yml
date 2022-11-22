@@ -36,7 +36,7 @@ jobs:
     - name: Run tests
       run: npm run test
     - name: Upload coverage to codecov
-      uses: codecov/codecov-action@v2
+      uses: codecov/codecov-action@v3
   deploy:
     if: success() && github.ref == 'refs/heads/master' # only run on master success
     needs: [tests] # only run after jest and cypress jobs complete
