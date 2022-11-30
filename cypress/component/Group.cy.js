@@ -26,7 +26,6 @@ const readXml = (file) => {
 
 const setup = (file, overrideProps) => {
   const { group, model, resolver } = readXml(file)
-  console.log('🚀 ~ file: Group.cy.js ~ line 24 ~ setup ~ group', group)
 
   const onUpdateModelSpy = cy.spy().as('onUpdateModelSpy')
   const setFormIsValidSpy = cy.spy().as('setFormIsValidSpy')
