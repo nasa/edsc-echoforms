@@ -1,5 +1,5 @@
 import React, { useState } from 'react'
-import { render } from 'react-dom'
+import { createRoot } from 'react-dom/client'
 import format from 'xml-formatter'
 import GithubCorner from 'react-github-corner'
 
@@ -183,4 +183,5 @@ const App = () => {
   )
 }
 
-render(<App />, document.getElementById('root'))
+const root = createRoot(document.getElementById('root'))
+root.render(<App />)
