@@ -186,7 +186,7 @@ export const Tree = ({
     >
       {
         ({ isFieldValid }) => (
-          <div className={elementClasses('tree', '', !isFieldValid)}>
+          <div id={id} className={elementClasses('tree', '', !isFieldValid)}>
             <div className={elementClasses('tree__filter')}>
               <label
                 className={elementClasses('tree__filter-label', 'sr-only')}

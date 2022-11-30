@@ -1,4 +1,4 @@
-import React, { useContext } from 'react'
+import React, { useContext, useEffect } from 'react'
 import PropTypes from 'prop-types'
 
 import { evaluateXpath } from '../../util/evaluateXpath'
@@ -56,7 +56,9 @@ export const Constraint = ({
     errors.push('Required field')
   }
 
-  setFieldIsValid(!errors.length)
+  useEffect(() => {
+    setFieldIsValid(!errors.length)
+  }, [errors.length])
 
   return errors.map((error) => (
     <div key={error} className="invalid-feedback">
