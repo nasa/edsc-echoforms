@@ -318,7 +318,7 @@ export class TreeNode {
    * Sets the checked property of the item and the item's children if cascading
    * @param {String|Boolean} checked new checked value
    */
-  setChecked(checked) {
+  setChecked(checked, forceCheckedFromParent) {
     let newChecked = checked
 
     // If the node is currently indeterminate, clicking the checkbox should switch to checked
@@ -326,11 +326,11 @@ export class TreeNode {
       newChecked = true
 
       // If all enabled children are checked, newChecked should be false
-      if (this.allEnabledChildrenChecked()) newChecked = false
+      if (this.allEnabledChildrenCheckedOrIndeterminate()) newChecked = false
     }
 
     // Required fields are always checked
-    this.checked = newChecked || this.required
+    this.checked = forceCheckedFromParent || newChecked || this.required
 
     // Irrelevant fields are never checked
     if (!this.relevant) this.checked = false
@@ -338,7 +338,7 @@ export class TreeNode {
     // If cascading, set all children equal to this node
     if (this.cascade) {
       this.children.forEach((child) => {
-        child.setChecked(this.checked)
+        child.setChecked(this.checked, forceCheckedFromParent || this.checked)
       })
     }
   }
@@ -359,7 +359,22 @@ export class TreeNode {
   }
 
   /**
-   * Determines if all the item's enabled children are checked
+   * Determines if all the item's children are checked
+   */
+  allEnabledChildrenCheckedOrIndeterminate() {
+    return this.children.every((child) => {
+      if (child.checked === 'indeterminate') {
+        const allIndeterminateChildrenChecked = child.allEnabledChildrenCheckedOrIndeterminate()
+
+        return allIndeterminateChildrenChecked
+      }
+
+      return child.checked === true || child.getDisabled()
+    })
+  }
+
+  /**
+   * Determines if all the item's enabled children are checked or disabled
    */
   allEnabledChildrenChecked() {
     return this.children.every((child) => child.checked === true || child.getDisabled())

@@ -123,9 +123,9 @@ describe('EDSCEchoform component', () => {
     setup(treeWithSimplifyOutputXml)
 
     cy.get('@onFormModelUpdatedSpy').its('lastCall.args').should('deep.equal', [{
-      hasChanged: true,
-      model: '<prov:options xmlns:prov="http://www.example.com/orderoptions"><prov:treeReference/></prov:options>',
-      rawModel: '<prov:options xmlns:prov="http://www.example.com/orderoptions"><prov:treeReference/></prov:options>'
+      hasChanged: false,
+      model: '<prov:options xmlns:prov="http://www.example.com/orderoptions"><prov:treeReference><prov:data_layer>/Parent1</prov:data_layer></prov:treeReference></prov:options>',
+      rawModel: '<prov:options xmlns:prov="http://www.example.com/orderoptions"><prov:treeReference><prov:data_layer>/Parent1</prov:data_layer></prov:treeReference></prov:options>'
     }])
   })
 
