@@ -374,13 +374,6 @@ export class TreeNode {
   }
 
   /**
-   * Determines if all the item's enabled children are checked or disabled
-   */
-  allEnabledChildrenChecked() {
-    return this.children.every((child) => child.checked === true || child.getDisabled())
-  }
-
-  /**
    * Determines if some the item's children are checked
    */
   someChildrenChecked() {
