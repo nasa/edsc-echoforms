@@ -228,11 +228,11 @@ export const Tree = ({
             </div>
             <div className={elementClasses('tree__node-count', 'mb-3')}>
               <span className={elementClasses('tree__node-count-text', 'text-secondary small')}>
-                {selectedNodes}
+                {selectedNodes.toLocaleString()}
                 {' '}
                 of
                 {' '}
-                {totalNodes}
+                {totalNodes.toLocaleString()}
                 {' '}
                 bands selected
               </span>
