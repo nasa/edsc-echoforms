@@ -1,16 +1,17 @@
 /* eslint-disable react/react-in-jsx-scope, react/jsx-no-constructed-context-values */
 import murmurhash from 'murmurhash'
 
-import { treeWithMaxParametersXml, treeXml } from '../mocks/FormElement'
+import { treeWithMaxParametersXml, treeWithNestedDisabledFieldsXml, treeXml } from '../mocks/FormElement'
 import { Tree } from '../../src/components/Tree/Tree'
 import { EchoFormsContext } from '../../src/context/EchoFormsContext'
 import { parseXml } from '../../src/util/parseXml'
+import EDSCEchoform from '../../src'
 
 const readXml = (file) => {
   const doc = parseXml(file)
-  const treeResult = document.evaluate('//*[local-name()="tree"]', doc)
+  const treeResult = doc.evaluate('//*[local-name()="tree"]', doc)
   const tree = treeResult.iterateNext()
-  const modelResult = document.evaluate('//*[local-name()="instance"]', doc)
+  const modelResult = doc.evaluate('//*[local-name()="instance"]', doc)
   const model = modelResult.iterateNext()
 
   return {
@@ -38,6 +39,7 @@ const setup = (overrideProps, file = treeXml) => {
     model,
     modelRef: 'testfield',
     parentRef: 'parentRef',
+    readOnly: false,
     required: false,
     separator: '/',
     simplifyOutput: false,
@@ -160,5 +162,265 @@ describe('Tree component', () => {
     cy.get('.tree__filter-clear-button').click()
 
     cy.get('#tree_filter_input').should('have.value', '')
+  })
+
+  // These tests need the full foam loaded to properly test the tree interactions,
+  // so it mounts EDSCEchoform instead of Tree
+  describe('nested disabled fields', () => {
+    it('selects the initial fields correctly', () => {
+      const onFormModelUpdatedSpy = cy.spy().as('onFormModelUpdatedSpy')
+      const onFormIsValidUpdatedSpy = cy.spy().as('onFormIsValidUpdatedSpy')
+
+      cy.mount(
+        <EDSCEchoform
+          form={treeWithNestedDisabledFieldsXml}
+          onFormModelUpdated={onFormModelUpdatedSpy}
+          onFormIsValidUpdated={onFormIsValidUpdatedSpy}
+        />
+      )
+
+      // Expand tree
+      cy.get('[data-cy="tree-item__parent-button-2"]').click()
+      cy.get('[data-cy="tree-item__parent-button-3"]').click()
+
+      cy.get('[data-cy="/Parent1"]:indeterminate').should('exist')
+      cy.get('[data-cy="/Parent1/Child1-1"]:indeterminate').should('exist')
+      cy.get('[data-cy="/Parent1/Child1-1/Child1-1-1"]').should('be.checked')
+      cy.get('[data-cy="/Parent1/Child1-1/Child1-1-2"]:indeterminate').should('exist')
+      cy.get('[data-cy="/Parent1/Child1-1/Child1-1-2/Child1-1-2-1"]').should('be.checked')
+      cy.get('[data-cy="/Parent1/Child1-1/Child1-1-2/Child1-1-2-2"]').should('not.be.checked')
+    })
+
+    it('unchecks all fields correctly', () => {
+      const onFormModelUpdatedSpy = cy.spy().as('onFormModelUpdatedSpy')
+      const onFormIsValidUpdatedSpy = cy.spy().as('onFormIsValidUpdatedSpy')
+
+      cy.mount(
+        <EDSCEchoform
+          form={treeWithNestedDisabledFieldsXml}
+          onFormModelUpdated={onFormModelUpdatedSpy}
+          onFormIsValidUpdated={onFormIsValidUpdatedSpy}
+        />
+      )
+
+      // Expand tree
+      cy.get('[data-cy="tree-item__parent-button-2"]').click()
+      cy.get('[data-cy="tree-item__parent-button-3"]').click()
+
+      // Uncheck top parent
+      cy.get('[data-cy="/Parent1"]').click()
+
+      cy.get('[data-cy="/Parent1"]').should('not.be.checked')
+      cy.get('[data-cy="/Parent1/Child1-1"]').should('not.be.checked')
+      cy.get('[data-cy="/Parent1/Child1-1/Child1-1-1"]').should('not.be.checked')
+      cy.get('[data-cy="/Parent1/Child1-1/Child1-1-2"]').should('not.be.checked')
+      cy.get('[data-cy="/Parent1/Child1-1/Child1-1-2/Child1-1-2-1"]').should('not.be.checked')
+      cy.get('[data-cy="/Parent1/Child1-1/Child1-1-2/Child1-1-2-2"]').should('not.be.checked')
+    })
+
+    it('handles middle parent correctly', () => {
+      const onFormModelUpdatedSpy = cy.spy().as('onFormModelUpdatedSpy')
+      const onFormIsValidUpdatedSpy = cy.spy().as('onFormIsValidUpdatedSpy')
+
+      cy.mount(
+        <EDSCEchoform
+          form={treeWithNestedDisabledFieldsXml}
+          onFormModelUpdated={onFormModelUpdatedSpy}
+          onFormIsValidUpdated={onFormIsValidUpdatedSpy}
+        />
+      )
+
+      // Expand tree
+      cy.get('[data-cy="tree-item__parent-button-2"]').click()
+      cy.get('[data-cy="tree-item__parent-button-3"]').click()
+
+      // Uncheck middle parent
+      cy.get('[data-cy="/Parent1/Child1-1"]').click()
+
+      cy.get('[data-cy="/Parent1"]').should('not.be.checked')
+      cy.get('[data-cy="/Parent1/Child1-1"]').should('not.be.checked')
+      cy.get('[data-cy="/Parent1/Child1-1/Child1-1-1"]').should('not.be.checked')
+      cy.get('[data-cy="/Parent1/Child1-1/Child1-1-2"]').should('not.be.checked')
+      cy.get('[data-cy="/Parent1/Child1-1/Child1-1-2/Child1-1-2-1"]').should('not.be.checked')
+      cy.get('[data-cy="/Parent1/Child1-1/Child1-1-2/Child1-1-2-2"]').should('not.be.checked')
+
+      // Check middle parent
+      cy.get('[data-cy="/Parent1/Child1-1"]').click()
+
+      cy.get('[data-cy="/Parent1"]:indeterminate').should('exist')
+      cy.get('[data-cy="/Parent1/Child1-1"]:indeterminate').should('exist')
+      cy.get('[data-cy="/Parent1/Child1-1/Child1-1-1"]').should('be.checked')
+      cy.get('[data-cy="/Parent1/Child1-1/Child1-1-2"]:indeterminate').should('exist')
+      cy.get('[data-cy="/Parent1/Child1-1/Child1-1-2/Child1-1-2-1"]').should('be.checked')
+      cy.get('[data-cy="/Parent1/Child1-1/Child1-1-2/Child1-1-2-2"]').should('not.be.checked')
+    })
+
+    it('handles lower parent correctly', () => {
+      const onFormModelUpdatedSpy = cy.spy().as('onFormModelUpdatedSpy')
+      const onFormIsValidUpdatedSpy = cy.spy().as('onFormIsValidUpdatedSpy')
+
+      cy.mount(
+        <EDSCEchoform
+          form={treeWithNestedDisabledFieldsXml}
+          onFormModelUpdated={onFormModelUpdatedSpy}
+          onFormIsValidUpdated={onFormIsValidUpdatedSpy}
+        />
+      )
+
+      // Expand tree
+      cy.get('[data-cy="tree-item__parent-button-2"]').click()
+      cy.get('[data-cy="tree-item__parent-button-3"]').click()
+
+      // Uncheck middle parent
+      cy.get('[data-cy="/Parent1/Child1-1/Child1-1-2"]').click()
+
+      cy.get('[data-cy="/Parent1"]:indeterminate').should('exist')
+      cy.get('[data-cy="/Parent1/Child1-1"]:indeterminate').should('exist')
+      cy.get('[data-cy="/Parent1/Child1-1/Child1-1-1"]').should('be.checked')
+      cy.get('[data-cy="/Parent1/Child1-1/Child1-1-2"]').should('not.be.checked')
+      cy.get('[data-cy="/Parent1/Child1-1/Child1-1-2/Child1-1-2-1"]').should('not.be.checked')
+      cy.get('[data-cy="/Parent1/Child1-1/Child1-1-2/Child1-1-2-2"]').should('not.be.checked')
+
+      // Check middle parent
+      cy.get('[data-cy="/Parent1/Child1-1"]').click()
+
+      cy.get('[data-cy="/Parent1"]:indeterminate').should('exist')
+      cy.get('[data-cy="/Parent1/Child1-1"]:indeterminate').should('exist')
+      cy.get('[data-cy="/Parent1/Child1-1/Child1-1-1"]').should('be.checked')
+      cy.get('[data-cy="/Parent1/Child1-1/Child1-1-2"]:indeterminate').should('exist')
+      cy.get('[data-cy="/Parent1/Child1-1/Child1-1-2/Child1-1-2-1"]').should('be.checked')
+      cy.get('[data-cy="/Parent1/Child1-1/Child1-1-2/Child1-1-2-2"]').should('not.be.checked')
+    })
+
+    it('handles middle leaf correctly', () => {
+      const onFormModelUpdatedSpy = cy.spy().as('onFormModelUpdatedSpy')
+      const onFormIsValidUpdatedSpy = cy.spy().as('onFormIsValidUpdatedSpy')
+
+      cy.mount(
+        <EDSCEchoform
+          form={treeWithNestedDisabledFieldsXml}
+          onFormModelUpdated={onFormModelUpdatedSpy}
+          onFormIsValidUpdated={onFormIsValidUpdatedSpy}
+        />
+      )
+
+      // Expand tree
+      cy.get('[data-cy="tree-item__parent-button-2"]').click()
+      cy.get('[data-cy="tree-item__parent-button-3"]').click()
+
+      // Uncheck middle value parent
+      cy.get('[data-cy="/Parent1/Child1-1/Child1-1-1"]').click()
+
+      cy.get('[data-cy="/Parent1"]:indeterminate').should('exist')
+      cy.get('[data-cy="/Parent1/Child1-1"]:indeterminate').should('exist')
+      cy.get('[data-cy="/Parent1/Child1-1/Child1-1-1"]').should('not.be.checked')
+      cy.get('[data-cy="/Parent1/Child1-1/Child1-1-2"]:indeterminate').should('exist')
+      cy.get('[data-cy="/Parent1/Child1-1/Child1-1-2/Child1-1-2-1"]').should('be.checked')
+      cy.get('[data-cy="/Parent1/Child1-1/Child1-1-2/Child1-1-2-2"]').should('not.be.checked')
+
+      // Check middle value parent
+      cy.get('[data-cy="/Parent1/Child1-1/Child1-1-1"]').click()
+
+      cy.get('[data-cy="/Parent1"]:indeterminate').should('exist')
+      cy.get('[data-cy="/Parent1/Child1-1"]:indeterminate').should('exist')
+      cy.get('[data-cy="/Parent1/Child1-1/Child1-1-1"]').should('be.checked')
+      cy.get('[data-cy="/Parent1/Child1-1/Child1-1-2"]:indeterminate').should('exist')
+      cy.get('[data-cy="/Parent1/Child1-1/Child1-1-2/Child1-1-2-1"]').should('be.checked')
+      cy.get('[data-cy="/Parent1/Child1-1/Child1-1-2/Child1-1-2-2"]').should('not.be.checked')
+    })
+
+    it('handles lower leaf correctly', () => {
+      const onFormModelUpdatedSpy = cy.spy().as('onFormModelUpdatedSpy')
+      const onFormIsValidUpdatedSpy = cy.spy().as('onFormIsValidUpdatedSpy')
+
+      cy.mount(
+        <EDSCEchoform
+          form={treeWithNestedDisabledFieldsXml}
+          onFormModelUpdated={onFormModelUpdatedSpy}
+          onFormIsValidUpdated={onFormIsValidUpdatedSpy}
+        />
+      )
+
+      // Expand tree
+      cy.get('[data-cy="tree-item__parent-button-2"]').click()
+      cy.get('[data-cy="tree-item__parent-button-3"]').click()
+
+      // Uncheck lower leaf
+      cy.get('[data-cy="/Parent1/Child1-1/Child1-1-2/Child1-1-2-1"]').click()
+
+      cy.get('[data-cy="/Parent1"]:indeterminate').should('exist')
+      cy.get('[data-cy="/Parent1/Child1-1"]:indeterminate').should('exist')
+      cy.get('[data-cy="/Parent1/Child1-1/Child1-1-1"]').should('be.checked')
+      cy.get('[data-cy="/Parent1/Child1-1/Child1-1-2"]').should('not.be.checked')
+      cy.get('[data-cy="/Parent1/Child1-1/Child1-1-2/Child1-1-2-1"]').should('not.be.checked')
+      cy.get('[data-cy="/Parent1/Child1-1/Child1-1-2/Child1-1-2-2"]').should('not.be.checked')
+
+      // Check lower leaf
+      cy.get('[data-cy="/Parent1/Child1-1/Child1-1-2/Child1-1-2-1"]').click()
+
+      cy.get('[data-cy="/Parent1"]:indeterminate').should('exist')
+      cy.get('[data-cy="/Parent1/Child1-1"]:indeterminate').should('exist')
+      cy.get('[data-cy="/Parent1/Child1-1/Child1-1-1"]').should('be.checked')
+      cy.get('[data-cy="/Parent1/Child1-1/Child1-1-2"]:indeterminate').should('exist')
+      cy.get('[data-cy="/Parent1/Child1-1/Child1-1-2/Child1-1-2-1"]').should('be.checked')
+      cy.get('[data-cy="/Parent1/Child1-1/Child1-1-2/Child1-1-2-2"]').should('not.be.checked')
+    })
+
+    it('handles mixed nested values correctly', () => {
+      const onFormModelUpdatedSpy = cy.spy().as('onFormModelUpdatedSpy')
+      const onFormIsValidUpdatedSpy = cy.spy().as('onFormIsValidUpdatedSpy')
+
+      cy.mount(
+        <EDSCEchoform
+          form={treeWithNestedDisabledFieldsXml}
+          onFormModelUpdated={onFormModelUpdatedSpy}
+          onFormIsValidUpdated={onFormIsValidUpdatedSpy}
+        />
+      )
+
+      // Expand tree
+      cy.get('[data-cy="tree-item__parent-button-2"]').click()
+      cy.get('[data-cy="tree-item__parent-button-3"]').click()
+
+      // Uncheck middle leaf
+      cy.get('[data-cy="/Parent1/Child1-1/Child1-1-1"]').click()
+
+      cy.get('[data-cy="/Parent1"]:indeterminate').should('exist')
+      cy.get('[data-cy="/Parent1/Child1-1"]:indeterminate').should('exist')
+      cy.get('[data-cy="/Parent1/Child1-1/Child1-1-1"]').should('not.be.checked')
+      cy.get('[data-cy="/Parent1/Child1-1/Child1-1-2"]:indeterminate').should('exist')
+      cy.get('[data-cy="/Parent1/Child1-1/Child1-1-2/Child1-1-2-1"]').should('be.checked')
+      cy.get('[data-cy="/Parent1/Child1-1/Child1-1-2/Child1-1-2-2"]').should('not.be.checked')
+
+      // Check top parent
+      cy.get('[data-cy="/Parent1"]').click()
+
+      cy.get('[data-cy="/Parent1"]:indeterminate').should('exist')
+      cy.get('[data-cy="/Parent1/Child1-1"]:indeterminate').should('exist')
+      cy.get('[data-cy="/Parent1/Child1-1/Child1-1-1"]').should('be.checked')
+      cy.get('[data-cy="/Parent1/Child1-1/Child1-1-2"]:indeterminate').should('exist')
+      cy.get('[data-cy="/Parent1/Child1-1/Child1-1-2/Child1-1-2-1"]').should('be.checked')
+      cy.get('[data-cy="/Parent1/Child1-1/Child1-1-2/Child1-1-2-2"]').should('not.be.checked')
+
+      // Uncheck lower leaf
+      cy.get('[data-cy="/Parent1/Child1-1/Child1-1-2/Child1-1-2-1"]').click()
+
+      cy.get('[data-cy="/Parent1"]:indeterminate').should('exist')
+      cy.get('[data-cy="/Parent1/Child1-1"]:indeterminate').should('exist')
+      cy.get('[data-cy="/Parent1/Child1-1/Child1-1-1"]').should('be.checked')
+      cy.get('[data-cy="/Parent1/Child1-1/Child1-1-2"]').should('not.be.checked')
+      cy.get('[data-cy="/Parent1/Child1-1/Child1-1-2/Child1-1-2-1"]').should('not.be.checked')
+      cy.get('[data-cy="/Parent1/Child1-1/Child1-1-2/Child1-1-2-2"]').should('not.be.checked')
+
+      // Check top parent
+      cy.get('[data-cy="/Parent1"]').click()
+
+      cy.get('[data-cy="/Parent1"]:indeterminate').should('exist')
+      cy.get('[data-cy="/Parent1/Child1-1"]:indeterminate').should('exist')
+      cy.get('[data-cy="/Parent1/Child1-1/Child1-1-1"]').should('be.checked')
+      cy.get('[data-cy="/Parent1/Child1-1/Child1-1-2"]:indeterminate').should('exist')
+      cy.get('[data-cy="/Parent1/Child1-1/Child1-1-2/Child1-1-2-1"]').should('be.checked')
+      cy.get('[data-cy="/Parent1/Child1-1/Child1-1-2/Child1-1-2-2"]').should('not.be.checked')
+    })
   })
 })

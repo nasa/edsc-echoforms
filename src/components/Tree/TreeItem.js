@@ -109,6 +109,7 @@ export const TreeItem = ({
             className={elementClasses('tree-item__parent-button', 'btn')}
             type="button"
             onClick={onToggleExpanded}
+            data-cy={`tree-item__parent-button-${level}`}
           >
             <IconContext.Provider value={{
               style: {
@@ -133,6 +134,7 @@ export const TreeItem = ({
           checked={checked}
           disabled={disabled}
           ref={checkboxElement}
+          data-cy={fullValue}
         />
         <label
           className={elementClasses('tree-item__label')}

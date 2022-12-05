@@ -1,5 +1,10 @@
 import React, {
-  useContext, useState, useRef, useEffect, useCallback
+  useContext,
+  useState,
+  useRef,
+  useEffect,
+  useCallback,
+  useLayoutEffect
 } from 'react'
 import PropTypes from 'prop-types'
 
@@ -79,7 +84,7 @@ export const Tree = ({
   }
 
   // Initial render - setup TreeNode object to drive the tree data
-  useEffect(() => {
+  useLayoutEffect(() => {
     treeModel.current = new TreeNode({
       cascade,
       checkedFields: value,
@@ -124,7 +129,7 @@ export const Tree = ({
   })
 
   // Update the treeModel when the form model data changes
-  useEffect(() => {
+  useLayoutEffect(() => {
     update()
   }, [fullModel]) // When the tree is inside a group, it needs to update when anything in the form changes, so this useEffect runs on the full data model from the context
 
