@@ -66,10 +66,6 @@ const setup = (file, overrideProps) => {
   }
 
   cy.mount(<WrapperComponent {...props} />)
-
-  // // These functions get called a couple times during initial setup of the component. Reset their history
-  // // to make the tests make more sense
-  // cy.get('@onFormModelUpdatedSpy').invoke('resetHistory')
 }
 
 describe('EDSCEchoform component', () => {

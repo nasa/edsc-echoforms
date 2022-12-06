@@ -164,7 +164,7 @@ describe('Tree component', () => {
     cy.get('#tree_filter_input').should('have.value', '')
   })
 
-  // These tests need the full foam loaded to properly test the tree interactions,
+  // These tests need the full form loaded to properly test the tree interactions,
   // so it mounts EDSCEchoform instead of Tree
   describe('nested disabled fields', () => {
     it('selects the initial fields correctly', () => {

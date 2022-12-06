@@ -9,6 +9,7 @@ import {
   treeWithIndeterminateDisabledChildrenXml,
   treeWithSimplifyOutputXml
 } from '../../mocks/FormElement'
+import { INDETERMINATE } from '../../../src/constants'
 
 function setup(xml) {
   const doc = parseXml(xml)
@@ -130,7 +131,7 @@ describe('TreeNode', () => {
     })
 
     expect(treeNode.allItems['/Parent1'].cascade).to.eq(true)
-    expect(treeNode.allItems['/Parent1'].checked).to.eq('indeterminate')
+    expect(treeNode.allItems['/Parent1'].checked).to.eq(INDETERMINATE)
     expect(treeNode.allItems['/Parent1'].disabled).to.eq(false)
     expect(treeNode.allItems['/Parent1'].expanded).to.eq(true)
     expect(treeNode.allItems['/Parent1'].fullValue).to.eq('/Parent1')
