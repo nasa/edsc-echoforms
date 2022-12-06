@@ -9,6 +9,7 @@ import { IconContext } from 'react-icons'
 import { FaFolder, FaFolderOpen } from 'react-icons/fa'
 
 import { useClasses } from '../../hooks/useClasses'
+import { INDETERMINATE } from '../../constants'
 
 import './TreeItem.scss'
 
@@ -61,7 +62,7 @@ export const TreeItem = ({
   // Updates the indeterminate property of the checkbox when the checked value changes
   useEffect(() => {
     if (checkboxElement.current) {
-      checkboxElement.current.indeterminate = checked === 'indeterminate'
+      checkboxElement.current.indeterminate = checked === INDETERMINATE
     }
   }, [checkboxElement.current, checked])
 

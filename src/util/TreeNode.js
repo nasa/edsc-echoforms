@@ -2,6 +2,7 @@ import murmurhash from 'murmurhash'
 
 import { getAttribute } from './getAttribute'
 import { getNodeValue } from './getNodeValue'
+import { INDETERMINATE } from '../constants'
 
 export class TreeNode {
   constructor(props) {
@@ -285,7 +286,7 @@ export class TreeNode {
 
   /**
    * Determines the checked value based off the item's children
-   * @param {String|Boolean} value Checked value (true/false/'indeterminate')
+   * @param {String|Boolean} value Checked value (true/false/indeterminate)
    */
   determineChecked(value) {
     if (!this.relevant) return false
@@ -308,7 +309,7 @@ export class TreeNode {
     }
 
     if (this.someChildrenChecked()) {
-      return 'indeterminate'
+      return INDETERMINATE
     }
 
     return false
@@ -322,7 +323,7 @@ export class TreeNode {
     let newChecked = checked
 
     // If the node is currently indeterminate, clicking the checkbox should switch to checked
-    if (this.checked === 'indeterminate') {
+    if (this.checked === INDETERMINATE) {
       newChecked = true
 
       // If all enabled children are checked, newChecked should be false
@@ -363,10 +364,8 @@ export class TreeNode {
    */
   allEnabledChildrenCheckedOrIndeterminate() {
     return this.children.every((child) => {
-      if (child.checked === 'indeterminate') {
-        const allIndeterminateChildrenChecked = child.allEnabledChildrenCheckedOrIndeterminate()
-
-        return allIndeterminateChildrenChecked
+      if (child.checked === INDETERMINATE) {
+        return child.allEnabledChildrenCheckedOrIndeterminate()
       }
 
       return child.checked === true || child.getDisabled()
@@ -377,7 +376,7 @@ export class TreeNode {
    * Determines if some the item's children are checked
    */
   someChildrenChecked() {
-    return this.children.some((child) => child.checked === true || child.checked === 'indeterminate')
+    return this.children.some((child) => child.checked === true || child.checked === INDETERMINATE)
   }
 
   /**
