@@ -2,7 +2,7 @@ name: CI
 
 on:
   push:
-    branches: [master]
+    branches: [ main ]
   pull_request: {}
 
 jobs:
@@ -68,7 +68,7 @@ jobs:
     - name: Upload coverage to codecov
       uses: codecov/codecov-action@v3
   deploy:
-    if: success() && github.ref == 'refs/heads/master' # only run on master success
+    if: success() && github.ref == 'refs/heads/main' # only run on main success
     needs: [tests] # only run after jest and cypress jobs complete
     runs-on: ubuntu-latest
     steps:
@@ -86,9 +86,9 @@ jobs:
 
         git fetch --unshallow || true
         echo "GITHUB_COMMIT=$GITHUB_SHA"
-        git push ecc $GITHUB_SHA:refs/heads/master
+        git push ecc $GITHUB_SHA:refs/heads/main
   deploy-gh-pages:
-    if: success() && github.ref == 'refs/heads/master' # only run on master success
+    if: success() && github.ref == 'refs/heads/main' # only run on main success
     needs: [tests] # only run after jest and cypress jobs complete
     runs-on: ubuntu-latest
     steps:
