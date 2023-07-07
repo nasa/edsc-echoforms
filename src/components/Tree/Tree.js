@@ -78,7 +78,11 @@ export const Tree = ({
       }
 
       lastSeralized.current = seralized
-      onUpdateModel(parentRef, modelRef, { value: seralized, valueElementName })
+      onUpdateModel(parentRef, modelRef, {
+        value: seralized,
+        valueElementName
+      })
+
       setSelectedNodes(treeModel.current.getNumberSelectedNodes())
     }
   }
@@ -140,7 +144,7 @@ export const Tree = ({
   }
 
   /**
-   * onChange callback from TreeItem, update the form model
+   * `onChange` callback from TreeItem, update the form model
    */
   const onChange = () => {
     updateModel()
@@ -151,8 +155,8 @@ export const Tree = ({
    * @param {Object} e event object
    */
   const onFilterChange = (e) => {
-    const { value } = e.target
-    setFilterText(value)
+    const { value: filterValue } = e.target
+    setFilterText(filterValue)
   }
 
   /**

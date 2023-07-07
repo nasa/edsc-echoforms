@@ -18,17 +18,31 @@ function readXml(file) {
 
   const resolver = buildXPathResolverFn(doc)
 
-  return { input, model, resolver }
+  return {
+    input,
+    model,
+    resolver
+  }
 }
 
 const nonConstraintElements = () => {
   const { input, model, resolver } = readXml(textfieldXml)
-  return { elements: input.children, model, resolver }
+
+  return {
+    elements: input.children,
+    model,
+    resolver
+  }
 }
 
 const constraintElements = (file) => {
   const { input, model, resolver } = readXml(file)
-  return { elements: input.children, model, resolver }
+
+  return {
+    elements: input.children,
+    model,
+    resolver
+  }
 }
 
 const setup = (overrideProps, model, resolver) => {

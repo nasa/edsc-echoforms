@@ -75,6 +75,7 @@ describe('Range component', () => {
     cy.get('label')
       .should('have.text', 'Test Field')
       .and('have.attr', 'for', 'testfield')
+
     cy.get('.help-text').should('have.text', 'Helpful text')
 
     cy.get('.range__min').should('have.text', '0')

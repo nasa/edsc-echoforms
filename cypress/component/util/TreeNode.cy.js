@@ -416,6 +416,7 @@ describe('TreeNode', () => {
       '/Parent1/Child1-3/Child1-3-1',
       '/Parent1/Child1-3/Child1-3-2'
     ])
+
     expect(treeNode.simplifiedSeralize()).to.eql(['/Parent1'])
 
     checkedFields = [
@@ -424,6 +425,7 @@ describe('TreeNode', () => {
       '/Parent1/Child1-2/Child1-2-2',
       '/Parent1/Child1-3'
     ]
+
     treeNode = new TreeNode({
       cascade: true,
       checkedFields,
@@ -433,6 +435,7 @@ describe('TreeNode', () => {
       separator: '/',
       simplifyOutput: true
     })
+
     expect(treeNode.seralize()).to.eql([
       '/Parent1/Child1-1/Child1-1-3/Child1-1-3-1',
       '/Parent1/Child1-2',
@@ -442,6 +445,7 @@ describe('TreeNode', () => {
       '/Parent1/Child1-3/Child1-3-1',
       '/Parent1/Child1-3/Child1-3-2'
     ])
+
     expect(treeNode.simplifiedSeralize()).to.eql([
       '/Parent1/Child1-1/Child1-1-3/Child1-1-3-1',
       '/Parent1/Child1-2',

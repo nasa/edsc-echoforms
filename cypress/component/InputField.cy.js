@@ -87,7 +87,8 @@ describe('InputField component', () => {
       parentRef: 'parentRef'
     })
 
-    cy.get('input').focus().blur()
+    cy.get('input').focus()
+    cy.get('input').blur()
 
     cy.get('@onUpdateModelSpy')
       .should('have.been.calledOnce')
@@ -97,7 +98,8 @@ describe('InputField component', () => {
   it('onChange sets the state', () => {
     setup()
 
-    cy.get('input').clear().type('New Value')
+    cy.get('input').clear()
+    cy.get('input').type('New Value')
 
     cy.get('input').should('have.value', 'New Value')
   })

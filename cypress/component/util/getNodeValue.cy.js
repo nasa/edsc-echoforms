@@ -1,6 +1,10 @@
 import { getNodeValue } from '../../../src/util/getNodeValue'
 import { parseXml } from '../../../src/util/parseXml'
-import { selectXml, textareaXml, emptyTreeXml } from '../../mocks/FormElement'
+import {
+  selectXml,
+  textareaXml,
+  emptyTreeXml
+} from '../../mocks/FormElement'
 import { buildXPathResolverFn } from '../../../src/util/buildXPathResolverFn'
 
 describe('getNodeValue', () => {

@@ -106,6 +106,7 @@ describe('Checkbox component', () => {
 
       cy.get('input')
         .should('have.attr', 'disabled')
+
       cy.get('.help-text')
         .should('have.text', 'Click Back to Search and upload a KML or Shapefile to enable this option.')
     })

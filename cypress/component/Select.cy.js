@@ -72,6 +72,7 @@ describe('Select component', () => {
     cy.get('#testfield').children('option').first()
       .should('have.value', 'test value 1')
       .and('have.text', 'test label 1')
+
     cy.get('#testfield').children('option').last()
       .should('have.value', 'test value 2')
       .and('have.text', 'test label 2')
@@ -94,9 +95,11 @@ describe('Select component', () => {
     cy.get('#testfield').children('option').first()
       .should('have.value', '-- No selection --')
       .and('have.text', ' -- No selection -- ')
+
     cy.get('#testfield').children('option').eq(1)
       .should('have.value', 'test value 1')
       .and('have.text', 'test label 1')
+
     cy.get('#testfield').children('option').last()
       .should('have.value', 'test value 2')
       .and('have.text', 'test label 2')
@@ -122,9 +125,11 @@ describe('Select component', () => {
     cy.get('#testfield').children('option').first()
       .should('have.value', '-- Select a value --')
       .and('have.text', ' -- Select a value -- ')
+
     cy.get('#testfield').children('option').eq(1)
       .should('have.value', 'test value 1')
       .and('have.text', 'test label 1')
+
     cy.get('#testfield').children('option').last()
       .should('have.value', 'test value 2')
       .and('have.text', 'test label 2')
@@ -152,6 +157,7 @@ describe('Select component', () => {
     cy.get('#testfield').children('option').first()
       .should('have.value', 'test value 1')
       .and('have.text', 'test label 1')
+
     cy.get('#testfield').children('option').last()
       .should('have.value', 'test value 2')
       .and('have.text', 'test label 2')

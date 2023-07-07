@@ -1,4 +1,8 @@
-import React, { useContext, useEffect, useState } from 'react'
+import React, {
+  useContext,
+  useEffect,
+  useState
+} from 'react'
 import PropTypes from 'prop-types'
 import { ElementWrapper } from '../ElementWrapper/ElementWrapper'
 import { useClasses } from '../../hooks/useClasses'

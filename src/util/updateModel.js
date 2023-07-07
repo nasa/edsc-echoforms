@@ -7,7 +7,7 @@ import { evaluateXpath } from './evaluateXpath'
  * @param {String|Array} newValue New value to be inserted into model
  */
 export const updateModel = (model, resolver, modelRef, newValue) => {
-  // model is at the <instance> level, xpath needs to be evaluated based on the first child of <instance>
+  // `model` is at the <instance> level, xpath needs to be evaluated based on the first child of <instance>
   const value = evaluateXpath(modelRef, model.firstElementChild, resolver)
 
   if (!value) {

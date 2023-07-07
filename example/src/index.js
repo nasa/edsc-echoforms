@@ -121,9 +121,11 @@ const App = () => {
         className="btn btn-secondary"
         type="button"
         title="Reset Form Values"
-        onClick={() => {
-          setDefaultRawModel(null)
-        }}
+        onClick={
+          () => {
+            setDefaultRawModel(null)
+          }
+        }
       >
         Reset Form Values
       </button>

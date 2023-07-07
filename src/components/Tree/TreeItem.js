@@ -1,15 +1,14 @@
-/* eslint-disable react/jsx-no-constructed-context-values */
 import React, {
   useState,
   useRef,
   useEffect
 } from 'react'
 import PropTypes from 'prop-types'
-import { IconContext } from 'react-icons'
 import { FaFolder, FaFolderOpen } from 'react-icons/fa'
+import { IconContext } from 'react-icons'
 
-import { useClasses } from '../../hooks/useClasses'
 import { INDETERMINATE } from '../../constants'
+import { useClasses } from '../../hooks/useClasses'
 
 import './TreeItem.scss'
 
@@ -105,27 +104,32 @@ export const TreeItem = ({
       <div
         className={elementClasses('tree-item__header')}
       >
-        { isParent && (
-          <button
-            className={elementClasses('tree-item__parent-button', 'btn')}
-            type="button"
-            onClick={onToggleExpanded}
-            data-cy={`tree-item__parent-button-${level}`}
-          >
-            <IconContext.Provider value={{
-              style: {
-                width: '1.25em'
-              }
-            }}
+        {
+          isParent && (
+            <button
+              className={elementClasses('tree-item__parent-button', 'btn')}
+              type="button"
+              onClick={onToggleExpanded}
+              data-cy={`tree-item__parent-button-${level}`}
             >
-              {
-                isClosed
-                  ? <FaFolder />
-                  : <FaFolderOpen />
+              <IconContext.Provider value={
+                // eslint-disable-next-line react/jsx-no-constructed-context-values
+                {
+                  style: {
+                    width: '1.25em'
+                  }
+                }
               }
-            </IconContext.Provider>
-          </button>
-        )}
+              >
+                {
+                  isClosed
+                    ? <FaFolder />
+                    : <FaFolderOpen />
+                }
+              </IconContext.Provider>
+            </button>
+          )
+        }
         <input
           id={id}
           className={elementClasses('tree-item__checkbox')}
@@ -158,9 +162,8 @@ export const TreeItem = ({
           }
         </label>
       </div>
-      {
-        (isExpanded || filterExpanded) && childItems()
-      }
+
+      {(isExpanded || filterExpanded) && childItems()}
     </div>
   )
 }

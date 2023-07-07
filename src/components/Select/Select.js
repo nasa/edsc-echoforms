@@ -30,12 +30,18 @@ export const Select = ({
     const values = []
     Array.from(selectedOptions).forEach((option) => {
       const { attributes } = option
-      const value = getAttribute(attributes, 'value')
 
-      values.push(value)
+      values.push(getAttribute(attributes, 'value'))
     })
 
-    onUpdateModel(parentRef, modelRef, { value: values, valueElementName })
+    onUpdateModel(
+      parentRef,
+      modelRef,
+      {
+        value: values,
+        valueElementName
+      }
+    )
   }
 
   const options = []

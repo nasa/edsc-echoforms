@@ -6,5 +6,6 @@
  */
 export const validateIntegerRange = (min, max, value) => {
   const number = Number(value)
+
   return !Number.isNaN(number) && number >= min && number <= max && value.indexOf('.') === -1
 }
