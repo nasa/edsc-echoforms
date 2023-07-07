@@ -1,4 +1,8 @@
-import React, { useContext, useState, useEffect } from 'react'
+import React, {
+  useContext,
+  useState,
+  useEffect
+} from 'react'
 import PropTypes from 'prop-types'
 import { useClasses } from '../../hooks/useClasses'
 import { EchoFormsContext } from '../../context/EchoFormsContext'
@@ -24,7 +28,10 @@ export const ElementWrapper = ({
 
   // When isFieldValid changes, call setFormIsValid to update this field with the new value
   useEffect(() => {
-    setFormIsValid((prevState) => ({ ...prevState, [elementHash]: isFieldValid }))
+    setFormIsValid((prevState) => ({
+      ...prevState,
+      [elementHash]: isFieldValid
+    }))
   }, [isFieldValid])
 
   return (
@@ -33,9 +40,7 @@ export const ElementWrapper = ({
         {label}
       </label>
       <div className={elementClasses('', 'col-sm-8')}>
-        {
-          children({ isFieldValid })
-        }
+        {children({ isFieldValid })}
         <Constraint
           elements={formElements}
           setFieldIsValid={setFieldIsValid}

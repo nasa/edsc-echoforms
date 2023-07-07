@@ -1,4 +1,8 @@
-import React, { useContext, useState, useEffect } from 'react'
+import React, {
+  useContext,
+  useState,
+  useEffect
+} from 'react'
 import PropTypes from 'prop-types'
 
 import { ElementWrapper } from '../ElementWrapper/ElementWrapper'
@@ -37,10 +41,10 @@ export const Range = ({
   useEffect(() => {
     let safeValue = value
     if (!value) safeValue = min
-    const newValue = (Number((safeValue - min) * 100) / (max - min))
-    const newPosition = 25 - (newValue * 0.5)
+    const newlyCalculatedValue = (Number((safeValue - min) * 100) / (max - min))
+    const newPosition = 25 - (newlyCalculatedValue * 0.5)
     setPosition(newPosition)
-    setNewValue(newValue)
+    setNewValue(newlyCalculatedValue)
   }, [value, max, min])
 
   const onChange = (e) => {

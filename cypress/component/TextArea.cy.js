@@ -68,13 +68,15 @@ describe('TextArea component', () => {
     cy.get('label')
       .should('have.text', 'Test Field')
       .and('have.attr', 'for', 'testfield')
+
     cy.get('.help-text').should('have.text', 'Helpful text')
   })
 
   it('onBlur calls onUpdateModel', () => {
     setup(textareaXml)
 
-    cy.get('#testfield').focus().blur()
+    cy.get('#testfield').focus()
+    cy.get('#testfield').blur()
 
     cy.get('@onUpdateModelSpy')
       .should('have.been.calledOnce')
@@ -84,7 +86,8 @@ describe('TextArea component', () => {
   it('onChange sets the state', () => {
     setup(textareaXml)
 
-    cy.get('#testfield').clear().type('New Value')
+    cy.get('#testfield').clear()
+    cy.get('#testfield').type('New Value')
 
     cy.get('#testfield').should('have.value', 'New Value')
   })

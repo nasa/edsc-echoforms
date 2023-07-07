@@ -11,7 +11,10 @@ function readXml(file) {
   const modelResult = document.evaluate('//*[local-name()="instance"]', doc)
   const model = modelResult.iterateNext()
 
-  return { input, model }
+  return {
+    input,
+    model
+  }
 }
 
 const setup = (overrideProps) => {

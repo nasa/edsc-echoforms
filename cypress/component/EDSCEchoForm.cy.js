@@ -18,6 +18,7 @@ const WrapperComponent = (initialProps) => {
       defaultRawModel: null
     })
   }
+
   const handleChangePrepopulatedValues = () => {
     setProps({
       ...props,
@@ -33,9 +34,11 @@ const WrapperComponent = (initialProps) => {
         type="button"
         title="Reset Form"
         id="resetform"
-        onClick={() => {
-          handleResetForm()
-        }}
+        onClick={
+          () => {
+            handleResetForm()
+          }
+        }
       >
         Reset Form
       </button>
@@ -43,9 +46,11 @@ const WrapperComponent = (initialProps) => {
         type="button"
         title="Change Pre-populated Values"
         id="changeprepopulatedvalues"
-        onClick={() => {
-          handleChangePrepopulatedValues()
-        }}
+        onClick={
+          () => {
+            handleChangePrepopulatedValues()
+          }
+        }
       >
         Change Pre-populated Values
       </button>

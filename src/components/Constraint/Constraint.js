@@ -29,17 +29,24 @@ export const Constraint = ({
       const { children: constraints } = element
 
       Array.from(constraints)
-        .filter((element) => element.tagName === 'constraint')
+        .filter((constraintElement) => constraintElement.tagName === 'constraint')
         .forEach((constraint) => {
           const { children: constraintElements } = constraint
 
-          const xpath = Array.from(constraintElements).filter((element) => element.tagName === 'xpath')[0]
-          const pattern = Array.from(constraintElements).filter((element) => element.tagName === 'pattern')[0]
-          const alert = Array.from(constraintElements).filter((element) => element.tagName === 'alert')[0]
+          const xpath = Array.from(constraintElements).filter(
+            (constraintElement) => constraintElement.tagName === 'xpath'
+          )[0]
+          const pattern = Array.from(constraintElements).filter(
+            (constraintElement) => constraintElement.tagName === 'pattern'
+          )[0]
+          const alert = Array.from(constraintElements).filter(
+            (constraintElement) => constraintElement.tagName === 'alert'
+          )[0]
 
           if (xpath && !evaluateXpath(xpath.textContent, model, resolver)) {
             errors.push(alert.textContent)
           }
+
           if (pattern) {
             const regexResult = RegExp(pattern.textContent).exec(value)
             if (regexResult === null) errors.push(alert.textContent)

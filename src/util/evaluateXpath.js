@@ -14,7 +14,9 @@ export const evaluateXpath = (xpath, model, resolver) => {
   // so we need to replace '/' at the beginning of the path, as well as '//' anywhere with:
   // descendant-or-self::node()
   updatedXpath = updatedXpath.replace(/^\/+|(https:)?\/\//g, ($0, $1) => {
-    if ($1) { return $0 } return '/descendant-or-self::node()/'
+    if ($1) { return $0 }
+
+    return '/descendant-or-self::node()/'
   })
 
   const doc = model.ownerDocument

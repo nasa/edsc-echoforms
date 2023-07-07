@@ -63,6 +63,7 @@ describe('Output component', () => {
     cy.get('label')
       .should('have.text', 'Test Field')
       .and('have.attr', 'for', 'testfield')
+
     cy.get('.help-text').should('have.text', 'Helpful text')
   })
 
@@ -76,6 +77,7 @@ describe('Output component', () => {
     cy.get('label')
       .should('have.text', 'Test Field')
       .and('have.attr', 'for', 'testfield')
+
     cy.get('.help-text').should('have.text', 'Helpful text')
   })
 

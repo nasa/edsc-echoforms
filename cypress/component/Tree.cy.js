@@ -1,7 +1,11 @@
 /* eslint-disable react/react-in-jsx-scope, react/jsx-no-constructed-context-values */
 import murmurhash from 'murmurhash'
 
-import { treeWithMaxParametersXml, treeWithNestedDisabledFieldsXml, treeXml } from '../mocks/FormElement'
+import {
+  treeWithMaxParametersXml,
+  treeWithNestedDisabledFieldsXml,
+  treeXml
+} from '../mocks/FormElement'
 import { Tree } from '../../src/components/Tree/Tree'
 import { EchoFormsContext } from '../../src/context/EchoFormsContext'
 import { parseXml } from '../../src/util/parseXml'
@@ -96,7 +100,10 @@ describe('Tree component', () => {
         'have.been.calledOnceWith',
         'parentRef',
         'testfield',
-        { value: ['/Parent1', '/Parent1/Child1'], valueElementName: 'data_layer' }
+        {
+          value: ['/Parent1', '/Parent1/Child1'],
+          valueElementName: 'data_layer'
+        }
       )
   })
 

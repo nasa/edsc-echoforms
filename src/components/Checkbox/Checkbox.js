@@ -1,8 +1,9 @@
 import React, { useContext } from 'react'
 import PropTypes from 'prop-types'
+
+import { EchoFormsContext } from '../../context/EchoFormsContext'
 import { ElementWrapper } from '../ElementWrapper/ElementWrapper'
 import { useClasses } from '../../hooks/useClasses'
-import { EchoFormsContext } from '../../context/EchoFormsContext'
 
 export const Checkbox = ({
   checked,

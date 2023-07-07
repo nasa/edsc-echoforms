@@ -1,4 +1,8 @@
-import React, { useState, useEffect, useRef } from 'react'
+import React, {
+  useState,
+  useEffect,
+  useRef
+} from 'react'
 import PropTypes from 'prop-types'
 
 import { buildParentXpath } from './util/buildParentXpath'
@@ -23,21 +27,22 @@ export const EDSCEchoform = ({
 }) => {
   const [model, setModel] = useState({})
   const [ui, setUi] = useState({})
-  // formIsValid holds a hash of each field, and tells us if that field is valid
+  // `formIsValid` holds a hash of each field, and tells us if that field is valid
   const [formIsValid, setFormIsValid] = useState({})
 
-  // originalModel is the model included in the form XML, used to compare if the model has been changed at all
+  // `originalModel` is the model included in the form XML, used to compare if the model has been changed at all
   const [originalModel, setOriginalModel] = useState({})
 
-  // The Tree component needs to keep a verbose record of the nodes to ensure speed and accuracy, so we save a simplified output here if the tree form element has simplifyOutput set
+  // The Tree component needs to keep a verbose record of the nodes to ensure speed and accuracy,
+  // so we save a simplified output here if the tree form element has simplifyOutput set
   const simplifiedTree = useRef(undefined)
 
   // Updating this value will force a rerender of the component because it is used as a key prop in FormBody
   const [updateAt, setUpdatedAt] = useState(Date.now())
 
-  const resolver = useRef(undefined)
+  const resolverRef = useRef(undefined)
 
-  // relevantFields holds a hash of each field, and tells us if that field is relevant
+  // `relevantFields` holds a hash of each field, and tells us if that field is relevant
   const relevantFields = useRef({})
 
   // Take any prepopulate extensions and update the model
@@ -57,17 +62,19 @@ export const EDSCEchoform = ({
           updatedModel = updateModel(updatedModel, resolver, ref, prepopulateValues[source])
         }
       })
+
     return updatedModel
   }
 
   // Parse the XML form and return the XML document
-  const getFormDoc = (defaultRawModel) => {
+  const getFormDoc = (defaultRawModelParam) => {
     // If we have a defaultRawModel, insert that into the form before parsing
     let formWithModel = form
-    if (defaultRawModel) {
+
+    if (defaultRawModelParam) {
       formWithModel = form.replace(
         /(?:<instance>)(?:.|\n)*(?:<\/instance>)/,
-        `<instance>\n${defaultRawModel}\n</instance>`
+        `<instance>\n${defaultRawModelParam}\n</instance>`
       )
     }
 
@@ -118,21 +125,21 @@ export const EDSCEchoform = ({
 
     // Pull out the model and UI from the form, but with the defaultRawModel provided (savedAccessConfig)
     const { doc, resolver: newResolver } = getFormDoc(defaultRawModel)
-    resolver.current = newResolver
+    resolverRef.current = newResolver
 
     // Pull the model out of the form
-    const modelResult = doc.evaluate('//*[local-name()="instance"]', doc, resolver.current, XPathResult.ANY_TYPE, null)
+    const modelResult = doc.evaluate('//*[local-name()="instance"]', doc, resolverRef.current, XPathResult.ANY_TYPE, null)
     const initialModel = modelResult.iterateNext()
 
     const extendedModel = extendModelWithPrepopulateValues(
       doc,
       initialModel.cloneNode(true),
-      resolver.current
+      resolverRef.current
     )
 
     // Pull the UI out of the form
-    const uiResult = doc.evaluate('//*[local-name()="ui"]', doc, resolver.current, XPathResult.ANY_TYPE, null)
-    const ui = uiResult.iterateNext()
+    const uiResult = doc.evaluate('//*[local-name()="ui"]', doc, resolverRef.current, XPathResult.ANY_TYPE, null)
+    const newUi = uiResult.iterateNext()
 
     // Reset values for a newly created form
     setUpdatedAt(Date.now())
@@ -141,7 +148,7 @@ export const EDSCEchoform = ({
 
     // Set model and ui state
     setModel(extendedModel)
-    setUi(ui)
+    setUi(newUi)
   }
 
   // When the form prop changes a new form has been passed in and we need to call setupForm
@@ -153,7 +160,7 @@ export const EDSCEchoform = ({
   useEffect(() => {
     if (model.outerHTML) {
       const { doc, resolver: newResolver } = getFormDoc(defaultRawModel)
-      resolver.current = newResolver
+      resolverRef.current = newResolver
 
       const extendedModel = extendModelWithPrepopulateValues(
         doc,
@@ -185,7 +192,7 @@ export const EDSCEchoform = ({
         return fieldRelevant && !fieldValid
       })
 
-    // if there are no relevantInvalidFields, the form is valid
+    // If there are no relevantInvalidFields, the form is valid
     onFormIsValidUpdated(!relevantInvalidFields.length)
   }, [formIsValid, relevantFields])
 
@@ -210,7 +217,7 @@ export const EDSCEchoform = ({
 
           updatedModelWithSimplifiedTree = updateModel(
             updatedModelWithSimplifiedTree,
-            resolver.current,
+            resolverRef.current,
             xpath,
             {
               value,
@@ -229,7 +236,7 @@ export const EDSCEchoform = ({
         hasChanged: hasModelChanged(
           originalModel.cloneNode(true),
           updatedModelWithSimplifiedTree.cloneNode(true),
-          resolver.current
+          resolverRef.current
         )
       })
     }
@@ -241,7 +248,7 @@ export const EDSCEchoform = ({
 
   const onUpdateModel = (parentRef, modelRef, newValue) => {
     const xpath = buildParentXpath(parentRef, modelRef)
-    const updatedModel = updateModel(model.cloneNode(true), resolver.current, xpath, newValue)
+    const updatedModel = updateModel(model.cloneNode(true), resolverRef.current, xpath, newValue)
 
     setModel(updatedModel)
   }
@@ -258,18 +265,20 @@ export const EDSCEchoform = ({
 
   return (
     <EchoFormsContext.Provider
-      // eslint-disable-next-line react/jsx-no-constructed-context-values
-      value={{
-        addBootstrapClasses,
-        hasShapefile,
-        model: model.firstElementChild.innerHTML,
-        onUpdateModel,
-        resolver: resolver.current,
-        setFormIsValid,
-        setRelevantFields,
-        setSimplifiedTree,
-        simplifiedTree
-      }}
+      value={
+        // eslint-disable-next-line react/jsx-no-constructed-context-values
+        {
+          addBootstrapClasses,
+          hasShapefile,
+          model: model.firstElementChild.innerHTML,
+          onUpdateModel,
+          resolver: resolverRef.current,
+          setFormIsValid,
+          setRelevantFields,
+          setSimplifiedTree,
+          simplifiedTree
+        }
+      }
     >
       <FormBody
         className={className}

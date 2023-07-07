@@ -19,7 +19,7 @@ export class TreeNode {
     this.simplifyOutput = this.props.simplifyOutput
     this.onUpdateFinished = this.props.onUpdateFinished
 
-    // elementHash used as key for TreeItem components
+    // `elementHash` used as key for TreeItem components
     this.elementHash = murmurhash.v3(this.element.outerHTML, 'seed')
 
     // Properties with default values
@@ -103,7 +103,7 @@ export class TreeNode {
       this.checkedFields.includes(this.fullValue) || this.required
     )
 
-    // this.onUpdateFinished is only defined at the top level. if it exists call the function to let the component know to rerender
+    // `this.onUpdateFinished` is only defined at the top level. if it exists call the function to let the component know to rerender
     if (this.onUpdateFinished) {
       this.onUpdateFinished()
     }
@@ -255,6 +255,7 @@ export class TreeNode {
 
     this.totalLeafNodes = Object.values(this.allItems).reduce((total, value) => {
       if (value.isLeaf) return total + 1
+
       return total
     }, 0)
 
@@ -267,6 +268,7 @@ export class TreeNode {
   getNumberSelectedNodes() {
     return Object.values(this.allItems).reduce((total, value) => {
       if (value.isLeaf && value.checked === true) return total + 1
+
       return total
     }, 0)
   }
@@ -292,13 +294,13 @@ export class TreeNode {
     if (!this.relevant) return false
 
     if (this.cascade) {
-      // parentChecked used to determine checked value with cascading during initial render
+      // `parentChecked` used to determine checked value with cascading during initial render
       if (this.parent && this.parentChecked === true) {
         return true
       }
     }
 
-    // if cascade is false or this is a leaf, and a value does exist, return that value
+    // If cascade is false or this is a leaf, and a value does exist, return that value
     if ((!this.cascade || this.isLeaf) && value != null) {
       return value
     }

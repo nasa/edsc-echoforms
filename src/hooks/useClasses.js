@@ -1,4 +1,4 @@
-import { useContext, useCallback } from 'react'
+import { useCallback, useContext } from 'react'
 import { EchoFormsContext } from '../context/EchoFormsContext'
 
 /**
@@ -10,16 +10,19 @@ import { EchoFormsContext } from '../context/EchoFormsContext'
 export const useClasses = () => {
   const { addBootstrapClasses } = useContext(EchoFormsContext)
 
-  const elementClasses = useCallback((defaultClasses, bootstrapClasses, isInvalid) => {
-    let defaultWithError = defaultClasses
-    if (isInvalid) defaultWithError += ' is-invalid'
+  const elementClasses = useCallback(
+    (defaultClasses, bootstrapClasses, isInvalid) => {
+      let defaultWithError = defaultClasses
+      if (isInvalid) defaultWithError += ' is-invalid'
 
-    if (addBootstrapClasses) {
-      return [bootstrapClasses, defaultWithError].filter(Boolean).join(' ')
-    }
+      if (addBootstrapClasses) {
+        return [bootstrapClasses, defaultWithError].filter(Boolean).join(' ')
+      }
 
-    return defaultWithError
-  }, [addBootstrapClasses])
+      return defaultWithError
+    },
+    [addBootstrapClasses]
+  )
 
   return { elementClasses }
 }

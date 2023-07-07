@@ -4,9 +4,11 @@ import murmurhash from 'murmurhash'
 
 import { getAttribute } from '../../util/getAttribute'
 import { getNodeValue } from '../../util/getNodeValue'
+import { setRelevantAttribute } from '../../util/setRelevantAttribute'
 
 import { Checkbox } from '../Checkbox/Checkbox'
 import { DateTime } from '../DateTime/DateTime'
+// eslint-disable-next-line import/no-cycle
 import { Group } from '../Group/Group'
 import { Number } from '../Number/Number'
 import { Output } from '../Output/Output'
@@ -16,8 +18,8 @@ import { Select } from '../Select/Select'
 import { TextArea } from '../TextArea/TextArea'
 import { TextField } from '../TextField/TextField'
 import { Tree } from '../Tree/Tree'
+
 import { EchoFormsContext } from '../../context/EchoFormsContext'
-import { setRelevantAttribute } from '../../util/setRelevantAttribute'
 
 /**
  * Returns a simple string type from an XML type attribute
@@ -82,10 +84,12 @@ export const FormElement = ({
   if (relevantAttribute.current === undefined) {
     relevantAttribute.current = getAttribute(attributes, 'relevant')
   }
+
   let relevant = true
   if (relevantAttribute.current) {
     relevant = getNodeValue(relevantAttribute.current, model, resolver, true)
   }
+
   setRelevantFields({ [elementHash]: relevant })
   setRelevantAttribute(model, resolver, modelRef.current, relevant)
   if (!relevant) return null
@@ -99,6 +103,7 @@ export const FormElement = ({
     if (readOnlyAttribute.current === undefined) {
       readOnlyAttribute.current = getAttribute(attributes, 'readonly')
     }
+
     if (readOnlyAttribute.current) {
       readOnly = getNodeValue(readOnlyAttribute.current, model, resolver, true)
     }
@@ -107,6 +112,7 @@ export const FormElement = ({
   if (requiredAttribute.current === undefined) {
     requiredAttribute.current = getAttribute(attributes, 'required')
   }
+
   let required = false
   if (requiredAttribute.current) {
     required = getNodeValue(requiredAttribute.current, model, resolver, true)
@@ -115,6 +121,7 @@ export const FormElement = ({
   if (label.current === undefined) {
     label.current = getAttribute(attributes, 'label')
   }
+
   if (id.current === undefined) {
     id.current = getAttribute(attributes, 'id')
   }
@@ -150,6 +157,7 @@ export const FormElement = ({
         </Checkbox>
       )
     }
+
     if (type.current === 'datetime') {
       return (
         <DateTime {...defaultProps}>
@@ -157,6 +165,7 @@ export const FormElement = ({
         </DateTime>
       )
     }
+
     if (type.current === 'double'
       || type.current === 'long'
       || type.current === 'int'
@@ -175,6 +184,7 @@ export const FormElement = ({
       </TextField>
     )
   }
+
   if (tagName === 'textarea') {
     return (
       <TextArea {...defaultProps}>
@@ -182,6 +192,7 @@ export const FormElement = ({
       </TextArea>
     )
   }
+
   if (tagName === 'secret') {
     return (
       <SecretField {...defaultProps}>
@@ -189,10 +200,12 @@ export const FormElement = ({
       </SecretField>
     )
   }
+
   if (tagName === 'select' || tagName === 'selectref') {
     if (multiple.current === undefined) {
       multiple.current = getAttribute(attributes, 'multiple')
     }
+
     if (valueElementName.current === undefined) {
       valueElementName.current = getAttribute(attributes, 'valueElementName')
     }
@@ -213,13 +226,16 @@ export const FormElement = ({
       </Select>
     )
   }
+
   if (tagName === 'range') {
     if (max.current === undefined) {
       max.current = getAttribute(attributes, 'end')
     }
+
     if (min.current === undefined) {
       min.current = getAttribute(attributes, 'start')
     }
+
     if (step.current === undefined) {
       step.current = getAttribute(attributes, 'step')
     }
@@ -235,6 +251,7 @@ export const FormElement = ({
       </Range>
     )
   }
+
   if (tagName === 'output') {
     return (
       <Output {...defaultProps} type={type.current}>
@@ -242,6 +259,7 @@ export const FormElement = ({
       </Output>
     )
   }
+
   if (tagName === 'group') {
     return (
       <Group {...defaultProps}>
@@ -249,19 +267,24 @@ export const FormElement = ({
       </Group>
     )
   }
+
   if (tagName === 'tree') {
     if (cascade.current === undefined) {
       cascade.current = (getAttribute(attributes, 'cascade') || 'true') === 'true'
     }
+
     if (maxParameters.current === undefined) {
       maxParameters.current = getAttribute(attributes, 'maxParameters')
     }
+
     if (separator.current === undefined) {
       separator.current = getAttribute(attributes, 'separator')
     }
+
     if (simplifyOutput.current === undefined) {
       simplifyOutput.current = (getAttribute(attributes, 'simplifyOutput') || 'true') === 'true'
     }
+
     if (valueElementName.current === undefined) {
       valueElementName.current = getAttribute(attributes, 'valueElementName') || value
     }

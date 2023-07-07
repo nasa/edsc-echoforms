@@ -76,6 +76,7 @@ describe('Group component', () => {
     cy.get('label')
       .should('have.text', 'Text input')
       .and('have.attr', 'for', 'textinput')
+
     cy.get('.group__body').find('.help-text').should('have.text', 'Helpful text')
   })
 })

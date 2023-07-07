@@ -1,5 +1,9 @@
 import { parseXml } from '../../../src/util/parseXml'
-import { textfieldXml, selectXml, multipleNamespacesXml } from '../../mocks/FormElement'
+import {
+  textfieldXml,
+  selectXml,
+  multipleNamespacesXml
+} from '../../mocks/FormElement'
 import { updateModel } from '../../../src/util/updateModel'
 import { buildXPathResolverFn } from '../../../src/util/buildXPathResolverFn'
 

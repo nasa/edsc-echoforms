@@ -68,13 +68,16 @@ describe('TextField component', () => {
     cy.get('label')
       .should('have.text', 'Test Field')
       .and('have.attr', 'for', 'testfield')
+
     cy.get('.help-text').should('have.text', 'Helpful text')
   })
 
   it('renders constraint errors', () => {
     setup(textFieldWithPatternConstraintXml, { value: '' })
 
-    cy.get('#testfield').clear().type('invalid').blur()
+    cy.get('#testfield').clear()
+    cy.get('#testfield').type('invalid')
+    cy.get('#testfield').blur()
 
     cy.get('.invalid-feedback').should('have.text', 'Value must be "test value"')
   })

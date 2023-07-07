@@ -16,6 +16,7 @@ const isNodeOrParentIrrelevant = (element) => {
 
   // Check the parent node for the irrelevant attribute
   const { parentNode } = element
+
   return isNodeOrParentIrrelevant(parentNode)
 }
 
@@ -28,12 +29,12 @@ const isNodeOrParentIrrelevant = (element) => {
 export const hasModelChanged = (originalModel, updatedModel, resolver) => {
   let modelChanged = false
 
-  // diffAsXml will compare the two XML strings
+  // `diffAsXml` will compare the two XML strings
   diffAsXml(originalModel.innerHTML, updatedModel.innerHTML, {
     'ecs:email': { skipKey: true },
     'ecs:INCLUDE_META': { skipKey: true }
   }, {}, (results) => {
-    // results will be an array of differance objects
+    // `results` will be an array of differance objects
     if (results.length > 0) {
       // Keep track of how many irrelevant fields are without the results diffs
       let irrelevantFields = 0
