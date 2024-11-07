@@ -87,7 +87,7 @@ export const TreeItem = ({
 
   const isClosed = !isExpanded && !filterExpanded
 
-  let treeItemClasses = 'tree-item'
+  let treeItemClasses = 'ef-tree-item'
 
   treeItemClasses += ` ${`tree-item--child-${level}`}`
   treeItemClasses += ` ${isParent ? 'tree-item--is-parent' : ''}`
@@ -102,15 +102,15 @@ export const TreeItem = ({
       className={elementClasses(treeItemClasses)}
     >
       <div
-        className={elementClasses('tree-item__header')}
+        className={elementClasses('ef-tree-item__header')}
       >
         {
           isParent && (
             <button
-              className={elementClasses('tree-item__parent-button', 'btn')}
+              className={elementClasses('ef-tree-item__parent-button', 'btn')}
               type="button"
               onClick={onToggleExpanded}
-              data-cy={`tree-item__parent-button-${level}`}
+              data-cy={`ef-tree-item__parent-button-${level}`}
             >
               <IconContext.Provider value={
                 // eslint-disable-next-line react/jsx-no-constructed-context-values
@@ -132,7 +132,7 @@ export const TreeItem = ({
         }
         <input
           id={id}
-          className={elementClasses('tree-item__checkbox')}
+          className={elementClasses('ef-tree-item__checkbox')}
           type="checkbox"
           value={fullValue}
           onChange={handleChange}
@@ -142,20 +142,20 @@ export const TreeItem = ({
           data-cy={fullValue}
         />
         <label
-          className={elementClasses('tree-item__label')}
+          className={elementClasses('ef-tree-item__label')}
           htmlFor={id}
         >
           {label}
           {
             !relevant && (
-              <span className={elementClasses('tree-item__irrelevant-label', 'ml-1 small')}>
+              <span className={elementClasses('ef-tree-item__irrelevant-label', 'ml-1 small')}>
                 (not available)
               </span>
             )
           }
           {
             required && (
-              <span className={elementClasses('tree-item__required-label', 'ml-1 small')}>
+              <span className={elementClasses('ef-tree-item__required-label', 'ml-1 small')}>
                 (required)
               </span>
             )
