@@ -80,20 +80,20 @@ describe('Tree component', () => {
   it('renders a Tree', () => {
     setup()
 
-    cy.get('.tree__filter-label').should('have.text', 'Filter')
-    cy.get('#tree_filter_input').should('have.attr', 'placeholder', 'Enter text to filter bands')
-    cy.get('.tree__filter-clear-button').should('have.text', 'Clear')
+    cy.get('.ef-tree__filter-label').should('have.text', 'Filter')
+    cy.get('#ef-tree_filter_input').should('have.attr', 'placeholder', 'Enter text to filter bands')
+    cy.get('.ef-tree__filter-clear-button').should('have.text', 'Clear')
 
-    cy.get('.tree__node-count-text').should('have.text', '0 of 1 bands selected')
+    cy.get('.ef-tree__node-count-text').should('have.text', '0 of 1 bands selected')
 
-    cy.get('.tree__list').find('input').should('have.length', 2)
-    cy.get('.tree-item--is-open').should('exist')
+    cy.get('.ef-tree__list').find('input').should('have.length', 2)
+    cy.get('.ef-tree-item--is-open').should('exist')
   })
 
   it('changing a TreeItem calls onUpdateModel', () => {
     setup()
 
-    cy.get('.tree__list').find('input').first().click()
+    cy.get('.ef-tree__list').find('input').first().click()
 
     cy.get('@onUpdateModelSpy')
       .and(
@@ -117,7 +117,7 @@ describe('Tree component', () => {
   it('updating a simplifyOutput tree calls setSimplifiedTree', () => {
     setup({ simplifyOutput: true })
 
-    cy.get('.tree__list').find('input').first().click()
+    cy.get('.ef-tree__list').find('input').first().click()
 
     cy.get('@setSimplifiedTreeSpy')
       .and(
@@ -156,19 +156,19 @@ describe('Tree component', () => {
   it('onFilterChange updates the filterText', () => {
     setup()
 
-    cy.get('#tree_filter_input').type('filter text')
+    cy.get('#ef-tree_filter_input').type('filter text')
 
-    cy.get('#tree_filter_input').should('have.value', 'filter text')
+    cy.get('#ef-tree_filter_input').should('have.value', 'filter text')
   })
 
   it('onFilterClear clears the filterText', () => {
     setup()
 
-    cy.get('#tree_filter_input').type('filter text')
+    cy.get('#ef-tree_filter_input').type('filter text')
 
-    cy.get('.tree__filter-clear-button').click()
+    cy.get('.ef-tree__filter-clear-button').click()
 
-    cy.get('#tree_filter_input').should('have.value', '')
+    cy.get('#ef-tree_filter_input').should('have.value', '')
   })
 
   // These tests need the full form loaded to properly test the tree interactions,
@@ -187,8 +187,8 @@ describe('Tree component', () => {
       )
 
       // Expand tree
-      cy.get('[data-cy="tree-item__parent-button-2"]').click()
-      cy.get('[data-cy="tree-item__parent-button-3"]').click()
+      cy.get('[data-cy="ef-tree-item__parent-button-2"]').click()
+      cy.get('[data-cy="ef-tree-item__parent-button-3"]').click()
 
       cy.get('[data-cy="/Parent1"]:indeterminate').should('exist')
       cy.get('[data-cy="/Parent1/Child1-1"]:indeterminate').should('exist')
@@ -211,8 +211,8 @@ describe('Tree component', () => {
       )
 
       // Expand tree
-      cy.get('[data-cy="tree-item__parent-button-2"]').click()
-      cy.get('[data-cy="tree-item__parent-button-3"]').click()
+      cy.get('[data-cy="ef-tree-item__parent-button-2"]').click()
+      cy.get('[data-cy="ef-tree-item__parent-button-3"]').click()
 
       // Uncheck top parent
       cy.get('[data-cy="/Parent1"]').click()
@@ -238,8 +238,8 @@ describe('Tree component', () => {
       )
 
       // Expand tree
-      cy.get('[data-cy="tree-item__parent-button-2"]').click()
-      cy.get('[data-cy="tree-item__parent-button-3"]').click()
+      cy.get('[data-cy="ef-tree-item__parent-button-2"]').click()
+      cy.get('[data-cy="ef-tree-item__parent-button-3"]').click()
 
       // Uncheck middle parent
       cy.get('[data-cy="/Parent1/Child1-1"]').click()
@@ -275,8 +275,8 @@ describe('Tree component', () => {
       )
 
       // Expand tree
-      cy.get('[data-cy="tree-item__parent-button-2"]').click()
-      cy.get('[data-cy="tree-item__parent-button-3"]').click()
+      cy.get('[data-cy="ef-tree-item__parent-button-2"]').click()
+      cy.get('[data-cy="ef-tree-item__parent-button-3"]').click()
 
       // Uncheck middle parent
       cy.get('[data-cy="/Parent1/Child1-1/Child1-1-2"]').click()
@@ -312,8 +312,8 @@ describe('Tree component', () => {
       )
 
       // Expand tree
-      cy.get('[data-cy="tree-item__parent-button-2"]').click()
-      cy.get('[data-cy="tree-item__parent-button-3"]').click()
+      cy.get('[data-cy="ef-tree-item__parent-button-2"]').click()
+      cy.get('[data-cy="ef-tree-item__parent-button-3"]').click()
 
       // Uncheck middle value parent
       cy.get('[data-cy="/Parent1/Child1-1/Child1-1-1"]').click()
@@ -349,8 +349,8 @@ describe('Tree component', () => {
       )
 
       // Expand tree
-      cy.get('[data-cy="tree-item__parent-button-2"]').click()
-      cy.get('[data-cy="tree-item__parent-button-3"]').click()
+      cy.get('[data-cy="ef-tree-item__parent-button-2"]').click()
+      cy.get('[data-cy="ef-tree-item__parent-button-3"]').click()
 
       // Uncheck lower leaf
       cy.get('[data-cy="/Parent1/Child1-1/Child1-1-2/Child1-1-2-1"]').click()
@@ -386,8 +386,8 @@ describe('Tree component', () => {
       )
 
       // Expand tree
-      cy.get('[data-cy="tree-item__parent-button-2"]').click()
-      cy.get('[data-cy="tree-item__parent-button-3"]').click()
+      cy.get('[data-cy="ef-tree-item__parent-button-2"]').click()
+      cy.get('[data-cy="ef-tree-item__parent-button-3"]').click()
 
       // Uncheck middle leaf
       cy.get('[data-cy="/Parent1/Child1-1/Child1-1-1"]').click()

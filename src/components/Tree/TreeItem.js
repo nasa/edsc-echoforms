@@ -89,13 +89,13 @@ export const TreeItem = ({
 
   let treeItemClasses = 'ef-tree-item'
 
-  treeItemClasses += ` ${`tree-item--child-${level}`}`
-  treeItemClasses += ` ${isParent ? 'tree-item--is-parent' : ''}`
-  treeItemClasses += ` ${isFirst ? 'tree-item--is-first' : ''}`
-  treeItemClasses += ` ${isLast ? 'tree-item--is-last' : ''}`
-  treeItemClasses += ` ${!isClosed ? 'tree-item--is-open' : ''}`
-  treeItemClasses += ` ${isLast ? 'tree-item--has-blocker' : ''}`
-  treeItemClasses += ` ${!relevant ? 'tree-item--is-not-relevant' : ''}`
+  treeItemClasses += ` ${`ef-tree-item--child-${level}`}`
+  treeItemClasses += ` ${isParent ? 'ef-tree-item--is-parent' : ''}`
+  treeItemClasses += ` ${isFirst ? 'ef-tree-item--is-first' : ''}`
+  treeItemClasses += ` ${isLast ? 'ef-tree-item--is-last' : ''}`
+  treeItemClasses += ` ${!isClosed ? 'ef-tree-item--is-open' : ''}`
+  treeItemClasses += ` ${isLast ? 'ef-tree-item--has-blocker' : ''}`
+  treeItemClasses += ` ${!relevant ? 'ef-tree-item--is-not-relevant' : ''}`
 
   return (
     <div
