@@ -4,6 +4,7 @@ import murmurhash from 'murmurhash'
 import {
   treeWithMaxParametersXml,
   treeWithNestedDisabledFieldsXml,
+  treeWithNestedScrollableXml,
   treeXml
 } from '../mocks/FormElement'
 import { Tree } from '../../src/components/Tree/Tree'
@@ -428,6 +429,30 @@ describe('Tree component', () => {
       cy.get('[data-cy="/Parent1/Child1-1/Child1-1-2"]:indeterminate').should('exist')
       cy.get('[data-cy="/Parent1/Child1-1/Child1-1-2/Child1-1-2-1"]').should('be.checked')
       cy.get('[data-cy="/Parent1/Child1-1/Child1-1-2/Child1-1-2-2"]').should('not.be.checked')
+
+      // We shouldn't be able to scroll because the leaf labels are not long enough
+      cy.get('.ef-tree__list-wrapper').scrollTo('right', { ensureScrollable: false })
+
+    })
+
+    it('scrolls for long leaf label', () => {
+      const onFormModelUpdatedSpy = cy.spy().as('onFormModelUpdatedSpy')
+      const onFormIsValidUpdatedSpy = cy.spy().as('onFormIsValidUpdatedSpy')
+
+      cy.mount(
+        <EDSCEchoform
+          form={treeWithNestedScrollableXml}
+          onFormModelUpdated={onFormModelUpdatedSpy}
+          onFormIsValidUpdated={onFormIsValidUpdatedSpy}
+        />
+      )
+
+      // Expand tree
+      cy.get('[data-cy="ef-tree-item__parent-button-2"]').click()
+      cy.get('[data-cy="ef-tree-item__parent-button-3"]').click()
+
+      // Scroll to right edge and verify that with the longer leaf label value, this element will be scrollable
+      cy.get('.ef-tree__list-wrapper').scrollTo('right', { ensureScrollable: true })
     })
   })
 })
