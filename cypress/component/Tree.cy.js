@@ -432,7 +432,6 @@ describe('Tree component', () => {
 
       // We shouldn't be able to scroll because the leaf labels are not long enough
       cy.get('.ef-tree__list-wrapper').scrollTo('right', { ensureScrollable: false })
-
     })
 
     it('scrolls for long leaf label', () => {
