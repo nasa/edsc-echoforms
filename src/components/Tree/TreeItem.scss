@@ -1,4 +1,4 @@
-.tree-item {
+.ef-tree-item {
   position: relative;
   margin-left: 1.625rem;
   margin-bottom: 0.325rem;
@@ -11,7 +11,7 @@
     margin-bottom: 0.325rem;
     margin-left: 0.1rem;
 
-    .tree-item--is-first > & {
+    .ef-tree-item--is-first > & {
       &:after {
         content: '';
         position: absolute;
@@ -24,7 +24,7 @@
       }
     }
 
-    .tree-item--has-blocker > & {
+    .ef-tree-item--has-blocker > & {
       &:before {
         content: '';
         position: absolute;
@@ -38,7 +38,7 @@
       }
     }
 
-    .tree-item--is-not-relevant & {
+    .ef-tree-item--is-not-relevant & {
       cursor: not-allowed;
 
       &:hover {
@@ -80,10 +80,13 @@
     right: 0.3rem;
 
     &.btn {
+      flex-shrink: 0;
+      height: 1.5rem;
       padding: 0.125rem;
     }
 
     svg {
+      vertical-align: initial;
       fill: #fff981;
     }
 
@@ -97,7 +100,7 @@
     margin-right: 0.5rem;
     transform: scale(0.925);
 
-    .tree-item--is-not-relevant & {
+    .ef-tree-item--is-not-relevant & {
       cursor: not-allowed;
 
       &:hover {
@@ -107,6 +110,7 @@
   }
 
   &__label {
+    flex-shrink: 0;
     display: flex;
     align-items: center;
     margin-bottom: 0;
@@ -115,7 +119,7 @@
     font-size: 0.875rem;
     line-height: 1.375;
 
-    .tree-item--is-not-relevant & {
+    .ef-tree-item--is-not-relevant & {
       cursor: not-allowed;
 
       &:hover {

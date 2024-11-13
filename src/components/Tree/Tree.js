@@ -196,42 +196,42 @@ export const Tree = ({
       {
         ({ isFieldValid }) => (
           <div id={id} className={elementClasses('tree', '', !isFieldValid)}>
-            <div className={elementClasses('tree__filter')}>
+            <div className={elementClasses('ef-tree__filter')}>
               <label
-                className={elementClasses('tree__filter-label', 'sr-only')}
-                htmlFor="tree_filter_input"
+                className={elementClasses('ef-tree__filter-label', 'sr-only')}
+                htmlFor="ef-tree_filter_input"
               >
                 Filter
               </label>
-              <div className={elementClasses('tree__filter-input-group', 'input-group input-group-sm mb-2 mt-1')}>
-                <div className={elementClasses('tree__filter-input-group-prepend', 'input-group-prepend input-group-prepend-sm')}>
+              <div className={elementClasses('ef-tree__filter-input-group', 'input-group input-group-sm mb-2 mt-1')}>
+                <div className={elementClasses('ef-tree__filter-input-group-prepend', 'input-group-prepend input-group-prepend-sm')}>
                   <div className="input-group-text">Filter</div>
                 </div>
                 <input
-                  id="tree_filter_input"
-                  name="tree_filter_input"
-                  className={elementClasses('tree__filter-input', 'form-control form-control-sm')}
+                  id="ef-tree_filter_input"
+                  name="ef-tree_filter_input"
+                  className={elementClasses('ef-tree__filter-input', 'form-control form-control-sm')}
                   placeholder="Enter text to filter bands"
                   value={filterText}
                   onChange={onFilterChange}
                 />
-                <div className={elementClasses('tree__filter-input-append tree__filter-input-append--clear', 'input-group-append')}>
+                <div className={elementClasses('ef-tree__filter-input-append ef-tree__filter-input-append--clear', 'input-group-append')}>
                   <button
                     type="button"
                     label="Clear"
                     value=""
-                    className={elementClasses('tree__filter-clear-button', 'btn btn-outline-secondary form-control-sm')}
+                    className={elementClasses('ef-tree__filter-clear-button', 'btn btn-outline-secondary form-control-sm')}
                     onClick={onFilterClear}
                   >
-                    <span className={elementClasses('tree__filter-clear-button-text', '')}>
+                    <span className={elementClasses('ef-tree__filter-clear-button-text', '')}>
                       Clear
                     </span>
                   </button>
                 </div>
               </div>
             </div>
-            <div className={elementClasses('tree__node-count', 'mb-3')}>
-              <span className={elementClasses('tree__node-count-text', 'text-secondary small')}>
+            <div className={elementClasses('ef-tree__node-count', 'mb-3')}>
+              <span className={elementClasses('ef-tree__node-count-text', 'text-secondary small')}>
                 {selectedNodes.toLocaleString()}
                 {' '}
                 of
@@ -241,8 +241,8 @@ export const Tree = ({
                 bands selected
               </span>
             </div>
-            <div className="tree__list-wrapper">
-              <div className="tree__list">
+            <div className="ef-tree__list-wrapper">
+              <div className="ef-tree__list">
                 {nodeList()}
               </div>
             </div>

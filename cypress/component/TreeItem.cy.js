@@ -167,7 +167,7 @@ describe('TreeItem component', () => {
 
     cy.get('input').should('have.length', 2)
 
-    cy.get('.tree-item--is-parent').should('have.class', 'tree-item--is-open')
+    cy.get('.ef-tree-item--is-parent').should('have.class', 'ef-tree-item--is-open')
   })
 
   it('adds the level modifier classname', () => {
@@ -178,14 +178,14 @@ describe('TreeItem component', () => {
       }
     })
 
-    cy.get('.tree-item--child-2').should('exist')
+    cy.get('.ef-tree-item--child-2').should('exist')
   })
 
   describe('when the item is a parent', () => {
     it('adds the modifier classname', () => {
       setup()
 
-      cy.get('.tree-item--is-parent').should('exist')
+      cy.get('.ef-tree-item--is-parent').should('exist')
     })
   })
 
@@ -193,7 +193,7 @@ describe('TreeItem component', () => {
     it('adds the modifier classname', () => {
       setup()
 
-      cy.get('.tree-item--is-first').should('exist')
+      cy.get('.ef-tree-item--is-first').should('exist')
     })
   })
 
@@ -204,7 +204,7 @@ describe('TreeItem component', () => {
         isLast: true
       })
 
-      cy.get('.tree-item--is-last').should('exist')
+      cy.get('.ef-tree-item--is-last').should('exist')
     })
   })
 
@@ -212,7 +212,7 @@ describe('TreeItem component', () => {
     it('adds the modifier classname', () => {
       setup()
 
-      cy.get('.tree-item--is-open').should('exist')
+      cy.get('.ef-tree-item--is-open').should('exist')
     })
   })
 
@@ -222,7 +222,7 @@ describe('TreeItem component', () => {
 
       cy.get('button').click()
 
-      cy.get('.tree-item--is-open').should('not.exist')
+      cy.get('.ef-tree-item--is-open').should('not.exist')
     })
   })
 
@@ -235,7 +235,7 @@ describe('TreeItem component', () => {
         }
       })
 
-      cy.get('.tree-item--is-not-relevant').should('exist')
+      cy.get('.ef-tree-item--is-not-relevant').should('exist')
     })
   })
 })
