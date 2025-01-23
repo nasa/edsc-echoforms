@@ -52,7 +52,6 @@
     "babel-plugin-transform-runtime": "^6.23.0",
     "babel-preset-env": "^1.7.0",
     "bootstrap": "^5.3.3",
-    "buffer": "^6.0.3",
     "chai": "^4.3.6",
     "css-loader": "^6.8.1",
     "cypress": "^11.2.0",
