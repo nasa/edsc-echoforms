@@ -38,7 +38,8 @@ module.exports = {
   resolve: {
     extensions: ['.js', '.jsx'],
     fallback: {
-      stream: require.resolve('stream-browserify')
+      buffer: false,
+      stream: false
     }
   },
   devtool: 'source-map',
@@ -60,10 +61,5 @@ module.exports = {
         keep_fnames: true
       }
     })]
-  },
-  plugins: [
-    new webpack.ProvidePlugin({
-      Buffer: ['buffer', 'Buffer']
-    })
-  ]
+  }
 }
