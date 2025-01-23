@@ -4,6 +4,7 @@ import PropTypes from 'prop-types'
 import { ElementWrapper } from '../ElementWrapper/ElementWrapper'
 import { evaluateXpath } from '../../util/evaluateXpath'
 import { EchoFormsContext } from '../../context/EchoFormsContext'
+import { useClasses } from '../../hooks/useClasses'
 
 export const Output = ({
   children,
@@ -15,6 +16,7 @@ export const Output = ({
   value
 }) => {
   const { resolver } = useContext(EchoFormsContext)
+  const { elementClasses } = useClasses()
 
   // Output elements can have xpath as their value attribute.
   // Try to evaluate the value, but catch any error and use the given value
@@ -45,7 +47,7 @@ export const Output = ({
             {
               type === 'anyuri' && (
                 <a
-                  className="form-text"
+                  className={elementClasses('', 'd-block form-text link')}
                   id={id}
                   href={evaluatedValue}
                 >

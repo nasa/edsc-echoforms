@@ -1,3 +1,4 @@
+const webpack = require('webpack')
 const TerserPlugin = require('terser-webpack-plugin')
 const path = require('path')
 
@@ -16,12 +17,14 @@ module.exports = {
         use: [
           'style-loader',
           'css-loader',
-          'sass-loader',
           {
-            loader: 'sass-resources-loader',
+            loader: 'sass-loader',
             options: {
-              // eslint-disable-next-line import/no-dynamic-require, global-require
-              resources: require(path.join(process.cwd(), '/src/css/globalUtils.js'))
+              sassOptions: {
+                // Bootstrap is currently working on a version that does not create deprecation warnings. Once that version is released and updated,
+                // these deprecations can be removed.
+                silenceDeprecations: ['mixed-decls', 'color-functions', 'global-builtin', 'import']
+              }
             }
           }
         ]
@@ -35,6 +38,7 @@ module.exports = {
   resolve: {
     extensions: ['.js', '.jsx'],
     fallback: {
+      // Buffer: require.resolve('buffer/'),
       stream: require.resolve('stream-browserify')
     }
   },
@@ -57,5 +61,10 @@ module.exports = {
         keep_fnames: true
       }
     })]
-  }
+  },
+  plugins: [
+    new webpack.ProvidePlugin({
+      Buffer: ['buffer', 'Buffer']
+    })
+  ]
 }

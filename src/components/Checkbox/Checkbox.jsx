@@ -55,7 +55,7 @@ export const Checkbox = ({
     >
       {
         ({ isFieldValid }) => (
-          <>
+          <div className={elementClasses('checkbox', 'form-check')}>
             <input
               className={elementClasses('checkbox__input', 'form-check-input', !isFieldValid)}
               checked={checked === 'true'}
@@ -72,7 +72,7 @@ export const Checkbox = ({
             >
               {label}
             </label>
-          </>
+          </div>
         )
       }
     </ElementWrapper>

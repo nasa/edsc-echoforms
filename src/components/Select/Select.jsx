@@ -92,7 +92,7 @@ export const Select = ({
       {
         ({ isFieldValid }) => (
           <select
-            className={elementClasses('select__input', 'form-control', !isFieldValid)}
+            className={elementClasses('select__input', 'form-select', !isFieldValid)}
             id={id}
             name={label}
             multiple={multiple}

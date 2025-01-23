@@ -5,7 +5,7 @@ import { useClasses } from '../../hooks/useClasses'
 
 export const Help = ({ elements, manualHelp }) => {
   const { elementClasses } = useClasses()
-  const classes = elementClasses('help-text', 'form-text text-muted')
+  const classes = elementClasses('help-text', 'd-block mt-1 text-muted form-text')
 
   const help = []
   if (elements) {

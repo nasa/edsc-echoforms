@@ -82,7 +82,7 @@ export const Range = ({
               onMouseUp={updateModel}
               onKeyUp={updateModel}
             />
-            <div className="range__markers">
+            <div className={elementClasses('range__markers', 'mt-1')}>
               <span className="range__min">
                 {min}
               </span>

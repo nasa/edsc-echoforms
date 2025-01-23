@@ -27,9 +27,6 @@ export const Group = ({
   const { elementClasses } = useClasses()
   const groupModel = evaluateXpath(modelRef, model, resolver)
 
-  // `react-hooks/rules-of-hooks` - shouldn't call hooks inside of conditionals
-  const headerClasses = elementClasses('group__header', 'card-header')
-
   const newParentRef = buildParentXpath(parentRef, modelRef)
 
   return (
@@ -39,9 +36,11 @@ export const Group = ({
     >
       {
         label && (
-          <div className={headerClasses}>
+          <div className={elementClasses('group__header', 'card-header')}>
             {label}
-            <Help elements={children} />
+            <div className={elementClasses('group__subtitle', 'card-subtitle')}>
+              <Help elements={children} />
+            </div>
           </div>
         )
       }

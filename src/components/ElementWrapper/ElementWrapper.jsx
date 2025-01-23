@@ -35,11 +35,11 @@ export const ElementWrapper = ({
   }, [isFieldValid])
 
   return (
-    <div className={elementClasses('', 'form-group row')}>
+    <div className={elementClasses('', 'form-group row mb-3')}>
       <label htmlFor={htmlFor} className={elementClasses('', 'form-label col-form-label col-sm-4 text-right')}>
         {label}
       </label>
-      <div className={elementClasses('', 'col-sm-8')}>
+      <div className={elementClasses('', 'col-sm-8 position-relative')}>
         {children({ isFieldValid })}
         <Constraint
           elements={formElements}
