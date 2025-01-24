@@ -1,4 +1,3 @@
-const webpack = require('webpack')
 const path = require('path')
 const HtmlWebpackPlugin = require('html-webpack-plugin')
 
@@ -39,17 +38,13 @@ module.exports = {
     ]
   },
   plugins: [
-    htmlWebpackPlugin,
-    new webpack.ProvidePlugin({
-      Buffer: ['buffer', 'Buffer'],
-      stream: false
-    })
+    htmlWebpackPlugin
   ],
   resolve: {
     extensions: ['.js', '.jsx'],
     fallback: {
-      buffer: require.resolve('buffer'),
-      stream: require.resolve('stream-browserify')
+      buffer: false,
+      stream: false
     }
   },
   devtool: 'source-map',

@@ -1,1 +1,6 @@
-@forward "bootstrap";
+// Due to the way functions and variables are defined in bootstrap, it is not possible
+// to use @use and @forward. Bootstrap is working on a new version and tracking the progress
+// here: https://github.com/twbs/bootstrap/issues/29853. Once the sass modules system is
+// implemented, the change can be made here.
+@import "bootstrap/scss/functions";
+@import "bootstrap/scss/variables";

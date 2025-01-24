@@ -65,6 +65,7 @@
     "gh-pages": "^4.0.0",
     "html-webpack-plugin": "^5.6.3",
     "istanbul-lib-coverage": "^3.2.0",
+    "mini-css-extract-plugin": "^2.9.2",
     "nyc": "^15.1.0",
     "prop-types": "^15.8.1",
     "raw-loader": "^4.0.2",
@@ -79,6 +80,7 @@
     "style-loader": "^3.3.3",
     "terser-webpack-plugin": "^5.3.9",
     "webpack": "^5.97.1",
+    "webpack-bundle-analyzer": "^4.10.2",
     "webpack-cli": "^5.1.4",
     "webpack-dev-server": "^4.15.1",
     "xml-formatter": "^2.6.1"
