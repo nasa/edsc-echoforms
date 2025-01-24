@@ -11,7 +11,7 @@ module.exports = {
     '@babel/preset-react'
   ],
   env: {
-    test_cypress: {
+    test: {
       plugins: ['istanbul']
     }
   },
