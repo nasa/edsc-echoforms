@@ -8,7 +8,7 @@ const htmlWebpackPlugin = new HtmlWebpackPlugin({
 })
 
 module.exports = {
-  entry: path.join(__dirname, 'src/index.js'),
+  entry: path.join(__dirname, 'src/index.jsx'),
   module: {
     rules: [
       {
@@ -21,12 +21,12 @@ module.exports = {
         use: [
           'style-loader',
           'css-loader',
-          'sass-loader',
           {
-            loader: 'sass-resources-loader',
+            loader: 'sass-loader',
             options: {
-              // eslint-disable-next-line import/no-dynamic-require, global-require
-              resources: require(path.join(process.cwd(), '/src/css/globalUtils.js'))
+              sassOptions: {
+                silenceDeprecations: ['mixed-decls', 'color-functions', 'global-builtin', 'import']
+              }
             }
           }
         ]
@@ -37,9 +37,15 @@ module.exports = {
       }
     ]
   },
-  plugins: [htmlWebpackPlugin],
+  plugins: [
+    htmlWebpackPlugin
+  ],
   resolve: {
-    extensions: ['.js', '.jsx']
+    extensions: ['.js', '.jsx'],
+    fallback: {
+      buffer: false,
+      stream: false
+    }
   },
   devtool: 'source-map',
   devServer: {

@@ -18,11 +18,23 @@ For the jQuery version of this plugin see [this branch](https://github.com/nasa/
 
 ## Installation
 
-    npm install @edsc/echoforms
+```console
+npm install @edsc/echoforms
+```
 
 ## Usage
 
-After installing you can use the component in your code.
+### Import the required css
+
+The  `styles.css` file must be loaded separately from the `node_modules/@edsc-echoforms/dist` directory.
+
+```javascript
+import '@edsc/echoforms/dist/styles.css'
+```
+
+### Use the EDSCEchoform component
+
+The `EDSCEchoforms` React component is imported from the `@edsc/echoforms` module. When using the component, the `form`, `onFormModelUpdated`, and `onFormIsValidUpdated` props are required. See the Props section below for more information.
 
 ```javascript
 import EDSCEchoform from '@edsc/echoforms'
@@ -53,15 +65,21 @@ onFormIsValidUpdated | Function | true | | Callback function that returns a Bool
 
 To compile:
 
-    npm install
+```console
+npm install
+```
 
 To start the example project for local testing:
 
-    npm start
+```console
+npm start
+```
 
 To run the tests:
 
-    npm test
+```console
+npm test
+```
 
 ## Contributing
 

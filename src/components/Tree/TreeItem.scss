@@ -1,3 +1,5 @@
+@use "../../css/variables";
+
 .ef-tree-item {
   position: relative;
   margin-left: 1.625rem;
@@ -53,7 +55,7 @@
     top: 0.75rem;
     left: -1.125rem;
     width: 0.75rem;
-    border-bottom: 1px solid $gray-400;
+    border-bottom: 1px solid variables.$gray-400;
   }
 
   &--is-parent {
@@ -63,7 +65,7 @@
       top: 1.5rem;
       left: 0.5rem;
       height: calc(100% - 1.925rem);
-      border-left: 1px solid $gray-400;
+      border-left: 1px solid variables.$gray-400;
     }
   }
 
@@ -72,7 +74,7 @@
   }
 
   &--is-not-relevant {
-    color: $gray-600;
+    color: variables.$gray-600;
   }
 
   &__parent-button {

@@ -1,4 +1,5 @@
 const TerserPlugin = require('terser-webpack-plugin')
+const MiniCssExtractPlugin = require('mini-css-extract-plugin')
 const path = require('path')
 
 module.exports = {
@@ -14,14 +15,16 @@ module.exports = {
       {
         test: /\.(css|scss)$/,
         use: [
-          'style-loader',
+          MiniCssExtractPlugin.loader,
           'css-loader',
-          'sass-loader',
           {
-            loader: 'sass-resources-loader',
+            loader: 'sass-loader',
             options: {
-              // eslint-disable-next-line import/no-dynamic-require, global-require
-              resources: require(path.join(process.cwd(), '/src/css/globalUtils.js'))
+              sassOptions: {
+                // Bootstrap is currently working on a version that does not create deprecation warnings. Once that version is released and updated,
+                // these deprecations can be removed.
+                silenceDeprecations: ['mixed-decls', 'color-functions', 'global-builtin', 'import']
+              }
             }
           }
         ]
@@ -35,7 +38,8 @@ module.exports = {
   resolve: {
     extensions: ['.js', '.jsx'],
     fallback: {
-      stream: require.resolve('stream-browserify')
+      buffer: false,
+      stream: false
     }
   },
   devtool: 'source-map',
@@ -57,5 +61,10 @@ module.exports = {
         keep_fnames: true
       }
     })]
-  }
+  },
+  plugins: [
+    new MiniCssExtractPlugin({
+      filename: 'styles.css'
+    })
+  ]
 }

@@ -1,7 +1,9 @@
+@use "../../css/variables";
+
 .ef-tree {
   &__filter-clear-button {
     &.btn-outline-secondary {
-      border-color: $gray-400;
+      border-color: variables.$gray-400;
     }
   }
 
@@ -23,7 +25,7 @@
       top: -0.75rem;
       left: 0.625rem;
       height: calc(100% + 0.125rem);
-      border-left: 1px solid $gray-400;
+      border-left: 1px solid variables.$gray-400;
       z-index: 0;
     }
 

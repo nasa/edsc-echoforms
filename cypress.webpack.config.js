@@ -21,12 +21,14 @@ module.exports = {
         use: [
           'style-loader',
           'css-loader',
-          'sass-loader',
           {
-            loader: 'sass-resources-loader',
+            loader: 'sass-loader',
             options: {
-              // eslint-disable-next-line import/no-dynamic-require, global-require
-              resources: require(path.join(process.cwd(), '/src/css/globalUtils.js'))
+              sassOptions: {
+                // Bootstrap is currently working on a version that does not create deprecation warnings. Once that version is released and updated,
+                // these deprecations can be removed.
+                silenceDeprecations: ['mixed-decls', 'color-functions', 'global-builtin', 'import']
+              }
             }
           }
         ]
@@ -36,6 +38,9 @@ module.exports = {
         use: ['raw-loader']
       }
     ]
+  },
+  resolve: {
+    extensions: ['.js', '.jsx']
   },
   plugins: [
     new HtmlWebpackPlugin({

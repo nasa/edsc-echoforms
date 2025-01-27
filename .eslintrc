@@ -18,6 +18,7 @@
     }
   ],
 
+  // Use AirBnb settings as a base
   "extends": [
     "@edsc"
   ],

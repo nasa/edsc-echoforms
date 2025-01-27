@@ -3,10 +3,10 @@
   "title": "Earthdata Search Components: ECHO Forms",
   "description": "A React component implementation of the ECHO Forms specification.",
   "main": "dist/index.js",
-  "version": "1.1.17",
+  "version": "1.1.18",
   "scripts": {
     "build": "webpack",
-    "start": "webpack-dev-server --config example/webpack.config.js --mode development",
+    "start": "webpack serve --config example/webpack.config.js --mode development",
     "cypress:open": "NODE_ENV=test cypress open",
     "cypress:run": "NODE_ENV=test cypress run -c video=false --component",
     "test": "npm run cypress:run",
@@ -20,20 +20,10 @@
     "type": "git",
     "url": "git+https://github.com/nasa/edsc-echoforms.git"
   },
-  "maintainers": [
-    {
-      "name": "Ryan Abbott",
-      "email": "ryan@element84.com"
-    },
-    {
-      "name": "Matthew Crouch",
-      "email": "matthew@element84.com"
-    },
-    {
-      "name": "Trevor Lang",
-      "email": "trevor@element84.com"
-    }
-  ],
+  "author": {
+    "name": "Earthdata Search",
+    "email": "support@earthdata.nasa.gov"
+  },
   "license": "Apache-2.0",
   "bugs": {
     "url": "https://github.com/nasa/edsc-echoforms/issues"
@@ -45,50 +35,52 @@
     "NASA"
   ],
   "devDependencies": {
-    "@babel/core": "^7.22.8",
-    "@babel/eslint-parser": "^7.22.7",
+    "@babel/core": "^7.26.0",
+    "@babel/eslint-parser": "^7.25.9",
     "@babel/plugin-proposal-class-properties": "^7.16.7",
     "@babel/plugin-proposal-object-rest-spread": "^7.20.7",
     "@babel/plugin-transform-runtime": "^7.22.7",
-    "@babel/preset-env": "^7.22.7",
+    "@babel/preset-env": "^7.26.0",
     "@babel/preset-react": "^7.22.5",
     "@babel/register": "^7.22.5",
     "@cypress/code-coverage": "^3.10.8",
-    "@edsc/eslint-config": "^0.0.2",
+    "@cypress/webpack-preprocessor": "^6.0.2",
+    "@edsc/eslint-config": "^0.0.6",
+    "babel-eslint": "^10.0.1",
     "babel-loader": "^9.1.2",
     "babel-plugin-istanbul": "^6.1.1",
     "babel-plugin-transform-runtime": "^6.23.0",
     "babel-preset-env": "^1.7.0",
-    "bootstrap": "^4.6.2",
+    "bootstrap": "^5.3.3",
     "chai": "^4.3.6",
     "css-loader": "^6.8.1",
     "cypress": "^11.2.0",
+    "enzyme": "^3.11.0",
     "eslint": "^8.44.0",
-    "eslint-config-airbnb": "^19.0.4",
     "eslint-plugin-cypress": "^2.13.3",
     "eslint-plugin-import": "^2.27.5",
     "eslint-plugin-import-newlines": "^1.3.4",
     "eslint-plugin-jsx-a11y": "^6.7.1",
     "eslint-plugin-react": "^7.32.2",
     "gh-pages": "^4.0.0",
-    "html-webpack-plugin": "^5.5.3",
+    "html-webpack-plugin": "^5.6.3",
     "istanbul-lib-coverage": "^3.2.0",
-    "node-sass": "^8.0.0",
+    "mini-css-extract-plugin": "^2.9.2",
     "nyc": "^15.1.0",
     "prop-types": "^15.8.1",
     "raw-loader": "^4.0.2",
     "react": "^18.2.0",
     "react-dom": "^18.2.0",
     "react-github-corner": "^2.5.0",
-    "sass": "^1.63.6",
-    "sass-loader": "^13.3.2",
-    "sass-resources-loader": "^2.2.5",
+    "sass": "^1.83.0",
+    "sass-loader": "^16.0.4",
     "snyk": "^1.1187.0",
     "stream": "0.0.2",
     "stream-browserify": "^3.0.0",
     "style-loader": "^3.3.3",
     "terser-webpack-plugin": "^5.3.9",
-    "webpack": "^5.88.1",
+    "webpack": "^5.97.1",
+    "webpack-bundle-analyzer": "^4.10.2",
     "webpack-cli": "^5.1.4",
     "webpack-dev-server": "^4.15.1",
     "xml-formatter": "^2.6.1"

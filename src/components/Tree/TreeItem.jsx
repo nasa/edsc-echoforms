@@ -148,14 +148,14 @@ export const TreeItem = ({
           {label}
           {
             !relevant && (
-              <span className={elementClasses('ef-tree-item__irrelevant-label', 'ml-1 small')}>
+              <span className={elementClasses('ef-tree-item__irrelevant-label', 'ms-1 small')}>
                 (not available)
               </span>
             )
           }
           {
             required && (
-              <span className={elementClasses('ef-tree-item__required-label', 'ml-1 small')}>
+              <span className={elementClasses('ef-tree-item__required-label', 'ms-1 small')}>
                 (required)
               </span>
             )

@@ -1,0 +1,196 @@
+import React, { useState } from 'react'
+import { createRoot } from 'react-dom/client'
+import format from 'xml-formatter'
+import GithubCorner from 'react-github-corner'
+
+import { EDSCEchoform } from '../../src/index'
+
+import form1 from './form1.xml'
+import form2 from './form2.xml'
+import form3 from './form3.xml'
+
+import 'bootstrap/dist/css/bootstrap.min.css'
+import './styles.css'
+
+const App = () => {
+  const [form, setForm] = useState(form1)
+  const [prepopulateValues, setPrepopulateValues] = useState({
+    PREPOP: 'I am prepopulated'
+  })
+  const [tempForm, setTempForm] = useState(form)
+  const [tempPrepop, setTempPrepop] = useState(JSON.stringify(prepopulateValues))
+  const [serializedModel, setSerializedModel] = useState('')
+  const [serializedRawModel, setSerializedRawModel] = useState('')
+  const [selectedModel, setSelectedModel] = useState('rawModel')
+  const [formIsValid, setFormIsValid] = useState(true)
+  const [formHasBeenUpdated, setFormHasBeenUpdated] = useState(false)
+  const [defaultRawModel, setDefaultRawModel] = useState(null)
+
+  const onTextAreaChange = (e) => {
+    if (e.target.id === 'demo-echoforms-xml') {
+      setTempForm(e.target.value)
+    } else {
+      setTempPrepop(e.target.value)
+    }
+  }
+
+  const onTextAreaBlur = (e) => {
+    if (e.target.id === 'demo-echoforms-xml') {
+      setForm(tempForm)
+      setDefaultRawModel(null)
+    } else {
+      setPrepopulateValues(JSON.parse(tempPrepop))
+    }
+  }
+
+  const onFormModelUpdated = (value) => {
+    const { model, rawModel, hasChanged } = value
+    setSerializedModel(model)
+    setSerializedRawModel(rawModel)
+    setDefaultRawModel(rawModel)
+    setFormHasBeenUpdated(hasChanged)
+  }
+
+  const onFormIsValidUpdated = (isValid) => {
+    setFormIsValid(isValid)
+  }
+
+  const onSelectForm = (e) => {
+    const { value } = e.target
+    setForm(value)
+    setTempForm(value)
+    setDefaultRawModel(null)
+  }
+
+  const onSelectModelFormat = (e) => {
+    const { value } = e.target
+    setSelectedModel(value)
+  }
+
+  let modelPreview = serializedRawModel
+  if (selectedModel === 'model') modelPreview = serializedModel
+
+  return (
+    <>
+      <div className="navbar bg-light">
+        <div className="container">
+          <div className="navbar-brand">
+            ECHO Forms React Plugin Demo
+          </div>
+        </div>
+      </div>
+      <div className="container pt-5">
+        <h2 className="h1 mb-4 fw-bolder">ECHO Forms XML</h2>
+        <p>
+          Enter ECHO Forms XML or select a predefined form below to render a preview of the form and it&apos;s model.
+        </p>
+        <form className="mb-4">
+          <div className="form-check form-check-inline">
+            <input className="form-check-input" type="radio" name="form-select" id="form-select1" value={form1} onChange={onSelectForm} defaultChecked />
+            <label className="form-check-label" htmlFor="form-select1">
+              Form1
+            </label>
+          </div>
+          <div className="form-check form-check-inline">
+            <input className="form-check-input" type="radio" name="form-select" id="form-select2" value={form2} onChange={onSelectForm} />
+            <label className="form-check-label" htmlFor="form-select2">
+              Form2
+            </label>
+          </div>
+          <div className="form-check form-check-inline">
+            <input className="form-check-input" type="radio" name="form-select" id="form-select3" value={form3} onChange={onSelectForm} />
+            <label className="form-check-label" htmlFor="form-select3">
+              Form3
+            </label>
+          </div>
+        </form>
+        <textarea
+          id="demo-echoforms-xml"
+          className="mb-4"
+          value={tempForm}
+          onBlur={onTextAreaBlur}
+          onChange={onTextAreaChange}
+        />
+        <h3 className="mb-3 fw-bolder">Prepopulate Form Values</h3>
+        <textarea
+          id="demo-echoforms-prepopulate"
+          className="mb-4"
+          value={tempPrepop}
+          onBlur={onTextAreaBlur}
+          onChange={onTextAreaChange}
+        />
+        <h2 className="mb-3 fw-bolder">Generated Interface</h2>
+        <p>View and interact with the generated form</p>
+        <button
+          className="btn btn-secondary mb-3"
+          type="button"
+          title="Reset Form Values"
+          onClick={
+            () => {
+              setDefaultRawModel(null)
+            }
+          }
+        >
+          Reset Form Values
+        </button>
+        <EDSCEchoform
+          addBootstrapClasses
+          className="mb-4"
+          defaultRawModel={defaultRawModel}
+          form={form}
+          hasShapefile
+          prepopulateValues={prepopulateValues}
+          onFormModelUpdated={onFormModelUpdated}
+          onFormIsValidUpdated={onFormIsValidUpdated}
+        />
+        <h2 className="mb-4 fw-bolder">Serialized Model</h2>
+        <p>View the data model generated by the form</p>
+        <div className="mb-4">
+          <div>
+            Form Valid:
+            {' '}
+            <strong>
+              {formIsValid.toString()}
+            </strong>
+          </div>
+          <div>
+            Form values have been updated:
+            {' '}
+            <strong>
+              {formHasBeenUpdated.toString()}
+            </strong>
+          </div>
+        </div>
+        <form>
+          <div className="form-check form-check-inline">
+            <input className="form-check-input" type="radio" name="model-select" id="model-select1" value="rawModel" onChange={onSelectModelFormat} defaultChecked />
+            <label className="form-check-label" htmlFor="model-select1">
+              Raw Model (all fields)
+            </label>
+          </div>
+          <div className="form-check form-check-inline">
+            <input className="form-check-input" type="radio" name="model-select" id="model-select2" value="model" onChange={onSelectModelFormat} />
+            <label className="form-check-label" htmlFor="model-select2">
+              Model (Pruned of irrelevant fields)
+            </label>
+          </div>
+        </form>
+        <pre id="demo-echoforms-model" className="bg-light px-4 py-4">
+          <code className="d-block">
+            {
+              modelPreview.length && (
+                format(modelPreview, {
+                  indentation: '  '
+                })
+              )
+            }
+          </code>
+        </pre>
+      </div>
+      <GithubCorner href="https://github.com/nasa/edsc-echoforms" />
+    </>
+  )
+}
+
+const root = createRoot(document.getElementById('root'))
+root.render(<App />)
