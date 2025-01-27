@@ -34,7 +34,7 @@ import '@edsc/echoforms/dist/styles.css'
 
 ### Use the EDSCEchoform component
 
-The `EDSCEchoforms` React component is imported from the `@edsc/echoforms` module. When using the component, the `form`, `onFormModelUpdated`, and `onFormIsValidUpdated` are required. See the Props section below for more information.
+The `EDSCEchoforms` React component is imported from the `@edsc/echoforms` module. When using the component, the `form`, `onFormModelUpdated`, and `onFormIsValidUpdated` props are required. See the Props section below for more information.
 
 ```javascript
 import EDSCEchoform from '@edsc/echoforms'
