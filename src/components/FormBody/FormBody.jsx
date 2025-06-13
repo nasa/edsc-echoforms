@@ -13,10 +13,24 @@ export const FormBody = ({
 
   let formBodyClassnames = 'form'
 
+  /**
+   * Prevents form submission when Enter is pressed on any form element
+   * @param {Object} e event object
+   */
+  const onKeyDown = (e) => {
+    if (e.key === 'Enter') {
+      e.preventDefault()
+    }
+  }
+
   formBodyClassnames += ` ${className}`
 
   return (
-    <div className={elementClasses(formBodyClassnames, 'card')}>
+    // eslint-disable-next-line jsx-a11y/no-noninteractive-element-interactions, jsx-a11y/no-static-element-interactions
+    <div
+      className={elementClasses(formBodyClassnames, 'card')}
+      onKeyDown={onKeyDown}
+    >
       <div className={elementClasses('form__body', 'card-body')}>
         {
           ui.childElementCount > 0 && Array.from(ui.children).map((element) => (
