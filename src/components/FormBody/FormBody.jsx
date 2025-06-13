@@ -17,9 +17,9 @@ export const FormBody = ({
    * Prevents form submission when Enter is pressed on any form element
    * @param {Object} e event object
    */
-  const onKeyDown = (e) => {
-    if (e.key === 'Enter') {
-      e.preventDefault()
+  const onKeyDown = (keyPressEvent) => {
+    if (keyPressEvent.key === 'Enter') {
+      keyPressEvent.preventDefault()
     }
   }
 

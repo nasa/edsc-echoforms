@@ -184,7 +184,7 @@ describe('EDSCEchoform component', () => {
 
   it('calls preventDefault when Enter is pressed on any form element', () => {
     cy.window().then((win) => {
-      cy.stub(win.Event.prototype, 'preventDefault').as('pd')
+      cy.stub(win.Event.prototype, 'preventDefault').as('preventDefaultStub')
     })
 
     const formTypes = [
@@ -218,8 +218,9 @@ describe('EDSCEchoform component', () => {
         cancelable: true
       })
 
-      cy.get('@pd').should('have.been.called')
-      cy.get('@pd').invoke('resetHistory')
+      cy.get('@preventDefaultStub').should('have.been.called')
+      // Reset the spy's history between iterations so each check is independent
+      cy.get('@preventDefaultStub').invoke('resetHistory')
     })
   })
 })
