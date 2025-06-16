@@ -5,7 +5,9 @@ import {
   prepopulatedXml,
   textfieldXml,
   treeWithSimplifyOutputXml,
-  notRelevantXml
+  notRelevantXml,
+  checkboxXml,
+  selectXml
 } from '../mocks/FormElement'
 import EDSCEchoform from '../../src'
 
@@ -177,6 +179,48 @@ describe('EDSCEchoform component', () => {
       hasChanged: true,
       model: '<prov:options xmlns:prov="http://www.example.com/orderoptions"><prov:textreference>New prepopulated value</prov:textreference></prov:options>',
       rawModel: '<prov:options xmlns:prov="http://www.example.com/orderoptions"><prov:textreference>New prepopulated value</prov:textreference></prov:options>'
+    })
+  })
+
+  it('calls preventDefault when Enter is pressed on any form element', () => {
+    cy.window().then((win) => {
+      cy.stub(win.Event.prototype, 'preventDefault').as('preventDefaultStub')
+    })
+
+    const formTypes = [
+      {
+        xml: textfieldXml,
+        selector: '#textinput'
+      },
+      {
+        xml: checkboxXml,
+        selector: '#boolinput'
+      },
+      {
+        xml: selectXml,
+        selector: '#selectinput'
+      },
+      {
+        xml: treeWithSimplifyOutputXml,
+        selector: '#ef-tree_filter_input'
+      }
+    ]
+
+    formTypes.forEach(({ xml, selector }) => {
+      setup(xml)
+
+      cy.get(selector).trigger('keydown', {
+        key: 'Enter',
+        code: 'Enter',
+        which: 13,
+        keyCode: 13,
+        bubbles: true,
+        cancelable: true
+      })
+
+      cy.get('@preventDefaultStub').should('have.been.called')
+      // Reset the spy's history between iterations so each check is independent
+      cy.get('@preventDefaultStub').invoke('resetHistory')
     })
   })
 })
