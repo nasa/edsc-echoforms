@@ -26,7 +26,8 @@ export const FormBody = ({
   formBodyClassnames += ` ${className}`
 
   return (
-    // eslint-disable-next-line jsx-a11y/no-noninteractive-element-interactions, jsx-a11y/no-static-element-interactions
+    // Disabling this rule because we want to capture events from bubbling up
+    // eslint-disable-next-line jsx-a11y/no-static-element-interactions
     <div
       className={elementClasses(formBodyClassnames, 'card')}
       onKeyDown={onKeyDown}
