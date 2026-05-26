@@ -3,8 +3,9 @@ module.exports = {
     [
       '@babel/preset-env', {
         targets: {
-          node: '22',
-          esmodules: true
+          node: '24',
+          esmodules: true,
+          ie: '10'
         }
       }
     ],
